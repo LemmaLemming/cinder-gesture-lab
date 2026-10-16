@@ -1,3 +1,11 @@
+## L4 comparison failure diagnosed; TEST executor correction —16 October 2026
+
+The original compare-01 at2e61/driver55295 is CLOSED FAILED:712checks/1failure,338actual native ticks, zero completed cases. Raw log64f324e6 and198 exact source originals remain unchanged. At5.6333 Hero100→92 while the controller followed an older helper return through later Enclose. A newer native Enclose response existed at3.3333 before movement. This demonstrates stale TEST control, not an unsafe production admission or a retained-policy falsifier.
+
+The reviewed TEST correction rechecks original remaining proof rows against actual retained leases and switches only to a real unused same-origin/deadline-valid native warning response. Actual route owner and chosen damage target are distinct; real reach/LOS/recovery/cooldown and ordinary hit outcomes remain required. Current-point primary checking is a read-only diagnostic, never a new escape proof. Literal partial observations are retained before cleanup with truthful completion status and cumulative tick labeling. No production/adapter/codec/scene/guard/timing or Root PRIMARY change. See `docs/acts/act3/evidence/A3-L4-helper-choice/driver-correction/` for exact diagnosis/custody/delta.
+
+Only corrected --compare is next through the shared dev.py queue. Transport and any brief portrait remain unexecuted; preserve a new refusal/failure and return to Integration if this bounded choice cannot be qualified. Original eight Act3/all24 content and accepted L1/O2/L3 amendments remain complete. Latest exact scopee5ebaf52/ACKab6a85db/actualShared73bfac remain; no human decision or broad rerun.
+
 ## L4 helper-choice TEST source promoted; native qualification next — 16 October 2026
 
 Exact ACKe5ebaf52 bounded test source is promoted after independent source review: driver55295ace, adapter5aa921d0, codec e36ffae3, scene509b1c41. Only new owned TEST files and source-review records are added. Native comparison/held-helper transport/dead-helper transport/brief portrait remain unexecuted. Core uses actual canonical next_kind/retry/cardinal-scan native admissions throughout all waits/approach/return, with autonomous helper, complete proof/floor/current/pending view and literal refusals. No caller-selected Core, quiet-Core shortcut, forced first attacker/overlap or production change.

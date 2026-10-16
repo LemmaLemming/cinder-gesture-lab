@@ -15,6 +15,7 @@ const HC_HELPER_ID: String = "test-helper-choice-latcher"
 const HC_NEUTRAL: Dictionary = {"jacket":"CLOTH-J0","pants":"CLOTH-P0","shoes":"CLOTH-S0","weapon":"WEAPON-01"}
 const HC_COMBINED: Dictionary = {"jacket":"CLOTH-J0","pants":"CLOTH-P2","shoes":"CLOTH-S2","weapon":"WEAPON-03"}
 const HC_MAX_CLOCK_S: float = 80.0
+const HC_Geometry = preload("res://scripts/combat/threat_geometry.gd")
 
 class ChoiceBarrier extends Node:
 	signal observed
@@ -74,6 +75,12 @@ var _hc_seen: Dictionary = {}
 var _hc_callbacks: Array[Dictionary] = []
 var _hc_archives: Array[String] = []
 var _hc_hosts: Array[WeakRef] = []
+var _hc_plan_changes: Array[Dictionary] = []
+var _hc_declined_plans: Dictionary = {}
+var _hc_last_route: Dictionary = {}
+var _hc_damage_choices: Array[Dictionary] = []
+var _hc_completed_receipts: Dictionary = {}
+var _hc_pre_cleanup: Dictionary = {}
 
 func _initialize() -> void:
 	create_timer(600.0, true, false, true).timeout.connect(_hc_timeout, CONNECT_ONE_SHOT)
@@ -92,7 +99,9 @@ func _run() -> void:
 			await _hc_compare(row.name, row.kit, row.remove)
 			await _close()
 	else:
-		await _hc_transport_case(_hc_selector == "--transport-dead")
+		var passed: bool = await _hc_transport_case(_hc_selector == "--transport-dead")
+		if passed:
+			_hc_results.append({"case":_hc_case_name,"scope":"genuine TEST helper transport and original clock0 Retry","completed":true,"archives":_hc_archives.duplicate(),"unit":_hc_shell.capture_campaign_snapshot(),"session":_hc_shell.attempts.state()})
 	await _finish()
 
 func _hc_timeout() -> void:
@@ -104,6 +113,7 @@ func _hc_open_main(kit: Dictionary) -> bool:
 	if _hc_done or _hc_finishing: return false
 	_hc_actions.clear(); _events.clear(); _hc_phases.clear(); _hc_used_proofs.clear(); _hc_pressure.clear()
 	_hc_last_dash_end = -1.0; _hc_last_tap_wall_ms = -10000
+	_hc_plan_changes.clear(); _hc_declined_plans.clear(); _hc_last_route.clear(); _hc_damage_choices.clear()
 	_game = MainScene.instantiate()
 	root.add_child(_game)
 	_hc_hosts.append(weakref(_game))
@@ -159,7 +169,7 @@ func _hc_compare(label: String, kit: Dictionary, remove_helper: bool) -> bool:
 	var expected: float = maxf(0.0, 30.0 - float(_hero.stats.primary_damage))
 	var passed: bool = float(_tether.get("hp")) == expected and _tether.get("phase") == 2 and _hero.hp == _hero_hp and (bool(native.dead) if remove_helper else not bool(native.dead)) and not _hc_pressure.is_empty()
 	if not _expect(passed, "real target choice earns useful ordinary tether damage with full HP and recorded autonomous helper pressure: " + label, _hc_detail()): return false
-	_hc_results.append({"case":label,"kit":kit.duplicate(true),"declared_start":Vector3(0,0.1,1.25),"boundary":boundary,"after_choice":after_choice,"final":_hc_observation(),"native_actions":_hc_actions.duplicate(true),"native_phases":_hc_phases.duplicate(true),"actual_helper_pressure":_hc_pressure.duplicate(true),"admissions":_level.call("choice_admissions"),"attempts":_level.call("choice_attempts"),"refusals":_level.call("choice_refusals"),"canonical_parent_history":false})
+	_hc_results.append({"case":label,"kit":kit.duplicate(true),"declared_start":Vector3(0,0.1,1.25),"boundary":boundary,"after_choice":after_choice,"final":_hc_observation(),"native_actions":_hc_actions.duplicate(true),"native_phases":_hc_phases.duplicate(true),"actual_helper_pressure":_hc_pressure.duplicate(true),"admissions":_level.call("choice_admissions"),"attempts":_level.call("choice_attempts"),"refusals":_level.call("choice_refusals"),"helper_observations":_level.call("choice_helper_observations"),"damage_choices":_hc_damage_choices.duplicate(true),"plan_changes":_hc_plan_changes.duplicate(true),"declined_plans":_hc_declined_plans.duplicate(true),"canonical_parent_history":false})
 	return true
 
 func _hc_earn_phase2() -> bool:
@@ -167,7 +177,9 @@ func _hc_earn_phase2() -> bool:
 		if _hc_done: return false
 		if int(_tether.get("phase")) == 2: break
 		var response: Dictionary = await _hc_response("core")
-		if response.is_empty() or not await _hc_follow(response): return false
+		if response.is_empty(): return false
+		response = await _hc_follow(response)
+		if response.is_empty(): return false
 		if response.target == "core" and _core.call("exposure_open"):
 			if not _hc_primary(_tether, true): return false
 			if int(_tether.get("phase")) == 1 and await _hc_primary_ready(response):
@@ -182,8 +194,10 @@ func _hc_remove_helper() -> bool:
 		_hc_helper = _level.get("helper") as Node3D
 		if bool(_hc_helper.get("dead")): break
 		var response: Dictionary = await _hc_response("helper")
-		if response.is_empty() or not await _hc_follow(response): return false
-		if response.target == "helper" and (_hc_helper.call("state") as Dictionary).get("knot_open", false):
+		if response.is_empty(): return false
+		response = await _hc_follow(response)
+		if response.is_empty(): return false
+		if (_hc_helper.call("state") as Dictionary).get("knot_open", false) and _hc_ordinary_reachable(_hc_helper) and _hc_stationary_primary_error().is_empty():
 			if not _hc_primary(_hc_helper, false): return false
 	var state: Dictionary = _level.call("component_state")
 	var mechanism: CinderLaneMechanism = _hc_helper.call("get_mechanism")
@@ -191,40 +205,128 @@ func _hc_remove_helper() -> bool:
 	return _expect(_hc_helper.get("dead") and _hc_helper.get("hp") == 0.0 and not _hc_helper.is_in_group("enemies") and not state.helper_death.is_empty() and state.helper_retired.is_empty() and mechanism.state().last_cancel_reason == "source_defeated" and not controls.is_empty() and controls.reservations.is_empty() and _tether.get("hp") == 30.0 and _tether.get("phase") == 2 and not _hc_pressure.is_empty(), "real ordinary helper recovery death removes only optional pressure; target remains30 and Core kept pumping", _hc_detail())
 
 func _hc_useful_tether_primary() -> bool:
-	for _opening: int in range(10):
+	for _decision: int in range(600):
+		if _hc_done: return false
+		# Choosing an actual ordinary hit is separate from selecting a route's
+		# owner. No extra escape/return is demanded at an already useful point.
+		if _core.call("exposure_open") and _hc_ordinary_reachable(_tether) and _hc_stationary_primary_error().is_empty():
+			if _hero.get_threat_response_state().primary_cooldown_left_s == 0.0 and Time.get_ticks_msec()-_hc_last_tap_wall_ms > 280:
+				return _hc_primary(_tether,true)
+			# Ordinary cooldown/input-window wait only; every actual postactor
+			# observation still runs Core/helper and rechecks current geometry.
+			if not await _tick(): return false
+			continue
 		var response: Dictionary = await _hc_response("core")
-		if response.is_empty() or not await _hc_follow(response): return false
-		if response.target == "core" and _core.call("exposure_open"):
-			return _hc_primary(_tether, true)
-	return _expect(false, "bounded actual next useful tether recovery remains available", _hc_detail())
+		if response.is_empty(): return false
+		response = await _hc_follow(response)
+		if response.is_empty(): return false
+	return _expect(false,"bounded actual useful tether primary or native fallback remains available",_hc_detail())
+
+func _hc_ordinary_reachable(target: Node3D) -> bool:
+	if not is_instance_valid(target): return false
+	var offset: Vector3 = target.global_position-_hero.global_position
+	if Vector2(offset.x,offset.z).length() > float(_hero.stats.primary_range)-CinderThreatScheduler.SKIN or absf(offset.y) > CinderPlayer.ATTACK_MAX_VERTICAL_DISTANCE: return false
+	var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(_hero.global_position+Vector3.UP*CinderPlayer.ATTACK_LOS_HEIGHT,target.global_position+Vector3.UP*CinderPlayer.ATTACK_LOS_HEIGHT,CinderPlayer.ATTACK_SCENERY_MASK)
+	return _hero.get_world_3d().direct_space_state.intersect_ray(query).is_empty()
+
+func _hc_stationary_primary_error() -> Dictionary:
+	# Pure prospective check of the CURRENT point during native cooldown plus
+	# the ordinary primary commitment. This is not an escape path or a witness.
+	var now: float = _scheduler.get_clock()
+	var until: float = now + maxf(1.0/float(Engine.physics_ticks_per_second),float(_hero.get_threat_response_state().primary_cooldown_left_s)) + float(_hero.stats.primary_cooldown)
+	var bindings: Dictionary = _level.call("scheduler_bindings")
+	for owner: Node3D in bindings.owners.values():
+		var control: Dictionary = _scheduler.source_control_state(owner)
+		if control.is_empty() or not control.get("outside_transaction",false): return {"reason":"Actual settled owner control required"}
+		for lease: Dictionary in control.reservations:
+			if now > float(lease.active_until_s) or until < float(lease.active_from_s): continue
+			if not lease.get("geometry") is Dictionary or not HC_Geometry.error(lease.geometry).is_empty(): return {"reason":"Supported actual committed geometry required"}
+			if HC_Geometry.segment_hits(lease.geometry,_hero.global_position,_hero.global_position,CinderThreatScheduler.CAPSULE_RADIUS+CinderThreatScheduler.SKIN): return {"reason":"Current point is not an ordinary stationary opening through native union","lease":lease.duplicate(true),"clock_s":now}
+	return {}
 
 func _hc_response(preferred: String) -> Dictionary:
 	for _i: int in range(600):
 		if _hc_done: return {}
-		var choices: Array[Dictionary] = []
-		var core_state: Dictionary = _core.call("state")
-		for kind: String in ["draw","enclose"]:
-			var source: CinderLaneMechanism = _source(kind)
-			var current: Dictionary = source.state()
-			var proof: Dictionary = core_state.get("proofs", {}).get(kind, {})
-			var response: Dictionary = _hc_fresh_response("core", kind, source, current, proof)
-			if not response.is_empty(): choices.append(response)
-		_hc_helper = _level.get("helper") as Node3D
-		if is_instance_valid(_hc_helper) and not bool(_hc_helper.get("dead")):
-			var mechanism: CinderLaneMechanism = _hc_helper.call("get_mechanism")
-			var current: Dictionary = mechanism.state()
-			var helper_state: Dictionary = _hc_helper.call("state")
-			var response: Dictionary = _hc_fresh_response("helper", "helper", mechanism, current, helper_state.get("proof", {}))
-			if not response.is_empty(): choices.append(response)
-		for response: Dictionary in choices:
-			if response.target == preferred:
-				_hc_used_proofs[response.id] = true
-				return response
-		if not choices.is_empty():
-			_hc_used_proofs[choices[0].id] = true
-			return choices[0] # React to a real other source; do not stand in its attack while waiting.
+		var selected: Dictionary = _hc_select_fresh(preferred)
+		if not selected.is_empty():
+			selected["goal"] = preferred
+			_hc_used_proofs[selected.id] = true
+			return selected
 		if not await _tick(): return {}
 	_expect(false, "bounded autonomous native admission supplies a fresh ordinary response for " + preferred, _hc_detail())
+	return {}
+
+func _hc_select_fresh(preferred: String) -> Dictionary:
+	var choices: Array[Dictionary] = []
+	var core_state: Dictionary = _core.call("state")
+	for kind: String in ["draw","enclose"]:
+		var owner: CinderLaneMechanism = _source(kind)
+		var current: Dictionary = owner.state()
+		var proof: Dictionary = core_state.get("proofs", {}).get(kind, {})
+		var candidate: Dictionary = _hc_fresh_response("core",kind,owner,current,proof)
+		if not candidate.is_empty(): choices.append(candidate)
+	_hc_helper = _level.get("helper") as Node3D
+	if is_instance_valid(_hc_helper) and not bool(_hc_helper.get("dead")):
+		var owner: CinderLaneMechanism = _hc_helper.call("get_mechanism")
+		var current: Dictionary = owner.state()
+		var helper_state: Dictionary = _hc_helper.call("state")
+		var candidate: Dictionary = _hc_fresh_response("helper","helper",owner,current,helper_state.get("proof",{}))
+		if not candidate.is_empty(): choices.append(candidate)
+	var supported: Array[Dictionary] = []
+	for candidate: Dictionary in choices:
+		var error: Dictionary = _hc_plan_union_error(candidate)
+		if error.is_empty(): supported.append(candidate)
+		else: _hc_record_declined(candidate,error)
+	for candidate: Dictionary in supported:
+		if candidate.target == preferred: return candidate
+	return {} if supported.is_empty() else supported[0]
+
+func _hc_plan_union_error(response: Dictionary) -> Dictionary:
+	# Read only actual retained leases. Never allocate/prune a native source or
+	# synthesize/re-time a response; query only unchanged remaining path rows.
+	var remaining: Array[Dictionary] = []
+	var now: float = _scheduler.get_clock()
+	for segment: Dictionary in response.proof.path:
+		if float(segment.end_s) >= now: remaining.append(segment)
+	if remaining.is_empty(): return {"reason":"Original native proof has no remaining interval","clock_s":now}
+	var bindings: Dictionary = _level.call("scheduler_bindings")
+	for owner: Node3D in bindings.owners.values():
+		var control: Dictionary = _scheduler.source_control_state(owner)
+		if control.is_empty() or not control.get("outside_transaction",false): return {"reason":"Actual settled pure owner control required","clock_s":now}
+		for lease: Dictionary in control.reservations:
+			if float(lease.active_until_s) < now: continue
+			if not lease.get("geometry") is Dictionary or not HC_Geometry.error(lease.geometry).is_empty(): return {"reason":"Supported actual native committed geometry required","clock_s":now,"lease":lease.duplicate(true)}
+			if HC_Geometry.timed_path_hits(lease.geometry,remaining,float(lease.active_from_s),float(lease.active_until_s),CinderThreatScheduler.CAPSULE_RADIUS + CinderThreatScheduler.SKIN):
+				return {"reason":"Remaining original response intersects current committed union","clock_s":now,"lease":lease.duplicate(true),"remaining_native_rows":remaining.duplicate(true)}
+	return {}
+
+func _hc_record_declined(response: Dictionary, error: Dictionary) -> void:
+	var conflict: String = String(error.get("lease",{}).get("id","no-lease"))
+	var key: String = String(response.id) + "/" + conflict
+	if _hc_declined_plans.has(key): return
+	_hc_declined_plans[key] = {"id":response.id,"target":response.target,"kind":response.kind,"proof":response.proof.duplicate(true),"refusal":error.duplicate(true),"hero":_hero.global_position}
+	print("Garden helper choice: decline stale native plan=",response.id,"; conflict=",conflict,"; clock_s=",_scheduler.get_clock())
+
+func _hc_wait_plan_deadline(deadline: float, response: Dictionary) -> Dictionary:
+	for _sample: int in range(4800):
+		if _hc_done: return {}
+		var error: Dictionary = _hc_plan_union_error(response)
+		if not error.is_empty():
+			_hc_record_declined(response,error)
+			var next: Dictionary = _hc_select_fresh(String(response.get("goal",response.target)))
+			if next.is_empty():
+				_expect(false,"current union has no fresh same-origin native fallback; never execute or retime a stale plan",str(error)+"; "+_hc_detail())
+				return {}
+			next["goal"] = response.get("goal",response.target)
+			_hc_used_proofs[next.id] = true
+			_hc_plan_changes.append({"clock_s":_scheduler.get_clock(),"from_id":response.id,"to_id":next.id,"old_target":response.target,"new_target":next.target,"hero_position":_hero.global_position,"old_refusal":error.duplicate(true),"new_native_proof":next.proof.duplicate(true)})
+			print("Garden helper choice: newer native union response ",response.id," -> ",next.id," at actual clock_s=",_scheduler.get_clock())
+			return next
+		if _scheduler.get_clock() >= deadline:
+			if not _expect(_scheduler.get_clock() <= deadline + 1.0 / float(Engine.physics_ticks_per_second) + 0.000000001,"first actual postactor sample reaches unchanged current-plan deadline",str({"deadline":deadline,"clock_s":_scheduler.get_clock()})): return {}
+			return response
+		if not await _tick(): return {}
+	_expect(false,"bounded unchanged current-plan deadline is reachable",_hc_detail())
 	return {}
 
 func _hc_fresh_response(target: String, kind: String, owner: CinderLaneMechanism, current: Dictionary, proof: Dictionary) -> Dictionary:
@@ -240,29 +342,42 @@ func _hc_fresh_response(target: String, kind: String, owner: CinderLaneMechanism
 			return {"target":target,"kind":kind,"owner":owner,"id":lease.id,"proof":proof.duplicate(true),"lease":lease.duplicate(true)}
 	return {}
 
-func _hc_follow(response: Dictionary) -> bool:
-	var proof: Dictionary = response.proof
-	var lease: Dictionary = response.lease
-	if not _expect(proof.get("accepted", false) and proof.path is Array and not proof.get("uses_blast", true) and not proof.get("uses_invulnerability", true), "actual native committed union proves only ordinary movement/primary", str(response)): return false
-	var dashes: int = 0
-	for segment: Dictionary in proof.path:
-		if segment.kind not in ["escape_dash", "positioning_dash"]: continue
-		var scheduled: float = maxf(float(segment.start_s), _hc_last_dash_end)
-		if not await _until(scheduled): return false
-		var origin: Vector3 = _hero.global_position
-		var intended: Vector3 = (segment.to - segment.from).normalized()
-		var start: float = _scheduler.get_clock()
-		var error: String = _swipe(intended)
-		var dash: Dictionary = _hero.get_committed_dash_state()
-		if not _expect(error.is_empty() and dash.get("active", false) and dash.get("distance") == _hero.stats.dash_distance and dash.get("duration_s") == _hero.stats.dash_duration and (dash.direction as Vector3).distance_to(intended) < 0.000001 and Vector2(origin.x,origin.z).distance_to(Vector2(segment.from.x,segment.from.z)) < 0.005, "actual engine-routed proof dash keeps origin, full immutable travel and direction", error): return false
-		if not await _hc_finish_dash(segment, scheduled, start, response): return false
-		if segment.kind == "escape_dash" and not _expect(_hc_last_dash_end <= float(lease.active_from_s) + 0.000000001, "actual escape completes before committed active begins", str(_hc_actions.back())): return false
-		if segment.kind == "positioning_dash" and not _expect(start >= float(lease.active_until_s) and _hc_last_dash_end < float(lease.recovery_until_s), "real ordinary return starts after active and finishes inside native recovery", str(_hc_actions.back())): return false
-		dashes += 1
-	if not await _until(maxf(float(proof.primary_time_s), _hc_last_dash_end)): return false
-	var owner: CinderLaneMechanism = response.owner
-	var current: Dictionary = owner.state()
-	return _expect(dashes > 0 and current.status == "running" and current.reservation_id == response.id and current.phase == "recovery" and _scheduler.get_clock() < float(lease.recovery_until_s) and _hero.global_position.distance_to(proof.attack_position) < 0.02 and _hero.hp == _hero_hp and _hero.get_threat_response_state().primary_cooldown_left_s == 0.0, "actual response reaches the native source recovery/ordinary opening without prescribed extra return", _hc_detail())
+func _hc_follow(initial: Dictionary) -> Dictionary:
+	var response: Dictionary = initial.duplicate(true)
+	for _revision: int in range(16):
+		var proof: Dictionary = response.proof
+		var lease: Dictionary = response.lease
+		if not _expect(proof.get("accepted",false) and proof.path is Array and not proof.get("uses_blast",true) and not proof.get("uses_invulnerability",true),"actual native current-union proof supplies only ordinary movement/primary",str(response)): return {}
+		var dashes: int = 0
+		var changed: bool = false
+		for segment: Dictionary in proof.path:
+			if segment.kind not in ["escape_dash","positioning_dash"]: continue
+			var scheduled: float = maxf(float(segment.start_s),_hc_last_dash_end)
+			var next: Dictionary = await _hc_wait_plan_deadline(scheduled,response)
+			if next.is_empty(): return {}
+			if next.id != response.id:
+				response = next; changed = true; break
+			var origin: Vector3 = _hero.global_position
+			var intended: Vector3 = (segment.to-segment.from).normalized()
+			var start: float = _scheduler.get_clock()
+			var error: String = _swipe(intended)
+			var dash: Dictionary = _hero.get_committed_dash_state()
+			if not _expect(error.is_empty() and dash.get("active",false) and dash.get("distance") == _hero.stats.dash_distance and dash.get("duration_s") == _hero.stats.dash_duration and (dash.direction as Vector3).distance_to(intended) < 0.000001 and Vector2(origin.x,origin.z).distance_to(Vector2(segment.from.x,segment.from.z)) < 0.005,"actual engine-routed current-plan dash keeps origin, full immutable travel and direction",error): return {}
+			if not await _hc_finish_dash(segment,scheduled,start,response): return {}
+			if segment.kind == "escape_dash" and not _expect(_hc_last_dash_end <= float(lease.active_from_s)+0.000000001,"actual escape completes before committed active begins",str(_hc_actions.back())): return {}
+			if segment.kind == "positioning_dash" and not _expect(start >= float(lease.active_until_s) and _hc_last_dash_end < float(lease.recovery_until_s),"real ordinary return starts after active and finishes inside native recovery",str(_hc_actions.back())): return {}
+			dashes += 1
+		if changed: continue
+		var next: Dictionary = await _hc_wait_plan_deadline(maxf(float(proof.primary_time_s),_hc_last_dash_end),response)
+		if next.is_empty(): return {}
+		if next.id != response.id: response = next; continue
+		var owner: CinderLaneMechanism = response.owner
+		var current: Dictionary = owner.state()
+		if not _expect(dashes > 0 and current.status == "running" and current.reservation_id == response.id and current.phase == "recovery" and _scheduler.get_clock() < float(lease.recovery_until_s) and _hero.global_position.distance_to(proof.attack_position) < 0.02 and _hero.hp == _hero_hp and _hero.get_threat_response_state().primary_cooldown_left_s == 0.0,"actual current-plan response reaches its OWN native recovery/ordinary opening",_hc_detail()): return {}
+		_hc_last_route = {"owner_instance_id":owner.get_instance_id(),"mechanism_id":current.mechanism_id,"reservation_id":response.id,"route_target":response.target,"proof":proof.duplicate(true),"completed_at_s":_scheduler.get_clock(),"hero_position":_hero.global_position}
+		return response # Caller must use the actually completed owner, not initial.
+	_expect(false,"bounded sixteen native response revisions finish without a fabricated path",_hc_detail())
+	return {}
 
 func _hc_finish_dash(segment: Dictionary, scheduled: float, started: float, response: Dictionary) -> bool:
 	for _i: int in range(90):
@@ -293,13 +408,14 @@ func _hc_primary(target: Node3D, tether: bool) -> bool:
 	var lower: float = 30.0 if tether and int(target.get("phase")) == 1 else 0.0
 	var expected: float = maxf(lower, before - float(_hero.stats.primary_damage))
 	var open: bool = bool(_core.call("exposure_open")) if tether else bool((target.call("state") as Dictionary).get("knot_open", false))
-	if not _expect(open and _hero.get_threat_response_state().primary_cooldown_left_s == 0.0 and Time.get_ticks_msec() - _hc_last_tap_wall_ms > 280, "actual ordinary recovery and native cooldown authorize the selected target"): return false
+	if not _expect(open and _hc_ordinary_reachable(target) and _hc_stationary_primary_error().is_empty() and _hero.get_threat_response_state().primary_cooldown_left_s == 0.0 and Time.get_ticks_msec() - _hc_last_tap_wall_ms > 280, "actual ordinary recovery and native cooldown authorize the selected target"): return false
 	var count: int = _hero.get_world_action_records().size()
 	var direction: Vector3 = target.global_position - _hero.global_position; direction.y = 0.0
 	var error: String = _tap(direction.normalized())
 	_hc_last_tap_wall_ms = Time.get_ticks_msec()
 	var records: Array[Dictionary] = _hero.get_world_action_records()
 	var last: Dictionary = {} if records.is_empty() else records.back()
+	_hc_damage_choices.append({"clock_s":_scheduler.get_clock(),"actual_damage_target": "l4-garden-tether" if tether else HC_HELPER_ID,"target_instance_id":target.get_instance_id(),"before_hp":before,"after_hp":target.get("hp"),"actual_hero_position":_hero.global_position,"actual_route":_hc_last_route.duplicate(true),"actual_action":last.duplicate(true)})
 	return _expect(error.is_empty() and records.size() == count + 1 and last.get("kind") == "primary" and last.get("damage") == _hero.stats.primary_damage and int(last.get("hits", 0)) >= 1 and float(target.get("hp")) == expected and expected < before and _hero.hp == _hero_hp and not _events.has("fired_blast"), "actual engine-routed ordinary primary earns %.3f→%.3f on selected %s" % [before,expected,"tether" if tether else "helper"], error + "; " + str(last))
 
 func _tick() -> bool:
@@ -376,7 +492,8 @@ func _hc_transport_case(dead_helper: bool) -> bool:
 			var response: Dictionary = await _hc_response("helper")
 			if response.is_empty(): return false
 			if response.target == "helper": break
-			if not await _hc_follow(response): return false
+			response = await _hc_follow(response)
+			if response.is_empty(): return false
 		_hc_helper = _level.get("helper") as Node3D
 		var helper_state: Dictionary = _hc_helper.call("state")
 		if not _expect(helper_state.mechanism.status == "running" and helper_state.phase == "warning" and helper_state.proof.get("accepted",false), "genuine postactor helper warning supplies native held state, not early observer proof", str(helper_state)): return false
@@ -664,7 +781,26 @@ func _hc_refs_released(refs: Array[WeakRef], label: String) -> bool:
 		if freed: return _expect(true,"all actual native subtree WeakRefs free: "+label)
 	return _expect(false,"bounded120 process observations release every native descendant: "+label)
 
+func _hc_cache_pre_cleanup() -> void:
+	var complete: bool = false
+	for row: Dictionary in _hc_results:
+		if row.get("case") == _hc_case_name:
+			complete = true
+			if not _hc_completed_receipts.has(_hc_case_name):
+				# Freeze native Object-ID observations while this actual case's
+				# actors still live; do not serialize freed prior actor references.
+				_hc_completed_receipts[_hc_case_name] = {"case":_hc_case_name,"native_var_bytes":var_to_bytes(row),"native_text":str(row)}
+	var clock: Variant = _scheduler.get_clock() if is_instance_valid(_scheduler) else null
+	var native: Dictionary = _hc_observation() if is_instance_valid(_hero) and is_instance_valid(_core) and is_instance_valid(_scheduler) else {}
+	var controls: Dictionary = {}
+	if is_instance_valid(_level) and is_instance_valid(_scheduler) and _level.has_method("scheduler_bindings"):
+		var bindings: Dictionary = _level.call("scheduler_bindings")
+		for id: String in bindings.get("owners",{}): controls[id] = _scheduler.source_control_state(bindings.owners[id])
+	var literal: Dictionary = {"case":_hc_case_name,"current_case_complete":complete,"actual_clock_s":clock,"actual_global_native_ticks":_hc_native_ticks,"native_observation":native,"retained_controls":controls,"native_actions":_hc_actions.duplicate(true),"damage_choices":_hc_damage_choices.duplicate(true),"last_actual_route":_hc_last_route.duplicate(true),"declined_plans":_hc_declined_plans.duplicate(true),"plan_changes":_hc_plan_changes.duplicate(true),"events":_events.duplicate(),"quiet_events":_hc_quiet_events.duplicate(),"checks_before_cleanup":_checks,"failures_before_cleanup":_failures}
+	_hc_pre_cleanup = {"case":_hc_case_name,"current_case_complete":complete,"actual_clock_s":clock,"actual_global_native_ticks":_hc_native_ticks,"native_observation_available":not native.is_empty(),"checks_before_cleanup":_checks,"failures_before_cleanup":_failures,"native_var_bytes":var_to_bytes(literal),"native_text":str(literal)}
+
 func _close(_held: bool = false) -> void:
+	if is_instance_valid(_game): _hc_cache_pre_cleanup()
 	_hc_quiet = false
 	for ref: WeakRef in _hc_hosts:
 		var host: Node = ref.get_ref() as Node
@@ -691,13 +827,15 @@ func _finish() -> void:
 	await _close()
 	if node_added.is_connected(_hc_watch_node): node_added.disconnect(_hc_watch_node)
 	_expect(_hc_registry_text.is_empty() or FileAccess.get_file_as_string(HC_Registry.DATA_PATH) == _hc_registry_text,"canonical registry remains byte-identical")
-	if not _hc_results.is_empty():
+	if _failures > 0 or not _hc_results.is_empty() or not _hc_declined_plans.is_empty():
+		if _hc_pre_cleanup.is_empty(): _hc_cache_pre_cleanup() # Explicit unavailable native state for preconstruction failure.
+		var literal: Dictionary = {"completed_cases":_hc_completed_receipts.duplicate(true),"pre_cleanup":_hc_pre_cleanup.duplicate(true),"post_cleanup":{"checks":_checks,"failures":_failures,"actual_global_native_ticks":_hc_native_ticks,"enemies_remaining":get_nodes_in_group("enemies").size(),"required_cues_remaining":get_nodes_in_group("required_cues").size()},"declined_plans":_hc_declined_plans.duplicate(true),"plan_changes":_hc_plan_changes.duplicate(true),"damage_choices":_hc_damage_choices.duplicate(true),"native_actions":_hc_actions.duplicate(true)}
 		var directory: String = "res://captures/act3/garden-helper-choice/results-%d-%d/" % [OS.get_process_id(),Time.get_ticks_usec()]
 		if DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(directory)) == OK:
 			var output: FileAccess = FileAccess.open(directory+"native-results.var.bin",FileAccess.WRITE)
-			if output != null: output.store_buffer(var_to_bytes(_hc_results)); output.close()
+			if output != null: output.store_buffer(var_to_bytes(literal)); output.close()
 			output = FileAccess.open(directory+"native-results.txt",FileAccess.WRITE)
-			if output != null: output.store_string(str(_hc_results)); output.close()
+			if output != null: output.store_string(str(literal)); output.close()
 			print("Garden helper choice: literal native case result directory=",directory)
 	print("Garden helper choice: %d checks; failures: %d; selector=%s; observed native ticks=%d; cases=%d; authentic archives=%s. TEST declared Challenge root/helper choice only; no canonical MAIN checkpoint5, late parent history, fullroute/allkit/portrait/difficulty increase claim." % [_checks,_failures,_hc_selector,_hc_native_ticks,_hc_results.size(),str(_hc_archives)])
 	quit(0 if _failures == 0 else 1)
