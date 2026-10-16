@@ -1,0 +1,157 @@
+{
+  "schema": 1,
+  "selection": "original",
+  "status": "CLOSED_FUNCTIONAL_HOST_DIAGNOSTIC",
+  "functional_complete": true,
+  "clean": false,
+  "launch_attempted": true,
+  "engine_attempted": true,
+  "owned_children": [
+    {
+      "pid": 72466,
+      "closed": true,
+      "popen_returncode": 0
+    }
+  ],
+  "deadline_after_queue_s": 180,
+  "owned_validation_return": 0,
+  "return_qualification": "Pinned dev non124 return derives from child.wait;124 is native124 versus synthesized timeout ambiguous. Owned Popen closure is recorded, not an independent OS terminal receipt.",
+  "checks": 113,
+  "failures": 0,
+  "diagnostic_lines": [
+    "ERROR: Condition \"ret != noErr\" is true. Returning: \"\""
+  ],
+  "known_host_ca_only": true,
+  "raw_profile_line_sha256": "3ae77cbdb3a3f3d7cf6f3dab82e5bb05e17a1db2bf5322c9bec492264e9e462f",
+  "automatic": {
+    "count": 72,
+    "inclusive_total_us": 3382938,
+    "mean_us": 46985.25,
+    "p50_us": 46195,
+    "p95_us": 51095,
+    "max_us": 91243
+  },
+  "phases": {
+    "warning": {
+      "count": 16,
+      "inclusive_total_us": 719594,
+      "mean_us": 44974.625,
+      "p50_us": 44658,
+      "p95_us": 46845,
+      "max_us": 46845
+    },
+    "lock": {
+      "count": 23,
+      "inclusive_total_us": 1071990,
+      "mean_us": 46608.260869565216,
+      "p50_us": 44803,
+      "p95_us": 51110,
+      "max_us": 53233
+    },
+    "active": {
+      "count": 14,
+      "inclusive_total_us": 710840,
+      "mean_us": 50774.28571428572,
+      "p50_us": 47555,
+      "p95_us": 91243,
+      "max_us": 91243
+    },
+    "recovery": {
+      "count": 19,
+      "inclusive_total_us": 880514,
+      "mean_us": 46342.84210526316,
+      "p50_us": 46228,
+      "p95_us": 47639,
+      "max_us": 47639
+    }
+  },
+  "manual": [
+    {
+      "accepted": true,
+      "automatic_native_tick": false,
+      "clock_s": 0.616666666666667,
+      "event_count": 0,
+      "finish_us": 1955357,
+      "inclusive_us": 44344,
+      "phase": "lock",
+      "physics_frame": 38,
+      "process_frame": 21,
+      "start_us": 1911013
+    }
+  ],
+  "row_scope": "actual printed PASS/footer; no structured row-array claim",
+  "named_sources_equal_at_close": true,
+  "closed_at": "2026-10-16T08:39:08.774052+00:00",
+  "files": [
+    {
+      "path": "command.json",
+      "present": true,
+      "sha256": "564df842ddd80ce7fcd0d0a677213d9620e088bf98feaae7263f713558466192",
+      "bytes": 629,
+      "mode": "0644"
+    },
+    {
+      "path": "engine.log",
+      "present": true,
+      "sha256": "f59808b5b4419d8e5ecf770d4ea6f4a0759461b82f5a284515eb9f3217ab41f6",
+      "bytes": 31170,
+      "mode": "0644"
+    },
+    {
+      "path": "native-profile.json",
+      "present": true,
+      "sha256": "14765fe544d871d54bcac1c1963cc5b09f52ae646656d4856d08aaab162d5600",
+      "bytes": 30371,
+      "mode": "0644"
+    },
+    {
+      "path": "queue-owned.json",
+      "present": true,
+      "sha256": "ceca6022055e1f221a1eed62380ba5b9cb01845ca0c7d6284e08a0b14d1b8a9f",
+      "bytes": 81,
+      "mode": "0644"
+    },
+    {
+      "path": "raw.log",
+      "present": true,
+      "sha256": "f59808b5b4419d8e5ecf770d4ea6f4a0759461b82f5a284515eb9f3217ab41f6",
+      "bytes": 31170,
+      "mode": "0644"
+    },
+    {
+      "path": "source-after-child.json",
+      "present": true,
+      "sha256": "9ccf6552bcdf045b1ae0a6a53a5c1dde09f4941a9a6fa24a9428c67140a4ff4c",
+      "bytes": 19691,
+      "mode": "0644"
+    },
+    {
+      "path": "source-at-close.json",
+      "present": true,
+      "sha256": "9ccf6552bcdf045b1ae0a6a53a5c1dde09f4941a9a6fa24a9428c67140a4ff4c",
+      "bytes": 19691,
+      "mode": "0644"
+    },
+    {
+      "path": "source-at-lock.json",
+      "present": true,
+      "sha256": "9ccf6552bcdf045b1ae0a6a53a5c1dde09f4941a9a6fa24a9428c67140a4ff4c",
+      "bytes": 19691,
+      "mode": "0644"
+    },
+    {
+      "path": "source-before.json",
+      "present": true,
+      "sha256": "9ccf6552bcdf045b1ae0a6a53a5c1dde09f4941a9a6fa24a9428c67140a4ff4c",
+      "bytes": 19691,
+      "mode": "0644"
+    },
+    {
+      "path": "source-retention.json",
+      "present": true,
+      "sha256": "4e6ec3df240d0fedfd8ba4c74ab2585a605f1be26f2b7e3124bfc4cdfa2aabf3",
+      "bytes": 35726,
+      "mode": "0644"
+    }
+  ]
+}

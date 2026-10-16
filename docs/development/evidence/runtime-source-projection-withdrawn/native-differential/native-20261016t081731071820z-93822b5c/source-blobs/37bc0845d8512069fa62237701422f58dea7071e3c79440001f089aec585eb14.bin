@@ -1,0 +1,473 @@
+extends "res://tests/authored_echo_playback_smoke.gd"
+## PRIVATE v2 SOURCE-ONLY DRAFT. Runs one focused differential, never inherited route suites.
+## Both full current73 donor chains differ only by exact3d9b proposal plus counted
+## TEST class/preload relocation. Actual shared Scheduler stays actor-attached.
+## Catalogue cases REQUIRE Root's reviewed finally-restoring canonical queue wrapper.
+
+const ORIGINAL_SCHEDULER = preload("res://.cinder/runtime-source-projection-prepare-v2-20261016/compiled/original/threat_scheduler.gd")
+const CANDIDATE_SCHEDULER = preload("res://.cinder/runtime-source-projection-prepare-v2-20261016/compiled/candidate/threat_scheduler.gd")
+const ORIGINAL_PROGRAM = preload("res://.cinder/runtime-source-projection-prepare-v2-20261016/compiled/original/replay_program.gd")
+const CANDIDATE_PROGRAM = preload("res://.cinder/runtime-source-projection-prepare-v2-20261016/compiled/candidate/replay_program.gd")
+const ORIGINAL_AUTHORED = preload("res://.cinder/runtime-source-projection-prepare-v2-20261016/compiled/original/authored_enemy_sequence.gd")
+const CANDIDATE_AUTHORED = preload("res://.cinder/runtime-source-projection-prepare-v2-20261016/compiled/candidate/authored_enemy_sequence.gd")
+const AUTHORED_SUBCLASS = preload("res://.cinder/runtime-source-projection-prepare-v2-20261016/fixture/authored_state_subclass.gd")
+const PROGRAM_SUBCLASS = preload("res://.cinder/runtime-source-projection-prepare-v2-20261016/fixture/program_state_subclass.gd")
+const PROFILE_PATH: String = "res://data/design/difficulty_profiles.json"
+const REPORT_ENV: String = "CINDER_SOURCE_PROJECTION_REPORT"
+const MAX_UNIT_BYTES: int = 2097152
+const MAX_REPORT_BYTES: int = 16777216
+const MAX_NATIVE_WALL_MS: int = 150000
+
+class ProjectionGetterActor extends "res://tests/fixtures/authored_echo_actor.gd":
+	var mutation: String = ""
+	var submitted: Dictionary = {}
+	var staged: Dictionary = {}
+	var original_catalogue := PackedByteArray()
+	var floor_shape: BoxShape3D
+	var total_getter_calls: int = 0
+	var mutation_calls: int = 0
+	var write_error: String = ""
+
+	func get_authored_echo_binding() -> Dictionary:
+		var value: Dictionary = super.get_authored_echo_binding()
+		total_getter_calls += 1
+		if mutation.is_empty(): return value
+		mutation_calls += 1
+		var mode: String = mutation
+		mutation = ""
+		match mode:
+			"catalogue_damage", "floor_catalogue":
+				var raw: Dictionary = JSON.parse_string(original_catalogue.get_string_from_utf8())
+				for profile: Dictionary in raw.profiles:
+					if profile.id == "standard": profile.raw_damage_multiplier = 1.125
+				_write(JSON.stringify(raw).to_utf8_buffer())
+				if mode == "floor_catalogue": _change_floor()
+			"catalogue_lexical":
+				var raw: PackedByteArray = original_catalogue.duplicate()
+				raw.append_array("\n \t".to_utf8_buffer())
+				_write(raw)
+			"program_damage":
+				var record: Dictionary = submitted.timeline.slots[0].events[0].record
+				record.damage = _next_double(float(record.damage))
+			"native_definition":
+				value.definition.slash.visual_duration_s = _next_double(float(value.definition.slash.visual_duration_s))
+			"staged_definition":
+				staged.definition.slash.visual_duration_s = _next_double(float(staged.definition.slash.visual_duration_s))
+			"queue_owner":
+				queue_free()
+		return value
+
+	func _write(bytes: PackedByteArray) -> void:
+		var file: FileAccess = FileAccess.open(PROFILE_PATH, FileAccess.WRITE)
+		if file == null:
+			write_error = "Catalogue control write failed"
+			return
+		file.store_buffer(bytes)
+		file.flush()
+		file.close()
+		if FileAccess.get_file_as_bytes(PROFILE_PATH) != bytes:
+			write_error = "Catalogue control bytes not retained"
+
+	func _change_floor() -> void:
+		var bits := PackedByteArray()
+		bits.resize(4)
+		bits.encode_float(0, floor_shape.size.x)
+		bits.encode_u32(0, bits.decode_u32(0) + 1)
+		var size: Vector3 = floor_shape.size
+		size.x = bits.decode_float(0)
+		floor_shape.size = size
+
+	static func _next_double(value: float) -> float:
+		var bits := PackedByteArray()
+		bits.resize(8)
+		bits.encode_double(0, value)
+		bits.encode_u64(0, bits.decode_u64(0) + 1)
+		return bits.decode_double(0)
+
+var _projection_rows: Array = []
+var _projection_first_failure: Dictionary = {}
+var _projection_observations: Array = []
+var _projection_callbacks: Array[String] = []
+var _projection_catalogue := PackedByteArray()
+var _projection_started_ms: int = 0
+var _projection_source_before: Dictionary = {}
+var _projection_arena: Dictionary = {}
+var _projection_donors: Array = []
+var _projection_scope_complete: bool = true
+
+
+func _private_script_reference_observation() -> Dictionary:
+	var expected: Dictionary = {
+		"res://.cinder/runtime-source-projection-prepare-v2-20261016/compiled/original/authored_enemy_sequence.gd": ORIGINAL_AUTHORED,
+		"res://.cinder/runtime-source-projection-prepare-v2-20261016/compiled/original/replay_program.gd": ORIGINAL_PROGRAM,
+		"res://.cinder/runtime-source-projection-prepare-v2-20261016/compiled/original/threat_scheduler.gd": ORIGINAL_SCHEDULER,
+		"res://.cinder/runtime-source-projection-prepare-v2-20261016/compiled/candidate/authored_enemy_sequence.gd": CANDIDATE_AUTHORED,
+		"res://.cinder/runtime-source-projection-prepare-v2-20261016/compiled/candidate/replay_program.gd": CANDIDATE_PROGRAM,
+		"res://.cinder/runtime-source-projection-prepare-v2-20261016/compiled/candidate/threat_scheduler.gd": CANDIDATE_SCHEDULER
+	}
+	var result: Dictionary = {}
+	for path: String in expected:
+		var actual: Resource = ResourceLoader.get_cached_ref(path)
+		result[path] = {"same_reference": actual == expected[path], "expected_id_decimal": str(expected[path].get_instance_id()), "actual_id_decimal": str(actual.get_instance_id()) if is_instance_valid(actual) else "", "actual_is_script": actual is Script}
+	return result
+
+
+func _private_script_refs_match() -> bool:
+	var observations: Dictionary = _private_script_reference_observation()
+	for value: Dictionary in observations.values():
+		if not value.same_reference or not value.actual_is_script:
+			return false
+	return observations.size() == 6
+
+
+func _require_private_script_refs(label: String) -> bool:
+	var matches: bool = _private_script_refs_match()
+	_expect(matches, label + " exact private preloaded Script objects match fixed ResourceLoader references; no global class-name or path-only authority")
+	if not matches: _projection_scope_complete = false
+	return matches
+
+
+func _run() -> void:
+	_projection_started_ms = Time.get_ticks_msec()
+	_projection_source_before = _source_observations()
+	var report_path: String = OS.get_environment(REPORT_ENV)
+	if "--allow-canonical-catalogue-mutation" not in OS.get_cmdline_user_args() or report_path.is_empty() or not report_path.is_absolute_path() or FileAccess.file_exists(report_path):
+		_expect(false, "reviewed restoring runner flag and absent unique absolute report path are mandatory before native setup; no silent skipped catalogue cases")
+		_finish_projection(false)
+		return
+	_projection_catalogue = FileAccess.get_file_as_bytes(PROFILE_PATH)
+	_expect(not _projection_catalogue.is_empty(), "original catalogue bytes are retained before any native setup")
+	if _projection_catalogue.is_empty():
+		_finish_projection(false)
+		return
+	root.size = Vector2i(540, 1170)
+	var arena: Dictionary = await _arena()
+	_projection_arena = arena
+	var installed: Dictionary = _install(arena)
+	paused = true
+	await process_frame
+	if installed.is_empty():
+		_expect(_restore_catalogue(), "failed native setup restores every original catalogue byte")
+		await _dispose(arena)
+		_finish_projection(false)
+		return
+	var original = ORIGINAL_SCHEDULER.new()
+	var candidate = CANDIDATE_SCHEDULER.new()
+	original.name = "ProjectionOriginalGuardOnly"
+	candidate.name = "ProjectionCandidateGuardOnly"
+	arena.world.add_child(original)
+	arena.world.add_child(candidate)
+	for donor in [original, candidate]:
+		donor.set_physics_process(false)
+		donor.set_process(false)
+	_projection_donors = [original, candidate]
+	_expect(arena.scheduler.get_script() == Scheduler and original.get_script() == ORIGINAL_SCHEDULER and candidate.get_script() == CANDIDATE_SCHEDULER, "actual shared Scheduler remains actor-attached; two exact donor Scripts are guard-only Nodes in its same actual world")
+	_expect(original.get_world_3d() == arena.scheduler.get_world_3d() and candidate.get_world_3d() == arena.scheduler.get_world_3d(), "both donor guards inspect the same actual native world")
+	_test_projection_fields_and_aliases(arena.actor.source_program())
+	_watch_projection(arena)
+	for mode: String in ["normal", "staged_normal", "program_damage", "native_definition", "staged_definition", "floor_catalogue", "catalogue_lexical", "catalogue_damage"]:
+		if _expired():
+			_expect(false, "bounded native watchdog stopped before another differential pair")
+			break
+		_compare_projection(arena, original, candidate, mode)
+	_test_early_refusal(arena, original, candidate)
+	await _test_owner_lifetimes(arena, original, candidate)
+	_expect(_restore_catalogue(), "normal completion restores exact catalogue bytes before cleanup")
+	_projection_donors.clear()
+	var native_refs: Array = [weakref(arena.host), weakref(arena.viewport), weakref(arena.actor), weakref(arena.player), weakref(original), weakref(candidate)]
+	await _dispose(arena)
+	_projection_arena = {}
+	for ref: WeakRef in native_refs:
+		_expect(ref.get_ref() == null, "normal public arena disposal frees actual descendant/donor native identity")
+	_finish_projection(not _expired() and _projection_scope_complete)
+
+
+func _arena(extreme: bool = false, settle: bool = true) -> Dictionary:
+	var arena: Dictionary = await super._arena(extreme, settle)
+	arena.actor.free()
+	var source = ProjectionGetterActor.new()
+	source.name = "ProjectionActualGetterSource"
+	arena.world.add_child(source)
+	var prepared: Dictionary = {"world_revision": 1, "collision_fingerprint": arena.context.world_collision_fingerprint, "floor_signature": arena.context.world_floor_signature}
+	_expect(source.initialize_source(SOURCE_ID, EPOCH, GENERATION, _definition(), "standard", prepared) and source.attach_source_scheduler(arena.scheduler), "actual native getter-control owner has unchanged definition/HP/resources/knot and attaches only the canonical Scheduler")
+	_expect(source.configure_authored("test-only/physical-echo", source.source_program(), EPOCH, GENERATION), "actual native source configures through the original full Playback path")
+	source.original_catalogue = _projection_catalogue.duplicate()
+	source.floor_shape = arena.floor.shape
+	arena.actor = source
+	return arena
+
+
+func _test_projection_fields_and_aliases(program: Dictionary) -> void:
+	if not _require_private_script_refs("pure projection before"): return
+	var left = ORIGINAL_PROGRAM.new()
+	var right = CANDIDATE_PROGRAM.new()
+	var submitted: Dictionary = program.duplicate(true)
+	var left_ready: bool = left._restore_authored_for_source_guard(program, EPOCH, GENERATION)
+	var right_ready: bool = right._restore_authored_for_source_guard(submitted, EPOCH, GENERATION)
+	_expect(left_ready and right_ready, "both exact source-guard factories perform full fresh validation")
+	if not left_ready or not right_ready:
+		_projection_scope_complete = false
+		return
+	var inner = right.get("_reader")
+	var exact_scripts: bool = right.get_script() == CANDIDATE_PROGRAM and inner != null and inner.get_script() == CANDIDATE_AUTHORED
+	_expect(exact_scripts, "candidate Program and inner Authored exact Script symbols name private candidate donors rather than live globals")
+	if not exact_scripts:
+		_projection_scope_complete = false
+		return
+	var before: String = Exact.stringify(right.snapshot_state())
+	var validation_before: PackedByteArray = inner.get("_validation_input").duplicate()
+	var full: Dictionary = left.state()
+	var projected: Dictionary = right._authored_source_guard_identity()
+	var compact: bool = projected.keys().size() == 2 and projected.get("source_id") is String and projected.get("authored") is Dictionary and projected.authored.keys().size() == 1 and projected.authored.get("tether_position") is Vector3
+	var full_ready: bool = full.get("source_id") is String and full.get("authored") is Dictionary and full.authored.get("tether_position") is Vector3
+	_expect(compact and full_ready, "candidate executes the compact two-field branch rather than a fallback full state; original full state is complete")
+	if not compact or not full_ready:
+		_projection_scope_complete = false
+		return
+	_expect(projected.source_id == full.source_id and var_to_bytes(projected.authored.tether_position) == var_to_bytes(full.authored.tether_position), "both consumed fields retain original native type and exact Vector3 bits")
+	_expect(not before.is_empty() and not validation_before.is_empty() and inner.get("_validation_input") == validation_before and Exact.stringify(right.snapshot_state()) == before, "projection neither consumes source validation dependency nor mutates the complete retained wire")
+	submitted.definition.route[0].position[0] = 99.0
+	submitted.timeline.slots[0].events[0].record.damage = 999.0
+	projected.authored.tether_position = Vector3(99, 0, 0)
+	projected.authored["forged_alias"] = {"items": [1, 2, 3]}
+	var again: Dictionary = right._authored_source_guard_identity()
+	_expect(again.source_id == full.source_id and var_to_bytes(again.authored.tether_position) == var_to_bytes(full.authored.tether_position) and Exact.stringify(right.snapshot_state()) == before and inner.get("_validation_input") == validation_before, "nested submitted-input and returned-output mutations cannot change private plan or subsequent projection")
+	var empty_program = CANDIDATE_PROGRAM.new()
+	var empty_plan = CANDIDATE_AUTHORED.new()
+	_expect(empty_program._authored_source_guard_identity().is_empty() and empty_plan._source_guard_identity().is_empty(), "empty exact readers retain original empty state fallback")
+	var authored_sub = AUTHORED_SUBCLASS.new()
+	var authored_fallback: Dictionary = authored_sub._source_guard_identity()
+	_expect(authored_sub.state_calls == 1 and authored_fallback.get("subclass_marker", false), "Authored legitimate subclass invokes virtual state exactly once")
+	var program_sub = PROGRAM_SUBCLASS.new()
+	var program_fallback: Dictionary = program_sub._authored_source_guard_identity()
+	_expect(program_sub.state_calls == 1 and program_fallback.get("subclass_marker", false), "Program legitimate subclass invokes virtual state exactly once")
+	var exact_outer = CANDIDATE_PROGRAM.new()
+	exact_outer.set("_reader", authored_sub)
+	exact_outer.set("_kind", CANDIDATE_AUTHORED.API_REVISION)
+	authored_sub.state_calls = 0
+	var inner_fallback: Dictionary = exact_outer._authored_source_guard_identity()
+	_expect(authored_sub.state_calls == 1 and inner_fallback.get("subclass_marker", false), "synthetic pure inner-subclass control falls back through original virtual state without an accepted flag")
+	_expect(not program_sub._restore_authored_for_source_guard(program, EPOCH, GENERATION) and not authored_sub._restore_for_source_guard(program, EPOCH, GENERATION), "internal exact-native preparation still refuses legitimate subclasses")
+	_require_private_script_refs("pure projection after")
+
+
+func _compare_projection(arena: Dictionary, original, candidate, mode: String) -> void:
+	var shape: BoxShape3D = arena.floor.shape
+	var original_size: Vector3 = shape.size
+	var baseline: String = _projection_unit_wire(arena)
+	_expect(not baseline.is_empty() and baseline.to_utf8_buffer().size() <= MAX_UNIT_BYTES, mode + " starts from complete bounded actual native unit")
+	if baseline.is_empty(): return
+	var errors: Array[String] = []
+	for variant: int in range(2):
+		var donor = original if variant == 0 else candidate
+		var before: String = _projection_unit_wire(arena)
+		_expect(before == baseline and not before.is_empty(), mode + " each donor starts from the same actual native unit")
+		_projection_callbacks.clear()
+		var sequence: Dictionary = arena.actor.source_program()
+		var staged: Dictionary = arena.actor.get_authored_echo_binding().duplicate(true) if mode in ["staged_normal", "staged_definition"] else {}
+		arena.actor.submitted = sequence
+		arena.actor.staged = staged
+		arena.actor.total_getter_calls = 0
+		arena.actor.mutation_calls = 0
+		arena.actor.write_error = ""
+		arena.actor.mutation = "" if mode in ["normal", "staged_normal"] else mode
+		if not _require_private_script_refs(mode + " before getter"): return
+		var error: String = donor.authored_replay_source_error(arena.actor, sequence, arena.context, arena.floors, "standard", 1, staged)
+		var script_refs_after: Dictionary = _private_script_reference_observation()
+		_require_private_script_refs(mode + " after getter")
+		var actual_getters: int = arena.actor.total_getter_calls
+		var actual_mutations: int = arena.actor.mutation_calls
+		var write_error: String = arena.actor.write_error
+		errors.append(error)
+		arena.actor.mutation = ""
+		arena.actor.submitted = {}
+		arena.actor.staged = {}
+		sequence.clear()
+		staged.clear()
+		shape.size = original_size
+		_expect(_restore_catalogue(), mode + " restores original catalogue before any await or full snapshot")
+		var after: String = _projection_unit_wire(arena)
+		_expect(actual_getters == 1 and actual_mutations == (0 if mode in ["normal", "staged_normal"] else 1) and write_error.is_empty(), mode + " actual native source getter executes once at its original boundary")
+		_expect(not after.is_empty() and before == after and _projection_callbacks.is_empty(), mode + " pure guard preserves full Player/Scheduler/Playback/native fields, HP/clocks/identities and callbacks")
+		_projection_observations.append({"mode": mode, "variant": "original" if variant == 0 else "candidate", "before_exact": before, "after_exact": after, "error": error, "getter_calls": actual_getters, "mutation_calls": actual_mutations, "write_error": write_error, "callbacks": _projection_callbacks.duplicate(), "private_script_refs_after": script_refs_after})
+	_expect(errors[0] == errors[1], mode + " current73 original and candidate decisions/error precedence agree exactly")
+	if mode in ["normal", "staged_normal", "catalogue_lexical"]:
+		_expect(errors[0].is_empty(), mode + " complete original valid path remains accepted")
+	else:
+		_expect(not errors[0].is_empty(), mode + " actual forged definition/program/current world or catalogue refuses")
+	if mode == "floor_catalogue":
+		_expect(errors[0] == "Actual authored floor/collision guards differ", "earlier actual floor/collision refusal wins over changed catalogue at original boundary")
+
+
+func _test_early_refusal(arena: Dictionary, original, candidate) -> void:
+	var malformed: Dictionary = arena.actor.source_program()
+	malformed.timeline.slots[0].events[0].record.damage = 999.0
+	var errors: Array[String] = []
+	for donor in [original, candidate]:
+		arena.actor.total_getter_calls = 0
+		if not _require_private_script_refs("early refusal before"): return
+		var error: String = donor.authored_replay_source_error(arena.actor, malformed, arena.context, arena.floors, "standard", 1)
+		_require_private_script_refs("early refusal after")
+		errors.append(error)
+		_expect(not error.is_empty() and arena.actor.total_getter_calls == 0, "malformed otherwise-unused timeline is completely rejected before actual source getter")
+	_expect(errors[0] == errors[1], "complete validation still precedes compact projection and retains original early error")
+
+
+func _test_owner_lifetimes(arena: Dictionary, original, candidate) -> void:
+	var baseline: String = _projection_unit_wire(arena)
+	var errors: Array[String] = []
+	for variant: int in range(2):
+		var donor = original if variant == 0 else candidate
+		var source = ProjectionGetterActor.new()
+		source.name = "LifetimeOnlyUnleasedSource" + str(variant)
+		arena.world.add_child(source)
+		var prepared: Dictionary = {"world_revision": 1, "collision_fingerprint": arena.context.world_collision_fingerprint, "floor_signature": arena.context.world_floor_signature}
+		_expect(source.initialize_source(SOURCE_ID, EPOCH, GENERATION, _definition(), "standard", prepared) and source.attach_source_scheduler(arena.scheduler), "lifetime control creates a real unleased owner in the same actual world; no fabricated packet or lease")
+		var program: Dictionary = source.source_program()
+		var handle: WeakRef = weakref(source)
+		source.total_getter_calls = 0
+		source.mutation = "queue_owner"
+		_projection_callbacks.clear()
+		if not _require_private_script_refs("queued owner before"): return
+		var error: String = donor.authored_replay_source_error(source, program, arena.context, arena.floors, "standard", 1)
+		_require_private_script_refs("queued owner after")
+		errors.append(error)
+		_expect(error == "Actual pure authored source binding rejected" and source.total_getter_calls == 1 and source.is_queued_for_deletion(), "post-getter queued owner refuses at original native boundary")
+		_projection_observations.append({"mode": "queue_owner", "variant": "original" if variant == 0 else "candidate", "error": error, "getter_calls": source.total_getter_calls, "expected_delta": "this auxiliary unleased owner is queued and then genuinely freed; full owner equality is not asserted"})
+		await process_frame
+		_expect(handle.get_ref() == null, "auxiliary queued source is actually freed before already-freed handle control")
+		var unavailable: Node3D = handle.get_ref() as Node3D
+		if not _require_private_script_refs("freed WeakRef before"): return
+		var freed_error: String = donor.authored_replay_source_error(unavailable, program, arena.context, arena.floors, "standard", 1)
+		_require_private_script_refs("freed WeakRef after")
+		_expect(freed_error == "Actual ready authored Playback/C52 lease owner required", "actual freed WeakRef resolves unavailable and original source guard rejects before getter")
+		var after: String = _projection_unit_wire(arena)
+		_expect(not baseline.is_empty() and after == baseline and _projection_callbacks.is_empty(), "auxiliary lifetime mutation leaves the independently admitted main native unit and its callbacks unchanged")
+	_expect(errors[0] == errors[1], "original/candidate queued-owner decisions agree; distinct actual auxiliary identities are not normalized")
+
+
+func _projection_unit_wire(arena: Dictionary) -> String:
+	var unit: Dictionary = _native_projection_unit(arena)
+	var complete: bool = not unit.is_empty() and unit.size() == 7
+	for key: String in ["player", "scheduler", "playback", "source", "renderer", "transform", "identity_decimal"]:
+		complete = complete and unit.get(key) is Dictionary and not unit.get(key, {}).is_empty()
+	_expect(complete, "actual native capture has every nonempty required component before Exact encoding")
+	if not complete:
+		_projection_scope_complete = false
+		return ""
+	var encoded: String = Exact.stringify(unit)
+	var bounded: bool = not encoded.is_empty() and encoded.to_utf8_buffer().size() <= MAX_UNIT_BYTES
+	_expect(bounded, "complete actual native unit has a nonempty bounded exact wire")
+	if not bounded:
+		_projection_scope_complete = false
+		return ""
+	return encoded
+
+
+func _native_projection_unit(arena: Dictionary) -> Dictionary:
+	var bindings: Dictionary = _bindings(arena)
+	var player: Dictionary = arena.player.snapshot_state()
+	var scheduler: Dictionary = arena.scheduler.snapshot_state(bindings)
+	var playback: Dictionary = arena.actor.snapshot_state(scheduler, bindings)
+	if player.is_empty() or scheduler.is_empty() or playback.is_empty(): return {}
+	var source: Dictionary = {"binding": _closed_native(arena.actor.get_authored_echo_binding()), "program": arena.actor.source_program(), "native": _closed_native(arena.actor.native_descriptor()), "hp": arena.actor.hp, "max_hp": arena.actor.max_hp, "dead": arena.actor.dead, "source_hits": arena.actor.source_hits, "defeated_at_s": arena.actor.defeated_at_s, "phase": arena.actor.source_phase(), "clock_s": arena.actor.source_clock()}
+	return {"player": player, "scheduler": scheduler, "playback": playback, "source": source, "renderer": _closed_native(arena.actor.get_enemy_apparition().native_pose()), "transform": _closed_native(arena.actor.global_transform), "identity_decimal": {"source": str(arena.actor.get_instance_id()), "source_script": str(arena.actor.get_script().get_instance_id()), "mesh": str(arena.actor.get_enemy_apparition().visual.mesh.get_instance_id()), "material": str(arena.actor.get_enemy_apparition().visual.material_override.get_instance_id())}}
+
+
+func _closed_native(value: Variant) -> Variant:
+	if value is Vector3: return Value.vector3(value)
+	if value is Basis: return [Value.vector3(value.x), Value.vector3(value.y), Value.vector3(value.z)]
+	if value is Transform3D: return {"basis": _closed_native(value.basis), "origin": Value.vector3(value.origin)}
+	if value is Dictionary:
+		var result: Dictionary = {}
+		for key: String in value: result[key] = _closed_native(value[key])
+		return result
+	if value is Array:
+		var result: Array = []
+		for item: Variant in value: result.append(_closed_native(item))
+		return result
+	return value
+
+
+func _watch_projection(arena: Dictionary) -> void:
+	arena.actor.state_changed.connect(func(_value: Dictionary) -> void: _projection_callbacks.append("state"))
+	arena.actor.event_dispatched.connect(func(_event: Dictionary, _receipt: Dictionary) -> void: _projection_callbacks.append("event"))
+	arena.actor.source_hit_resolved.connect(func(_value: Dictionary) -> void: _projection_callbacks.append("source_hit"))
+	arena.actor.source_defeated.connect(func(_value: Dictionary) -> void: _projection_callbacks.append("source_defeated"))
+	arena.player.fired.connect(func(kind: String) -> void: _projection_callbacks.append(kind))
+	arena.player.died.connect(func() -> void: _projection_callbacks.append("player_death"))
+	arena.player.world_action_executed.connect(func(_value: Dictionary) -> void: _projection_callbacks.append("player_action"))
+	arena.scheduler.reservation_invalidated.connect(func(_id: String, _reason: String) -> void: _projection_callbacks.append("cancel"))
+	for cue: Node3D in arena.actor.get_cues():
+		cue.state_changed.connect(func(_value: Dictionary) -> void: _projection_callbacks.append("cue"))
+
+
+func _restore_catalogue() -> bool:
+	if FileAccess.get_file_as_bytes(PROFILE_PATH) == _projection_catalogue: return true
+	var file: FileAccess = FileAccess.open(PROFILE_PATH, FileAccess.WRITE)
+	if file == null: return false
+	file.store_buffer(_projection_catalogue)
+	file.flush()
+	file.close()
+	return FileAccess.get_file_as_bytes(PROFILE_PATH) == _projection_catalogue
+
+
+func _expired() -> bool:
+	return Time.get_ticks_msec() - _projection_started_ms > MAX_NATIVE_WALL_MS
+
+
+func _expect(accepted: bool, description: String) -> void:
+	super._expect(accepted, description)
+	var row: Dictionary = {"index": _checks, "label": description, "passed": accepted}
+	_projection_rows.append(row)
+	if not accepted and _projection_first_failure.is_empty():
+		_projection_first_failure = row.duplicate(true)
+
+
+func _source_observations() -> Dictionary:
+	var result: Dictionary = {}
+	for path: String in [
+		"res://tests/authored_echo_playback_smoke.gd",
+		"res://tests/fixtures/authored_echo_actor.gd",
+		"res://scripts/combat/replay_playback.gd",
+		"res://scripts/combat/difficulty.gd",
+		PROFILE_PATH,
+		"res://.cinder/runtime-source-projection-prepare-v2-20261016/compiled/original/authored_enemy_sequence.gd",
+		"res://.cinder/runtime-source-projection-prepare-v2-20261016/compiled/original/replay_program.gd",
+		"res://.cinder/runtime-source-projection-prepare-v2-20261016/compiled/original/threat_scheduler.gd",
+		"res://.cinder/runtime-source-projection-prepare-v2-20261016/compiled/candidate/authored_enemy_sequence.gd",
+		"res://.cinder/runtime-source-projection-prepare-v2-20261016/compiled/candidate/replay_program.gd",
+		"res://.cinder/runtime-source-projection-prepare-v2-20261016/compiled/candidate/threat_scheduler.gd",
+		"res://.cinder/runtime-source-projection-prepare-v2-20261016/fixture/authored_state_subclass.gd",
+		"res://.cinder/runtime-source-projection-prepare-v2-20261016/fixture/program_state_subclass.gd",
+		"res://.cinder/runtime-source-projection-prepare-v2-20261016/fixture/source_projection_smoke.gd"
+	]:
+		result[path] = FileAccess.get_sha256(path) if FileAccess.file_exists(path) else ""
+	return result
+
+
+func _finish_projection(complete: bool) -> void:
+	_require_private_script_refs("finish")
+	complete = complete and _projection_scope_complete
+	var after: Dictionary = _source_observations()
+	_expect(after == _projection_source_before, "all named native sources and canonical catalogue bytes restore before report/quit")
+	var report: Dictionary = {"schema": 1, "checks": _checks, "failures": _failures, "rows": _projection_rows.duplicate(true), "first_failure": _projection_first_failure.duplicate(true), "complete": complete, "success": complete and _failures == 0, "observations": _projection_observations.duplicate(true), "source_before": _projection_source_before, "source_after": after, "scope": "One current73 original/candidate source-guard differential in actual same paused world; callback/native/alias/error controls only. No route/performance/production promotion credit."}
+	var wire: String = JSON.stringify(report)
+	var path: String = OS.get_environment(REPORT_ENV)
+	if path.is_empty() or not path.is_absolute_path() or FileAccess.file_exists(path) or wire.is_empty() or wire.to_utf8_buffer().size() > MAX_REPORT_BYTES:
+		_expect(false, "Projection report path/complete data/bound invalid")
+		print("Source projection boundary smoke: %d checks, %d failures; complete=false; success=false" % [_checks, _failures])
+		quit(1)
+		return
+	var file: FileAccess = FileAccess.open(path, FileAccess.WRITE)
+	if file == null:
+		_expect(false, "Projection report write failed")
+		print("Source projection boundary smoke: %d checks, %d failures; complete=false; success=false" % [_checks, _failures])
+		quit(1)
+		return
+	file.store_string(wire)
+	file.flush()
+	file.close()
+	print("CINDER_SOURCE_PROJECTION_REPORT path=%s sha256=%s" % [path, FileAccess.get_sha256(path)])
+	print("Source projection boundary smoke: %d checks, %d failures; complete=%s; success=%s" % [_checks, _failures, str(complete), str(complete and _failures == 0)])
+	quit(0 if complete and _failures == 0 else 1)

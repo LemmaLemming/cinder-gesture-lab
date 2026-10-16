@@ -1,5 +1,9 @@
 # Cinder shared progress
 
+## Source projection withdrawn after measurement —16 October2026
+
+[Root’s withdrawal record](RUNTIME_SOURCE_PROJECTION_WITHDRAWN.md) preserves actual private267/0 plus both paired113/0 native results, with their original CA-only host2/nonclean statuses. The single ordered pair shows small mixed changes: automatic total−2.08% andp50−3.16%, warningp50+4.96%, wall+0.85% and admission+64.45%. No convincing material overall benefit is established; the exact three-file projection is withdrawn, all103 named originals restored under the canonical lock, and no repeat for green/gain follows. Original failed parse, controls, raw diagnostics and scoped custody remain portable. Both engineering requests stay OPEN; no FPS/causal speedup or dynamic-count claim. Separate first local-profiler export is incomplete and does not change this decision. A2-O1 is independently unaccepted; all24 originals/16 policies remain.
+
 ## Current contract reconciled —16 October2026
 
 [Bounded source audit and Root decision](evidence/desktop-completion-source-audit/README.md) correct current contract counts to all24 original accepted levels and16/24 difficulty policies, and mark obsolete consumer/capture/presentation frontiers as historical. AGENTS now distinguishes the original Character Lab from the accepted campaign while preserving concept/readiness limits. Exact reviewed source preconditions and original proposals remain retained. This is documentation only: no new engine run, runtime API, coverage or goal-completion claim. Eight policies and runtime-cost work remain. Root’s separate A2-O1 candidate is unaccepted; Agent02 remains inactive/untouched.

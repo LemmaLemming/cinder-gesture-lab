@@ -1,0 +1,191 @@
+{
+  "schema": 1,
+  "status": "ADDITIVE_V2_SOURCE_ONLY_NOT_COMPILED",
+  "proposal_patch_sha256": "3d9b02271589f55b221e20a887cbfa636337b3067644f450c825bcaa68c5d3d9",
+  "donors": [
+    {
+      "variant": "original",
+      "logical_production_path": "scripts/combat/authored_enemy_sequence.gd",
+      "raw_text": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/runtime-source-projection-prepare-20261016/raw/original/authored_enemy_sequence.gd.txt",
+      "raw_sha256": "9aed90b797bdef3388a82b63f40390e2b779f2fec671ed3914a33b1ff42950a3",
+      "raw_bytes": 37426,
+      "compiled_text": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/runtime-source-projection-prepare-v2-20261016/compiled/original/authored_enemy_sequence.gd.txt",
+      "compiled_sha256": "df72977f8edd24e48c933d6d5dd06075937031ef9c30d82dfaf93059d32a604d",
+      "compiled_bytes": 37717,
+      "planned_resource": "res://.cinder/runtime-source-projection-prepare-v2-20261016/compiled/original/authored_enemy_sequence.gd",
+      "native_script_identity_operand": "ResourceLoader.get_cached_ref(\"res://.cinder/runtime-source-projection-prepare-v2-20261016/compiled/original/authored_enemy_sequence.gd\")",
+      "test_only_transformations": [
+        {
+          "kind": "remove_unregistered_global_declaration",
+          "from": "class_name CinderAuthoredEnemySequence\n",
+          "to": "",
+          "count": 1
+        },
+        {
+          "kind": "exact_native_Script_resource_operand",
+          "from": "CinderAuthoredEnemySequence",
+          "to": "ResourceLoader.get_cached_ref(\"res://.cinder/runtime-source-projection-prepare-v2-20261016/compiled/original/authored_enemy_sequence.gd\")",
+          "count": 3
+        }
+      ]
+    },
+    {
+      "variant": "original",
+      "logical_production_path": "scripts/combat/replay_program.gd",
+      "raw_text": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/runtime-source-projection-prepare-20261016/raw/original/replay_program.gd.txt",
+      "raw_sha256": "0336b295650bd31ef5c4973e37dd0c48fd204e032a17ca07a7a6ac81062b69e9",
+      "raw_bytes": 4180,
+      "compiled_text": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/runtime-source-projection-prepare-v2-20261016/compiled/original/replay_program.gd.txt",
+      "compiled_sha256": "e51e81b522c890d6a32abba10064acb6a17da709ec44338c80f73984a62ba24b",
+      "compiled_bytes": 4315,
+      "planned_resource": "res://.cinder/runtime-source-projection-prepare-v2-20261016/compiled/original/replay_program.gd",
+      "native_script_identity_operand": "ResourceLoader.get_cached_ref(\"res://.cinder/runtime-source-projection-prepare-v2-20261016/compiled/original/replay_program.gd\")",
+      "test_only_transformations": [
+        {
+          "kind": "remove_unregistered_global_declaration",
+          "from": "class_name CinderReplayProgram\n",
+          "to": "",
+          "count": 1
+        },
+        {
+          "kind": "exact_native_Script_resource_operand",
+          "from": "CinderReplayProgram",
+          "to": "ResourceLoader.get_cached_ref(\"res://.cinder/runtime-source-projection-prepare-v2-20261016/compiled/original/replay_program.gd\")",
+          "count": 1
+        },
+        {
+          "kind": "matched_dependency_relocation",
+          "from": "res://scripts/combat/authored_enemy_sequence.gd",
+          "to": "res://.cinder/runtime-source-projection-prepare-v2-20261016/compiled/original/authored_enemy_sequence.gd",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "variant": "original",
+      "logical_production_path": "scripts/combat/threat_scheduler.gd",
+      "raw_text": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/runtime-source-projection-prepare-20261016/raw/original/threat_scheduler.gd.txt",
+      "raw_sha256": "c28ea9f4cd6c1ff9aedbc9cfc45a28826c589c095b9193b565f45d23c3df903d",
+      "raw_bytes": 266033,
+      "compiled_text": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/runtime-source-projection-prepare-v2-20261016/compiled/original/threat_scheduler.gd.txt",
+      "compiled_sha256": "cd5c28f8efb1a50950094f65cfa5eb5dee4ad2fd39552256d3715c7fbe78c264",
+      "compiled_bytes": 266114,
+      "planned_resource": "res://.cinder/runtime-source-projection-prepare-v2-20261016/compiled/original/threat_scheduler.gd",
+      "native_script_identity_operand": "none; Scheduler had only its global declaration",
+      "test_only_transformations": [
+        {
+          "kind": "remove_unregistered_global_declaration",
+          "from": "class_name CinderThreatScheduler\n",
+          "to": "",
+          "count": 1
+        },
+        {
+          "kind": "matched_dependency_relocation",
+          "from": "res://scripts/combat/authored_enemy_sequence.gd",
+          "to": "res://.cinder/runtime-source-projection-prepare-v2-20261016/compiled/original/authored_enemy_sequence.gd",
+          "count": 1
+        },
+        {
+          "kind": "matched_dependency_relocation",
+          "from": "res://scripts/combat/replay_program.gd",
+          "to": "res://.cinder/runtime-source-projection-prepare-v2-20261016/compiled/original/replay_program.gd",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "variant": "candidate",
+      "logical_production_path": "scripts/combat/authored_enemy_sequence.gd",
+      "raw_text": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/runtime-source-projection-prepare-20261016/raw/candidate/authored_enemy_sequence.gd.txt",
+      "raw_sha256": "325a21ccd1be68e4347e8415474d4bcbd1a9b8313a5a0dd8104d08d5a4b9cdb9",
+      "raw_bytes": 37844,
+      "compiled_text": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/runtime-source-projection-prepare-v2-20261016/compiled/candidate/authored_enemy_sequence.gd.txt",
+      "compiled_sha256": "ea0779ed722d39d0a029137e78eaab37d0480bbb076e372eac593f8d110957bd",
+      "compiled_bytes": 38249,
+      "planned_resource": "res://.cinder/runtime-source-projection-prepare-v2-20261016/compiled/candidate/authored_enemy_sequence.gd",
+      "native_script_identity_operand": "ResourceLoader.get_cached_ref(\"res://.cinder/runtime-source-projection-prepare-v2-20261016/compiled/candidate/authored_enemy_sequence.gd\")",
+      "test_only_transformations": [
+        {
+          "kind": "remove_unregistered_global_declaration",
+          "from": "class_name CinderAuthoredEnemySequence\n",
+          "to": "",
+          "count": 1
+        },
+        {
+          "kind": "exact_native_Script_resource_operand",
+          "from": "CinderAuthoredEnemySequence",
+          "to": "ResourceLoader.get_cached_ref(\"res://.cinder/runtime-source-projection-prepare-v2-20261016/compiled/candidate/authored_enemy_sequence.gd\")",
+          "count": 4
+        }
+      ]
+    },
+    {
+      "variant": "candidate",
+      "logical_production_path": "scripts/combat/replay_program.gd",
+      "raw_text": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/runtime-source-projection-prepare-20261016/raw/candidate/replay_program.gd.txt",
+      "raw_sha256": "44681f6bd2c273ba5ee8d24451075fd328d1a9c1a0be136fd6089ca31065473e",
+      "raw_bytes": 4551,
+      "compiled_text": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/runtime-source-projection-prepare-v2-20261016/compiled/candidate/replay_program.gd.txt",
+      "compiled_sha256": "e1b675a3b9ed0cd8981d314edd43158220c04384fcbcaa9a28dc7bbcb57894a7",
+      "compiled_bytes": 4798,
+      "planned_resource": "res://.cinder/runtime-source-projection-prepare-v2-20261016/compiled/candidate/replay_program.gd",
+      "native_script_identity_operand": "ResourceLoader.get_cached_ref(\"res://.cinder/runtime-source-projection-prepare-v2-20261016/compiled/candidate/replay_program.gd\")",
+      "test_only_transformations": [
+        {
+          "kind": "remove_unregistered_global_declaration",
+          "from": "class_name CinderReplayProgram\n",
+          "to": "",
+          "count": 1
+        },
+        {
+          "kind": "exact_native_Script_resource_operand",
+          "from": "CinderReplayProgram",
+          "to": "ResourceLoader.get_cached_ref(\"res://.cinder/runtime-source-projection-prepare-v2-20261016/compiled/candidate/replay_program.gd\")",
+          "count": 2
+        },
+        {
+          "kind": "matched_dependency_relocation",
+          "from": "res://scripts/combat/authored_enemy_sequence.gd",
+          "to": "res://.cinder/runtime-source-projection-prepare-v2-20261016/compiled/candidate/authored_enemy_sequence.gd",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "variant": "candidate",
+      "logical_production_path": "scripts/combat/threat_scheduler.gd",
+      "raw_text": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/runtime-source-projection-prepare-20261016/raw/candidate/threat_scheduler.gd.txt",
+      "raw_sha256": "ce3790dce502e17799057f73e967ea76ca9b62cce21fbd63fa418e446075dcc2",
+      "raw_bytes": 266059,
+      "compiled_text": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/runtime-source-projection-prepare-v2-20261016/compiled/candidate/threat_scheduler.gd.txt",
+      "compiled_sha256": "ba2b39ce50a813f231d47b3b08e336ee829039df1c4174ef52d6553adac1704a",
+      "compiled_bytes": 266142,
+      "planned_resource": "res://.cinder/runtime-source-projection-prepare-v2-20261016/compiled/candidate/threat_scheduler.gd",
+      "native_script_identity_operand": "none; Scheduler had only its global declaration",
+      "test_only_transformations": [
+        {
+          "kind": "remove_unregistered_global_declaration",
+          "from": "class_name CinderThreatScheduler\n",
+          "to": "",
+          "count": 1
+        },
+        {
+          "kind": "matched_dependency_relocation",
+          "from": "res://scripts/combat/authored_enemy_sequence.gd",
+          "to": "res://.cinder/runtime-source-projection-prepare-v2-20261016/compiled/candidate/authored_enemy_sequence.gd",
+          "count": 1
+        },
+        {
+          "kind": "matched_dependency_relocation",
+          "from": "res://scripts/combat/replay_program.gd",
+          "to": "res://.cinder/runtime-source-projection-prepare-v2-20261016/compiled/candidate/replay_program.gd",
+          "count": 1
+        }
+      ]
+    }
+  ],
+  "native_identity_rule": "Fixture explicitly preloads all six Script resources and asserts each ResourceLoader.get_cached_ref(fixedprivatepath) returns that exact Script object before/after controls. Self-class comparisons use this object identity. No path-string equality, injected accepted flag, validation receipt, new native/world cache, load/reload, callback, guard skipping or global class registration is introduced.",
+  "root_cause": "Original private class_name names were excluded from Godot global class scanning by .cinder/.gdignore; original Root queued parse failed compile despite API0. All original phase bytes and source/UID closure remain immutable.",
+  "api_primary_source": "https://docs.godotengine.org/en/stable/classes/class_resourceloader.html#class-resourceloader-method-get-cached-ref",
+  "api_qualification": "Official API returns current cached Resource reference or invalid when absent. This is only TEST Script identity resolution equivalent to already-preloaded self Script operands; missing/replaced reference fails explicit fixture checks and compact-branch/sourcefactory assertions. No performance cache or native-proof reuse."
+}

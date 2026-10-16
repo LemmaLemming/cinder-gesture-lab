@@ -1,0 +1,6 @@
+extends "res://.cinder/runtime-source-projection-prepare-v2-20261016/compiled/candidate/authored_enemy_sequence.gd"
+## TEST ONLY legitimate virtual state() override; no native authority.
+var state_calls: int = 0
+func state() -> Dictionary:
+	state_calls += 1
+	return {"source_id": "test-only/virtual-state", "authored": {"tether_position": Vector3(4, 0, 2)}, "subclass_marker": true}

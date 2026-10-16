@@ -1,0 +1,990 @@
+{
+  "schema": 1,
+  "status": "ADDITIVE_V2_SOURCE_ONLY_UNEXECUTED_FIXED_INPUT_SPEC",
+  "proposal_patch": {
+    "path": ".cinder/runtime-source-projection-prepare-v2-20261016/PROJECTION_PROPOSAL.original.patch.txt",
+    "sha256": "3d9b02271589f55b221e20a887cbfa636337b3067644f450c825bcaa68c5d3d9",
+    "bytes": 2907,
+    "mode": "0644"
+  },
+  "selection": "fixture/source_projection_smoke.gd.txt",
+  "literal_roots": [
+    "tests/authored_echo_playback_smoke.gd",
+    "tests/fixtures/authored_echo_actor.gd",
+    "scripts/combat/authored_enemy_sequence.gd",
+    "scripts/combat/replay_program.gd",
+    "scripts/combat/threat_scheduler.gd"
+  ],
+  "named_existing_inputs": [
+    {
+      "path": ".cinder/local.json",
+      "present": true,
+      "sha256": "d814b23dd06fd656260904920d38c2cc1325ffe42c68d7d6cc1d2172bb1fff02",
+      "bytes": 207,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/d814b23dd06fd656260904920d38c2cc1325ffe42c68d7d6cc1d2172bb1fff02.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "data/design/difficulty_profiles.json",
+      "present": true,
+      "sha256": "891baa4d087a1f35da0581c5dc6b888274296686144b3c8f5609249245def41c",
+      "bytes": 1313,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/891baa4d087a1f35da0581c5dc6b888274296686144b3c8f5609249245def41c.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "data/design/player_equipment.json",
+      "present": true,
+      "sha256": "737cf534df88fa965ab568f750515eb17098688d268e5b6b699de5cd519b98d1",
+      "bytes": 32678,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/737cf534df88fa965ab568f750515eb17098688d268e5b6b699de5cd519b98d1.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "project.godot",
+      "present": true,
+      "sha256": "cc0fcb840085aaf7e59ca231df3cf1b21f67dd17a5e87f9f4c46729a5f7bbb1f",
+      "bytes": 841,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/cc0fcb840085aaf7e59ca231df3cf1b21f67dd17a5e87f9f4c46729a5f7bbb1f.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scenes/lab_arena.tscn",
+      "present": true,
+      "sha256": "290c0f7fa49b284705c6adec423ca7109a2e7ebd50439866e39ef3856397c361",
+      "bytes": 23638,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/290c0f7fa49b284705c6adec423ca7109a2e7ebd50439866e39ef3856397c361.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scenes/player.tscn",
+      "present": true,
+      "sha256": "68cf79442eb217cb0e2afcc4099080ba79c3f3b2c548655195d0864f4fc8bfac",
+      "bytes": 1184,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/68cf79442eb217cb0e2afcc4099080ba79c3f3b2c548655195d0864f4fc8bfac.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scenes/practice_target.tscn",
+      "present": true,
+      "sha256": "600553b1326ef7d117e123c308c6e0f8be0e4a4dc4ff80113894add7bf2ee520",
+      "bytes": 180,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/600553b1326ef7d117e123c308c6e0f8be0e4a4dc4ff80113894add7bf2ee520.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/attack_footprint.gd",
+      "present": true,
+      "sha256": "e202873c089e018231a7ac01d6f665f323654804edeea3cb39dd1a0f16d2fcbb",
+      "bytes": 4138,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/e202873c089e018231a7ac01d6f665f323654804edeea3cb39dd1a0f16d2fcbb.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/attack_footprint.gd.uid",
+      "present": true,
+      "sha256": "6f49cf6ffe2b06ba65e11a0d8a0ace2d6678c08b37285068ae718b1c555bd627",
+      "bytes": 19,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/6f49cf6ffe2b06ba65e11a0d8a0ace2d6678c08b37285068ae718b1c555bd627.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/campaign/exact_json.gd",
+      "present": true,
+      "sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+      "bytes": 9330,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/campaign/exact_json.gd.uid",
+      "present": true,
+      "sha256": "17b8db6b593b5d323901d318d07cf82a9562731d8254bfe418e70a7544f883e0",
+      "bytes": 20,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/17b8db6b593b5d323901d318d07cf82a9562731d8254bfe418e70a7544f883e0.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/campaign/level.gd",
+      "present": true,
+      "sha256": "27fdab6686d8ba4b8282c48af84c0c3f63d8c8fa7620ae462a4642ec225100c1",
+      "bytes": 23949,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/27fdab6686d8ba4b8282c48af84c0c3f63d8c8fa7620ae462a4642ec225100c1.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/campaign/level.gd.uid",
+      "present": true,
+      "sha256": "3f1289a9ee3e3586e0e5b16600517f7af18a79ae7bdc01b1a440ec7f9155b812",
+      "bytes": 20,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/3f1289a9ee3e3586e0e5b16600517f7af18a79ae7bdc01b1a440ec7f9155b812.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/campaign/save_store.gd",
+      "present": true,
+      "sha256": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0",
+      "bytes": 7310,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/campaign/save_store.gd.uid",
+      "present": true,
+      "sha256": "9d900a8ada96ac304fb1df06c8b93a6dc5e4d5ce0569158d0c3f00e362ac39d1",
+      "bytes": 20,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/9d900a8ada96ac304fb1df06c8b93a6dc5e4d5ce0569158d0c3f00e362ac39d1.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/campaign/snapshot_codec.gd",
+      "present": true,
+      "sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+      "bytes": 3350,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/campaign/snapshot_codec.gd.uid",
+      "present": true,
+      "sha256": "3d1e2bebc4e99f59d00b208037bef7e66119959d08b935c2b2b4fc72d7df5e82",
+      "bytes": 20,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/3d1e2bebc4e99f59d00b208037bef7e66119959d08b935c2b2b4fc72d7df5e82.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/character/player_presentations.gd",
+      "present": true,
+      "sha256": "046b716e4030926ac89788bc4fb33ca893c9cf4ba20cdbd8284954d15dfc3f01",
+      "bytes": 12558,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/046b716e4030926ac89788bc4fb33ca893c9cf4ba20cdbd8284954d15dfc3f01.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/character/player_presentations.gd.uid",
+      "present": true,
+      "sha256": "c355fe1b339f0cd9f9ce696caa5c1856cc16b482d97db52481e1d07c6ac92651",
+      "bytes": 20,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/c355fe1b339f0cd9f9ce696caa5c1856cc16b482d97db52481e1d07c6ac92651.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/combat/action_capture.gd",
+      "present": true,
+      "sha256": "0cd185d0a3b49190e9b3fbe33bcf5f2642f070eb305745cc6b4182f97a8e7d8f",
+      "bytes": 19785,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/0cd185d0a3b49190e9b3fbe33bcf5f2642f070eb305745cc6b4182f97a8e7d8f.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/combat/action_capture.gd.uid",
+      "present": true,
+      "sha256": "a089c978485a2b58adb2d1a73d634aa158fcfc9b6b3355f3cdf4256c81ec3828",
+      "bytes": 20,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/a089c978485a2b58adb2d1a73d634aa158fcfc9b6b3355f3cdf4256c81ec3828.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/combat/authored_echo_cycle_journal.gd",
+      "present": true,
+      "sha256": "87fe101b17b5602d5573f060181de366444d8713f2967e3dfe07596a70e04409",
+      "bytes": 5717,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/87fe101b17b5602d5573f060181de366444d8713f2967e3dfe07596a70e04409.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/combat/authored_echo_cycle_journal.gd.uid",
+      "present": true,
+      "sha256": "bc039f3302f2052d656a6ac395efc9af96e9b1fdab2f7791723944abd31be665",
+      "bytes": 20,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/bc039f3302f2052d656a6ac395efc9af96e9b1fdab2f7791723944abd31be665.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/combat/authored_echo_renderer.gd",
+      "present": true,
+      "sha256": "52dcf5b261574171b32d9c3c15da9279b467a697f81dbae17abd2b2b3c62014d",
+      "bytes": 22148,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/52dcf5b261574171b32d9c3c15da9279b467a697f81dbae17abd2b2b3c62014d.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/combat/authored_echo_renderer.gd.uid",
+      "present": true,
+      "sha256": "f5c93061cd05add9269454dd6007921d33c20719b2fccb12f0b6c6117b063081",
+      "bytes": 20,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/f5c93061cd05add9269454dd6007921d33c20719b2fccb12f0b6c6117b063081.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/combat/authored_echo_terminal_receipt.gd",
+      "present": true,
+      "sha256": "79705a953e134ed206e835574378bb8164c06061d55be44e8baf8ebbc2c8d94a",
+      "bytes": 16559,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/79705a953e134ed206e835574378bb8164c06061d55be44e8baf8ebbc2c8d94a.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/combat/authored_echo_terminal_receipt.gd.uid",
+      "present": true,
+      "sha256": "6ac50eb55f0f1d4c11a02bac5f081dd32604242b17558fd3ed2e1fd0f2d8f943",
+      "bytes": 20,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/6ac50eb55f0f1d4c11a02bac5f081dd32604242b17558fd3ed2e1fd0f2d8f943.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/combat/authored_enemy_sequence.gd",
+      "present": true,
+      "sha256": "9aed90b797bdef3388a82b63f40390e2b779f2fec671ed3914a33b1ff42950a3",
+      "bytes": 37426,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/9aed90b797bdef3388a82b63f40390e2b779f2fec671ed3914a33b1ff42950a3.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/combat/authored_enemy_sequence.gd.uid",
+      "present": true,
+      "sha256": "a7386bc5ee79dc7f7dcc22242adc7f02bfdd5babcbf9c19347d35889d27507dc",
+      "bytes": 19,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/a7386bc5ee79dc7f7dcc22242adc7f02bfdd5babcbf9c19347d35889d27507dc.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/combat/body_sweep.gd",
+      "present": true,
+      "sha256": "bddf3956d85c656fedea6bbce952ceb494c76867cdba895ff089abeb4c31eab9",
+      "bytes": 17456,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/bddf3956d85c656fedea6bbce952ceb494c76867cdba895ff089abeb4c31eab9.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/combat/body_sweep.gd.uid",
+      "present": true,
+      "sha256": "ef81e08a544e454636c523ea797029954359eead30c94e225c7de6893dcdcc74",
+      "bytes": 20,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/ef81e08a544e454636c523ea797029954359eead30c94e225c7de6893dcdcc74.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/combat/captured_replay_policy.gd",
+      "present": true,
+      "sha256": "ffb8580c66cdbd87642c6f6668f9cd42355b586900eba27bac48210e13126161",
+      "bytes": 4521,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/ffb8580c66cdbd87642c6f6668f9cd42355b586900eba27bac48210e13126161.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/combat/captured_replay_policy.gd.uid",
+      "present": true,
+      "sha256": "a8f1ad405ac1241df38c2d02d93077da3da51c6f963ab7876bc852fa30670202",
+      "bytes": 19,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/a8f1ad405ac1241df38c2d02d93077da3da51c6f963ab7876bc852fa30670202.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/combat/difficulty.gd",
+      "present": true,
+      "sha256": "e6a0aba9b39697cf59837165ebec858b0dd15c7573f66d79eadc58595ed2e7ae",
+      "bytes": 4882,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/e6a0aba9b39697cf59837165ebec858b0dd15c7573f66d79eadc58595ed2e7ae.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/combat/difficulty.gd.uid",
+      "present": true,
+      "sha256": "67649a881ed65fed80580798646a09b1916ad8ca03a7442dca805f234087685b",
+      "bytes": 20,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/67649a881ed65fed80580798646a09b1916ad8ca03a7442dca805f234087685b.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/combat/lunge_motion.gd",
+      "present": true,
+      "sha256": "52b048392c7ea5d5728b500d1cc68fa478947f59f5b321bd81f377c265be9a66",
+      "bytes": 15016,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/52b048392c7ea5d5728b500d1cc68fa478947f59f5b321bd81f377c265be9a66.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/combat/lunge_motion.gd.uid",
+      "present": true,
+      "sha256": "26b4d5dc7cbd8540bb060cac7c9e0153860810d20b8cffcb9f4ea30f322e2432",
+      "bytes": 20,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/26b4d5dc7cbd8540bb060cac7c9e0153860810d20b8cffcb9f4ea30f322e2432.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/combat/replay_cursor.gd",
+      "present": true,
+      "sha256": "1cbe648ad391d4363a525751fcc23e71f13292eddcc5da46233289a40a787362",
+      "bytes": 19854,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/1cbe648ad391d4363a525751fcc23e71f13292eddcc5da46233289a40a787362.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/combat/replay_cursor.gd.uid",
+      "present": true,
+      "sha256": "60b768dbe4b3c9528567ec0e64afe3ebb775c9d407d55d140eed6e90fcd36d16",
+      "bytes": 19,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/60b768dbe4b3c9528567ec0e64afe3ebb775c9d407d55d140eed6e90fcd36d16.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/combat/replay_footprint.gd",
+      "present": true,
+      "sha256": "23ad30c9805dcb7af69f81cbb5f0d702c4d0eb8767f51a144d7b87ed87d3964b",
+      "bytes": 34512,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/23ad30c9805dcb7af69f81cbb5f0d702c4d0eb8767f51a144d7b87ed87d3964b.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/combat/replay_footprint.gd.uid",
+      "present": true,
+      "sha256": "1ae28025dae1fcc6a4c10c0c4731171be5418eb6413f31383ce4aa14f2024855",
+      "bytes": 19,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/1ae28025dae1fcc6a4c10c0c4731171be5418eb6413f31383ce4aa14f2024855.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/combat/replay_playback.gd",
+      "present": true,
+      "sha256": "53af575a415f0a8365c71eb92b54c03847a52eb694369afc413d191958ee7cd1",
+      "bytes": 141870,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/53af575a415f0a8365c71eb92b54c03847a52eb694369afc413d191958ee7cd1.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/combat/replay_playback.gd.uid",
+      "present": true,
+      "sha256": "9772d96bd490fa16ae9e7438910e915e090c6485dfc1252574cae1bf7a977c5a",
+      "bytes": 20,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/9772d96bd490fa16ae9e7438910e915e090c6485dfc1252574cae1bf7a977c5a.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/combat/replay_program.gd",
+      "present": true,
+      "sha256": "0336b295650bd31ef5c4973e37dd0c48fd204e032a17ca07a7a6ac81062b69e9",
+      "bytes": 4180,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/0336b295650bd31ef5c4973e37dd0c48fd204e032a17ca07a7a6ac81062b69e9.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/combat/replay_program.gd.uid",
+      "present": true,
+      "sha256": "d150d89ef4ba744f63d05e7a4b7a2acc91e4681d23d355cb9cb2678ac03f1a91",
+      "bytes": 19,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/d150d89ef4ba744f63d05e7a4b7a2acc91e4681d23d355cb9cb2678ac03f1a91.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/combat/replay_sequence.gd",
+      "present": true,
+      "sha256": "7deda2bbf0f17b011ed5a7f8191281538887f95ba0188f2e2b9cc89adad023a6",
+      "bytes": 10638,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/7deda2bbf0f17b011ed5a7f8191281538887f95ba0188f2e2b9cc89adad023a6.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/combat/replay_sequence.gd.uid",
+      "present": true,
+      "sha256": "313e93a946f59228685fbc4730bb5d239df9e9ba2ae69855937ccb3c7d35289b",
+      "bytes": 20,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/313e93a946f59228685fbc4730bb5d239df9e9ba2ae69855937ccb3c7d35289b.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/combat/replay_witness.gd",
+      "present": true,
+      "sha256": "5bcc9c58b9ea8c496200d9d313f2d9848baa0700665fa062640270945d829295",
+      "bytes": 23615,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/5bcc9c58b9ea8c496200d9d313f2d9848baa0700665fa062640270945d829295.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/combat/replay_witness.gd.uid",
+      "present": true,
+      "sha256": "c3bb32204b630c686744ef4e1a5a9769c8ea0a66fc40606517f734487081da42",
+      "bytes": 20,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/c3bb32204b630c686744ef4e1a5a9769c8ea0a66fc40606517f734487081da42.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/combat/threat_geometry.gd",
+      "present": true,
+      "sha256": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+      "bytes": 14303,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/combat/threat_geometry.gd.uid",
+      "present": true,
+      "sha256": "dbffe6e46566832c1126d98a643d508a68219fec591d4662f7bccfe297ddccdd",
+      "bytes": 20,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/dbffe6e46566832c1126d98a643d508a68219fec591d4662f7bccfe297ddccdd.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/combat/threat_scheduler.gd",
+      "present": true,
+      "sha256": "c28ea9f4cd6c1ff9aedbc9cfc45a28826c589c095b9193b565f45d23c3df903d",
+      "bytes": 266033,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/c28ea9f4cd6c1ff9aedbc9cfc45a28826c589c095b9193b565f45d23c3df903d.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/combat/threat_scheduler.gd.uid",
+      "present": true,
+      "sha256": "54a051d030eef72dfce3f58a9073b3bce0f469720124e948c251f22a064e974d",
+      "bytes": 18,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/54a051d030eef72dfce3f58a9073b3bce0f469720124e948c251f22a064e974d.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/cues/cue_mesh.gd",
+      "present": true,
+      "sha256": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d",
+      "bytes": 9589,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/cues/cue_mesh.gd.uid",
+      "present": true,
+      "sha256": "aab103bd0966b0b298f2a10e8107167ca7e23c451dd94d8be76136bd1bdc4d3a",
+      "bytes": 19,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/aab103bd0966b0b298f2a10e8107167ca7e23c451dd94d8be76136bd1bdc4d3a.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/cues/threat_cue.gd",
+      "present": true,
+      "sha256": "c8a7abbbd4c021ec92c45e1e57fc966873110231b781dba00bd1ff3d63f5cc5a",
+      "bytes": 37198,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/c8a7abbbd4c021ec92c45e1e57fc966873110231b781dba00bd1ff3d63f5cc5a.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/cues/threat_cue.gd.uid",
+      "present": true,
+      "sha256": "147d2f591ebb3ad3af17a4111b3118811c23bc2e83f3fc6f7574c38c860d4425",
+      "bytes": 19,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/147d2f591ebb3ad3af17a4111b3118811c23bc2e83f3fc6f7574c38c860d4425.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/curling_smoke.gd",
+      "present": true,
+      "sha256": "5f8fa272a9c5beef47f7c69ad0b916965e7caf30a5d0e6b329d56b227807c36c",
+      "bytes": 14175,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/5f8fa272a9c5beef47f7c69ad0b916965e7caf30a5d0e6b329d56b227807c36c.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/curling_smoke.gd.uid",
+      "present": true,
+      "sha256": "8c283bb9181b5b956ec3746bf98b9d614d5f86a8caddac06ba609e43231b75bb",
+      "bytes": 19,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/8c283bb9181b5b956ec3746bf98b9d614d5f86a8caddac06ba609e43231b75bb.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/dev/dev.py",
+      "present": true,
+      "sha256": "dc333c45353be73300b74ffc8a4f30415acc1ee4891b5a2deab56ec762f96c19",
+      "bytes": 30466,
+      "mode": "0755",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/dc333c45353be73300b74ffc8a4f30415acc1ee4891b5a2deab56ec762f96c19.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/effects.gd",
+      "present": true,
+      "sha256": "c5b8294b88e999d913a9043fd9f588a2b1f7f942280c71945a92d91d1be5b6d7",
+      "bytes": 21962,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/c5b8294b88e999d913a9043fd9f588a2b1f7f942280c71945a92d91d1be5b6d7.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/effects.gd.uid",
+      "present": true,
+      "sha256": "d0042236bbd05c3b01e337610154c0b00d3e38970ee381441832b2a7f9fcc831",
+      "bytes": 19,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/d0042236bbd05c3b01e337610154c0b00d3e38970ee381441832b2a7f9fcc831.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/enemy.gd",
+      "present": true,
+      "sha256": "39c16960c5b7ccb12282cda87c93d4b99280040881bf39b5879e11487a883ed1",
+      "bytes": 41287,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/39c16960c5b7ccb12282cda87c93d4b99280040881bf39b5879e11487a883ed1.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/enemy.gd.uid",
+      "present": true,
+      "sha256": "8f3ba80717e9fe95c6a27620cd909fddd88cd18ed5c425b859b236ccc85a4280",
+      "bytes": 20,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/8f3ba80717e9fe95c6a27620cd909fddd88cd18ed5c425b859b236ccc85a4280.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/equipment.gd",
+      "present": true,
+      "sha256": "2f721f0e7af0d1034ae9f92c37b4af3c3223171d0e5d2c120e42c00ae9155ab0",
+      "bytes": 9130,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/2f721f0e7af0d1034ae9f92c37b4af3c3223171d0e5d2c120e42c00ae9155ab0.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/equipment.gd.uid",
+      "present": true,
+      "sha256": "25917e75633ca2b0c2133142882fc15ab97373c69a71fc1377bed7ff1d096b4a",
+      "bytes": 20,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/25917e75633ca2b0c2133142882fc15ab97373c69a71fc1377bed7ff1d096b4a.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/game.gd",
+      "present": true,
+      "sha256": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26",
+      "bytes": 38685,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/game.gd.uid",
+      "present": true,
+      "sha256": "ef1b176ec4e92535f63b4913fd257364b2e2e20250bb21ab152d44a55f083129",
+      "bytes": 19,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/ef1b176ec4e92535f63b4913fd257364b2e2e20250bb21ab152d44a55f083129.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/hud.gd",
+      "present": true,
+      "sha256": "3a76c06a97da117b2fbd43824d88f3ef5150e6ad0045b5e27766b8d70542897b",
+      "bytes": 16609,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/3a76c06a97da117b2fbd43824d88f3ef5150e6ad0045b5e27766b8d70542897b.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/hud.gd.uid",
+      "present": true,
+      "sha256": "70a9ef089b6201cdd4e82f8c617ac548e11145f62e7fcd1aaa36f82f425a85c5",
+      "bytes": 20,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/70a9ef089b6201cdd4e82f8c617ac548e11145f62e7fcd1aaa36f82f425a85c5.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/lab_bench.gd",
+      "present": true,
+      "sha256": "8f2bb0d92f48cfea32205f0b76854ad03ca7a85127e29dfe9275bdb0b2ea58fb",
+      "bytes": 6324,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/8f2bb0d92f48cfea32205f0b76854ad03ca7a85127e29dfe9275bdb0b2ea58fb.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/lab_bench.gd.uid",
+      "present": true,
+      "sha256": "2a7f596814c6c7fff0b9f0a229de202678f54e5455c1d16c450e5f2a7ef561fe",
+      "bytes": 20,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/2a7f596814c6c7fff0b9f0a229de202678f54e5455c1d16c450e5f2a7ef561fe.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/pixel_sprite.gd",
+      "present": true,
+      "sha256": "69a1846a55d251b1e8b44764b429546b814f97aba18379c7ee06b3267938747a",
+      "bytes": 25114,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/69a1846a55d251b1e8b44764b429546b814f97aba18379c7ee06b3267938747a.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/pixel_sprite.gd.uid",
+      "present": true,
+      "sha256": "e122d2f88538ac29e667e57008aacc678de4ed9d92a1be0493f37687b0a0b9d3",
+      "bytes": 20,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/e122d2f88538ac29e667e57008aacc678de4ed9d92a1be0493f37687b0a0b9d3.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/player.gd",
+      "present": true,
+      "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+      "bytes": 48906,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/player.gd.uid",
+      "present": true,
+      "sha256": "064e4b400f36f2e612baa7a0ec47fd22ac2de3dac6646e02b9921f3675784d70",
+      "bytes": 19,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/064e4b400f36f2e612baa7a0ec47fd22ac2de3dac6646e02b9921f3675784d70.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/practice_target.gd",
+      "present": true,
+      "sha256": "455e1d0697db73c3b27a9e12136e5103bd438fdf22142bee0d329cd8748ba15e",
+      "bytes": 4451,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/455e1d0697db73c3b27a9e12136e5103bd438fdf22142bee0d329cd8748ba15e.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/practice_target.gd.uid",
+      "present": true,
+      "sha256": "653901d6e1e18f9d4ce4eb782af9366629a641679963266065a425d014814531",
+      "bytes": 20,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/653901d6e1e18f9d4ce4eb782af9366629a641679963266065a425d014814531.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/presentation/camera_framing.gd",
+      "present": true,
+      "sha256": "daf839d1e35497c88a59d4c1c2af7bb02194418e2c667aceb677242bd642c39b",
+      "bytes": 10132,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/daf839d1e35497c88a59d4c1c2af7bb02194418e2c667aceb677242bd642c39b.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/presentation/camera_framing.gd.uid",
+      "present": true,
+      "sha256": "64b72a728eb61dfdd37069ff53b7259483bef7d3c238660617af463b1b50778a",
+      "bytes": 20,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/64b72a728eb61dfdd37069ff53b7259483bef7d3c238660617af463b1b50778a.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/shotgun_flare.gd",
+      "present": true,
+      "sha256": "24e526e3850531317285e0d687ee93ebd37aa7819fbf5cd27af19284af0b84e6",
+      "bytes": 5778,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/24e526e3850531317285e0d687ee93ebd37aa7819fbf5cd27af19284af0b84e6.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/shotgun_flare.gd.uid",
+      "present": true,
+      "sha256": "e7c22cc0b7e74fa5181371c644527e6b18ec06ad8369dc72bfa4986505a15ba4",
+      "bytes": 20,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/e7c22cc0b7e74fa5181371c644527e6b18ec06ad8369dc72bfa4986505a15ba4.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/weapon_pickup.gd",
+      "present": true,
+      "sha256": "7a350ffa2efa2f6f031877842fb447e22b3b80d49cc2acc40ee39dd0cc19c56e",
+      "bytes": 1750,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/7a350ffa2efa2f6f031877842fb447e22b3b80d49cc2acc40ee39dd0cc19c56e.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "scripts/weapon_pickup.gd.uid",
+      "present": true,
+      "sha256": "0a004b242329bf5742cac245b12a6d41b8e306fc79ad63d43dc0c46896bf8615",
+      "bytes": 20,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/0a004b242329bf5742cac245b12a6d41b8e306fc79ad63d43dc0c46896bf8615.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "tests/authored_echo_playback_smoke.gd",
+      "present": true,
+      "sha256": "2ade5f07a380c2a5d64c05d1f2c90d3b067cecef128e3c03daa6fd0fbd27741a",
+      "bytes": 33904,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/2ade5f07a380c2a5d64c05d1f2c90d3b067cecef128e3c03daa6fd0fbd27741a.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "tests/authored_echo_playback_smoke.gd.uid",
+      "present": true,
+      "sha256": "3d0a3bb2cd3074986eba92cdf60613c00a6f145c24040682b492771b3b9566dd",
+      "bytes": 19,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/3d0a3bb2cd3074986eba92cdf60613c00a6f145c24040682b492771b3b9566dd.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "tests/fixtures/authored_echo_actor.gd",
+      "present": true,
+      "sha256": "bd78c8392f70b6f01e96d4a40c8adafc791a605e43487144e26aa8bb0173d542",
+      "bytes": 10038,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/bd78c8392f70b6f01e96d4a40c8adafc791a605e43487144e26aa8bb0173d542.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "tests/fixtures/authored_echo_actor.gd.uid",
+      "present": true,
+      "sha256": "c1f254eb4e0c205d7ee089b591136d3083e43c7c34e21108de83551f5abcd58b",
+      "bytes": 19,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/c1f254eb4e0c205d7ee089b591136d3083e43c7c34e21108de83551f5abcd58b.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "tests/fixtures/authored_echo_native_codec.gd",
+      "present": true,
+      "sha256": "4b430b2c9f266ff37c222a2d89a7db62429e0f25b9267a891078f845138c2402",
+      "bytes": 9276,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/4b430b2c9f266ff37c222a2d89a7db62429e0f25b9267a891078f845138c2402.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    },
+    {
+      "path": "tests/fixtures/authored_echo_native_codec.gd.uid",
+      "present": true,
+      "sha256": "bc2de0c79282641189a3feda7896fb26d7b61de49006179fc072f826c2e84c1e",
+      "bytes": 19,
+      "mode": "0644",
+      "original_retained_donor": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/bc2de0c79282641189a3feda7896fb26d7b61de49006179fc072f826c2e84c1e.bin",
+      "scope": "retained current73 engine/host named input; future live mismatch must refuse until Root reviews a new seal"
+    }
+  ],
+  "named_existing_input_count": 90,
+  "explicit_missing_literal_qualifications": [
+    "...tscn",
+    "...tscn:",
+    "captures",
+    "captures/character-blast.png",
+    "captures/character-lab.png",
+    "captures/character-primary.png",
+    "captures/dash-plume-end.png",
+    "captures/dash-plume-mid.png",
+    "captures/enemy-recovery.png",
+    "captures/enemy-warning.png",
+    "captures/level-preview.png",
+    "captures/loadout-bench.png",
+    "captures/mechanics-lab.png",
+    "captures/polish",
+    "captures/shot-flare-left.png",
+    "captures/shot-flare-right.png",
+    "captures/slash-arc.png"
+  ],
+  "root_materialization_only": [
+    {
+      "source": ".cinder/runtime-source-projection-prepare-v2-20261016/compiled/original/authored_enemy_sequence.gd.txt",
+      "destination": ".cinder/runtime-source-projection-prepare-v2-20261016/compiled/original/authored_enemy_sequence.gd",
+      "sha256": "df72977f8edd24e48c933d6d5dd06075937031ef9c30d82dfaf93059d32a604d",
+      "bytes": 37717,
+      "mode": "0644",
+      "scope": "TEST-only classless donor with fixed exact native Script resource identity; never production replacement"
+    },
+    {
+      "source": ".cinder/runtime-source-projection-prepare-v2-20261016/compiled/original/replay_program.gd.txt",
+      "destination": ".cinder/runtime-source-projection-prepare-v2-20261016/compiled/original/replay_program.gd",
+      "sha256": "e51e81b522c890d6a32abba10064acb6a17da709ec44338c80f73984a62ba24b",
+      "bytes": 4315,
+      "mode": "0644",
+      "scope": "TEST-only classless donor with fixed exact native Script resource identity; never production replacement"
+    },
+    {
+      "source": ".cinder/runtime-source-projection-prepare-v2-20261016/compiled/original/threat_scheduler.gd.txt",
+      "destination": ".cinder/runtime-source-projection-prepare-v2-20261016/compiled/original/threat_scheduler.gd",
+      "sha256": "cd5c28f8efb1a50950094f65cfa5eb5dee4ad2fd39552256d3715c7fbe78c264",
+      "bytes": 266114,
+      "mode": "0644",
+      "scope": "TEST-only classless donor with fixed exact native Script resource identity; never production replacement"
+    },
+    {
+      "source": ".cinder/runtime-source-projection-prepare-v2-20261016/compiled/candidate/authored_enemy_sequence.gd.txt",
+      "destination": ".cinder/runtime-source-projection-prepare-v2-20261016/compiled/candidate/authored_enemy_sequence.gd",
+      "sha256": "ea0779ed722d39d0a029137e78eaab37d0480bbb076e372eac593f8d110957bd",
+      "bytes": 38249,
+      "mode": "0644",
+      "scope": "TEST-only classless donor with fixed exact native Script resource identity; never production replacement"
+    },
+    {
+      "source": ".cinder/runtime-source-projection-prepare-v2-20261016/compiled/candidate/replay_program.gd.txt",
+      "destination": ".cinder/runtime-source-projection-prepare-v2-20261016/compiled/candidate/replay_program.gd",
+      "sha256": "e1b675a3b9ed0cd8981d314edd43158220c04384fcbcaa9a28dc7bbcb57894a7",
+      "bytes": 4798,
+      "mode": "0644",
+      "scope": "TEST-only classless donor with fixed exact native Script resource identity; never production replacement"
+    },
+    {
+      "source": ".cinder/runtime-source-projection-prepare-v2-20261016/compiled/candidate/threat_scheduler.gd.txt",
+      "destination": ".cinder/runtime-source-projection-prepare-v2-20261016/compiled/candidate/threat_scheduler.gd",
+      "sha256": "ba2b39ce50a813f231d47b3b08e336ee829039df1c4174ef52d6553adac1704a",
+      "bytes": 266142,
+      "mode": "0644",
+      "scope": "TEST-only classless donor with fixed exact native Script resource identity; never production replacement"
+    },
+    {
+      "source": ".cinder/runtime-source-projection-prepare-v2-20261016/fixture/authored_state_subclass.gd.txt",
+      "destination": ".cinder/runtime-source-projection-prepare-v2-20261016/fixture/authored_state_subclass.gd",
+      "sha256": "74be75597ce72683a2ce0033d18188373ddb3dbd4fbef200b4dc1a66f8a71d6c",
+      "bytes": 383,
+      "mode": "0644",
+      "scope": "selected TEST-only v2 private fixture"
+    },
+    {
+      "source": ".cinder/runtime-source-projection-prepare-v2-20261016/fixture/program_state_subclass.gd.txt",
+      "destination": ".cinder/runtime-source-projection-prepare-v2-20261016/fixture/program_state_subclass.gd",
+      "sha256": "948a03e41f739764988c25c86e8b6ec265cfd484d340676735c84a6d7c5356f0",
+      "bytes": 374,
+      "mode": "0644",
+      "scope": "selected TEST-only v2 private fixture"
+    },
+    {
+      "source": ".cinder/runtime-source-projection-prepare-v2-20261016/fixture/source_projection_smoke.gd.txt",
+      "destination": ".cinder/runtime-source-projection-prepare-v2-20261016/fixture/source_projection_smoke.gd",
+      "sha256": "37bc0845d8512069fa62237701422f58dea7071e3c79440001f089aec585eb14",
+      "bytes": 30178,
+      "mode": "0644",
+      "scope": "selected TEST-only v2 private fixture"
+    }
+  ],
+  "future_private_uid_states": [
+    {
+      "path": ".cinder/runtime-source-projection-prepare-v2-20261016/compiled/original/authored_enemy_sequence.gd.uid",
+      "present_before_promotion": false,
+      "rule": "No UID created/claimed by this preparation; unexpected selected addition is a retained failed/drift phase before Root chooses any new seal."
+    },
+    {
+      "path": ".cinder/runtime-source-projection-prepare-v2-20261016/compiled/original/replay_program.gd.uid",
+      "present_before_promotion": false,
+      "rule": "No UID created/claimed by this preparation; unexpected selected addition is a retained failed/drift phase before Root chooses any new seal."
+    },
+    {
+      "path": ".cinder/runtime-source-projection-prepare-v2-20261016/compiled/original/threat_scheduler.gd.uid",
+      "present_before_promotion": false,
+      "rule": "No UID created/claimed by this preparation; unexpected selected addition is a retained failed/drift phase before Root chooses any new seal."
+    },
+    {
+      "path": ".cinder/runtime-source-projection-prepare-v2-20261016/compiled/candidate/authored_enemy_sequence.gd.uid",
+      "present_before_promotion": false,
+      "rule": "No UID created/claimed by this preparation; unexpected selected addition is a retained failed/drift phase before Root chooses any new seal."
+    },
+    {
+      "path": ".cinder/runtime-source-projection-prepare-v2-20261016/compiled/candidate/replay_program.gd.uid",
+      "present_before_promotion": false,
+      "rule": "No UID created/claimed by this preparation; unexpected selected addition is a retained failed/drift phase before Root chooses any new seal."
+    },
+    {
+      "path": ".cinder/runtime-source-projection-prepare-v2-20261016/compiled/candidate/threat_scheduler.gd.uid",
+      "present_before_promotion": false,
+      "rule": "No UID created/claimed by this preparation; unexpected selected addition is a retained failed/drift phase before Root chooses any new seal."
+    },
+    {
+      "path": ".cinder/runtime-source-projection-prepare-v2-20261016/fixture/authored_state_subclass.gd.uid",
+      "present_before_promotion": false,
+      "rule": "No UID created/claimed by this preparation; unexpected selected addition is a retained failed/drift phase before Root chooses any new seal."
+    },
+    {
+      "path": ".cinder/runtime-source-projection-prepare-v2-20261016/fixture/program_state_subclass.gd.uid",
+      "present_before_promotion": false,
+      "rule": "No UID created/claimed by this preparation; unexpected selected addition is a retained failed/drift phase before Root chooses any new seal."
+    },
+    {
+      "path": ".cinder/runtime-source-projection-prepare-v2-20261016/fixture/source_projection_smoke.gd.uid",
+      "present_before_promotion": false,
+      "rule": "No UID created/claimed by this preparation; unexpected selected addition is a retained failed/drift phase before Root chooses any new seal."
+    }
+  ],
+  "native_entry": "res://.cinder/runtime-source-projection-prepare-v2-20261016/fixture/source_projection_smoke.gd",
+  "native_report_env": "CINDER_SOURCE_PROJECTION_REPORT",
+  "native_report_format": "Plain JSON actual rows/checks/failures/first_failure/complete/success; observations carry original Exact string units, exact errors/getter counts and decimal native IDs. Full native units must be complete before encoding.",
+  "no_global_closure": "Fixed named/literal subset from retained current73 inputs plus9 explicitly selected private test resources. Not a complete dynamic dependency/resource import or global UID census. Missing literal strings remain qualifications; no new native load claim.",
+  "custody": {
+    "no_live_promotions": true,
+    "no_engine_parser_import": true,
+    "no_git_worker_or_mail_changes": true,
+    "Agent02": "not accessed/contacted"
+  },
+  "future_launch_requirements": [
+    "Root source-reviews and materializes exactly selected private resources; preserves before hashes and absent UID states.",
+    "Use actual canonical scripts/dev/dev.py godot_lock(root) and run_validation(command,context,lock_fd,180) only. No engine resolver/process invoked during this preparation.",
+    "Unique absent output directory/report; finite native150s and host180s AFTER acquiring queue. Own child only; no wait time counted in timeout.",
+    "Catalogue controls require a separate Root-reviewed finally-restoring wrapper: retain exact original bytes+mode before queue, recheck at lock, restore only after owned child closes (including exceptions/interrupts), verify bytes+mode before lock release. Do not rely on fixture finally alone or perform the native catalogue cases without this wrapper.",
+    "Pin named source bytes before/atlock/afterchild/close. Expected temporary catalogue writes exist only within controls and must restore before report/close. Any unexplained source drift, partial/missing report, unexpected raw diagnostics, failed row or incomplete cleanup refuses success.",
+    "All original raw streams/index/report/source records are immutable; record actual native/dev return qualification and preserve errors/timeout/partial source observations. No repeated engine execution is automatically authorized by a failed test."
+  ],
+  "additive_identity_remedy": "Only TEST self-class operands/global declaration and all matched private resource paths differ; raw production candidate3d9b remains exact. Wrapper remains byte-exact v1 because flat sibling preserves ROOT=HERE.parents[1]. Six exact preloaded Script object assertions prevent fallback-only success. No native execution in this preparation."
+}

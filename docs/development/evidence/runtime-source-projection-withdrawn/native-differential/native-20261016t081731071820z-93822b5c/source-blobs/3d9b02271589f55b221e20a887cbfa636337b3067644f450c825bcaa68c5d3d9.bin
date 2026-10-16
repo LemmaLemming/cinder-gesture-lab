@@ -1,0 +1,45 @@
+--- a/scripts/combat/threat_scheduler.gd
++++ b/scripts/combat/threat_scheduler.gd
+@@ -588,7 +588,7 @@
+ 	if PreviewExact.stringify(sequence_snapshot).is_empty(): return "Bounded exact authored program required"
+ 	var reader = ReplayProgram.new()
+ 	if not reader._restore_authored_for_source_guard(sequence_snapshot, context.source_epoch, context.generation) or not reader.is_authored_enemy(): return "Distinct immutable authored enemy program required"
+-	var plan: Dictionary = reader.state()
++	var plan: Dictionary = reader._authored_source_guard_identity()
+ 	var native: Variant = owner.call("get_authored_echo_binding")
+ 	if not is_instance_valid(owner) or not owner.is_inside_tree() or owner.is_queued_for_deletion() or owner.get_script() != actual_script or not native is Dictionary or not Codec.keys_error(native, ["api_revision", "source_id", "source_epoch", "generation", "definition", "alive", "knot_position"]).is_empty() or native.api_revision != "authored-echo-source-1" or not native.source_id is String or not native.source_epoch is String or not native.generation is int or not Codec.is_integer(native.generation, 0) or not native.definition is Dictionary or not native.alive is bool or not native.knot_position is Vector3 or not native.knot_position.is_finite(): return "Actual pure authored source binding rejected"
+ 	var selected: Dictionary = native
+--- a/scripts/combat/replay_program.gd
++++ b/scripts/combat/replay_program.gd
+@@ -85,6 +85,14 @@
+ 		return "Distinct immutable authored enemy program required"
+ 	return _reader._binding_error_for_source_guard(snapshot, expected_source_id, source_epoch, generation, profile_id, native_definition, actual_world, staged_binding)
+ 
++## Same-call pure projection for Scheduler's fresh exact-native source reader.
++## This is not a validation receipt or native authority. Subclasses keep state().
++func _authored_source_guard_identity() -> Dictionary:
++	if get_script() != CinderReplayProgram or _reader == null or _reader.get_script() != Authored:
++		return state()
++	return _reader._source_guard_identity()
++
++
+ func state() -> Dictionary:
+ 	return {} if _reader == null else _reader.state()
+ 
+--- a/scripts/combat/authored_enemy_sequence.gd
++++ b/scripts/combat/authored_enemy_sequence.gd
+@@ -75,6 +75,14 @@
+ 			event.record.world_origin = Codec.read_vector3(event.record.world_origin)
+ 			event.record.direction = Codec.read_vector3(event.record.direction)
+ 	return native
++
++
++## Pure two-field projection; validation and native getter order stay at callers.
++## The source guard owns this exact reader and no caller can mutate its _json.
++func _source_guard_identity() -> Dictionary:
++	if get_script() != CinderAuthoredEnemySequence or _json.is_empty():
++		return state()
++	return {"source_id": _json.source_id, "authored": {"tether_position": Codec.read_vector3(_json.authored.tether_position)}}
+ 
+ 
+ func snapshot_state() -> Dictionary:

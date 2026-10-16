@@ -1,0 +1,446 @@
+{
+  "schema": 1,
+  "status": "INDEPENDENT_READ_ONLY_PAIRED_REVIEW_COMPLETE",
+  "reviewed_at": "2026-10-16T08:43:19.277289+00:00",
+  "run": ".cinder/runtime-source-projection-prepare-v2-20261016/paired-performance-prepare/runs/pair-20261016t083903166248z-f6be20e8",
+  "result": {
+    "path": ".cinder/runtime-source-projection-prepare-v2-20261016/paired-performance-prepare/runs/pair-20261016t083903166248z-f6be20e8/result.json",
+    "present": true,
+    "sha256": "daa9ae7babf6c7ba836ec223a661684a1d07e2d7deef9ddc511494b3913d8278",
+    "bytes": 33831,
+    "mode": "0644"
+  },
+  "index": {
+    "path": ".cinder/runtime-source-projection-prepare-v2-20261016/paired-performance-prepare/runs/pair-20261016t083903166248z-f6be20e8/index.json",
+    "present": true,
+    "sha256": "32e88b615a21ba018d3069c4d7ce7b0e237184ef205afe7684e7fc099909828f",
+    "bytes": 33292,
+    "mode": "0644"
+  },
+  "comparison": {
+    "path": ".cinder/runtime-source-projection-prepare-v2-20261016/paired-performance-prepare/runs/pair-20261016t083903166248z-f6be20e8/comparison.json",
+    "present": true,
+    "sha256": "2c6ba86b63eea39a7c794378c4e53558b7cd458d469d2d9648eb0ac80cc2cd21",
+    "bytes": 4355,
+    "mode": "0644"
+  },
+  "selected_seal": {
+    "path": ".cinder/runtime-source-projection-prepare-v2-20261016/paired-performance-prepare/runs/pair-20261016t083903166248z-f6be20e8/selected-seal.json",
+    "present": true,
+    "sha256": "646f26f9661095769112364d3e0032a0fe0c3af2184aa849b12ddfeff4833743",
+    "bytes": 47220,
+    "mode": "0644"
+  },
+  "indexed_artifact_counts_verified": {
+    "pair": 134,
+    "original": 10,
+    "candidate": 10
+  },
+  "source_joins": {
+    "named_pins": 103,
+    "runtime_config_fixture_uid_subset": 92,
+    "host_controls": 11,
+    "subject_delta": [
+      "scripts/combat/authored_enemy_sequence.gd",
+      "scripts/combat/replay_program.gd",
+      "scripts/combat/threat_scheduler.gd"
+    ],
+    "original_and_candidate_all4_phase_checkpoints_equal_selected_sources": true,
+    "pair_before_atlock_afterrestore_atclose_all_original": true,
+    "actual_CAS_bytes_and_logical_mode_maps": true,
+    "all103_current_physical_match_original": true,
+    "recovery_donors_exact": true,
+    "no_conflict": true,
+    "both_owned_children_closed_before_restore": true,
+    "limits": "Fixed named source/UID scope, not a global closure. CAS storage modes differ legitimately from logical source modes."
+  },
+  "phases": [
+    {
+      "selection": "original",
+      "raw": {
+        "path": ".cinder/runtime-source-projection-prepare-v2-20261016/paired-performance-prepare/runs/pair-20261016t083903166248z-f6be20e8/original/raw.log",
+        "present": true,
+        "sha256": "f59808b5b4419d8e5ecf770d4ea6f4a0759461b82f5a284515eb9f3217ab41f6",
+        "bytes": 31170,
+        "mode": "0644"
+      },
+      "native_profile": {
+        "path": ".cinder/runtime-source-projection-prepare-v2-20261016/paired-performance-prepare/runs/pair-20261016t083903166248z-f6be20e8/original/native-profile.json",
+        "present": true,
+        "sha256": "14765fe544d871d54bcac1c1963cc5b09f52ae646656d4856d08aaab162d5600",
+        "bytes": 30371,
+        "mode": "0644"
+      },
+      "result": {
+        "path": ".cinder/runtime-source-projection-prepare-v2-20261016/paired-performance-prepare/runs/pair-20261016t083903166248z-f6be20e8/original/result.json",
+        "present": true,
+        "sha256": "e19e913ff9eb0d3b9c624b0e99b0c1b22db9c4cfd678825f4f286830b3cc341c",
+        "bytes": 4203,
+        "mode": "0644"
+      },
+      "index": {
+        "path": ".cinder/runtime-source-projection-prepare-v2-20261016/paired-performance-prepare/runs/pair-20261016t083903166248z-f6be20e8/original/index.json",
+        "present": true,
+        "sha256": "3135ba083ea64bb9ed14b923039f5525c451a66d33a704e5b9c603e2f59fa7b7",
+        "bytes": 2327,
+        "mode": "0644"
+      },
+      "raw_profile_line_sha256": "3ae77cbdb3a3f3d7cf6f3dab82e5bb05e17a1db2bf5322c9bec492264e9e462f",
+      "actual_checks": 113,
+      "actual_failures": 0,
+      "actual_complete": true,
+      "host_clean": false,
+      "host_scope": "soleCA diagnostic retained",
+      "native_exit_qualification": "dev child.wait-derived0 plus actual owned Popen return0/closed; not an independent OS terminal receipt",
+      "automatic": {
+        "count": 72,
+        "inclusive_total_us": 3382938,
+        "mean_us": 46985.25,
+        "p50_us": 46195,
+        "p95_us": 51095,
+        "max_us": 91243
+      },
+      "phases": {
+        "warning": {
+          "count": 16,
+          "inclusive_total_us": 719594,
+          "mean_us": 44974.625,
+          "p50_us": 44658,
+          "p95_us": 46845,
+          "max_us": 46845
+        },
+        "lock": {
+          "count": 23,
+          "inclusive_total_us": 1071990,
+          "mean_us": 46608.260869565216,
+          "p50_us": 44803,
+          "p95_us": 51110,
+          "max_us": 53233
+        },
+        "active": {
+          "count": 14,
+          "inclusive_total_us": 710840,
+          "mean_us": 50774.28571428572,
+          "p50_us": 47555,
+          "p95_us": 91243,
+          "max_us": 91243
+        },
+        "recovery": {
+          "count": 19,
+          "inclusive_total_us": 880514,
+          "mean_us": 46342.84210526316,
+          "p50_us": 46228,
+          "p95_us": 47639,
+          "max_us": 47639
+        }
+      },
+      "actual_actions": [
+        {
+          "completed_at_s": 0.933333333333335,
+          "damage": 0.0,
+          "hits": 0,
+          "kind": "dash",
+          "started_at_s": 0.750000000000001
+        },
+        {
+          "completed_at_s": 1.46666666666667,
+          "damage": 0.0,
+          "hits": 0,
+          "kind": "dash",
+          "started_at_s": 1.28333333333333
+        },
+        {
+          "completed_at_s": 1.55,
+          "damage": 20.0,
+          "hits": 1,
+          "kind": "primary",
+          "started_at_s": 1.55
+        }
+      ],
+      "wall_elapsed_us": 3943519,
+      "simulation_elapsed_s": 1.2,
+      "admission_projection_bind_inclusive_us": 165476,
+      "sample_counts": {
+        "automatic": 72,
+        "manual": 1,
+        "fixed_clock_probes_separate": 15
+      },
+      "cleanup_scope": "Actual113 footer is after await _dispose; retained base _retire queue_frees host+viewport and waits frames. No ObjectDB leak diagnostic. This fixture has no explicit postfree WeakRef/group inventory assertion."
+    },
+    {
+      "selection": "candidate",
+      "raw": {
+        "path": ".cinder/runtime-source-projection-prepare-v2-20261016/paired-performance-prepare/runs/pair-20261016t083903166248z-f6be20e8/candidate/raw.log",
+        "present": true,
+        "sha256": "37ae00a594c5925f1cfce762aec8f2812c005924a0ccc1a70c1ed425f3cb46da",
+        "bytes": 31596,
+        "mode": "0644"
+      },
+      "native_profile": {
+        "path": ".cinder/runtime-source-projection-prepare-v2-20261016/paired-performance-prepare/runs/pair-20261016t083903166248z-f6be20e8/candidate/native-profile.json",
+        "present": true,
+        "sha256": "443feb84805db39b4561d0abd85a0e224ecf196c80bcfb933f687c69d1b0429d",
+        "bytes": 30797,
+        "mode": "0644"
+      },
+      "result": {
+        "path": ".cinder/runtime-source-projection-prepare-v2-20261016/paired-performance-prepare/runs/pair-20261016t083903166248z-f6be20e8/candidate/result.json",
+        "present": true,
+        "sha256": "4b306b6505721de19874de624029f32ffb0e9e8afcb4172470632792ed0602f2",
+        "bytes": 4203,
+        "mode": "0644"
+      },
+      "index": {
+        "path": ".cinder/runtime-source-projection-prepare-v2-20261016/paired-performance-prepare/runs/pair-20261016t083903166248z-f6be20e8/candidate/index.json",
+        "present": true,
+        "sha256": "11a1d7d632896b9b10dc40b8756e6d2c5e849cbb9858089ecef3edb7e1ff256d",
+        "bytes": 2327,
+        "mode": "0644"
+      },
+      "raw_profile_line_sha256": "61daa55b49d6cbd56ba7b29395d6cc4d2ef8230834ec839a31a95f06ae1de033",
+      "actual_checks": 113,
+      "actual_failures": 0,
+      "actual_complete": true,
+      "host_clean": false,
+      "host_scope": "soleCA diagnostic retained",
+      "native_exit_qualification": "dev child.wait-derived0 plus actual owned Popen return0/closed; not an independent OS terminal receipt",
+      "automatic": {
+        "count": 72,
+        "inclusive_total_us": 3312522,
+        "mean_us": 46007.25,
+        "p50_us": 44737,
+        "p95_us": 48371,
+        "max_us": 84221
+      },
+      "phases": {
+        "warning": {
+          "count": 16,
+          "inclusive_total_us": 746630,
+          "mean_us": 46664.375,
+          "p50_us": 46871,
+          "p95_us": 48371,
+          "max_us": 48371
+        },
+        "lock": {
+          "count": 23,
+          "inclusive_total_us": 1039183,
+          "mean_us": 45181.86956521739,
+          "p50_us": 44472,
+          "p95_us": 47684,
+          "max_us": 49938
+        },
+        "active": {
+          "count": 14,
+          "inclusive_total_us": 665139,
+          "mean_us": 47509.92857142857,
+          "p50_us": 44409,
+          "p95_us": 84221,
+          "max_us": 84221
+        },
+        "recovery": {
+          "count": 19,
+          "inclusive_total_us": 861570,
+          "mean_us": 45345.78947368421,
+          "p50_us": 44600,
+          "p95_us": 49504,
+          "max_us": 49504
+        }
+      },
+      "actual_actions": [
+        {
+          "completed_at_s": 0.950000000000001,
+          "damage": 0.0,
+          "hits": 0,
+          "kind": "dash",
+          "started_at_s": 0.766666666666667
+        },
+        {
+          "completed_at_s": 1.48333333333333,
+          "damage": 0.0,
+          "hits": 0,
+          "kind": "dash",
+          "started_at_s": 1.3
+        },
+        {
+          "completed_at_s": 1.56666666666667,
+          "damage": 20.0,
+          "hits": 1,
+          "kind": "primary",
+          "started_at_s": 1.56666666666667
+        }
+      ],
+      "wall_elapsed_us": 3977192,
+      "simulation_elapsed_s": 1.2,
+      "admission_projection_bind_inclusive_us": 272119,
+      "sample_counts": {
+        "automatic": 72,
+        "manual": 1,
+        "fixed_clock_probes_separate": 15
+      },
+      "cleanup_scope": "Actual113 footer is after await _dispose; retained base _retire queue_frees host+viewport and waits frames. No ObjectDB leak diagnostic. This fixture has no explicit postfree WeakRef/group inventory assertion."
+    }
+  ],
+  "comparison_recomputed": {
+    "automatic": {
+      "inclusive_total_us": {
+        "original": 3382938,
+        "candidate": 3312522,
+        "candidate_minus_original": -70416,
+        "percent_change": -2.0815043018819757
+      },
+      "p50_us": {
+        "original": 46195,
+        "candidate": 44737,
+        "candidate_minus_original": -1458,
+        "percent_change": -3.1561857343868405
+      },
+      "p95_us": {
+        "original": 51095,
+        "candidate": 48371,
+        "candidate_minus_original": -2724,
+        "percent_change": -5.33124571875917
+      },
+      "max_us": {
+        "original": 91243,
+        "candidate": 84221,
+        "candidate_minus_original": -7022,
+        "percent_change": -7.695932838683516
+      }
+    },
+    "phases": {
+      "warning": {
+        "inclusive_total_us": {
+          "original": 719594,
+          "candidate": 746630,
+          "candidate_minus_original": 27036,
+          "percent_change": 3.7571185974313304
+        },
+        "p50_us": {
+          "original": 44658,
+          "candidate": 46871,
+          "candidate_minus_original": 2213,
+          "percent_change": 4.955439115052185
+        },
+        "p95_us": {
+          "original": 46845,
+          "candidate": 48371,
+          "candidate_minus_original": 1526,
+          "percent_change": 3.257551499626432
+        },
+        "max_us": {
+          "original": 46845,
+          "candidate": 48371,
+          "candidate_minus_original": 1526,
+          "percent_change": 3.257551499626432
+        }
+      },
+      "lock": {
+        "inclusive_total_us": {
+          "original": 1071990,
+          "candidate": 1039183,
+          "candidate_minus_original": -32807,
+          "percent_change": -3.0603830259610665
+        },
+        "p50_us": {
+          "original": 44803,
+          "candidate": 44472,
+          "candidate_minus_original": -331,
+          "percent_change": -0.7387898131821502
+        },
+        "p95_us": {
+          "original": 51110,
+          "candidate": 47684,
+          "candidate_minus_original": -3426,
+          "percent_change": -6.703189199765214
+        },
+        "max_us": {
+          "original": 53233,
+          "candidate": 49938,
+          "candidate_minus_original": -3295,
+          "percent_change": -6.189769503879172
+        }
+      },
+      "active": {
+        "inclusive_total_us": {
+          "original": 710840,
+          "candidate": 665139,
+          "candidate_minus_original": -45701,
+          "percent_change": -6.429154240054025
+        },
+        "p50_us": {
+          "original": 47555,
+          "candidate": 44409,
+          "candidate_minus_original": -3146,
+          "percent_change": -6.615497844600993
+        },
+        "p95_us": {
+          "original": 91243,
+          "candidate": 84221,
+          "candidate_minus_original": -7022,
+          "percent_change": -7.695932838683516
+        },
+        "max_us": {
+          "original": 91243,
+          "candidate": 84221,
+          "candidate_minus_original": -7022,
+          "percent_change": -7.695932838683516
+        }
+      },
+      "recovery": {
+        "inclusive_total_us": {
+          "original": 880514,
+          "candidate": 861570,
+          "candidate_minus_original": -18944,
+          "percent_change": -2.151470618297946
+        },
+        "p50_us": {
+          "original": 46228,
+          "candidate": 44600,
+          "candidate_minus_original": -1628,
+          "percent_change": -3.521675175218486
+        },
+        "p95_us": {
+          "original": 47639,
+          "candidate": 49504,
+          "candidate_minus_original": 1865,
+          "percent_change": 3.914859673796678
+        },
+        "max_us": {
+          "original": 47639,
+          "candidate": 49504,
+          "candidate_minus_original": 1865,
+          "percent_change": 3.914859673796678
+        }
+      }
+    },
+    "qualification": "One original-first/candidate-second sequential pair. Order/cache/OS noise remains; descriptive, no causal/FPS/full-route claim.",
+    "wall_elapsed_us": {
+      "original": 3943519,
+      "candidate": 3977192,
+      "candidate_minus_original": 33673,
+      "percent_change": 0.8538820277016468
+    },
+    "admission_projection_bind_inclusive_us": {
+      "original": 165476,
+      "candidate": 272119,
+      "candidate_minus_original": 106643,
+      "percent_change": 64.44620367908338
+    },
+    "separate_fixed_clock_probe_elapsed_us": {
+      "original": 36698,
+      "candidate": 38364,
+      "candidate_minus_original": 1666,
+      "percent_change": 4.53975693498283
+    },
+    "simulation_elapsed_s": {
+      "original": 1.2,
+      "candidate": 1.2,
+      "candidate_minus_original": 0.0,
+      "percent_change": 0.0
+    }
+  },
+  "recommendation": "WITHDRAW raw three-file projection from production; keep exact original runtime bytes. No repeat is justified by this pair.",
+  "reason": "Automatic inclusive total -2.08% and p50 -3.16% coexist with warning p50 +4.96%, recovery p95 +3.91%, wall +0.85% and admission +64.45%. One sequential pair provides no convincing material overall benefit; no causal regression or speedup can be established.",
+  "unchanged_requests": "Both performance requests remain open; no FPS, sustained device, fullroute or dynamic call-count conclusion.",
+  "native_statement": "Two actual113/0 complete runs, separate CA-only host nonclean2. Preserve all originals and previous267, failedparse and withdrawn candidates."
+}
