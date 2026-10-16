@@ -758,7 +758,7 @@ func _ot_report(selector: String, complete: bool, scope: String) -> void:
 
 class FinalCourtLab extends QRC:
 	## TEST initial eligibility, not earned canonical court progress.
-	const TEST_SPAWN: Vector3 = Vector3(1.2,0.1,-3.0)
+	const TEST_SPAWN: Vector3 = Vector3(0.0,0.1,-3.0)
 	const SAVE_LIMIT: String = "TEST final-court component has no canonical route/save authority"
 	@export_enum("standard", "challenge") var component_profile: String = "challenge"
 

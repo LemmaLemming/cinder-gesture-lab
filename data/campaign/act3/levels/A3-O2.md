@@ -1,3 +1,9 @@
+## Separate O2 native guard rejects right-hand component approach — 16 October 2026
+
+Neutral03 at `0a7103ff` closed **865/1**,269 ticks,scope incomplete,native/wrapper1; raw `80268f8b8a14b545979dfba7a7f2df10267941d43c55449069806945bdb272e3`. Even after genuine forward Root removal, the C50 prospective union remained too wide at the original declared right-hand component approach `(1.2,.1,-3)`. No C50 cycle/lease is credited. Root response/full HP and normal audio-clean teardown retain their actual scopes. Native camera/admission guards correctly retained their refusal.
+
+The next distinct focused component declares a central approach `(0,.1,-3)` before native construction, keeping every canonical source, source slot, floor/base, native camera and gameplay parameter unchanged. This represents the forward-knot approach on the floor centre; it gives the rear/right Stalker a more longitudinal bearing in portrait. It is an explicitly different TEST initial context, not a change to the canonical spawn or proof that the earlier right-hand context passes. No route/history/snapshot authority is added. Required mixed native pressure remains enforced; no blind repeat or guard relaxation.
+
 ## Separate O2 post-hit pressure observation refined — 16 October 2026
 
 Neutral02 at `a2617d40` closed **631/1**,191 ticks,scope incomplete; raw `8045202c000859a460782565c8298a7aa76fb9d629b457c35f2aabfc189fb6e0`. Actual String-key assertion passed and the prior bounded-value rejection disappeared. The next native guard correctly refused a C50 proposal with `Required union cannot fit the fixed-width HUD-safe rectangle`. Actual Root response still passed/full HP. No native leak warning followed public effects stop/drain; this alone does not establish broader teardown performance.
