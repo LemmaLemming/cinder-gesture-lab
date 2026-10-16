@@ -1,6 +1,14 @@
 # Living Moon difficulty trial
 
-Status: **returned to Integration after a genuine native optical refusal; no difficulty acceptance or novelty claim**. Authorization is RESPONSE `67c87b80-bbae-4d9b-933b-9e3f9c20145e`, ACK `f4b86b99-6fcc-4174-9310-f811dd6c9f53`, for the exact [bounded proposal](A1_L5_DIFFICULTY_PROPOSAL.md). The original eight Act1/all24 campaign content acceptances and L3 amendment remain complete. Sole Act1 ownership/checkout/branch and actual Shared71 adoption `8300b31c` remain verified.
+## One BACK refinement authorized — 16 October 2026
+
+Integration RESPONSE `c6cf20dc-2c38-4d67-838b-32386338f4af`, ACK `29c0aa1b-ac6f-4bd1-b354-2ca629a84c8c`, authorizes one additive full `Vector3.BACK` old-policy trial from the same literal genuine CP3. Its source-reviewed fixture is installed and unexecuted. Preserve full2.7distance, native recognition/readiness/support/timing/guards and ordinary return/primary; no runtime/Codec/recipe/shared/optics/stat/source/clock change. The backward landing is a source hypothesis, not a safety or portrait pass. Original LEFT86/1 and immutable stopping package1725edd6 remain unchanged. New chronological records and this additive fixture are later metadata/source changes, not a repin of earlier evidence.
+
+Only actual complete old BACK safe/useful hold/return/ordinary cadence authorizes one dependent new SAME-BACK trial. Retain measured same landing and original native proofs; compare the complete actual old hold and full timed return, preserving false conflict/equivalent outcomes. Passive bounded current/forecast points and plan/containment/lease/proof/clock/camera observations retain their before-parent199/after3000 order; native sources100 run earlier, so a sampled set is not an exact rejected callback set. Known unsafe stationary hold is refused before contact. If this one trial refuses, cannot complete usefully or proves equivalent, stop for Integration's specific final-exercise retention decision. No producer/import/selector/CP2 reruns or further side search. Original all24/Act1/L3 acceptances remain complete; no human permission, unlock, full-route/all-kit/other-act gate or new original goal.
+
+> Earlier dated entries retain their original scope; this exact refinement is the current authorized work.
+
+Previous stopping packet status: **returned to Integration after a genuine native optical refusal; no difficulty acceptance or novelty claim**. Authorization is RESPONSE `67c87b80-bbae-4d9b-933b-9e3f9c20145e`, ACK `f4b86b99-6fcc-4174-9310-f811dd6c9f53`, for the exact [bounded proposal](A1_L5_DIFFICULTY_PROPOSAL.md). The original eight Act1/all24 campaign content acceptances and L3 amendment remain complete. Sole Act1 ownership/checkout/branch and actual Shared71 adoption `8300b31c` remain verified.
 
 
 ## L5 trial returned to Integration after native refusal — 16 October 2026

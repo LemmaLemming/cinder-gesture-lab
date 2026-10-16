@@ -70,6 +70,9 @@ func _run() -> void:
 	var registry := Registry.new(raw)
 	if not _expect(registry.last_error.is_empty() and registry.scene_error(Layout.LEVEL_ID).is_empty(), "only owned L5 receives isolated TEST registration; no canonical metadata changes"):
 		await _finish(); return
+	if difficulty_case in ["held-back-legacy", "held-back-new"]:
+		difficulty_complete = await _run_back_response_case(transport_request.source_report, transport_request.source_sha256, "legacy" if difficulty_case == "held-back-legacy" else "new", transport_request.get("baseline_report", ""), transport_request.get("baseline_sha256", ""))
+		await _finish(); return
 	if difficulty_case in ["held-legacy", "held-new"]:
 		difficulty_complete = await _run_held_response_case(transport_request.source_report, transport_request.source_sha256, "legacy" if difficulty_case == "held-legacy" else "new", transport_request.get("baseline_report", ""), transport_request.get("baseline_sha256", ""))
 		await _finish(); return
@@ -140,18 +143,18 @@ func _parse_difficulty_arguments() -> bool:
 		if not _expect(separator >= 0 and key in allowed and not values.has(key) and not argument.substr(separator + 1).is_empty(), "one explicit known nonempty difficulty selector: " + argument): return false
 		values[key] = argument.substr(separator + 1)
 	difficulty_case = String(values.get("--case", ""))
-	if not _expect(difficulty_case in ["legacy-producer", "fresh-producer", "selectors", "transport", "metadata", "held-legacy", "held-new"], "explicit scoped difficulty case required"): return false
+	if not _expect(difficulty_case in ["legacy-producer", "fresh-producer", "selectors", "transport", "metadata", "held-legacy", "held-new", "held-back-legacy", "held-back-new"], "explicit scoped difficulty case required"): return false
 	if difficulty_case in ["legacy-producer", "fresh-producer", "selectors"]:
 		return _expect(values.size() == 1, "producer/entry selectors accept no donor or inherited alternate arguments")
 	var required: Array[String] = ["--case", "--source-report", "--source-sha256", "--branch", "--future-profile"]
-	if difficulty_case == "held-new": required.append_array(["--baseline-report", "--baseline-sha256"])
+	if difficulty_case in ["held-new", "held-back-new"]: required.append_array(["--baseline-report", "--baseline-sha256"])
 	if not _expect(values.size() == required.size(), "selected case requires exactly its report/SHA/branch/profile and any genuine baseline selectors"): return false
 	for key: String in required:
 		if not _expect(values.has(key), "required case selector: " + key): return false
 	transport_request = {"source_report": values["--source-report"], "source_sha256": values["--source-sha256"], "branch": values["--branch"], "future_profile": values["--future-profile"]}
-	if difficulty_case in ["held-legacy", "held-new"]:
+	if difficulty_case in ["held-legacy", "held-new", "held-back-legacy", "held-back-new"]:
 		if not _expect(transport_request.branch == "cp3" and transport_request.future_profile == "standard", "held-response always clones actual CP3 with public future Standard while retaining saved native Challenge"): return false
-	if difficulty_case == "held-new":
+	if difficulty_case in ["held-new", "held-back-new"]:
 		transport_request["baseline_report"] = values["--baseline-report"]
 		transport_request["baseline_sha256"] = values["--baseline-sha256"]
 		if not _expect(String(transport_request.baseline_sha256).length() == 64, "complete actual old held-response baseline SHA is required"): return false
@@ -261,6 +264,8 @@ func _run_selectors(registry: CinderCampaignRegistry) -> void:
 
 
 func _case_scope() -> String:
+	if difficulty_case in ["held-back-legacy", "held-back-new"]:
+		return "Additive c6cf20dc BACK-only TEST refinement from an exact original independent CP3 branch: one full public Vector3.BACK dash with unchanged native2.7 distance/readiness/deadlines, actual stationary hold/full return/ordinary primary and cadence. No new placement, body/HP/ammo/clock/profile/history/source/geometry/camera/guard/timing write. New case requires an actual complete successful old BACK report and maps its full executed hold/return only by the observed CP3 clock offset; no clamp, extension, diagonal substitution, equal-clock or both-eligible claim. False mapped conflict remains data; safe actual old-relative return replay can demonstrate equivalence. Known conflicting stationary waiting is refused before contact. Passive bounded union diagnostics at199(after native100,before host200) and3000(after host) separate current/forecast/mandatory points, plan/current containment, leases/proofs/clock/camera and pure boundary equality; neither is the exact rejected guard callback. Original LEFT86/1 remains failed/incomplete. Natural refusal or equivalence stops dependent trials for Integration retention/refinement; no extra side search, shorter dash, portrait, full route, boss defeat, all-kit or balance claim."
 	if difficulty_case in ["held-legacy", "held-new"]:
 		return "One exact original independently loaded CP3 whole Store/Attempts, actual Challenge native profile with public future Standard, supported literal authored approach, no new TEST relocation. Public full left dash/held landing/full return/ordinary primary with original native leases/proofs/geometry/cue phases/clocks/full action paths, unchanged HP/ammo, no source-hit callbacks or invulnerability reliance and final whole Save retaining original CP3. New case additionally requires actual old useful-response report and live pure strict-temporal/actual-radius/support held-H counterfactual against genuinely sampled Blink. Same old CP3-relative return schedule is tried only when complete hold and return are safe before new Blink active; equivalent two-dash success receives no automatic difficulty credit and returns to Integration. No equal absolute-clock/both-eligibility/nominal proof-timeline, full route, boss defeat, portrait, OS-gesture, all-kit, balance or performance claim. Failed/inconclusive native observations are retained without guard/timing changes."
 	if difficulty_case == "transport":
@@ -376,6 +381,9 @@ func _expect(ok: bool, label: String) -> bool:
 
 func _finish() -> void:
 	if finishing: return
+	if difficulty_case in ["held-back-legacy", "held-back-new"]:
+		_back_retire_diagnostics()
+		_held_finalize_observations()
 	if difficulty_case in ["held-legacy", "held-new"]: _held_finalize_observations()
 	finishing = true; paused = true; _end_watch("normal " + difficulty_case + " cleanup")
 	# Unwind any native probe emitter before normal node disposal.
@@ -1000,3 +1008,268 @@ func _held_finalize_observations() -> void:
 	held_result["close_clock_s"] = _scheduler().get_clock() if _live() else -1.0
 	held_result["close_position"] = Codec.vector3(game.player.global_position) if _live() else []
 	if is_instance_valid(probe) and probe.tick_finished.is_connected(_held_tick): probe.tick_finished.disconnect(_held_tick)
+
+
+# PRIVATE ADDITIVE BACK REFINEMENT, authority c6cf20dc. UNPARSED/UNEXECUTED.
+# Original LEFT functions and86/1 evidence remain unchanged.
+var back_union_rows: Array[Dictionary] = []
+var back_union_observed: int = 0
+var back_union_omitted: int = 0
+
+
+func _run_back_response_case(path: String, sha256: String, mode: String, baseline_path: String = "", baseline_sha256: String = "") -> bool:
+	if not _expect(mode in ["legacy", "new"], "explicit old or new held-response case"): return false
+	if not _transport_read_input(path, sha256, "cp3") or not await _transport_open_original("standard"): return false
+	var local: Dictionary = transport_input_unit.level.local
+	if not _expect(local.schema_version == (1 if mode == "legacy" else 2) and local.scheduler.profile.id == "challenge" and local.stage == "final" and local.eye.hp == 80.0 and local.scheduler.reservations.is_empty() and local.next_attack == ("blink" if mode == "legacy" else "sneeze"), "actual contemporaneous CP3 retains its original whole-attempt initial leader"): return false
+	moon = game.active_level; eye_ref = weakref(moon.get("eye"))
+	var eye: CharacterBody3D = eye_ref.get_ref() as CharacterBody3D
+	var collision: CollisionShape3D = eye.call("get_collision")
+	eye_collision_ref = weakref(collision); eye_shape_ref = weakref(collision.shape)
+	held_origin = game.player.global_position; held_cp3_clock = _scheduler().get_clock()
+	held_hp = game.player.hp; held_shells = game.player.shells
+	var support: Dictionary = Sweep.step(game.player, game.player.global_transform, Vector3.ZERO, [moon.call("floor_region")])
+	if not _expect(Vector2(held_origin.x, held_origin.z).distance_to(Vector2(Layout.EYE_APPROACH_POSITION.x, Layout.EYE_APPROACH_POSITION.z)) < 0.001 and game.player.get_threat_response_state().stable and not support.has("error") and not support.get("collided", true) and game.player.equipment.snapshot() == Equipment.STARTER and held_hp == 100.0 and held_shells == 2, "same authored supported CP3 start and neutral resources are restored literally; no new TEST pose or refill"): return false
+	var baseline: Dictionary = {}
+	if mode == "new":
+		baseline = _back_read_baseline(baseline_path, baseline_sha256)
+		if baseline.is_empty(): return false
+		if not _expect(Codec.read_vector3(baseline.origin).distance_to(held_origin) < 0.001, "new actual CP3 start matches the executed old start within measured submillimetre support tolerance"): return false
+	held_result = {"stage": "held-landing response", "mode": mode, "status": "incomplete", "source_report": path, "source_sha256": sha256, "branch": "cp3", "baseline_report": baseline_path, "baseline_sha256": baseline_sha256, "origin": Codec.vector3(held_origin), "cp3_clock_s": held_cp3_clock, "source_order": held_order, "leases": {}, "phases": held_phases, "action_receipts": [], "counterfactual": {}, "stopping_rule": "Order/centre change alone earns no difficulty credit; equivalent two-dash response returns to Integration.", "setup_scope": "Literal genuine CP3 with producer's disclosed TEST predecessor/Rusher/approach history; no new Hero/source placement or native-state write."}
+	held_result["response_variant"] = "back"
+	held_result["first_input"] = Codec.vector3(Vector3.BACK)
+	held_result["union_diagnostics"] = back_union_rows
+	held_result["refinement_authority"] = "c6cf20dc-2c38-4d67-838b-32386338f4af"
+	receipts.append(held_result)
+	if not is_instance_valid(probe): probe = NativeTickProbe.new(); probe.process_physics_priority = 3000; root.add_child(probe)
+	# Producer admission-pause observers must NOT be connected for this case.
+	before_parent_probe = BeforeParentProbe.new(); root.add_child(before_parent_probe)
+	before_parent_probe.before_parent.connect(_back_before_parent)
+	probe.tick_finished.connect(_back_after_parent)
+	probe.tick_finished.connect(_held_tick)
+	game.player.world_action_executed.connect(_held_world_action)
+	_begin_watch("actual held-response live native contacts/cancellations", moon, game.player)
+	held_live = true
+	if not await _click(game, "ResumeButton"): return _held_stop("Public Resume failed; no forced focus/resume")
+	if not await _held_wait(func() -> bool: return held_order.size() >= 1, "first genuine admission"): return false
+	var expected_leader: String = Layout.EYE_ID if mode == "legacy" else Layout.NOSE_ID
+	if not _expect(held_order[0] == expected_leader, "actual first admitted source matches original saved attempt policy"): return _held_stop("Native initial order differed")
+	var leader: Dictionary = held_leases[expected_leader].record
+	var proof: Dictionary = held_leases[expected_leader].framing.proof
+	if not _expect(proof.path is Array and proof.path.size() >= 2 and proof.path[1].kind == "escape_dash", "retain genuine native recognition/readiness proof without replacing its path"): return false
+	var earliest_escape: float = float(proof.path[1].start_s)
+	if not await _held_wait(func() -> bool: return _scheduler().get_clock() >= earliest_escape and _held_ready(), "actual recognition and public dash readiness", float(leader.active_from_s)): return false
+	if not await _held_dash(Vector3.BACK, "same initial full BACK dash"): return false
+	held_landing = game.player.global_position
+	held_result["landing"] = Codec.vector3(held_landing)
+	var hold_start: float = _scheduler().get_clock()
+	if not await _held_wait(func() -> bool: return held_order.size() == 2, "native lock follower while genuinely holding BACK landing", float(leader.active_from_s)): return false
+	if not _expect(held_order == ([Layout.EYE_ID, Layout.NOSE_ID] if mode == "legacy" else [Layout.NOSE_ID, Layout.EYE_ID]), "both original native sources admitted in actual policy order; no simultaneous-eligibility claim"): return false
+	var blink: Dictionary = held_leases[Layout.EYE_ID].record
+	var nose: Dictionary = held_leases[Layout.NOSE_ID].record
+	var return_at: float = maxf(float(blink.active_until_s), float(nose.active_until_s))
+	var return_policy: String = "hold through both original active intervals"
+	if mode == "new":
+		if not _expect(Codec.read_vector3(baseline.landing).distance_to(held_landing) < 0.001, "new full dash reaches the same measured old held landing"): return false
+		if not _back_counterfactual(blink, baseline): return false
+		# Replay the old actual CP3-relative return time where its complete timed
+		# path is safe under the real new leases. This can demonstrate equivalence.
+		var replay_at: float = held_cp3_clock + float(baseline.return_start_s) - float(baseline.cp3_clock_s)
+		var duration: float = float(game.player.equipment.resolved_stats().dash_duration)
+		var now: float = _scheduler().get_clock()
+		var response: Dictionary = game.player.get_threat_response_state()
+		var ready_at: float = now + maxf(float(response.dash_cooldown_left_s), float(response.commitment_remaining_s))
+		var mapped_return: Array[Dictionary] = _back_mapped_return(baseline)
+		var support_return: Dictionary = Sweep.sweep(game.player, game.player.global_transform, held_origin - held_landing, [moon.call("floor_region")])
+		var refusal_reasons: Array[String] = []
+		if replay_at < now: refusal_reasons.append("old relative return time already passed")
+		if not response.stable or response.motion.queued_dash != Vector3.ZERO or ready_at > replay_at: refusal_reasons.append("actual native readiness cannot reach old return time")
+		if support_return.has("error") or support_return.get("collided", true): refusal_reasons.append("actual full return support/sweep refused")
+		if not _back_path_safe([_back_mapped_hold(baseline)]): refusal_reasons.append("complete mapped old hold conflicts with actual new timed union")
+		if not _back_path_safe(mapped_return): refusal_reasons.append("complete mapped actual old return path conflicts with actual new timed union")
+		if not _held_timed_safe(held_landing, held_landing, now, replay_at): refusal_reasons.append("intervening actual stationary hold conflicts")
+		if not _held_timed_safe(held_landing, held_origin, replay_at, replay_at + duration): refusal_reasons.append("current actual full return trajectory conflicts")
+		var replay_safe: bool = refusal_reasons.is_empty()
+		held_result["old_return_schedule_replay"] = {"at_s": replay_at, "old_cp3_relative_s": float(baseline.return_start_s) - float(baseline.cp3_clock_s), "native_ready_at_s": ready_at, "complete_mapped_old_hold_exact": _held_wire(_back_mapped_hold(baseline)), "complete_mapped_old_return_exact": _held_wire(mapped_return), "original_return_action_exact": baseline.original_return_action_exact, "actual_return_support_exact": _held_wire(support_return), "complete_timed_path_safe": replay_safe, "refusal_reasons": refusal_reasons, "finish_before_Blink_active_required": false, "analytic_only_until_actual_execution": true}
+		if replay_safe:
+			return_at = replay_at; return_policy = "same actual old CP3-relative return schedule"
+		else:
+			return_at = float(nose.active_until_s); return_policy = "adjusted return after actual Sneeze active, before sampled Blink active"
+		if not replay_safe and not _expect(return_at + duration < float(blink.active_from_s), "chosen actual return can finish before unchanged sampled Blink active; otherwise stop without forcing it"): return _held_stop("No bounded supported two-dash return before sampled Blink active")
+	# Both actual leases now exist. Refuse known conflicting stationary waiting
+	# before entering it; this never injures Hero to demonstrate a counterfactual.
+	var intended_hold: Dictionary = {"from": held_landing, "to": held_landing, "start_s": _scheduler().get_clock(), "end_s": return_at}
+	var known_safe: bool = return_at >= float(intended_hold.start_s) and _back_path_safe([intended_hold])
+	held_result["intended_stationary_hold"] = {"segment_exact": _held_wire(intended_hold), "timed_union_safe": known_safe, "checked_before_wait": true, "native_radius": Scheduler.CAPSULE_RADIUS}
+	if not known_safe: return _held_stop("Known conflicting stationary BACK hold refused before contact")
+	if not await _held_wait(func() -> bool: return _scheduler().get_clock() >= return_at and _held_ready(), "hold until selected actual return boundary", minf(float(blink.recovery_until_s), float(nose.recovery_until_s))): return false
+	if not _expect(game.player.global_position.distance_to(held_landing) < 0.001 and _held_hold_supported(hold_start, _scheduler().get_clock()), "executed stationary supported hold has complete native endpoints and zero contact"): return false
+	var return_start: float = _scheduler().get_clock()
+	held_result["return_policy"] = return_policy
+	held_result["actual_hold"] = {"from": Codec.vector3(held_landing), "to": Codec.vector3(held_landing), "start_s": hold_start, "end_s": return_start, "executed": true}
+	held_result["actual_hold_exact"] = Exact.stringify(held_result.actual_hold)
+	if not await _held_dash((held_origin - game.player.global_position).normalized(), "actual full ordinary return; no TEST recovery teleport"): return false
+	if not _expect(game.player.global_position.distance_to(held_origin) < 0.01, "actual full return dash reaches measured original useful approach"): return false
+	if not await _held_wait(func() -> bool: return _held_ready() and game.player.get_threat_response_state().primary_cooldown_left_s == 0.0 and _genuine_recovery(_boss_records()), "actual stationary low-eye recovery primary readiness", minf(float(blink.recovery_until_s), float(nose.recovery_until_s))): return false
+	if not _expect(game.camera_framing_error(moon.camera_framing_points()).is_empty(), "actual current unchanged full source/cue/response framing before ordinary primary"): return _held_stop("Native current optics refused the ordinary response")
+	var primary_time: float = _scheduler().get_clock()
+	var primary_deadline: float = 0.0
+	for record: Dictionary in _boss_records():
+		if String(record.state) == "recovery": primary_deadline = maxf(primary_deadline, float(record.recovery_until_s))
+	var stats: Dictionary = game.player.equipment.resolved_stats()
+	var completion: float = primary_time + maxf(float(stats.primary_cooldown), float(game.player.get_threat_response_state().primary_commitment_s))
+	if not _expect(primary_deadline > completion, "actual ordinary primary and unchanged cooldown/commitment fit a genuine retained recovery"): return false
+	var before_hp: float = eye.get("hp")
+	var hits: int = game.player.slash((eye.global_position - game.player.global_position).normalized())
+	held_primary_done = true
+	if not _expect(hits == 1 and before_hp == 80.0 and eye.get("hp") == before_hp - float(stats.primary_damage) and held_actions.size() == 3 and held_actions[2].kind == "primary" and held_actions[2].hits == 1 and game.player.get_threat_response_state().primary_cooldown_left_s > 0.0, "one immediate real ordinary primary80-to60 after two full public dashes pays its native cooldown"): return false
+	if not await _held_wait(func() -> bool: return _scheduler().get_clock() >= completion and game.player.get_threat_response_state().primary_cooldown_left_s == 0.0, "actual ordinary completion under original recovery", primary_deadline): return false
+	# Finish both genuine active windows at the returned safe position. This
+	# never rewinds a lease or waits for a fabricated replay of the earlier hold.
+	if not await _held_wait(func() -> bool: return _scheduler().get_clock() > maxf(float(blink.active_until_s), float(nose.active_until_s)), "both original active intervals genuinely ended", minf(float(blink.recovery_until_s), float(nose.recovery_until_s))): return false
+	for id: String in [Layout.EYE_ID, Layout.NOSE_ID]:
+		for phase: String in ["warning", "lock", "active", "recovery"]:
+			if not _expect(held_phases.get(id, {}).has(phase), "actual source grammar observed: " + id + "/" + phase): return false
+	if not _held_integrity() or not _expect(held_actions.size() == 3 and _eye_registration_intact(), "exact two-dash/one-primary exchange retains original eye collision/native registration"): return false
+	held_live = false
+	if probe.tick_finished.is_connected(_held_tick): probe.tick_finished.disconnect(_held_tick)
+	if not await _pause(): return false
+	var saved: Dictionary = game.capture_campaign_snapshot()
+	if not _closed(saved) or not _expect(_durable(game) and Exact.stringify(game.attempts.state().story.checkpoint) == transport_input_branch.checkpoint_exact, "actual public final Save retains the original whole CP3 checkpoint"): return false
+	var comparison: Dictionary = {"cp3_clock_s": held_cp3_clock, "origin": Codec.vector3(held_origin), "landing": Codec.vector3(held_landing), "hold_start_s": hold_start, "return_start_s": return_start, "primary_time_s": primary_time, "completion_s": completion, "recovery_deadline_s": primary_deadline, "eye_before_hp": before_hp, "eye_after_hp": eye.get("hp"), "hero_hp": game.player.hp, "shells": game.player.shells, "dash_count": 2, "primary_count": 1, "mode": mode, "return_policy": return_policy}
+	comparison["response_variant"] = "back"
+	comparison["first_direction"] = Codec.vector3(Vector3.BACK)
+	held_result["comparison_exact"] = Exact.stringify(comparison)
+	held_result["trace_exact"] = _held_wire(held_trace)
+	held_result["actions_exact"] = _held_wire(held_actions)
+	held_result["native_events_exact"] = _held_wire(events)
+	held_result["final_snapshot_exact"] = Exact.stringify(saved)
+	held_result["final_attempts_exact"] = Exact.stringify(game.attempts.state())
+	for key: String in ["actual_hold_exact", "comparison_exact", "trace_exact", "actions_exact", "native_events_exact", "final_snapshot_exact", "final_attempts_exact"]:
+		if not _expect(_held_wire_valid(String(held_result[key])), "complete nonempty exact held-response witness: " + key): return false
+	held_result["status"] = "complete"
+	held_result["old_safe_useful_executed"] = mode == "legacy"
+	held_result["interpretation"] = "Executed old hold through both active intervals and useful return." if mode == "legacy" else ("Same CP3-relative old return schedule succeeded with two dashes: equivalent option observed; no automatic difficulty credit, return to Integration." if return_policy.begins_with("same actual old") else "Adjusted return succeeded with two dashes; see complete mapped old hold/return result. No automatic novelty credit; Integration reviews equivalence.")
+	_end_watch("normal held-response cleanup")
+	return _transport_input_unchanged()
+
+
+func _back_read_baseline(path: String, sha256: String) -> Dictionary:
+	var comparison: Dictionary = _held_read_baseline(path, sha256)
+	if comparison.is_empty(): return {}
+	var report: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(path))
+	if not _expect(report.get("case") == "held-back-legacy", "dependent BACK case consumes only a complete actual old BACK case"): return {}
+	for row: Variant in report.receipts:
+		if not row is Dictionary or row.get("stage") != "held-landing response": continue
+		if not _expect(row.get("response_variant") == "back" and row.get("first_input") == Codec.vector3(Vector3.BACK) and comparison.get("response_variant") == "back" and comparison.get("first_direction") == Codec.vector3(Vector3.BACK) and _held_wire_valid(String(row.get("actual_hold_exact", ""))), "baseline explicitly preserves the executed BACK hold and direction"): return {}
+		var hold: Dictionary = Exact.parse(row.actual_hold_exact).value
+		var actions: Array = Exact.parse(row.actions_exact).value
+		var trace: Array = Exact.parse(row.trace_exact).value
+		if not _expect(hold.get("executed") == true and hold.start_s == comparison.hold_start_s and hold.end_s == comparison.return_start_s and hold.from == comparison.landing and hold.to == comparison.landing and actions.size() == 3 and actions[0].kind == "dash" and actions[1].kind == "dash" and actions[2].kind == "primary" and actions[0].direction.native_type == "Vector3" and Codec.read_vector3(actions[0].direction.components) == Vector3.BACK, "exact actual hold endpoints/times join the complete old actions and comparison"): return {}
+		var action: Dictionary = actions[1]
+		var path_rows: Array = action.path
+		if not _expect(path_rows.size() >= 2 and path_rows[0].time_s == action.started_at_s and path_rows[-1].time_s == action.completed_at_s and path_rows[0].position.components == comparison.landing and path_rows[-1].position.components == action.landing.components, "complete old return keeps its actual measured path and Player action clock"): return {}
+		var offset: float = float(comparison.return_start_s) - float(action.started_at_s)
+		var paired: int = 0
+		for sample: Dictionary in trace:
+			if float(sample.player_clock_s) < float(action.started_at_s) or float(sample.player_clock_s) > float(action.completed_at_s): continue
+			if not _expect(float(sample.clock_s) - float(sample.player_clock_s) == offset, "actual paired old return clocks preserve the measured Scheduler/Player offset"): return {}
+			paired += 1
+		if not _expect(paired >= 2, "old return has actual paired native clock observations"): return {}
+		comparison["original_hold"] = hold
+		comparison["original_hold_exact"] = row.actual_hold_exact
+		comparison["original_return_action"] = action
+		comparison["original_return_action_exact"] = Exact.stringify(action)
+		comparison["old_scheduler_player_offset_s"] = offset
+		comparison["original_actions_exact"] = row.actions_exact
+		comparison["original_trace_exact"] = row.trace_exact
+		return comparison
+	return {}
+
+
+func _back_mapped_hold(baseline: Dictionary) -> Dictionary:
+	var original: Dictionary = baseline.original_hold
+	var delta: float = held_cp3_clock - float(baseline.cp3_clock_s)
+	return {"from": Codec.read_vector3(original.from), "to": Codec.read_vector3(original.to), "start_s": float(original.start_s) + delta, "end_s": float(original.end_s) + delta}
+
+
+func _back_mapped_return(baseline: Dictionary) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	var path_rows: Array = baseline.original_return_action.path
+	var offset: float = float(baseline.old_scheduler_player_offset_s)
+	var delta: float = held_cp3_clock - float(baseline.cp3_clock_s)
+	for i: int in range(1, path_rows.size()):
+		result.append({"from": Codec.read_vector3(path_rows[i - 1].position.components), "to": Codec.read_vector3(path_rows[i].position.components), "start_s": float(path_rows[i - 1].time_s) + offset + delta, "end_s": float(path_rows[i].time_s) + offset + delta})
+	return result
+
+
+func _back_path_safe(path: Array[Dictionary]) -> bool:
+	if path.is_empty(): return false
+	for segment: Dictionary in path:
+		if float(segment.end_s) < float(segment.start_s): return false
+		for id: String in held_leases:
+			var record: Dictionary = held_leases[id].record
+			if maxf(float(segment.start_s), float(record.active_from_s)) > minf(float(segment.end_s), float(record.active_until_s)): continue
+			var one: Array[Dictionary] = [segment]
+			if HeldGeometry.timed_path_hits(record.geometry, one, float(record.active_from_s), float(record.active_until_s), Scheduler.CAPSULE_RADIUS): return false
+	return true
+
+
+func _back_counterfactual(blink: Dictionary, baseline: Dictionary) -> bool:
+	var source: Dictionary = moon.get("blink").state()
+	var before: Dictionary = _scheduler().sampled_circle_reservation_state(String(blink.id))
+	var before_wire: String = _held_wire(before)
+	var segment: Dictionary = _back_mapped_hold(baseline)
+	var path: Array[Dictionary] = [segment]
+	var temporal: bool = maxf(float(segment.start_s), float(blink.active_from_s)) <= minf(float(segment.end_s), float(blink.active_until_s))
+	var hit: bool = temporal and HeldGeometry.timed_path_hits(blink.geometry, path, float(blink.active_from_s), float(blink.active_until_s), Scheduler.CAPSULE_RADIUS)
+	var supported: bool = _scheduler().sampled_circle_contact_supported(String(blink.id), held_landing, held_landing)
+	var after: Dictionary = _scheduler().sampled_circle_reservation_state(String(blink.id))
+	if not _expect(not paused and source.status == "running" and source.reservation_id == blink.id and blink.geometry.kind == "circle" and not before.is_empty() and _held_wire_valid(before_wire) and before_wire == _held_wire(after) and _held_wire(source.sample) == _held_wire(blink.adapter.sample) and Codec.read_vector3(source.sample.hero_position).distance_to(held_landing) < 0.001 and blink.geometry.origin == Codec.read_vector3(source.sample.ground_position), "actual new Blink samples the same executed BACK landing without lease/sample mutation"): return _held_stop("Actual new Blink did not sample the supported BACK landing")
+	held_result["counterfactual"] = {"original_executed_hold_exact": baseline.original_hold_exact, "original_actions_exact": baseline.original_actions_exact, "original_trace_exact": baseline.original_trace_exact, "mapped_complete_old_hold_exact": _held_wire(segment), "cp3_clock_delta_s": held_cp3_clock - float(baseline.cp3_clock_s), "strict_temporal_overlap": temporal, "timed_geometry_hit": hit, "native_radius": Scheduler.CAPSULE_RADIUS, "native_sample_exact": _held_wire(source.sample), "native_lease_exact": before_wire, "native_lease_after_exact": _held_wire(after), "current_held_landing_supported": supported, "executed": false, "scope": "Only the complete actual old hold is mapped by the actual CP3 clock delta. No clamp, extension or endpoint substitution. Current native support applies to the actual current landing only, not historical endpoint authority. False mapped hit remains truthful data and permits safe actual replay/equivalence."}
+	return _expect(supported, "current actual sampled-circle endpoint support is retained; mapped old conflict may truthfully be false")
+
+
+func _back_before_parent() -> void:
+	_back_union_observe("after native100 / before parent200", 199)
+
+
+func _back_after_parent() -> void:
+	_back_union_observe("after parent200", 3000)
+
+
+func _back_union_boundary() -> Dictionary:
+	return {"native": _selection_boundary(), "camera": game.camera.global_transform, "camera_size": game.camera.size, "planner_spec": game.call("_camera_framing_spec", 0.055), "containment_spec": game.call("_camera_framing_spec", 0.02), "framing": game.get_camera_framing_state(), "input": game.get_input_observation_state(), "blink_cue": moon.get("blink").get_cue().state(), "nose_cue": moon.get("nose").get_cue().state()}
+
+
+func _back_union_observe(label: String, priority: int) -> void:
+	if not held_live or finishing or aborted or paused or not _live() or not is_instance_valid(moon): return
+	var before: String = _held_wire(_back_union_boundary())
+	var current: Array = moon.call("_camera_framing_points", false)
+	var with_forecast: Array = moon.call("_camera_framing_points", true)
+	var mandatory: Array = game.player_camera_framing_points()
+	var focus: Vector3 = game.player.global_position + Vector3.UP * 0.65
+	var current_plan: Dictionary = game.camera_framing_plan(current, focus)
+	var current_error: String = game.camera_framing_error(current)
+	var forecast_plan: Dictionary = game.camera_framing_plan(with_forecast, focus)
+	var forecast_error: String = game.camera_framing_error(with_forecast)
+	var after: String = _held_wire(_back_union_boundary())
+	var pure: bool = not before.is_empty() and before == after
+	var row: Dictionary = {"observer": label, "physics_priority": priority, "scope": "Passive ordered observation, not the exact rejected source-guard callback or identification of its unique failing predicate.", "clock_s": _scheduler().get_clock(), "player_clock_s": game.player.get_world_action_clock(), "native_camera_cue_before_exact": before, "native_camera_cue_after_sha256": after.sha256_text(), "pure": pure, "current_points_exact": _held_wire(current), "current_plus_applicable_forecast_points_exact": _held_wire(with_forecast), "mandatory_player_points_exact": _held_wire(mandatory), "retained_forecast_exact": _held_wire(moon.get("_forecast")), "forecast_hero_exact": _held_wire(moon.get("_forecast_hero")), "forecast_matches_actual_hero": game.player.global_transform == moon.get("_forecast_hero"), "plan_focus": Codec.vector3(focus), "current_plan_exact": _held_wire(current_plan), "current_containment_error": current_error, "with_forecast_plan_exact": _held_wire(forecast_plan), "with_forecast_containment_error": forecast_error, "point_counts": {"current": current.size(), "with_forecast": with_forecast.size(), "mandatory_player": mandatory.size()}}
+	for key: String in ["native_camera_cue_before_exact", "current_points_exact", "current_plus_applicable_forecast_points_exact", "mandatory_player_points_exact", "retained_forecast_exact", "forecast_hero_exact", "current_plan_exact", "with_forecast_plan_exact"]:
+		if not _held_wire_valid(String(row[key])): held_fault = "Passive BACK diagnostic exact witness rejected: " + key
+	if not pure:
+		row["native_camera_cue_after_exact"] = after
+		held_fault = "Passive BACK diagnostic changed its actual native/camera/input boundary"
+	back_union_observed += 1
+	if back_union_rows.size() >= 24:
+		back_union_rows.pop_front(); back_union_omitted += 1
+	back_union_rows.append(row)
+	held_result["union_observed_count"] = back_union_observed
+	held_result["union_omitted_earlier_rows"] = back_union_omitted
+	held_result["union_retained_limit"] = 24
+
+
+func _back_retire_diagnostics() -> void:
+	if is_instance_valid(before_parent_probe) and before_parent_probe.before_parent.is_connected(_back_before_parent): before_parent_probe.before_parent.disconnect(_back_before_parent)
+	if is_instance_valid(probe) and probe.tick_finished.is_connected(_back_after_parent): probe.tick_finished.disconnect(_back_after_parent)
