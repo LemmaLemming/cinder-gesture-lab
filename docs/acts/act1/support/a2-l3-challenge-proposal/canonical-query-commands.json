@@ -1,0 +1,104 @@
+{
+  "scope": "Read-only canonical equipment/ability gate and three data validators for source-only A2-L3 support, no allocation/engine",
+  "commands": [
+    {
+      "name": "equipment-status",
+      "command": "python3 scripts/dev/dev.py equipment status --markdown",
+      "result": {
+        "status": "fulfilled",
+        "value": {
+          "chunk_id": "f6cbab",
+          "wall_time_seconds": 0.212209083,
+          "exit_code": 0,
+          "original_token_count": 0,
+          "output": ""
+        }
+      }
+    },
+    {
+      "name": "ability-status",
+      "command": "python3 scripts/dev/dev.py ability status",
+      "result": {
+        "status": "fulfilled",
+        "value": {
+          "chunk_id": "20966a",
+          "wall_time_seconds": 0.21650275,
+          "exit_code": 0,
+          "original_token_count": 0,
+          "output": ""
+        }
+      }
+    },
+    {
+      "name": "ability-level-status",
+      "command": "python3 scripts/dev/dev.py ability status --level A2-L3",
+      "result": {
+        "status": "fulfilled",
+        "value": {
+          "chunk_id": "2b2728",
+          "wall_time_seconds": 0.246363959,
+          "exit_code": 0,
+          "original_token_count": 0,
+          "output": ""
+        }
+      }
+    },
+    {
+      "name": "ability-available",
+      "command": "python3 scripts/dev/dev.py ability available --level A2-L3",
+      "result": {
+        "status": "fulfilled",
+        "value": {
+          "chunk_id": "2e57f8",
+          "wall_time_seconds": 0.205817375,
+          "exit_code": 0,
+          "original_token_count": 0,
+          "output": ""
+        }
+      }
+    },
+    {
+      "name": "ability-validate",
+      "command": "python3 scripts/dev/dev.py ability validate",
+      "result": {
+        "status": "fulfilled",
+        "value": {
+          "chunk_id": "c7a665",
+          "wall_time_seconds": 0.185233041,
+          "exit_code": 0,
+          "original_token_count": 0,
+          "output": ""
+        }
+      }
+    },
+    {
+      "name": "equipment-validate",
+      "command": "python3 scripts/dev/dev.py equipment validate",
+      "result": {
+        "status": "fulfilled",
+        "value": {
+          "chunk_id": "ea45ca",
+          "wall_time_seconds": 0.192864125,
+          "exit_code": 0,
+          "original_token_count": 0,
+          "output": ""
+        }
+      }
+    },
+    {
+      "name": "numerical-validate",
+      "command": "python3 scripts/design/validate_equipment.py",
+      "result": {
+        "status": "fulfilled",
+        "value": {
+          "chunk_id": "70cd92",
+          "wall_time_seconds": 0.166248208,
+          "exit_code": 0,
+          "original_token_count": 0,
+          "output": ""
+        }
+      }
+    }
+  ]
+}
+
