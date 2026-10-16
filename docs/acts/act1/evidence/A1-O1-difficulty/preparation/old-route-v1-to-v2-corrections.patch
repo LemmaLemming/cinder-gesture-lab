@@ -1,0 +1,30 @@
+--- a1_o1_difficulty_old_route_draft-v1.gd
++++ a1_o1_difficulty_old_route_draft-v2.gd
+@@ -220,6 +220,9 @@
+ func _finish() -> void:
+ 	if finishing: return
+ 	_route_stop_observers()
++	if difficulty_case == "old-east-second" and bool(route_result.complete) and not route_fault.is_empty():
++		route_result["complete"] = false
++		if failures == 0: _expect(false, "late final native observation refused completed old route: " + route_fault)
+ 	finishing = true; paused = true; operation = "normal final producer cleanup"
+ 	var refs: Array[WeakRef] = []
+ 	if is_instance_valid(preview):
+@@ -247,7 +250,7 @@
+ 	if process_frame.is_connected(_watchdog): process_frame.disconnect(_watchdog)
+ 	var report: FileAccess = FileAccess.open(report_path, FileAccess.WRITE)
+ 	if report == null: _expect(false, "unique native difficulty producer report is writable")
+-	var case_done: bool = bool(route_result.complete) if difficulty_case == "old-east-second" else producer_scope_complete and branch_order == DIFFICULTY_BRANCHES
++	var case_done: bool = (bool(route_result.complete) and route_fault.is_empty()) if difficulty_case == "old-east-second" else producer_scope_complete and branch_order == DIFFICULTY_BRANCHES
+ 	var complete: bool = case_done and cleanup_complete and failures == 0
+ 	if report != null:
+ 		report.store_string(JSON.stringify({"case": difficulty_case, "checks": checks, "failures": failures, "assertions": assertion_rows, "complete": complete, "scope_complete": complete, "success": complete, "first_failure": first_failure, "elapsed_ms": Time.get_ticks_msec() - started_ms, "branch_root": branch_root, "branch_order": branch_order, "branches": branches, "source_pre": source_pre, "source_post": source_post, "setups": setups, "receipts": receipts, "observations": observations, "final_observation": producer_final_observation, "route_result": route_result if difficulty_case == "old-east-second" else {}, "scope": ROUTE_SCOPE if difficulty_case == "old-east-second" else "Genuine original API1/schema1 exact13 old Challenge optional writer; isolated production Shell/Attempts/Store, actual protected pristine L2 Story plus disclosed TEST completed prefix and same-floor Hero contact setup; entrance and one-part native paired current; actual three-contact checkpoint independently materialized by public Retry; later genuine Standard final epoch after public future preference retains exact same Challenge checkpoint. All original Store/backup/settings/preferences bytes preserved before cleanup. No source/phase/HP/clock/lease/progress assignment; no final kill, route comparison, hatch, reward, GUI/recognizer, portrait, all-order, equipment balance or performance claim."}, "\t"))
+@@ -388,7 +391,7 @@
+ 	var producer: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
+ 	if not _expect(producer is Dictionary and producer.get("case") == "legacy-producer" and producer.get("checks") == 102 and producer.get("failures") == 0 and producer.get("complete") == true and producer.get("success") == true and producer.get("branch_order") == DIFFICULTY_BRANCHES and producer.get("source_pre") == producer.get("source_post") and producer.source_pre.get("res://tests/acts/act1/a1_o1_difficulty.gd") == ROUTE_PRODUCER_FIXTURE_SHA, "closed genuine original writer and branch source attribution retained"): return false
+ 	route_row = producer.branches["one-part-live"].duplicate(true)
+-	branches["original-one-part-input"] = route_row.duplicate(true)
++	branches["one-part-live"] = route_row.duplicate(true)
+ 	route_result["input_producer"] = {"path": path, "sha256": ROUTE_PRODUCER_SHA, "scope": producer.scope, "branch": "one-part-live", "original_fixture_sha256": ROUTE_PRODUCER_FIXTURE_SHA}
+ 	for key: String in ["current", "checkpoint", "attempts", "protected_story"]:
+ 		var wire: String = route_row[key + "_exact"]; var answer: Dictionary = Exact.parse(wire)
