@@ -1,0 +1,6 @@
+{
+  "classification": "local package copy precondition, no engine or gameplay run",
+  "first_error": "AssertionError at existing audit destination precondition",
+  "cause": "Completed audit files were already copied by the stopping-record checkpoint. Their exact bytes match the private originals.",
+  "resolution": "Verify existing identical audit bytes without overwrite, then build the new scoped manifest."
+}
