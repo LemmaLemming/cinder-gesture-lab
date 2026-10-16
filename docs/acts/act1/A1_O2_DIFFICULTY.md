@@ -19,7 +19,7 @@ Quiet restore commits native units before copying the format flag/receipt. Retry
 
 ## Closed evidence
 
-[All twenty closed run records](evidence/A1-O2-difficulty/results.json) retain actual commands, report paths/SHA256, closure and selected pre/post manifests. Totals include fixture and cleanup assertions. Except producer02's older reached-Save aggregate, listed passes have complete/success true and clean logs.
+[Twenty post-promotion closed runs](evidence/A1-O2-difficulty/results.json) retain actual commands, report paths/SHA256, closure and selected pre/post manifests. The two older API1 producers are archived separately below. Totals include fixture and cleanup assertions. Except producer02's older reached-Save aggregate, listed passes have complete/success true and clean logs.
 
 | Run | Result and bounded observation |
 | --- | --- |
@@ -52,7 +52,7 @@ Quiet restore commits native units before copying the format flag/receipt. Retry
 
 ## Provenance and limits
 
-Runtime's three scripts/data remain unchanged since promotion on Shared64. Current fixture prefix `327b…` includes later finite/diagnostic corrections; earlier runs retain their original full pins. Source-default/legacy case functions remain unchanged. Shared65 availability is not adoption. Exact manifests are selected-input checks, not a global census.
+Runtime's three scripts/data remain unchanged since promotion on Shared64. Current fixture prefix `327b…` includes later finite/diagnostic corrections; earlier runs retain their original full pins. Source-default/legacy case functions remain unchanged. [Shared65 is actually preserving-adopted](evidence/A1-O2-difficulty/shared65-adoption.json) at `0188d7d7`: six owned Git trees,27named physical files and all118835incoming nonowned mode/blob entries are exact at that merge boundary. Original tests remain Shared64; no new engine/import or repin. Exact manifests are selected-input checks, not a global census.
 
 TEST uses isolated Store/Attempts/Shell, protected genuine Story donors, disclosed Hero-only positions, public primaries and the real shared recognizer. Comparison pose is `(-2.2,Y,-3)`. Valid donor packets are never synthesized; malformed copies are negative tests. Portrait is not OS-touch/human evidence. Accepted unchanged contact/stamp/Replay evidence is reused. No full-route, all-kit, human balance, sustained-FPS or mobile/export claim follows. Queue/wall duration is observation cost, not performance acceptance. Integration remains first help contact; the exact submitted commit/manifest are recorded in the canonical handoff. Independent amendment acceptance is pending.
 
