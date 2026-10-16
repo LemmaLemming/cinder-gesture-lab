@@ -1,0 +1,70 @@
+"""Exact two CLOSED graphical portrait originals; host-only digest pack, no engine/public copy."""
+from pathlib import Path,PurePosixPath
+import json,hashlib,stat,datetime
+HERE=Path(__file__).resolve().parent
+BASE=HERE.parent
+ROOT=BASE.parents[1]
+PUBLIC='docs/development/evidence/living-moon-forecast-portrait/'
+PHASES=['root-verification-portrait/run-seal-20261016T071658.707969Z-33f27a6c','root-verification-portrait/run-native-20261016T071712.916606Z-f351f1b8']
+EXTRAS={'root-verification-portrait':['run.py','INPUT_SPEC.json','SOURCE_INPUTS.json','README.md','SELF_REVIEW.json','READINESS.json','a1_l5_forecast_rollback_portrait.gd','ROOT_VISUAL_REVIEW.json','ROOT_PORTRAIT_REVIEW.json'],'portrait-prepare':['INPUT_SPEC.json','FREEZE.json','READINESS.json','README.md','a1_l5_forecast_rollback_portrait.gd.txt']}
+
+def need(ok,why):
+ if not ok:raise ValueError(why)
+def read(p):return json.loads(p.read_text())
+def data(p):
+ need(p.is_file() and not p.is_symlink(),'Regular original required '+str(p));return p.read_bytes()
+def sha(b):return hashlib.sha256(b).hexdigest()
+def meta(p):
+ b=data(p);return {'sha256':sha(b),'bytes':len(b),'mode_octal':format(stat.S_IMODE(p.stat().st_mode),'04o')}
+def enc(x):return (json.dumps(x,indent=2,allow_nan=False)+'\n').encode()
+def safe(n):
+ p=PurePosixPath(n);need(not p.is_absolute() and '..' not in p.parts and str(p)==n,'Safe relative path');return n
+def main():
+ selected={};aliases=[];phases=[]
+ def select(p,role):
+  n=p.relative_to(ROOT).as_posix();b=data(p);m=meta(p);m['role']=role
+  if n in selected:need(selected[n][0]==b and selected[n][1]==m,'Selection changed')
+  selected[n]=(b,m);return n
+ for name in PHASES:
+  p=BASE/name;idx=read(p/'evidence-index.json');result=read(p/'result.json');need(result['closed'] is True and idx['created_after_raw_close'] is True,'Original CLOSED required');physical={q.relative_to(p).as_posix() for q in p.rglob('*') if q.is_file()};need(physical==set(idx['files'])|{'evidence-index.json'},'Exact original phase physical/index whitelist')
+  for n,m in idx['files'].items():need(sha(data(p/safe(n)))==m['sha256'] and len(data(p/n))==m['bytes'],'Original indexed source differs')
+  members={n:select(p/n,'Original CLOSED phase artifact; historical bytes/status/path untouched') for n in sorted(physical)}
+  for n in sorted(x for x in physical if x.endswith('-retention.json') and x!='native-report-retention.json'):
+   retention=read(p/n);observation=n.replace('-retention.json','.json');observed=read(p/observation);need(set(retention)=={k for k,v in observed.items() if v is not None},'Source retention keyset')
+   for logical,digest in observed.items():
+    if digest is None:
+     aliases.append({'phase':name,'original_observation_path':members[observation],'original_retention_path':members[n],'original_source_path':logical,'present':False});continue
+    m=retention[logical];blob=members[safe(m['blob'])];need(selected[blob][1]['sha256']==digest==m['sha256'] and selected[blob][1]['bytes']==m['bytes'],'Original source/CAS join');aliases.append({'phase':name,'original_observation_path':members[observation],'original_retention_path':members[n],'original_source_path':logical,'sha256':digest,'bytes':m['bytes'],'original_blob_path':blob})
+  row={'phase':name,'index_sha256':sha(data(p/'evidence-index.json')),'original_result_path':members['result.json'],'closed':True,'passed':result['passed'],'runner_return_code':result['runner_return_code'],'canonical_return_code':result['canonical_validation_return_code'],'diagnostics':result['raw_diagnostic_lines'],'original_file_count_including_index':len(physical)}
+  if (p/'native-report.json').exists():
+   report=read(p/'native-report.json');row['actual_native_controls']={k:report[k] for k in ['checks','failures','first_failure','complete','success','kind']};row['native_report_sha256']=sha(data(p/'native-report.json'))
+  phases.append(row)
+ for folder,names in EXTRAS.items():
+  for n in names:select(BASE/folder/n,'Named preparation/promotion/independent/visual/native review snapshot; original status retained')
+ select(Path(__file__),'Exact private host-only packaging helper')
+ for row in read(BASE/'INPUT_SPEC.json')['authority_and_audit']:
+  path=ROOT/row['path'];need(sha(data(path))==row['sha256'],'Exact named authority/audit input');select(path,'Original exact named Root request/owner ACK/audit; no new message or authority inferred')
+ output=HERE/('pack-'+datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S.%fZ'));output.mkdir(exist_ok=False);pack=output/'pack';files={};originals={};blobs=set()
+ def put(n,b):
+  need(safe(n).startswith(PUBLIC),'Exact destination prefix');p=pack/n;p.parent.mkdir(parents=True,exist_ok=True)
+  if p.exists():need(data(p)==b,'CAS collision')
+  else:p.write_bytes(b)
+  p.chmod(0o644);files[n]=meta(p)
+ put(PUBLIC+'.gdignore',b'')
+ for n,(b,m) in selected.items():
+  dest=PUBLIC+'blobs/'+m['sha256']+'.bin';put(dest,b);blobs.add(dest);originals[n]={**m,'repository_storage_path':dest}
+ for a in aliases:
+  if 'original_blob_path' in a:a['repository_storage_path']=originals[a['original_blob_path']]['repository_storage_path']
+ put(PUBLIC+'original-paths.json',enc({'schema_version':1,'files':originals,'scope':'Original mode/hash/size/path maps; archive CAS is0644, original modes explicitly retained. Original evidence opaque paths/indexes unchanged, no historical repin.'}))
+ put(PUBLIC+'source-observation-aliases.json',enc({'schema_version':1,'aliases':aliases}))
+ put(PUBLIC+'HISTORICAL_INPUT_REFERENCE.json',enc({'schema_version':1,'path':'tests/acts/act1/fixtures/a1_l5_saved_portrait_units.json','sha256':'2daa482db269374b4360d1abc4d89ff618f6f08c1bc222bea49e139913a6dd0e','scope':'Genuine119 input is retained already in original phase sourceCAS. No duplicate whole owner bank, no historical packet repin. Current original packet and its original TEST setup attribution remain unchanged.'}))
+ index={'schema_version':1,'kind':'living-moon-forecast-two-closed-portrait-originals','phases':phases,'unique_CAS_blobs':len(blobs),'original_paths':len(originals),'source_aliases':len(aliases),'scope':'Exactly portraitseal33f2/nativef351 CLOSED0 clean51/0 complete. Real paused540x1170PNG plus source119 custody/native52636bytepair/wholeopticsrender138940bytepair/actualStore and Rootpersonalvisualreview. Private a256leaf extends unchanged779c; both UIDabsences preserved. No soft/invalid/headless rerun, gameplay/nativeproof/cancellationcause/route/portraitcombat/acceptance claim. Earlier headlesspack immutable separate.'}
+ put(PUBLIC+'index.json',enc(index))
+ put(PUBLIC+'README.md',b'# Living Moon forecast rollback portrait addendum\n\n[index.json](index.json) records exactly two CLOSED originals: portrait host seal and clean native51/0 complete. [original-paths.json](original-paths.json) maps original raw/report/index/result/queue/capsules/leaf/visual records/PNG/typedStore bytes into deduplicated CAS with exact original hash/size/mode. [source-observation-aliases.json](source-observation-aliases.json) preserves119-input original custody and genuine UID absence without repin. No missing seal native artifacts are invented.\n\nActual540x1170PNG joins Root personal visual review; native typed pair52636bytes and whole/native/input/optics/render portrait pair138940bytes are byte-identical before/after. Actual original owned Store bytes are retained before verified scoped cleanup, UI/FPS/audio restored. Source-free original119 packet attribution remains pinned in [HISTORICAL_INPUT_REFERENCE.json](HISTORICAL_INPUT_REFERENCE.json), already in CAS; no owner bank duplication.\n\nRoot describes grounded Hero/feet and low eye/lunar face/HUD readability in committed idle/recovery context; no active attack footprint is shown. Packaging adds no firsthand optical claim. Synthetic hard-preflight rollback only: no soft/invalid/headless replay, source start/native accepted proof/gameplay/GUI/historical cancellation-cause/route or portraitcombat acceptance. Earlier headless59/0 and failed12/2 evidence remain immutable in their separate pack.\n')
+ manifest=PUBLIC+'PUBLIC_COPY_MANIFEST.json';put(manifest,enc({'schema_version':1,'status':'PRIVATE_READY_FOR_ROOT_REVIEW_ONLY','file_count_excluding_this_manifest':len(files),'file_count_including_this_manifest':len(files)+1,'self_repository_path':manifest,'files':dict(files)}))
+ for n,m in files.items():need(meta(pack/n)==m,'Pack exact hash/size/mode')
+ for n,(b,m) in selected.items():need(data(ROOT/n)==b and meta(ROOT/n)=={k:m[k] for k in ['sha256','bytes','mode_octal']},'Original changed')
+ for link in ['index.json','original-paths.json','source-observation-aliases.json','HISTORICAL_INPUT_REFERENCE.json']:need((pack/PUBLIC/link).is_file(),'README link absent')
+ (output/'PUBLICATION_PATHS.txt').write_text('\n'.join(sorted(files))+'\n');(output/'PUBLICATION_PATHS.nul').write_bytes(b''.join(n.encode()+b'\0' for n in sorted(files)))
+ closure={'status':'EXACT_PRIVATE_ROOT_PACK_READY','private_pack':str(pack),'publication_files':len(files),'publication_bytes':sum(m['bytes'] for m in files.values()),'manifest_sha256':files[manifest]['sha256'],'index_sha256':files[PUBLIC+'index.json']['sha256'],'unique_CAS_blobs':len(blobs),'original_paths':len(originals),'source_aliases':len(aliases),'closed_phases':2,'README_links_verified':True,'no_engine_Git_publication':True};(output/'PREPARATION_CLOSURE.json').write_bytes(enc(closure));print(json.dumps(closure,indent=2))
+if __name__=='__main__':main()

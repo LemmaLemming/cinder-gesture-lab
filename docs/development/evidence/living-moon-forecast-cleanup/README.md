@@ -1,0 +1,7 @@
+# Living Moon forecast cleanup evidence
+
+[index.json](index.json) records exactly four CLOSED Root phases: original seal and failed12/2 incomplete Store-setup run with certificate diagnostic, then v2seal and clean59/0 complete native. Failed result remains unchanged; the fix changes only TEST user Store setup/custody. Production forecast candidate d25a is identical across both.
+
+[original-paths.json](original-paths.json) retains original paths/hash/size/modes in deduplicated CAS, including raw/report/result/queue/indices/capsules/preimages/audits/ownerACK/source reviews. [source-observation-aliases.json](source-observation-aliases.json) joins original95/106 input maps without rewriting historical evidence; absent new UID is preserved. Five original nonempty typed witnesses are byte-equal; actual owned native Store file is retained before verified unique user-directory cleanup.
+
+[HISTORICAL_INPUT_REFERENCE.json](HISTORICAL_INPUT_REFERENCE.json) pins unchanged genuine119 input already stored in sourceCAS; no owner bank duplication. Actual default camera/update0 hard rollback, feasible preframe and invalid-input cleanup use explicit synthetic TEST proposals in a genuine paused119 restored world. No source-start, native accepted proof, gameplay, GUI, cancellation-cause, portrait, full-route or new acceptance credit. Clean current runtime diagnostics do not imply immutable historical archives are whitespace-clean.

@@ -1,0 +1,65 @@
+{
+  "kind": "l5-forecast-repair-private-source-readiness-1",
+  "status": "SOURCE_ONLY_UNEXECUTED",
+  "runtime_candidate": {
+    "file": "living_moon.gd.txt",
+    "sha256": "d25ae002a4d6256fd95b3e6df557541de1cd4ac4503cc7fde3dd50d52b0d4808",
+    "production_target": "scripts/acts/act1/living_moon.gd"
+  },
+  "selected_regression": {
+    "file": "a1_l5_forecast_publication.report-safe.gd.txt",
+    "sha256": "65f085df2ef263ecce7816149ce2e144abe98fb1b3d6ee35392ce221a2284e41",
+    "production_test_target": "tests/act1_l5_forecast_publication.gd"
+  },
+  "input_spec_sha256": "381265706cf80a03c1190864d87836bb94169341f8338613c8929de959e2c570",
+  "method_comparison_sha256": "9f1127c0467612be27cf89a67bea77649db098a6d5b24974ff0ca24b0524a5f4",
+  "authorization": "Canonical REQUEST b26b3879 + Act1 ACK 1bff94bf transfer only Root9056 forecast publication methods and one Root focused regression. Root retains sole promotion, queue and publication custody. Worker checkout and unaccepted Sneeze-first files untouched.",
+  "fix": "Each prospective attempt first retires old unpublished forecast/pending. Hard invalid/full-plan-refused proposals retire their new unpublished points. An accepted plan with current-view containment error retains forecast for normal camera preframe and clears pending; current containment still gates native admission.",
+  "source_checks": [
+    {
+      "check": "exact method boundary",
+      "result": "PASS_SOURCE",
+      "detail": "76 pre-existing method bodies byte-identical; only _prepare_forecast and _framing_error change; _framing_status is added. Native guard/error ordering remains unchanged except local forecast/pending transaction cleanup."
+    },
+    {
+      "check": "inherited names/types",
+      "result": "PASS_SOURCE",
+      "detail": "Inherited _initialize supplies old_fps:int, old_audio:AudioBusLayout, first_failure:Dictionary, checks/failures/finishing/aborted/operation, game:CinderCampaignShell, raw/registry_bytes/test_root. Selected fixture declares no collisions. Body eye.phase is actual int; native Blink/Nose state() dictionaries exist. _scheduler() returns actual game.active_level scheduler. source_control_state(Node3D) is pure retained state, not pruning reservations()."
+    },
+    {
+      "check": "actual camera apply",
+      "result": "PASS_SOURCE",
+      "detail": "game.gd _update_camera(0.0) computes follow_weight=0 and preserves old focus initially, then accepted plan replaces _camera_focus with planned.focus before camera.global_position assignment. Soft test uses that unchanged production method while paused, never a synthetic camera transform/lens/clock assignment."
+    },
+    {
+      "check": "declared preflight boundary",
+      "result": "PASS_SOURCE",
+      "detail": "Only literal historical selected frame0 is restored via real isolated Store/public Continue. Synthetic candidate/proof dictionaries exercise _prepare_forecast publication and pure planner/current-view queries only. No native preview/start/activate/guard override or source request receives them. Exactly two finite projected geometry inputs select soft-case test data; not route/proof search."
+    },
+    {
+      "check": "native custody observation",
+      "result": "PASS_SOURCE",
+      "detail": "Original var_to_bytes signature contains live Player resources/position/input-related state, Blink/Nose states, actual eye HP/phase/pose, Scheduler owner control/cooldown/leases, committed frames, parent stage/next/pending_phase/escape, input observation and Attempts. Forecast/pending/lasterror and camera are deliberately outside signature because those are component observations/transaction under test. Each reached witness writes fresh original bytes and verifies readback."
+    },
+    {
+      "check": "source API signatures",
+      "result": "PASS_SOURCE",
+      "detail": "Geometry.cone(origin:Vector3,direction:Vector3,reach:float,min_dot:float,origin_radius:float=0.1); _camera_framing_points(include_forecast:bool), _source_points, _geometry_points, _response_points and _unique exist on actual Moon; parent _bindings checks all actual aliases, real eye-owner/child consumer/Hero/Scheduler. No new production constructor hook or native API is needed."
+    },
+    {
+      "check": "finite cleanup/report",
+      "result": "PASS_SOURCE",
+      "detail": "Inherited wall watchdog120000ms; no loops beyond two geometric candidates, three invalid inputs and two inherited eight-process-frame settles. Real Shell descendant/group disposal followed by FPS/audio restore and watchdog/node observer disconnection. Fresh absolute report rechecked at closure, writer assertion counted before packet. Exact literal footer and actual SHA/path. Closed JSON includes native Vector2/Rect2/Basis/Transform diagnostics; original typed witnesses remain .var."
+    }
+  ],
+  "one_targeted_native": "Root promotes reviewed sources, captures named source/UID bytes before/at queue lock/after/closure, and invokes exactly INPUT_SPEC.command through canonical dev.py queue. No separate import unless an actual new dependency requires it. No full route, all-kit, parent prefix, original producer or trial rerun.",
+  "actual_result": "NONE. This subagent executed no Godot/parser/import/test. Do not infer any pass count, native proof, camera cancellation cause or gameplay improvement from source readiness.",
+  "preservation": [
+    "Canonical accepted level/Blink-first policy, Codec2fafe, snapshot format/schema, roles/floor/stats/timings/controls/rewards/current-view guards remain unchanged.",
+    "Original119 and downstream unchanged accepted evidence retain their historical source pins and limits.",
+    "Original LEFT86/1 and BACK86/1 remain failed/incomplete; native100 cancellation exact inner predicate remains unproved. This regression is not a causality replay.",
+    "Do not integrate worker Sneeze-first host89dc/Codec25bc/recipe06b or require their unaccepted trials.",
+    "No new mobile/device/export/release/performance/full-playthrough acceptance gate."
+  ],
+  "future_failure_handling": "Keep actual first refusal/failure, raw/index/partial report and any witnesses reached. Do not alter native optics, guards, timings, geometry, clocks or source selection to manufacture a green test. If either finite soft input lacks an accepted/currently-clipped union, the component reports a focused fixture-selection failure for review."
+}
