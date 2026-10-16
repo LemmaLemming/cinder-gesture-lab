@@ -244,6 +244,7 @@ func _hp_all_hidden(actual: Array[Dictionary]) -> bool:
 func _hp_portrait() -> bool:
 	var campaign_error_before: String = _hc_shell.campaign_error
 	var before: Dictionary = _hp_witnesses()
+	var hpd_before: Dictionary = _hpd_snapshot(before) # Read-only diagnostics, encoded while original actors are live.
 	if not _expect(before.size() == 4 and _hc_shell.campaign_error.is_empty() and _hc_quiet_events.is_empty() and _wire_exact(_hc_shell.capture_campaign_snapshot(),_hp_unit),"four actual NONEMPTY typed witnesses and no campaign error before saved-dead draw"): return false
 	_hp_exclusions = [{"node":weakref(_hc_shell.menu),"visible":_hc_shell.menu.visible,"label":"campaign menu"}]
 	var bench: CanvasLayer = _hc_shell.get("bench") as CanvasLayer
@@ -269,6 +270,10 @@ func _hp_portrait() -> bool:
 	var after: Dictionary = _hp_witnesses()
 	var unchanged: bool = after.size() == 4 and paused and _hc_shell.campaign_error.is_empty() and not _hc_shell.is_pause_requested() and _hc_quiet_events.is_empty() and _wire_exact(_hc_shell.capture_campaign_snapshot(),_hp_unit) and _wire_exact(_hc_shell.attempts.state(),_hp_session)
 	for key: String in before: unchanged = unchanged and before[key] == after.get(key)
+	var hpd_after: Dictionary = _hpd_snapshot(after)
+	var hpd_predicate: bool = _hp_draw_seen and hidden_during_draw and picture != null and not picture.is_empty() and picture.get_size().x in [339,340] and picture.get_size().y == 736 and unchanged
+	if not hpd_predicate:
+		_hpd_failed_draw(before,after,hpd_before,hpd_after,picture,hidden_during_draw,unchanged,visibility_observations,campaign_error_before,campaign_error_after)
 	if not _expect(_hp_draw_seen and hidden_during_draw and picture != null and not picture.is_empty() and picture.get_size().x in [339,340] and picture.get_size().y == 736 and unchanged,"actual paused339/340x736 dead portrait preserves native/input/optics/render without gameplay, hidden actors or campaign errors"): return false
 	if not _hp_sources_exact() or not _expect(FileAccess.get_sha256(_hp_archive+"manifest.json") == _hp_args["manifest-sha256"],"original archive pin remains unchanged after draw"): return false
 	var folder: String = "res://captures/act3/garden-helper-choice/portrait-dead-%d-%d/" % [OS.get_process_id(),Time.get_ticks_usec()]
@@ -311,3 +316,107 @@ func _finish() -> void:
 	_expect(_hc_registry_text.is_empty() or FileAccess.get_file_as_string(HC_Registry.DATA_PATH) == _hc_registry_text,"canonical registry remains exact")
 	print("Garden helper saved portrait: %d checks; failures: %d; png=%s. Paused authentic TEST dead-helper only; no active route/producer/MAIN/acceptance credit." % [_checks,_failures,_hp_png])
 	quit(0 if _failures == 0 else 1)
+
+
+## FAILED DRAW DIAGNOSTICS ONLY. These reads/files confer no portrait pass.
+func _hpd_snapshot(strict: Dictionary) -> Dictionary:
+	var strict_native: Variant = strict.get("native")
+	var native: Dictionary = {"strict_native_witness_present":strict_native is PackedByteArray,"observation":_hc_observation(),"events":_events.duplicate(),"quiet":_hc_quiet_events.duplicate(),"actions":_hc_actions.duplicate(true),"campaign_error":_hc_shell.campaign_error,"paused":paused,"pause_requested":_hc_shell.is_pause_requested()}
+	if strict_native is PackedByteArray: native["original_strict_native_bytes"] = strict_native
+	var controls: Dictionary = {}
+	var bindings: Dictionary = _level.call("scheduler_bindings")
+	for key: String in bindings.get("owners",{}): controls[key] = _scheduler.source_control_state(bindings.owners[key])
+	native["actual_pure_owner_controls"] = controls
+	var camera: Camera3D = _hc_shell.camera
+	var hud: GameHUD = _hc_shell.hud
+	var union: Dictionary = _level.call("framing_union",camera)
+	var sun: Dictionary = _level.call("optional_sun_bounds",camera)
+	var labels: Array = []; _hp_labels(hud,labels); _hp_labels(_hc_shell.menu,labels)
+	var optics: Dictionary = {"camera":[camera.global_transform,camera.projection,camera.keep_aspect,camera.size,camera.near,camera.far,camera.h_offset,camera.v_offset,camera.cull_mask],"framing":_hc_shell.call("get_camera_framing_state"),"hud":[hud.visible,hud.combat_safe_rect(),labels],"union":union,"sun_bounds":sun,"sun":_level.call("sun_presentation_state"),"union_view_error":String(_hc_shell.call("camera_framing_error",union.points)) if union.get("points") is Array and not union.points.is_empty() else "No current union points","sun_view_error":String(_hc_shell.call("camera_framing_error",sun.points)) if sun.get("points") is Array and not sun.points.is_empty() else "No current Sun points","root_size":root.size,"root_visible_rect":root.get_visible_rect(),"texture_size":root.get_texture().get_size(),"window_can_draw":DisplayServer.window_can_draw(root.get_window_id()),"window_focus":root.has_focus()}
+	var render: Array = []; _hp_render(_hc_shell.world,render)
+	var input: Dictionary = _hc_shell.get_input_observation_state()
+	# These are literal diagnostic observations, not replacements for a rejected
+	# strict witness. Values are encoded now, before rendering or cleanup.
+	return {"native":var_to_bytes(native),"input":var_to_bytes(input),"optics":var_to_bytes(optics),"render":var_to_bytes(render),"typed_value_nonempty":{"native":not native.is_empty(),"input":not input.is_empty(),"optics":not optics.is_empty(),"render":not render.is_empty()},"strict_native_witness_present":strict_native is PackedByteArray}
+
+func _hpd_changes(left: Variant, right: Variant, path: String, rows: Array, budget: Array[int], depth: int = 0) -> void:
+	if budget[0] <= 0 or rows.size() >= 24: return
+	budget[0] -= 1
+	if typeof(left) != typeof(right):
+		rows.append({"path":path,"change":"type","before_type":typeof(left),"after_type":typeof(right),"before":str(left).left(600),"after":str(right).left(600)}); return
+	if left is Dictionary:
+		var keys: Array = left.keys()
+		for key: Variant in right:
+			if not keys.has(key): keys.append(key)
+		for key: Variant in keys:
+			if budget[0] <= 0 or rows.size() >= 24: break
+			if not left.has(key) or not right.has(key): rows.append({"path":path+"."+str(key),"change":"key presence","before_present":left.has(key),"after_present":right.has(key)}); continue
+			if depth < 10: _hpd_changes(left[key],right[key],path+"."+str(key),rows,budget,depth+1)
+			elif var_to_bytes(left[key]) != var_to_bytes(right[key]): rows.append({"path":path+"."+str(key),"change":"bounded depth","before":str(left[key]).left(600),"after":str(right[key]).left(600)})
+	elif left is Array:
+		if left.size() != right.size(): rows.append({"path":path,"change":"array size","before_size":left.size(),"after_size":right.size()})
+		var context: String = " ["+String(left[0]).left(180)+"]" if not left.is_empty() and left[0] is String else ""
+		for index: int in range(mini(left.size(),right.size())):
+			if budget[0] <= 0 or rows.size() >= 24: break
+			if depth < 10: _hpd_changes(left[index],right[index],path+context+"["+str(index)+"]",rows,budget,depth+1)
+			elif var_to_bytes(left[index]) != var_to_bytes(right[index]): rows.append({"path":path+context+"["+str(index)+"]","change":"bounded depth","before":str(left[index]).left(600),"after":str(right[index]).left(600)})
+	elif left != right:
+		rows.append({"path":path,"change":"value","before":str(left).left(600),"after":str(right).left(600)})
+
+func _hpd_write(path: String, bytes: PackedByteArray) -> Dictionary:
+	# Diagnostic I/O never changes the original assertion or its failure count.
+	if FileAccess.file_exists(path): return {"file":path,"written":false,"error":"unique output already exists","bytes":bytes.size()}
+	var file: FileAccess = FileAccess.open(path,FileAccess.WRITE)
+	if file == null: return {"file":path,"written":false,"error":"file open failed","bytes":bytes.size()}
+	file.store_buffer(bytes); file.flush(); var error: Error = file.get_error(); file.close()
+	return {"file":path,"written":error == OK and FileAccess.get_file_as_bytes(path) == bytes,"error_code":int(error),"bytes":bytes.size(),"sha256":FileAccess.get_sha256(path)}
+
+func _hpd_failed_draw(before: Dictionary, after: Dictionary, raw_before: Dictionary, raw_after: Dictionary, picture: Image, hidden: bool, unchanged: bool, visibility: Array, campaign_before: String, campaign_after: String) -> void:
+	var dimensions: Vector2i = picture.get_size() if picture != null else Vector2i(-1,-1)
+	var conjuncts: Dictionary = {"draw_seen":_hp_draw_seen,"hidden_during_draw":hidden,"image_nonnull":picture != null,"image_nonempty":picture != null and not picture.is_empty(),"width_339_or_340":picture != null and dimensions.x in [339,340],"height736":picture != null and dimensions.y == 736,"unchanged":unchanged}
+	# Reuse only the already-observed strict bytes. Never force a new Shell
+	# capture after strict refusal: that operation can set campaign_error/menu.
+	var decoded_native: Variant = bytes_to_var(after.native) if after.get("native") is PackedByteArray else null
+	var unit_available: bool = decoded_native is Dictionary and decoded_native.get("unit") is Dictionary and not decoded_native.unit.is_empty()
+	var session_available: bool = decoded_native is Dictionary and decoded_native.get("session") is Dictionary and not decoded_native.session.is_empty()
+	var unchanged_parts: Dictionary = {"strict_after_four":after.size() == 4,"paused":paused,"campaign_error_empty":_hc_shell.campaign_error.is_empty(),"pause_not_requested":not _hc_shell.is_pause_requested(),"quiet_events_empty":_hc_quiet_events.is_empty(),"whole_unit_from_original_strict_bytes_available":unit_available,"whole_unit_from_original_strict_bytes_exact":_wire_exact(decoded_native.unit,_hp_unit) if unit_available else null,"session_from_original_strict_bytes_available":session_available,"session_from_original_strict_bytes_exact":_wire_exact(decoded_native.session,_hp_session) if session_available else null,"original_short_circuit_capture_not_reinvoked":true}
+	var strict_rows: Dictionary = {}
+	for key: String in ["native","input","optics","render"]:
+		var left: Variant = before.get(key)
+		var right: Variant = after.get(key)
+		var equal: bool = before.has(key) and after.has(key) and left == right
+		unchanged_parts["strict_"+key+"_equal"] = equal
+		var changes: Array = []
+		if left is PackedByteArray and right is PackedByteArray and not equal:
+			var budget: Array[int] = [4096]
+			# Decode only our original var_to_bytes output, without object creation.
+			_hpd_changes(bytes_to_var(left),bytes_to_var(right),key,changes,budget)
+		strict_rows[key] = {"before_present":before.has(key),"after_present":after.has(key),"before_bytes":left.size() if left is PackedByteArray else null,"after_bytes":right.size() if right is PackedByteArray else null,"equal":equal,"bounded_diagnostic_changes":changes}
+	var raw_changes: Dictionary = {}
+	for key: String in ["input","optics","render"]:
+		var changes: Array = []
+		if raw_before.get(key) is PackedByteArray and raw_after.get(key) is PackedByteArray and raw_before[key] != raw_after[key]:
+			var budget: Array[int] = [4096]
+			_hpd_changes(bytes_to_var(raw_before[key]),bytes_to_var(raw_after[key]),"observed_"+key,changes,budget)
+		raw_changes[key] = changes
+	var diagnostic: Dictionary = {"schema_version":1,"test_only":true,"classification":"FAILED_DRAW_DIAGNOSTICS_ONLY","original_assertion_preserved":true,"conjuncts":conjuncts,"unchanged_parts":unchanged_parts,"actual_image_dimensions":[dimensions.x,dimensions.y],"root_size":[root.size.x,root.size.y],"texture_size":str(root.get_texture().get_size()),"strict_witness_differences":strict_rows,"additional_observation_differences":raw_changes,"raw_before_typed_value_nonempty":raw_before.typed_value_nonempty,"raw_after_typed_value_nonempty":raw_after.typed_value_nonempty,"raw_before_strict_native_witness_present":raw_before.strict_native_witness_present,"raw_after_strict_native_witness_present":raw_after.strict_native_witness_present,"actual_hidden_ui_observations":visibility,"actual_post_draw_ui":_hp_draw_ui,"actual_restored_ui":_hp_ui_state(),"campaign_error_before":campaign_before,"campaign_error_after":campaign_after,"campaign_error_now":_hc_shell.campaign_error,"clock_s":_scheduler.get_clock(),"scope":"Failed paused saved-dead draw diagnostic, never portrait pass, acceptance, active view or new gameplay evidence."}
+	print("GARDEN_HELPER_FAILED_DRAW_DIAGNOSTIC "+HC_Exact.stringify(diagnostic))
+	var folder: String = "res://captures/act3/garden-helper-choice/FAILED-dead-draw-%d-%d/" % [OS.get_process_id(),Time.get_ticks_usec()]
+	var outputs: Dictionary = {}
+	if DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(folder)) == OK:
+		outputs["strict-before"] = _hpd_write(folder+"strict-before.var.bin",var_to_bytes(before))
+		outputs["strict-after"] = _hpd_write(folder+"strict-after.var.bin",var_to_bytes(after))
+		for key: String in ["native","input","optics","render"]:
+			if before.get(key) is PackedByteArray: outputs["strict-before-"+key] = _hpd_write(folder+"strict-before-"+key+".var.bin",before[key])
+			if after.get(key) is PackedByteArray: outputs["strict-after-"+key] = _hpd_write(folder+"strict-after-"+key+".var.bin",after[key])
+			outputs["observed-before-"+key] = _hpd_write(folder+"observed-before-"+key+".var.bin",raw_before[key])
+			outputs["observed-after-"+key] = _hpd_write(folder+"observed-after-"+key+".var.bin",raw_after[key])
+		if picture != null and not picture.is_empty():
+			var image_path: String = folder+"FAILED-original-native-draw.png"
+			var status: Error = picture.save_png(image_path)
+			outputs["FAILED-image"] = {"file":image_path,"written":status == OK,"error_code":int(status),"sha256":FileAccess.get_sha256(image_path) if status == OK else "","classification":"FAILED_DRAW_DIAGNOSTICS_ONLY"}
+		diagnostic["outputs"] = outputs
+		var record: Dictionary = _hpd_write(folder+"FAILED-diagnostic.native.json",HC_Exact.stringify(diagnostic).to_utf8_buffer())
+		print("GARDEN_HELPER_FAILED_DRAW_FILES "+ProjectSettings.globalize_path(folder)+" receipt="+HC_Exact.stringify(record))
+	else:
+		print("GARDEN_HELPER_FAILED_DRAW_FILES directory unavailable: "+ProjectSettings.globalize_path(folder))

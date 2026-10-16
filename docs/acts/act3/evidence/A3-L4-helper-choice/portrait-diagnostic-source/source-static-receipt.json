@@ -1,0 +1,17 @@
+{
+  "scope": "PRIVATE source-only failed-draw diagnostics; no native execution",
+  "base_sha256": "196de82abd7237b89fccfb42c2a33605d9700d4ad62937e5f7ad977a4c4d29b4",
+  "candidate_sha256": "994c3ec50992c0a42e9e91c4ad60730f9199bb4814a4f490e70b161e73c18a01",
+  "patch_sha256": "29e37503788f3ff21c2170ec0c678848369efdb7ed6a845fe5d9e829a057f865",
+  "original_assertion_byte_exact": "\tif not _expect(_hp_draw_seen and hidden_during_draw and picture != null and not picture.is_empty() and picture.get_size().x in [339,340] and picture.get_size().y == 736 and unchanged,\"actual paused339/340x736 dead portrait preserves native/input/optics/render without gameplay, hidden actors or campaign errors\"): return false",
+  "lines": 422,
+  "owned_writes": false,
+  "engine_runs": 0,
+  "not_executed": [
+    "GDScript parser",
+    "native snapshot/draw/diagnostic serialization"
+  ],
+  "readme_sha256": "da8cc332bc9ef2ba807408326b2d10c17dd6a88b36c4282c13fcc5a8b4f0a5b4",
+  "independent_source_review": "seal_audit bounded review clear for exact994c3ec5 source/29e37503 patch; no native/parser/owned activity",
+  "review_correction": "Diagnostic snapshot reuses original strict native bytes when present; no new Shell capture/host observation. Whole/session comparisons derive only already captured strict bytes, or remain unavailable/null after original short circuit."
+}
