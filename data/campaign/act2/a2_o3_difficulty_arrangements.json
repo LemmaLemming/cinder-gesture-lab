@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "unit_ids": [
+    "first_scout",
+    "second_handler",
+    "final_scout",
+    "final_handler"
+  ],
+  "recipes": [
+    {
+      "recipe_id": "A2-O3/assisted-canonical@v1",
+      "profile": "assisted",
+      "order": [
+        "first_scout",
+        "second_handler",
+        "final_scout",
+        "final_handler"
+      ]
+    },
+    {
+      "recipe_id": "A2-O3/standard-canonical@v1",
+      "profile": "standard",
+      "order": [
+        "first_scout",
+        "second_handler",
+        "final_scout",
+        "final_handler"
+      ]
+    },
+    {
+      "recipe_id": "A2-O3/challenge-canonical-legacy@v1",
+      "profile": "challenge",
+      "order": [
+        "first_scout",
+        "second_handler",
+        "final_scout",
+        "final_handler"
+      ]
+    },
+    {
+      "recipe_id": "A2-O3/challenge-near-handler@v2",
+      "profile": "challenge",
+      "order": [
+        "first_scout",
+        "second_handler",
+        "final_handler",
+        "final_scout"
+      ]
+    }
+  ],
+  "current": {
+    "assisted": "A2-O3/assisted-canonical@v1",
+    "standard": "A2-O3/standard-canonical@v1",
+    "challenge": "A2-O3/challenge-near-handler@v2"
+  }
+}

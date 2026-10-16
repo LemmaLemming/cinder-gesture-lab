@@ -1,0 +1,307 @@
+"""INERT Root-only pure/legacy/whole-Shell Canal validation wrapper. No self escalation.
+
+Root promotes exact named cohort first, reviews final readiness, then executes.
+One canonical queue/direct child per phase; no native route or public packaging.
+"""
+from pathlib import Path
+import argparse
+import contextlib
+import datetime
+import hashlib
+import importlib.util
+import json
+import os
+import re
+import sys
+import uuid
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[2]
+CONFIG = HERE / "RUNNER_INPUTS.json"
+RUNNER = str(Path(__file__).resolve().relative_to(ROOT))
+ENV = {"pure": "CINDER_A2_O3_ARRANGEMENT_PURE_REPORT", "legacy": "CINDER_A2_O3_ARRANGEMENT_LEGACY_REPORT", "shell": "CINDER_A2_O3_ARRANGEMENT_SHELL_REPORT"}
+SCOPE = "Additive current reviewed named subset, exact14 promoted Canal/runtime/recipe/tests/literals and genuine sidecars. One import then pure, legacy and whole-Shell native jobs; no changed-pair/portrait/route/performance credit; no dependency/global UID/bank census."
+
+def now():
+    return datetime.datetime.now(datetime.timezone.utc).isoformat()
+
+def digest(data):
+    return hashlib.sha256(data).hexdigest()
+
+def sha(path):
+    return digest(path.read_bytes())
+
+def require(condition, message):
+    if not condition:
+        raise ValueError(message)
+
+def save(path, value):
+    path.write_text(json.dumps(value, indent=2, allow_nan=False) + "\n")
+
+def load_json(path):
+    return json.loads(path.read_text(), parse_constant=lambda value: (_ for _ in ()).throw(ValueError("Nonfinite JSON: " + value)))
+
+class Tee:
+    def __init__(self, original, log):
+        self.original, self.log = original, log
+    def write(self, value):
+        self.log.write(value)
+        return self.original.write(value)
+    def flush(self):
+        self.log.flush()
+        self.original.flush()
+
+def observe(names, out, label):
+    """Retain the bytes actually read at each observation, including failures."""
+    values, retained = {}, {}
+    blobs = out / "source-blobs"
+    blobs.mkdir(exist_ok=True)
+    for name in names:
+        path = ROOT / name
+        if not path.is_file():
+            values[name], retained[name] = None, {"present": False}
+            continue
+        data = path.read_bytes()
+        value = digest(data)
+        blob = blobs / value
+        if blob.exists():
+            require(blob.read_bytes() == data, "Retained source blob collision: " + name)
+        else:
+            blob.write_bytes(data)
+        values[name] = value
+        retained[name] = {"present": True, "sha256": value, "bytes": len(data), "blob": "source-blobs/" + value}
+    save(out / ("sources-" + label + ".json"), values)
+    save(out / ("retained-" + label + ".json"), {"observed_at": now(), "files": retained, "scope": SCOPE})
+    return values
+
+def same_sources(expected, actual, label):
+    changed = [name for name in expected if expected[name] != actual.get(name)]
+    require(set(expected) == set(actual) and not changed, label + " named source/UID drift: " + repr(changed))
+
+
+def after_sources(expected, actual, phase, allowed_uids):
+    missing = {name for name, value in expected.items() if value is None}
+    require(not missing or phase == "import" and missing <= allowed_uids, "Only the three selected new test UID sidecars may be absent for import")
+    require(set(expected) == set(actual), "Named source set must remain exact")
+    require(all(actual[name] == value for name, value in expected.items() if value is not None), "Existing selected source/UID changed during child")
+    require(all(actual[name] is not None for name in missing), "Canonical import must actually generate each new selected test UID")
+
+
+def check_native(path, raw, test, config, expected):
+    report = load_json(path)
+    require(type(report) is dict and type(report.get("schema_version")) is int and report["schema_version"] == 1
+            and report.get("kind") == "a2-o3-arrangement-" + test, "Actual native report kind/schema")
+    rows = report["rows"]
+    require(type(rows) is list and bool(rows) and type(report["checks"]) is int and report["checks"] == len(rows), "Actual nonempty native row/count join")
+    require(all(type(row) is dict and type(row.get("check")) is int and row["check"] == index and row.get("ok") is True
+                for index, row in enumerate(rows, 1)), "Actual rows must retain consecutive ordinals and strict passing booleans")
+    require(type(report["failures"]) is int and report["failures"] == 0 and report["first_failure"] == {}
+            and report["complete"] is True and report["success"] is True, "Actual success/completion/failure metadata")
+    sources = {"res://" + name: expected[name] for name in config["native_source_keys"][test]}
+    require(report["source_before"] == report["source_after"] == sources, "Actual native named source observations join exact host seal")
+    lines = re.findall(r"(?m)^" + re.escape(ENV[test]) + r" path=(.+) sha256=([0-9a-f]{64})$", raw)
+    require(lines == [(str(path), sha(path))], "Unique actual native report path and SHA join physical bytes")
+    if test == "pure":
+        footer = "Canal arrangement pure: %d checks/0 failures; complete=true" % len(rows)
+        require([line for line in raw.splitlines() if line.startswith("Canal arrangement pure:")] == [footer], "Actual pure row/footer join")
+    elif test == "legacy":
+        receipts = report["receipts"]
+        require(type(receipts) is list and len(receipts) == 4 and report["quiet_events"] == [], "Exactly four actual paused legacy units and empty selected callback observations")
+        require({row["name"] for row in receipts} == set(config["literal_hashes"]), "Actual legacy unit names join original four packets")
+        for row in receipts:
+            original = config["literal_hashes"][row["name"]]
+            require(row["original_wire_sha256"] == row["exact_recapture_sha256"] == original[0]
+                    and row["original_store_sha256"] == original[1]
+                    and row["producer_report_sha256"] == "08b1f8cbdf8e8f56ae3504ec8ebda7b6fea920e9118d484d3ba2f512b2b3c8b9", "Exact original whole wire/recapture/rawStore/producer receipt joins")
+            require(row["saved_profile"] in ("standard", "challenge") and row["current_TEST_preference"] == ("challenge" if row["saved_profile"] == "standard" else "standard"), "Actual saved/opposite-current profile metadata")
+            ids = row["actual_native_identities_decimal"]
+            require(type(ids) is dict and len(ids) == 17 and len(set(ids.values())) == 17
+                    and all(type(value) is str and re.fullmatch(r"-?[1-9][0-9]*", value) is not None for value in ids.values()), "Native identity receipts retain canonical signed decimal strings; live validity is checked natively")
+        footer = "A2-O3 arrangement legacy: %d checks/0 failures; complete=true; units=4" % len(rows)
+        require([line for line in raw.splitlines() if line.startswith("A2-O3 arrangement legacy:")] == [footer], "Actual legacy row/footer/unit join")
+    else:
+        receipts = report["receipts"]
+        require(type(receipts) is list and [row.get("stage") for row in receipts] == config["shell_receipt_stages"], "Exact actual whole-Shell receipt stages")
+        for row in receipts:
+            for field in ("whole_packet_exact", "whole_session_exact", "protected_story_exact", "entrance_checkpoint_exact"):
+                require(type(row.get(field)) is str and bool(row[field]), "Original opaque native receipt wire required: " + field)
+            ids = row["native_ids_decimal"]
+            require(type(ids) is dict and len(ids) == 23 and len(set(ids.values())) == 23 and all(type(value) is str and re.fullmatch(r"-?[1-9][0-9]*", value) is not None for value in ids.values()), "Actual23 native identity decimal strings; live validity remains native")
+            stores = row["raw_stores"]
+            require(type(stores) is dict and type(stores.get("campaign")) is dict and type(stores.get("preferences")) is dict, "Actual campaign/preferences disk observation required")
+            for group in ("campaign", "preferences"):
+                for key, value in stores[group].items():
+                    if not key.endswith(".json") and not key.endswith(".json.bak"): continue
+                    if value is None: continue
+                    wire = value.get("raw")
+                    require(type(wire) is str and value.get("sha256") == digest(wire.encode()) and type(value.get("bytes")) is int and value["bytes"] == len(wire.encode()), "Opaque original raw Store UTF8 byte/SHA joins")
+        require(type(report["selected_gameplay_events"]) is list and type(report["actual_action_exact_wires"]) is list and len(report["actual_action_exact_wires"]) == 1 and all(type(wire) is str and bool(wire) for wire in report["actual_action_exact_wires"]), "Original one actual action wire and selected event observations")
+        footer = "Canal20 Optional Shell: %d checks/0 failures; complete=true" % len(rows)
+        require([line for line in raw.splitlines() if line.startswith("Canal20 Optional Shell:")] == [footer], "Actual whole-Shell footer/row join")
+    return {"report_sha256": sha(path), "checks": len(rows), "failures": 0, "complete": True,
+            "scope": "Actual metadata/row/footer/hash/source/literal transport joins only; host does not replace full native validators or infer changed-pair/visual/route coverage."}
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("phase", choices=("seal", "import", "native"))
+    parser.add_argument("--test", choices=("pure", "legacy", "shell"), default="pure")
+    parser.add_argument("--seal", type=Path)
+    args = parser.parse_args()
+    out = HERE / (args.phase + "-" + args.test + "-" + datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%S.%fZ") + "-" + uuid.uuid4().hex[:8])
+    out.mkdir(exist_ok=False)
+    result = {"phase": args.phase, "test": args.test, "started_at": now(), "closed": False,
+              "engine_launch_attempted": False, "engine_started": False, "owned_child_terminal": False,
+              "dev_return_code": None, "passed": False, "scope": SCOPE}
+    queue = {"queued": False, "acquired": False}
+    save(out / "result.json", result)
+    save(out / "queue.json", queue)
+    expected, names, after, code = {}, [], {}, 2
+    print("CINDER_A2_O3_VALIDATION_OUTPUT", out, flush=True)
+    with (out / "raw.log").open("w") as log, contextlib.redirect_stdout(Tee(sys.stdout, log)), contextlib.redirect_stderr(Tee(sys.stderr, log)):
+        try:
+            config = load_json(CONFIG)
+            require(config.get("schema_version") == 1 and set(config["scripts"]) == {"pure", "legacy", "shell"}, "Exact private source/test configuration")
+            base = set(config["source_files"]) | {RUNNER, str(CONFIG.relative_to(ROOT)), str((HERE / "READINESS.json").relative_to(ROOT)), str((HERE / "SELF_REVIEW.json").relative_to(ROOT))}
+            base |= {row["draft"] for row in config["expected_promotions"].values()}
+            require(all(type(name) is str and not Path(name).is_absolute() and ".." not in Path(name).parts for name in base), "Every input is an explicit checkout-relative named file")
+            names = sorted(base | {name + ".uid" for name in base if name.endswith(".gd")})
+            allowed = {name + ".uid" for name in config["scripts"].values()}
+            before = observe(names, out, "before-queue")
+            for name, pinned in config["current_baseline"].items():
+                require(before.get(name) == pinned, "New reviewed current baseline differs: " + name)
+            for name, pinned in load_json(HERE / "READINESS.json")["frozen_files"].items():
+                require(sha(HERE / name) == pinned, "Current capsule frozen file differs: " + name)
+            require(sha(ROOT / config["promotion_receipt"]["path"]) == config["promotion_receipt"]["sha256"], "Exact Root coherent promotion receipt required")
+            require(all(value is not None or name in allowed for name, value in before.items()), "Only new selected test UID sidecars may be absent")
+            for future, pin in config["expected_promotions"].items():
+                require(before[future] == before[pin["draft"]] == pin["sha256"], "Root must promote exact reviewed private source/data/test/literal bytes: " + future)
+            if args.phase == "seal":
+                target = args.seal.resolve() if args.seal else out / "seal.json"
+                require(target.is_relative_to(HERE) and not target.exists(), "Seal destination must be new within private candidate directory")
+                expected = before
+                seal = {"schema_version": 1, "created_at": now(), "root": str(ROOT), "files": expected, "scope": SCOPE}
+                save(target, seal)
+                save(out / "seal-used.json", seal)
+                result["seal_output"] = {"path": str(target), "sha256": sha(target)}
+            else:
+                require(args.seal is not None, "Each engine phase requires Root's explicit current seal")
+                selected_seal = args.seal.resolve()
+                require(selected_seal.parent.parent == HERE and selected_seal.name in ("seal.json", "post-import-seal.json"), "Explicit original seal from current capsule required")
+                origin = load_json(selected_seal.parent / "result.json")
+                origin_index = load_json(selected_seal.parent / "index.json")
+                require(origin.get("closed") is True and origin.get("passed") is True and type(origin.get("runner_return_code")) is int and origin["runner_return_code"] == 0 and origin_index.get("after_closed") is True and origin_index.get("after_raw_log_close") is True and origin_index["files"][selected_seal.name]["sha256"] == sha(selected_seal) and origin_index["files"]["result.json"]["sha256"] == sha(selected_seal.parent / "result.json"), "Original successful CLOSED indexed seal phase required")
+                seal = load_json(selected_seal)
+                save(out / "seal-used.json", seal)
+                require(seal.get("schema_version") == 1 and seal.get("root") == str(ROOT) and set(seal["files"]) == set(names), "Seal exact identity/source set")
+                expected = seal["files"]
+                same_sources(expected, before, "Before queue")
+                require(args.phase == "import" or all(value is not None for value in expected.values()), "Native requires genuine imported UID sidecars and post-import seal")
+                spec = importlib.util.spec_from_file_location("cinder_a2_o3_validation_dev", ROOT / "scripts/dev/dev.py")
+                require(spec is not None and spec.loader is not None, "Actual canonical dev loader")
+                dev = importlib.util.module_from_spec(spec)
+                sys.modules[spec.name] = dev
+                old_bytecode = sys.dont_write_bytecode
+                try:
+                    sys.dont_write_bytecode = True
+                    spec.loader.exec_module(dev)
+                finally:
+                    sys.dont_write_bytecode = old_bytecode
+                env = dict(os.environ)
+                for key in ENV.values():
+                    env.pop(key, None)
+                report_path = out / "native-report.json"
+                if args.phase == "native":
+                    env[ENV[args.test]] = str(report_path)
+                context = dev.ProjectContext(root=ROOT, environ=env)
+                command = [str(dev.resolve_godot(context)), "--path", str(ROOT), "--headless", "--log-file", str(out / "engine.log")]
+                if args.phase == "import":
+                    command += ["--editor", "--import"]
+                else:
+                    command += ["--script", "res://" + config["scripts"][args.test]]
+                    
+                timeout = {"pure": 60, "legacy": 120, "shell": 210}[args.test]
+                if args.phase == "import":
+                    timeout = 180
+                save(out / "command.json", {"argv": command, "cwd": str(ROOT), "timeout_seconds_after_acquisition": timeout,
+                     "added_environment": {ENV[args.test]: str(report_path)} if args.phase == "native" else {},
+                     "scope": "Only canonical direct child; finite timeout begins after queue. No foreign process/lock removal or implicit source promotion."})
+                queue.update({"queued": True, "queued_at": now(), "lock_path": str(dev.shared_lock_path(ROOT)), "timeout_seconds_after_acquisition": timeout})
+                save(out / "queue.json", queue)
+                try:
+                    with dev.godot_lock(ROOT) as fd:
+                        queue.update({"acquired": True, "acquired_at": now()})
+                        save(out / "queue.json", queue)
+                        at_lock = observe(names, out, "at-lock")
+                        same_sources(expected, at_lock, "At-lock")
+                        result.update({"engine_launch_attempted": True, "engine_launch_attempted_at": now(), "engine_started": None,
+                            "engine_started_scope": "Canonical API launches internally. Exception may occur before or after Popen; start unconfirmed until return."})
+                        save(out / "result.json", result)
+                        returned = dev.run_validation(command, context, fd, timeout, detect_godot_errors=True)
+                        result.update({"engine_started": True, "owned_child_terminal": True, "owned_child_terminal_at": now(), "dev_return_code": returned,
+                            "return_code_scope": "Canonical API return after owned wait/cleanup, potentially synthetic detected failure/timeout; owned_child_terminal is API-level evidence only, not an independently exposed OS-child status."})
+                        save(out / "result.json", result)
+                        after = observe(names, out, "after-child")
+                        after_sources(expected, after, args.phase, allowed)
+                finally:
+                    if queue["acquired"]:
+                        queue["lock_context_released_at"] = now()
+                        save(out / "queue.json", queue)
+                log.flush()
+                if report_path.is_file():
+                    save(out / "native-report-preservation.json", {"path": str(report_path), "sha256": sha(report_path), "bytes": report_path.stat().st_size, "preserved_before_success_checks": True})
+                require(result["owned_child_terminal"] and returned == 0, "Actual canonical direct-child validation must return zero")
+                if args.phase == "import":
+                    post = dict(seal, files=after, created_at=now(), prior_seal_sha256=sha(args.seal), import_phase=str(out))
+                    save(out / "post-import-seal.json", post)
+                    result["post_import_seal"] = str(out / "post-import-seal.json")
+                elif args.phase == "native":
+                    result["native"] = check_native(report_path, (out / "raw.log").read_text(), args.test, config, expected)
+            code = 0
+            result["passed"] = True
+        except KeyboardInterrupt:
+            result["error"] = "Interrupted; canonical dev owns only its direct child cleanup."
+            code = 130
+        except Exception as exc:
+            result["error"] = type(exc).__name__ + ": " + str(exc)
+            print(result["error"], flush=True)
+        finally:
+            final_errors = []
+            try:
+                report_path = out / "native-report.json"
+                if report_path.is_file():
+                    save(out / "native-report-preservation.json", {"path": str(report_path), "sha256": sha(report_path), "bytes": report_path.stat().st_size, "retained_even_on_failure": True})
+            except Exception as exc:
+                final_errors.append("Native report preservation metadata: " + str(exc))
+            try:
+                if names:
+                    closing = observe(names, out, "at-runner-close")
+                    if expected:
+                        same_sources(after or expected, closing, "Runner close")
+            except Exception as exc:
+                final_errors.append("Closing source custody: " + str(exc))
+            log.flush()
+            try:
+                diagnostics = [line for line in (out / "raw.log").read_text().splitlines() if re.search(r"\b(?:ERROR|WARNING|SCRIPT ERROR|Parse Error):", line)]
+                result["raw_diagnostics"] = {"count": len(diagnostics), "lines": diagnostics,
+                    "scope": "Raw host/runtime text preserved separately. A zero wrapper/native result is not a blanket clean-log claim."}
+            except Exception as exc:
+                final_errors.append("Raw diagnostic observation: " + str(exc))
+            if final_errors:
+                result["finalization_errors"] = final_errors
+                result["passed"] = False
+                if code == 0:
+                    code = 2
+            result.update({"closed": True, "closed_at": now(), "runner_return_code": code})
+            save(out / "result.json", result)
+            save(out / "queue.json", queue)
+            print("CINDER_A2_O3_VALIDATION_CLOSED code=" + str(code), flush=True)
+    save(out / "index.json", {"after_closed": True, "after_raw_log_close": True,
+        "files": {str(path.relative_to(out)): {"sha256": sha(path), "bytes": path.stat().st_size}
+                  for path in sorted(out.rglob("*")) if path.is_file()}, "scope": SCOPE})
+    return code
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
+
