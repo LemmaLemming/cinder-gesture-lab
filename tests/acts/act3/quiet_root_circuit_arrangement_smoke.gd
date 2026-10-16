@@ -1013,6 +1013,20 @@ func _component_case(selector: String) -> bool:
 	if not await driver.follow(warning.proof,warning.record): return false
 	for phase: String in ["warning","lock","active","recovery"]:
 		if not _expect(_component_phases.has(phase),"actual selected Root phase observed: "+phase,str(_component_phases)): return false
+	# Removing the forward Root changes the real union. Let the living C50's
+	# existing retry/turn logic reconsider while another actual Root still holds
+	# its original lease. No extra attack, movement, deadline or admission occurs.
+	for _sample: int in range(120):
+		if not _component_pressure.is_empty(): break
+		var other_root_held: bool = false
+		for id: String in QRC.ROOT_IDS:
+			if id == COMPONENT_SELECTED_ROOT: continue
+			var mechanism: Node3D = _component_level.sources[id].call("get_mechanism") as Node3D
+			var control: Dictionary = _component_scheduler.source_control_state(mechanism)
+			if not control.get("reservations",[]).is_empty(): other_root_held = true
+		if not other_root_held: break
+		if not await _component_tick(): return false
+	print("O2 COMPONENT POST-HIT PRESSURE: clock_s=",_component_scheduler.get_clock(),"; hero=",_component_hero.global_position,"; observed=",_component_pressure,"; C50=",_component_stalker.state())
 	if not _expect(not _component_pressure.is_empty() and _component_pressure.get("mixed_held",false) and _component_stalker.is_physics_processing() and not _component_stalker.dead and _component_stalker.hp > 0.0 and _component_stalker.is_in_group("enemies") and not String(_component_stalker.state().last_cancel_reason).begins_with("required_view_unsafe"),"living eligible optional Stalker produced a real native cycle/lease pressure observation without render-guard cancellation",str({"actual_pressure":_component_pressure,"current":_component_stalker.state(),"held_samples":_component_held_samples})): return false
 	return _component_integrity("completed ordinary component opportunity")
 
