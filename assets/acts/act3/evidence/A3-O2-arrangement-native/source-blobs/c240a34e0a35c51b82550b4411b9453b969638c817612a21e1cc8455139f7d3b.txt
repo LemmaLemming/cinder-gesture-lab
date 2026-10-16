@@ -1,0 +1,66 @@
+from pathlib import Path
+import datetime, hashlib, json, re, subprocess, sys
+
+root=Path.cwd()
+name,mode,*args=sys.argv[1:]
+assert re.fullmatch(r'[a-z0-9-]+',name)
+assert str(root)=='/Users/howardchen/.codex/worktrees/campaign-act3/video game idea'
+def git(*a):return subprocess.check_output(['git','--no-optional-locks',*a],cwd=root).decode().strip()
+def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+assert git('branch','--show-current')=='codex/campaign-act3'
+head=git('rev-parse','HEAD')
+assert subprocess.run(['git','merge-base','--is-ancestor','ec61231bdd4317bbe0a817d012f542c8d92a7e63',head],cwd=root).returncode==0
+out=root/'.cinder/o2-arrangement-runs'/name
+out.mkdir(parents=True,exist_ok=False)
+fixture='tests/acts/act3/quiet_root_circuit_arrangement_smoke.gd'
+selected={'.cinder/run_o2_arrangement.py','scripts/dev/dev.py','project.godot',fixture,
+'scripts/acts/act3/quiet_root_circuit.gd','scenes/acts/act3/a3_o2_quiet_root_circuit.tscn','data/campaign/act3/a3_o2_encounters.json',
+'scripts/acts/act3/living_forest_level.gd','scripts/acts/act3/living_forest.gd','scripts/acts/act3/living_forest_scenery.gd','scripts/acts/act3/root_latcher.gd','scripts/acts/act3/root_latcher_art.gd','scripts/acts/act3/garden_root_latcher.gd','scripts/acts/act3/sunbound_stalker.gd',
+'scenes/acts/act3/a3_l2_living_forest.tscn','tests/acts/act3/quiet_root_circuit_optional_shell.gd','tests/acts/act3/quiet_root_circuit_focused.gd','tests/acts/act3/pillars_before_time_optional_shell.gd','tests/acts/act3/pillars_before_time_focused.gd',
+'scripts/campaign/level.gd','scripts/campaign/shell.gd','scripts/campaign/registry.gd','scripts/campaign/attempts.gd','scripts/campaign/save_store.gd','scripts/campaign/exact_json.gd','scripts/campaign/snapshot_codec.gd','data/campaign/registry.json',
+'scripts/combat/threat_scheduler.gd','scripts/combat/lane_mechanism.gd','scripts/combat/body_sweep.gd','scripts/combat/threat_geometry.gd','scripts/combat/encounter_arrangement.gd','scripts/combat/difficulty.gd','scripts/combat/replay_playback.gd',
+'scripts/cues/threat_cue.gd','scripts/cues/interaction_cue.gd','scripts/game.gd','scripts/player.gd','scripts/equipment.gd','scripts/hud.gd','scripts/effects.gd','scripts/settings/game_settings.gd','scripts/ui/campaign_menu.gd','scripts/ui/campaign_scenery.gd','scripts/presentation/camera_framing.gd','scripts/character/player_presentations.gd','scripts/pixel_sprite.gd','scenes/main.tscn','scenes/player.tscn','data/design/player_equipment.json','data/design/difficulty_profiles.json'}
+selected.update(p+'.uid' for p in list(selected) if p.endswith('.gd'))
+legacy=root/'tests/acts/act3/fixtures/a3_o2_arrangement_legacy'
+if legacy.is_dir():selected.update(p.relative_to(root).as_posix() for p in legacy.iterdir() if p.is_file())
+missing=[p for p in selected if not(root/p).is_file()]
+allowed_missing={fixture+'.uid'} if mode=='import' else set()
+assert not set(missing)-allowed_missing,missing
+sources={p:sha(root/p) for p in sorted(selected) if(root/p).is_file()}
+if '--produce-legacy' in args:
+ for p in ['scripts/acts/act3/quiet_root_circuit.gd','data/campaign/act3/a3_o2_encounters.json']:
+  expected=hashlib.sha256(subprocess.check_output(['git','show','18b07006ea514ad9db20fd6a48a4baccfdd30970:'+p],cwd=root)).hexdigest()
+  assert sources[p]==expected,('Original producer source changed',p)
+for p,d in sources.items():
+ blob=out/'source-blobs'/f'{d}.txt';blob.parent.mkdir(parents=True,exist_ok=True)
+ if not blob.exists():blob.write_bytes((root/p).read_bytes())
+manifest={'head':head,'shared_api':'campaign-shared-65','started_at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'selected_sources':sources,'missing_before':missing,'scope':'Explicit O2/direct dependency/UID/settings source observations, source blobs and original fixture bytes; not a complete resource, global UID or project bank census.'}
+(out/'sources.json').write_text(json.dumps(manifest,indent=2)+'\n')
+if mode=='import':
+ assert not args
+ command=['python3','scripts/dev/dev.py','import']
+else:
+ assert mode=='res://'+fixture
+ graphics='--graphics' in args;parse='--parse-only' in args;verbose='--verbose-engine' in args
+ args=[a for a in args if a not in ['--graphics','--parse-only','--verbose-engine']]
+ command=['python3','scripts/dev/dev.py','engine']+([] if graphics else ['--headless'])+(['--verbose'] if verbose else [])+['--path','.']+(['--check-only'] if parse else [])+['--script',mode]+(['--',*args] if args else [])
+(out/'command.json').write_text(json.dumps({'argv':command,'cwd':str(root)},indent=2)+'\n')
+print('Queued O2 arrangement command; evidence '+str(out),flush=True)
+diagnostics=[];footers=[]
+with(out/'native.log').open('w') as log:
+ process=subprocess.Popen(command,cwd=root,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,bufsize=1)
+ for line in process.stdout:
+  log.write(line);log.flush()
+  if line.startswith(('SCRIPT ERROR:','ERROR:','WARNING:')):
+   diagnostics.append(line.rstrip())
+   if len(diagnostics)<=12:print(line.rstrip(),flush=True)
+  elif any(w in line for w in ['O2 ','ARRANGEMENT','LEGACY','FAIL:','CAPTURE:','[dev]','Waiting for']):
+   footers.append(line.rstrip())
+   if (not line.startswith('O2 ARRANGEMENT ROW ') or ': FAIL ' in line) and not line.startswith(('O2 COMPONENT BOUND PROBE:','O2 COMPONENT VIEW PROBE:','O2 COMPONENT POST-HIT PRESSURE:','O2 AFTER-FAILURE PRESSURE:')):print(line.rstrip(),flush=True)
+ code=process.wait()
+changed=[p for p,d in sources.items() if not(root/p).is_file() or sha(root/p)!=d]
+added={p:sha(root/p) for p in missing if(root/p).is_file()}
+result={'closed_at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'actual_exit_code':code,'diagnostics':diagnostics,'selected_source_changes_during_run':changed,'allowed_new_uid_observations':added,'head_after':git('rev-parse','HEAD'),'native_log_sha256':sha(out/'native.log'),'footers':footers}
+(out/'result.json').write_text(json.dumps(result,indent=2)+'\n')
+print(json.dumps({'actual_exit_code':code,'diagnostic_count':len(diagnostics),'first_diagnostic':diagnostics[0][:280] if diagnostics else None,'selected_source_changes_during_run':changed,'head_after':result['head_after'],'native_log_sha256':result['native_log_sha256'],'summary_footers':[x for x in footers if not x.startswith(('O2 ARRANGEMENT ROW ','O2 COMPONENT BOUND PROBE:','O2 COMPONENT VIEW PROBE:','O2 COMPONENT POST-HIT PRESSURE:','O2 AFTER-FAILURE PRESSURE:'))][-10:],'actual_row_count':sum(x.startswith('O2 ARRANGEMENT ROW ') for x in footers),'new_uid_observations':added}),flush=True)
+sys.exit(code if code else (1 if diagnostics or changed or result['head_after']!=head else 0))
