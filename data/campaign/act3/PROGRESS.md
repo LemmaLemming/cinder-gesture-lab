@@ -1,3 +1,11 @@
+## L5 first focused format result preserved; TEST encoding correction —16 October2026
+
+Format-01 at8ffa7051/Shared74 is CLOSED FAILED53/9, raw loge72012d2. There are no parser/native diagnostics, source/HEAD drift or new UID observations. All3 fresh native profile/map/pre-ready/frozen-copy positives pass through43; all9 malformed packets return their intended validation errors but the combined unchanged-donor assertion fails. Actual before/after operands were not retained, so donor mutation versus serializer refusal is not yet established. Quiet candidate, legacy archive check and fixed comparison were not executed.
+
+Only the TEST custody builder changes: explicit String indexes replace two new dotted ID keys. Actual local dot/bracket key types, nonempty Exact/native byte witnesses and per-field differences are added while preserving the original error/input/whole-custody conjunctions and strengthening nonempty-input checks. Originalb0f fixture and all53/9 failed results remain literal. Runtime3 remain10a522bb/93b81f0d/dd7272f7; no production fix or tolerance/guard change. Independent source review is clear; next is one affected format rerun to establish the actual cause and finish its previously unexecuted branches.
+
+ONE west-inset hypothesis comparison remains unexecuted/private. No placement search, old producer, broad suite or premature transport/portrait. Original8Act3/all24/16 policies and actualShared74 adoption remain; Root first help, Agent02 untouched. Earlier entries retain their dates and scopes.
+
 ## L5 selected constructor candidate source promoted —16 October 2026
 
 Integration selected exact design4ab97706/inerta71f0550 under RESPONSE `9c6a89f5`/ACK `67913245`. Candidate changes only crystalman_level, parent_codec and approach_unit: new parent7/policy4/full canonical profile8, frozen profile+whole rows before Approach ready, one fresh/saved Scheduler configuration from that identity, legacy6/canonical whole-attempt preservation, native Vector3 fixed-Echo metadata joins. Root capture API2/3 and future capture preference remain independent. Base JSON/world9/route8/epochs/timings/roles/floor/walls/ApproachCodec/shared/PRIMARY remain unchanged.

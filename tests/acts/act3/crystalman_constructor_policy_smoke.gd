@@ -41,6 +41,7 @@ func _run() -> void:
 	root.content_scale_mode = Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
 	if not _expect(OS.get_cmdline_user_args().is_empty(),"one bounded constructor-format/quiet-restore selector"):
 		await _finish(); return
+	_key_type_witness()
 	_pure_selections()
 	if _failures == 0:
 		for profile: String in ["standard","assisted","challenge"]:
@@ -153,8 +154,88 @@ func _new_negatives(host: PreferenceMain,saved: Dictionary) -> void:
 func _packet_reject(host: PreferenceMain,bad: Dictionary,label: String) -> void:
 	var before: Dictionary = _custody(host)
 	var input: String = Exact.stringify(bad)
+	var before_wire: String = Exact.stringify(before)
+	var before_native: PackedByteArray = var_to_bytes(before)
+	var input_native: PackedByteArray = var_to_bytes(bad)
 	var error: String = host.active_level.snapshot_error_with_player(bad.level,bad.player)
-	_expect(not error.is_empty() and input == Exact.stringify(bad) and _same(before,_custody(host)),label+" rejects with whole donor/IDs/input/optics/events unchanged",error)
+	var after: Dictionary = _custody(host)
+	var after_wire: String = Exact.stringify(after)
+	var after_input: String = Exact.stringify(bad)
+	var after_native: PackedByteArray = var_to_bytes(after)
+	var branches: Dictionary = {}
+	for key: Variant in before:
+		var left: String = Exact.stringify(before[key])
+		var right: String = Exact.stringify(after.get(key))
+		branches[str(key)] = {"before_type":typeof(before[key]),"after_type":typeof(after.get(key)),"before_wire_nonempty":not left.is_empty(),"after_wire_nonempty":not right.is_empty(),"before_wire_bytes":left.to_utf8_buffer().size(),"after_wire_bytes":right.to_utf8_buffer().size(),"wire_equal":not left.is_empty() and left == right,"native_equal":var_to_bytes(before[key]) == var_to_bytes(after.get(key))}
+	var differences: Array[Dictionary] = []
+	_typed_differences(before,after,"custody",differences,[4096],0)
+	var diagnostic: Dictionary = {"label":label,"error":error,"error_nonempty":not error.is_empty(),"input_before_nonempty":not input.is_empty(),"input_after_nonempty":not after_input.is_empty(),"input_wire_equal":input == after_input,"input_native_equal":input_native == var_to_bytes(bad),"before_wire_nonempty":not before_wire.is_empty(),"after_wire_nonempty":not after_wire.is_empty(),"before_wire_bytes":before_wire.to_utf8_buffer().size(),"after_wire_bytes":after_wire.to_utf8_buffer().size(),"custody_wire_equal":not before_wire.is_empty() and before_wire == after_wire,"before_native_bytes":before_native.size(),"after_native_bytes":after_native.size(),"before_native_sha256":_bytes_sha(before_native),"after_native_sha256":_bytes_sha(after_native),"native_equal":before_native == after_native,"branches":branches,"typed_differences":differences,"before_transport_shape":_transport_shape(before),"after_transport_shape":_transport_shape(after)}
+	print("L5_CONSTRUCTOR_REJECTION_DIAGNOSTIC "+JSON.stringify(diagnostic))
+	# Retain all original error/input/whole-custody conjuncts. The explicit
+	# nonempty input witness strengthens the formerly implicit serializer guard.
+	_expect(not error.is_empty() and not input.is_empty() and input == after_input and _same(before,after),label+" rejects with whole donor/IDs/input/optics/events unchanged",error)
+
+func _key_type_witness() -> void:
+	# Pure local dictionaries only. Record this engine's actual key kinds rather
+	# than attributing format-01's missing operands to an assumed StringName rule.
+	var dotted: Dictionary = {}
+	dotted.child = "native-id-text"
+	var indexed: Dictionary = {}
+	indexed["child"] = "native-id-text"
+	var dot_key: Variant = dotted.keys()[0]
+	var bracket_key: Variant = indexed.keys()[0]
+	print("L5_CONSTRUCTOR_KEY_TYPE_DIAGNOSTIC "+JSON.stringify({"dot_key_type":typeof(dot_key),"dot_key_is_string":dot_key is String,"dot_key_is_string_name":dot_key is StringName,"bracket_key_type":typeof(bracket_key),"bracket_key_is_string":bracket_key is String,"dot_exact_nonempty":not Exact.stringify(dotted).is_empty(),"bracket_exact_nonempty":not Exact.stringify(indexed).is_empty(),"dot_native_hex":var_to_bytes(dotted).hex_encode(),"bracket_native_hex":var_to_bytes(indexed).hex_encode(),"original_failed_fixture_sha256":"b0f35b186eae557994bd0dc112eeba45986950b1074f629ed672d0ff7aa931f8"}))
+
+func _transport_shape(value: Variant) -> Dictionary:
+	var result: Dictionary = {"nodes":0,"max_depth":0,"lower_bound_bytes":0,"unsupported":[]}
+	_transport_walk(value,"root",0,result)
+	result["exact_max_depth"] = Exact.MAX_DEPTH
+	result["exact_max_nodes"] = Exact.MAX_NODES
+	result["exact_max_bytes"] = Exact.MAX_BYTES
+	return result
+
+func _transport_walk(value: Variant,path: String,depth: int,result: Dictionary) -> void:
+	if result.nodes >= Exact.MAX_NODES or depth > Exact.MAX_DEPTH+1: return
+	result.nodes += 1
+	result.max_depth = maxi(result.max_depth,depth)
+	result.lower_bound_bytes += 8
+	var kind: int = typeof(value)
+	if value is Dictionary:
+		for key: Variant in value:
+			if not key is String and result.unsupported.size() < 24: result.unsupported.append({"path":path,"key":str(key),"key_type":typeof(key),"reason":"ExactJSON requires String dictionary keys"})
+			result.lower_bound_bytes += str(key).to_utf8_buffer().size()+5
+			_transport_walk(value[key],path+"/"+str(key),depth+1,result)
+	elif value is Array:
+		for index: int in range(value.size()): _transport_walk(value[index],path+"/"+str(index),depth+1,result)
+	elif value is String:
+		result.lower_bound_bytes += value.to_utf8_buffer().size()+5
+	elif kind not in [TYPE_NIL,TYPE_BOOL,TYPE_INT,TYPE_FLOAT] and result.unsupported.size() < 24:
+		result.unsupported.append({"path":path,"value_type":kind,"reason":"unsupported native Variant"})
+	elif value is float and not is_finite(value) and result.unsupported.size() < 24:
+		result.unsupported.append({"path":path,"value_type":kind,"reason":"nonfinite float"})
+
+func _typed_differences(left: Variant,right: Variant,path: String,rows: Array[Dictionary],budget: Array[int],depth: int) -> void:
+	if rows.size() >= 24 or budget[0] <= 0 or depth > 64: return
+	budget[0] -= 1
+	if typeof(left) != typeof(right):
+		rows.append({"path":path,"before_type":typeof(left),"after_type":typeof(right),"reason":"native type differs"}); return
+	if left is Dictionary:
+		if var_to_bytes(left.keys()) != var_to_bytes(right.keys()): rows.append({"path":path,"reason":"key order/types differ (order alone is diagnostic)","before_keys":str(left.keys()),"after_keys":str(right.keys())})
+		for key: Variant in left:
+			if not right.has(key): rows.append({"path":path+"/"+str(key),"reason":"key absent after validation"})
+			else: _typed_differences(left[key],right[key],path+"/"+str(key),rows,budget,depth+1)
+		for key: Variant in right:
+			if not left.has(key) and rows.size() < 24: rows.append({"path":path+"/"+str(key),"reason":"key added after validation"})
+	elif left is Array:
+		if left.size() != right.size(): rows.append({"path":path,"reason":"array size differs","before_size":left.size(),"after_size":right.size()})
+		for index: int in range(mini(left.size(),right.size())): _typed_differences(left[index],right[index],path+"/"+str(index),rows,budget,depth+1)
+	elif var_to_bytes(left) != var_to_bytes(right) and rows.size() < 24:
+		rows.append({"path":path,"reason":"exact native scalar differs","before":str(left),"after":str(right),"before_hex":var_to_bytes(left).hex_encode(),"after_hex":var_to_bytes(right).hex_encode()})
+
+static func _bytes_sha(bytes: PackedByteArray) -> String:
+	var context := HashingContext.new()
+	if context.start(HashingContext.HASH_SHA256) != OK or context.update(bytes) != OK: return ""
+	return context.finish().hex_encode()
 
 func _legacy_case() -> bool:
 	if not _expect(FileAccess.get_sha256(ARCHIVE.path_join("manifest.json")) == MANIFEST_SHA,"literal known Standard archive manifest is externally pinned"): return false
@@ -269,8 +350,8 @@ func _custody(host: Node) -> Dictionary:
 	var child: Node = level.get("current_unit") as Node
 	var ids: Dictionary = {"main":str(host.get_instance_id()),"parent":str(level.get_instance_id()),"hero":str((host.get("player") as Node).get_instance_id()),"world":str(level.get_world_3d().get_instance_id()),"floor":str((level.get("floor_collision") as Node).get_instance_id()),"camera":str((host.get("camera") as Node).get_instance_id()),"hud":str((host.get("hud") as Node).get_instance_id())}
 	if is_instance_valid(child):
-		ids.child = str(child.get_instance_id())
-		ids.scheduler = str((child.get("threat_scheduler") as Node).get_instance_id())
+		ids["child"] = str(child.get_instance_id())
+		ids["scheduler"] = str((child.get("threat_scheduler") as Node).get_instance_id())
 		for id: String in child.get("sources"): ids[id] = str((child.get("sources")[id] as Node).get_instance_id())
 	var camera: Camera3D = host.get("camera") as Camera3D
 	var hud: GameHUD = host.get("hud") as GameHUD
