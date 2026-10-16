@@ -1,0 +1,1934 @@
+{
+  "run": "fresh-producer01",
+  "original_directory": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/l5-difficulty/fresh-producer01",
+  "archive_directory": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/docs/acts/act1/evidence/A1-L5-difficulty/fresh-producer01",
+  "receipt_sha256": "990ecd3625bc502595fa799201a96f5d2dab2978d10694383e5a8fe1198045af",
+  "command": [
+    "python3",
+    "scripts/dev/dev.py",
+    "engine",
+    "--headless",
+    "--path",
+    ".",
+    "--script",
+    "tests/acts/act1/a1_l5_difficulty.gd",
+    "--",
+    "--case=fresh-producer"
+  ],
+  "fixture_arguments": [
+    "--case=fresh-producer"
+  ],
+  "started_at": "2026-10-16T05:20:31.302303+00:00",
+  "closed_at": "2026-10-16T05:22:24.866632+00:00",
+  "exit_code": 0,
+  "recorded_result": "passed",
+  "subprocess_started": true,
+  "runner_error": null,
+  "report_error": null,
+  "recorded_assertion_evidence": {
+    "kind": "native_assertion_rows",
+    "row_count": 172,
+    "failed_rows": 0,
+    "agrees": true
+  },
+  "source_api_declarations": [
+    {
+      "source_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/scripts/acts/act1/living_moon.gd",
+      "source_sha256": "89dc49fe6e37c05679d1f4592c9873f01f1c4ea92720d2ec0209624985be7e7f",
+      "declarations": [
+        {
+          "line": 19,
+          "literal": "const WORLD_REVISION: int = 1"
+        }
+      ]
+    },
+    {
+      "source_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/scripts/acts/act1/living_moon_body.gd",
+      "source_sha256": "ee0ae2057bf6d57d17f14021adfd65687c099248fc9b63d74b86b930e4129cc5",
+      "declarations": [
+        {
+          "line": 23,
+          "literal": "const API_REVISION: String = \"act1-living-moon-body-1\""
+        },
+        {
+          "line": 24,
+          "literal": "const SNAPSHOT_SCHEMA_VERSION: int = 1"
+        },
+        {
+          "line": 25,
+          "literal": "const SAMPLED_SNAPSHOT_SCHEMA_VERSION: int = 2"
+        }
+      ]
+    },
+    {
+      "source_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/scripts/acts/act1/living_moon_codec.gd",
+      "source_sha256": "25bca033d4ce0e1f04abdeb08fb1645887e72246bb978ee7d1d5ae46a4ba73b9",
+      "declarations": [
+        {
+          "line": 13,
+          "literal": "const API_REVISION: String = \"act1-living-moon-level-2\""
+        },
+        {
+          "line": 14,
+          "literal": "const SCHEMA_VERSION: int = 2"
+        },
+        {
+          "line": 15,
+          "literal": "const LEGACY_API_REVISION: String = \"act1-living-moon-level-1\""
+        },
+        {
+          "line": 16,
+          "literal": "const LEGACY_SCHEMA_VERSION: int = 1"
+        },
+        {
+          "line": 17,
+          "literal": "const WORLD_REVISION: int = 1"
+        }
+      ]
+    },
+    {
+      "source_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/scripts/acts/act1/living_moon_layout.gd",
+      "source_sha256": "72810024dc58b80bbe0862088db302e1d107412de174327f497abdde21313809",
+      "declarations": [
+        {
+          "line": 8,
+          "literal": "const LAYOUT_REVISION: int = 1"
+        }
+      ]
+    },
+    {
+      "source_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/scripts/acts/act1/living_moon_nose.gd",
+      "source_sha256": "7aaa08ffc044998d3665f23ceaaa0b05b80736ff1dab286fef9e93d9233a55ac",
+      "declarations": [
+        {
+          "line": 17,
+          "literal": "const API_REVISION: String = \"act1-living-moon-nose-1\""
+        }
+      ]
+    },
+    {
+      "source_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/scripts/acts/act1/rush_selenite.gd",
+      "source_sha256": "5a46be35dd1dce4958bf235ced2c4e63cd442a412d340b0744c3922f479d4c92",
+      "declarations": [
+        {
+          "line": 18,
+          "literal": "const API_REVISION: String = \"act1-rush-selenite-1\""
+        },
+        {
+          "line": 19,
+          "literal": "const SNAPSHOT_SCHEMA_VERSION: int = 2"
+        },
+        {
+          "line": 20,
+          "literal": "const PENDING_SNAPSHOT_SCHEMA_VERSION: int = 3"
+        }
+      ]
+    },
+    {
+      "source_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/scripts/campaign/attempts.gd",
+      "source_sha256": "6701abec6181beb3934490e468b00868c14e69eb229f708d562b98efe32a43a0",
+      "declarations": [
+        {
+          "line": 7,
+          "literal": "const SCHEMA_VERSION: int = 1"
+        }
+      ]
+    },
+    {
+      "source_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/scripts/campaign/exact_json.gd",
+      "source_sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+      "declarations": [
+        {
+          "line": 6,
+          "literal": "const API_REVISION: String = \"exact-json-1\""
+        }
+      ]
+    },
+    {
+      "source_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/scripts/campaign/level.gd",
+      "source_sha256": "27fdab6686d8ba4b8282c48af84c0c3f63d8c8fa7620ae462a4642ec225100c1",
+      "declarations": [
+        {
+          "line": 13,
+          "literal": "const API_REVISION: String = \"campaign-level-1\""
+        },
+        {
+          "line": 14,
+          "literal": "const RESTORE_CANDIDATE_API_REVISION: String = \"level-restore-candidate-1\""
+        },
+        {
+          "line": 15,
+          "literal": "const RESTORE_PRESENTATION_API_REVISION: String = \"level-restore-presentation-1\""
+        },
+        {
+          "line": 16,
+          "literal": "const RESTORE_REGISTRATION_API_REVISION: String = \"level-restore-registration-1\""
+        },
+        {
+          "line": 18,
+          "literal": "const SNAPSHOT_SCHEMA_VERSION: int = 1"
+        }
+      ]
+    },
+    {
+      "source_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/scripts/campaign/registry.gd",
+      "source_sha256": "2b29babb103d121d8f4d185b0d56cb094e9693f099a10731ac6363ead9ee4fe2",
+      "declarations": [
+        {
+          "line": 7,
+          "literal": "const API_REVISION: String = \"campaign-level-1\""
+        }
+      ]
+    },
+    {
+      "source_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/scripts/combat/body_sweep.gd",
+      "source_sha256": "bddf3956d85c656fedea6bbce952ceb494c76867cdba895ff089abeb4c31eab9",
+      "declarations": [
+        {
+          "line": 7,
+          "literal": "const API_REVISION: String = \"body-sweep-1\""
+        }
+      ]
+    },
+    {
+      "source_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/scripts/combat/difficulty.gd",
+      "source_sha256": "e6a0aba9b39697cf59837165ebec858b0dd15c7573f66d79eadc58595ed2e7ae",
+      "declarations": [
+        {
+          "line": 8,
+          "literal": "const SCHEMA_VERSION: int = 1"
+        }
+      ]
+    },
+    {
+      "source_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/scripts/combat/lane_mechanism.gd",
+      "source_sha256": "bcf6558d4ae57c4bf8714ae6fe6b1896b3c7c0be3b6a8a9f3178451653bd031d",
+      "declarations": [
+        {
+          "line": 14,
+          "literal": "const API_REVISION: String = \"lane-mechanism-1\""
+        }
+      ]
+    },
+    {
+      "source_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/scripts/combat/native_sampled_circle.gd",
+      "source_sha256": "27e212c6ae3fce94e980a59617f22732bc69300958404712be55aa82be35aa6f",
+      "declarations": [
+        {
+          "line": 18,
+          "literal": "const API_REVISION: String = \"native-sampled-circle-consumer-1\""
+        }
+      ]
+    },
+    {
+      "source_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/scripts/combat/threat_scheduler.gd",
+      "source_sha256": "c28ea9f4cd6c1ff9aedbc9cfc45a28826c589c095b9193b565f45d23c3df903d",
+      "declarations": [
+        {
+          "line": 34,
+          "literal": "const API_REVISION: String = \"threat-scheduler-4\""
+        },
+        {
+          "line": 35,
+          "literal": "const LUNGE_PREVIEW_API_REVISION: String = \"lunge-preview-1\""
+        },
+        {
+          "line": 36,
+          "literal": "const STATIONARY_PREVIEW_API_REVISION: String = \"stationary-preview-1\""
+        },
+        {
+          "line": 37,
+          "literal": "const SNAPSHOT_API_REVISION: String = \"scheduler-snapshot-1\""
+        },
+        {
+          "line": 38,
+          "literal": "const SNAPSHOT_SCHEMA_VERSION: int = 1"
+        }
+      ]
+    },
+    {
+      "source_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/scripts/cues/interaction_cue.gd",
+      "source_sha256": "2dcd082ea187250e227829957a04f1eb56e255b648aaabcf977b95a28cf2ffc2",
+      "declarations": [
+        {
+          "line": 9,
+          "literal": "const API_REVISION: String = \"interaction-cue-1\""
+        }
+      ]
+    },
+    {
+      "source_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/scripts/cues/threat_cue.gd",
+      "source_sha256": "c8a7abbbd4c021ec92c45e1e57fc966873110231b781dba00bd1ff3d63f5cc5a",
+      "declarations": [
+        {
+          "line": 22,
+          "literal": "const API_REVISION: String = \"threat-cue-1\""
+        }
+      ]
+    },
+    {
+      "source_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/scripts/player.gd",
+      "source_sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+      "declarations": [
+        {
+          "line": 15,
+          "literal": "const SNAPSHOT_API_REVISION: String = \"player-snapshot-1\""
+        },
+        {
+          "line": 16,
+          "literal": "const SNAPSHOT_SCHEMA_VERSION: int = 1"
+        },
+        {
+          "line": 17,
+          "literal": "const DASH_FRAMING_API_REVISION: String = \"player-dash-framing-1\""
+        },
+        {
+          "line": 26,
+          "literal": "const WORLD_ACTION_SCHEMA_VERSION: int = 1"
+        }
+      ]
+    },
+    {
+      "source_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/scripts/presentation/camera_framing.gd",
+      "source_sha256": "daf839d1e35497c88a59d4c1c2af7bb02194418e2c667aceb677242bd642c39b",
+      "declarations": [
+        {
+          "line": 8,
+          "literal": "const API_REVISION: String = \"camera-framing-1\""
+        }
+      ]
+    },
+    {
+      "source_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/scripts/settings/game_settings.gd",
+      "source_sha256": "60d76e75d66f757d5601903ff92007b3da55a77d5c79e1ba7dbb3da2925bb162",
+      "declarations": [
+        {
+          "line": 8,
+          "literal": "const SCHEMA_VERSION: int = 1"
+        }
+      ]
+    }
+  ],
+  "git_before": {
+    "scope": "Read-only Git revision/branch and selected-path status; no Git mutations or repository-wide status claim.",
+    "revision": "2ea6a0a553b610f786ff33bfa47e8c4557fbbaeb",
+    "branch": "codex/campaign-act1",
+    "selected_path_count": 111,
+    "selected_status": [],
+    "commands": [
+      {
+        "argv": [
+          "git",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exit_code": 0,
+        "stdout": "2ea6a0a553b610f786ff33bfa47e8c4557fbbaeb\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "git",
+          "branch",
+          "--show-current"
+        ],
+        "exit_code": 0,
+        "stdout": "codex/campaign-act1\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "git",
+          "status",
+          "--short",
+          "--untracked-files=all",
+          "--",
+          ".cinder/a1-shared71-adoption.json",
+          ".cinder/local.json",
+          "assets/acts/act1/launch/riveted_plate.png",
+          "assets/acts/act1/lunar/accents/human_star_performer.png",
+          "assets/acts/act1/lunar/environment/crescent_performer.png",
+          "assets/acts/act1/lunar/environment/floor_silver_tile.png",
+          "assets/acts/act1/lunar/environment/rock_flat_low_a.png",
+          "assets/acts/act1/lunar/environment/rock_flat_low_b.png",
+          "assets/acts/act1/lunar/rusher_back_crouch.png",
+          "assets/acts/act1/lunar/rusher_back_recovery.png",
+          "assets/acts/act1/lunar/rusher_back_rush.png",
+          "assets/acts/act1/lunar/rusher_back_standing.png",
+          "assets/acts/act1/lunar/rusher_front_crouch.png",
+          "assets/acts/act1/lunar/rusher_front_recovery.png",
+          "assets/acts/act1/lunar/rusher_front_rush.png",
+          "assets/acts/act1/lunar/rusher_front_standing.png",
+          "assets/acts/act1/lunar/rusher_side_crouch.png",
+          "assets/acts/act1/lunar/rusher_side_recovery.png",
+          "assets/acts/act1/lunar/rusher_side_rush.png",
+          "assets/acts/act1/lunar/rusher_side_standing.png",
+          "data/campaign/act1/a1_l5_difficulty_arrangements.json",
+          "data/campaign/registry.json",
+          "data/design/difficulty_profiles.json",
+          "data/design/player_equipment.json",
+          "project.godot",
+          "scenes/acts/act1/a1_l5.tscn",
+          "scenes/main.tscn",
+          "scenes/player.tscn",
+          "scripts/acts/act1/living_moon.gd",
+          "scripts/acts/act1/living_moon.gd.uid",
+          "scripts/acts/act1/living_moon_art.gd",
+          "scripts/acts/act1/living_moon_art.gd.uid",
+          "scripts/acts/act1/living_moon_body.gd",
+          "scripts/acts/act1/living_moon_body.gd.uid",
+          "scripts/acts/act1/living_moon_capsule.gd",
+          "scripts/acts/act1/living_moon_capsule.gd.uid",
+          "scripts/acts/act1/living_moon_codec.gd",
+          "scripts/acts/act1/living_moon_codec.gd.uid",
+          "scripts/acts/act1/living_moon_layout.gd",
+          "scripts/acts/act1/living_moon_layout.gd.uid",
+          "scripts/acts/act1/living_moon_nose.gd",
+          "scripts/acts/act1/living_moon_nose.gd.uid",
+          "scripts/acts/act1/living_moon_scenery.gd",
+          "scripts/acts/act1/living_moon_scenery.gd.uid",
+          "scripts/acts/act1/rush_selenite.gd",
+          "scripts/acts/act1/rush_selenite.gd.uid",
+          "scripts/acts/act1/rush_selenite_art.gd",
+          "scripts/acts/act1/rush_selenite_art.gd.uid",
+          "scripts/attack_footprint.gd",
+          "scripts/attack_footprint.gd.uid",
+          "scripts/campaign/attempts.gd",
+          "scripts/campaign/attempts.gd.uid",
+          "scripts/campaign/exact_json.gd",
+          "scripts/campaign/exact_json.gd.uid",
+          "scripts/campaign/level.gd",
+          "scripts/campaign/level.gd.uid",
+          "scripts/campaign/registry.gd",
+          "scripts/campaign/registry.gd.uid",
+          "scripts/campaign/save_store.gd",
+          "scripts/campaign/save_store.gd.uid",
+          "scripts/campaign/shell.gd",
+          "scripts/campaign/shell.gd.uid",
+          "scripts/campaign/snapshot_codec.gd",
+          "scripts/campaign/snapshot_codec.gd.uid",
+          "scripts/character/player_presentations.gd",
+          "scripts/character/player_presentations.gd.uid",
+          "scripts/combat/body_sweep.gd",
+          "scripts/combat/body_sweep.gd.uid",
+          "scripts/combat/difficulty.gd",
+          "scripts/combat/difficulty.gd.uid",
+          "scripts/combat/lane_mechanism.gd",
+          "scripts/combat/lane_mechanism.gd.uid",
+          "scripts/combat/lunge_motion.gd",
+          "scripts/combat/lunge_motion.gd.uid",
+          "scripts/combat/native_sampled_circle.gd",
+          "scripts/combat/native_sampled_circle.gd.uid",
+          "scripts/combat/threat_geometry.gd",
+          "scripts/combat/threat_geometry.gd.uid",
+          "scripts/combat/threat_scheduler.gd",
+          "scripts/combat/threat_scheduler.gd.uid",
+          "scripts/cues/cue_mesh.gd",
+          "scripts/cues/cue_mesh.gd.uid",
+          "scripts/cues/interaction_cue.gd",
+          "scripts/cues/interaction_cue.gd.uid",
+          "scripts/cues/threat_cue.gd",
+          "scripts/cues/threat_cue.gd.uid",
+          "scripts/dev/dev.py",
+          "scripts/effects.gd",
+          "scripts/effects.gd.uid",
+          "scripts/equipment.gd",
+          "scripts/equipment.gd.uid",
+          "scripts/game.gd",
+          "scripts/game.gd.uid",
+          "scripts/hud.gd",
+          "scripts/hud.gd.uid",
+          "scripts/pixel_sprite.gd",
+          "scripts/pixel_sprite.gd.uid",
+          "scripts/player.gd",
+          "scripts/player.gd.uid",
+          "scripts/presentation/camera_framing.gd",
+          "scripts/presentation/camera_framing.gd.uid",
+          "scripts/settings/game_settings.gd",
+          "scripts/settings/game_settings.gd.uid",
+          "scripts/ui/campaign_menu.gd",
+          "scripts/ui/campaign_menu.gd.uid",
+          "tests/acts/act1/a1_l5_difficulty.gd",
+          "tests/acts/act1/a1_l5_difficulty.gd.uid",
+          "tests/acts/act1/a1_l5_encounter_transition.gd",
+          "tests/acts/act1/a1_l5_encounter_transition.gd.uid",
+          "tests/acts/act1/a1_l5_shell_transport.gd",
+          "tests/acts/act1/a1_l5_shell_transport.gd.uid"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    ]
+  },
+  "git_at_native_banner": {
+    "scope": "Read-only Git revision/branch and selected-path status; no Git mutations or repository-wide status claim.",
+    "revision": "2ea6a0a553b610f786ff33bfa47e8c4557fbbaeb",
+    "branch": "codex/campaign-act1",
+    "selected_path_count": 111,
+    "selected_status": [],
+    "commands": [
+      {
+        "argv": [
+          "git",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exit_code": 0,
+        "stdout": "2ea6a0a553b610f786ff33bfa47e8c4557fbbaeb\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "git",
+          "branch",
+          "--show-current"
+        ],
+        "exit_code": 0,
+        "stdout": "codex/campaign-act1\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "git",
+          "status",
+          "--short",
+          "--untracked-files=all",
+          "--",
+          ".cinder/a1-shared71-adoption.json",
+          ".cinder/local.json",
+          "assets/acts/act1/launch/riveted_plate.png",
+          "assets/acts/act1/lunar/accents/human_star_performer.png",
+          "assets/acts/act1/lunar/environment/crescent_performer.png",
+          "assets/acts/act1/lunar/environment/floor_silver_tile.png",
+          "assets/acts/act1/lunar/environment/rock_flat_low_a.png",
+          "assets/acts/act1/lunar/environment/rock_flat_low_b.png",
+          "assets/acts/act1/lunar/rusher_back_crouch.png",
+          "assets/acts/act1/lunar/rusher_back_recovery.png",
+          "assets/acts/act1/lunar/rusher_back_rush.png",
+          "assets/acts/act1/lunar/rusher_back_standing.png",
+          "assets/acts/act1/lunar/rusher_front_crouch.png",
+          "assets/acts/act1/lunar/rusher_front_recovery.png",
+          "assets/acts/act1/lunar/rusher_front_rush.png",
+          "assets/acts/act1/lunar/rusher_front_standing.png",
+          "assets/acts/act1/lunar/rusher_side_crouch.png",
+          "assets/acts/act1/lunar/rusher_side_recovery.png",
+          "assets/acts/act1/lunar/rusher_side_rush.png",
+          "assets/acts/act1/lunar/rusher_side_standing.png",
+          "data/campaign/act1/a1_l5_difficulty_arrangements.json",
+          "data/campaign/registry.json",
+          "data/design/difficulty_profiles.json",
+          "data/design/player_equipment.json",
+          "project.godot",
+          "scenes/acts/act1/a1_l5.tscn",
+          "scenes/main.tscn",
+          "scenes/player.tscn",
+          "scripts/acts/act1/living_moon.gd",
+          "scripts/acts/act1/living_moon.gd.uid",
+          "scripts/acts/act1/living_moon_art.gd",
+          "scripts/acts/act1/living_moon_art.gd.uid",
+          "scripts/acts/act1/living_moon_body.gd",
+          "scripts/acts/act1/living_moon_body.gd.uid",
+          "scripts/acts/act1/living_moon_capsule.gd",
+          "scripts/acts/act1/living_moon_capsule.gd.uid",
+          "scripts/acts/act1/living_moon_codec.gd",
+          "scripts/acts/act1/living_moon_codec.gd.uid",
+          "scripts/acts/act1/living_moon_layout.gd",
+          "scripts/acts/act1/living_moon_layout.gd.uid",
+          "scripts/acts/act1/living_moon_nose.gd",
+          "scripts/acts/act1/living_moon_nose.gd.uid",
+          "scripts/acts/act1/living_moon_scenery.gd",
+          "scripts/acts/act1/living_moon_scenery.gd.uid",
+          "scripts/acts/act1/rush_selenite.gd",
+          "scripts/acts/act1/rush_selenite.gd.uid",
+          "scripts/acts/act1/rush_selenite_art.gd",
+          "scripts/acts/act1/rush_selenite_art.gd.uid",
+          "scripts/attack_footprint.gd",
+          "scripts/attack_footprint.gd.uid",
+          "scripts/campaign/attempts.gd",
+          "scripts/campaign/attempts.gd.uid",
+          "scripts/campaign/exact_json.gd",
+          "scripts/campaign/exact_json.gd.uid",
+          "scripts/campaign/level.gd",
+          "scripts/campaign/level.gd.uid",
+          "scripts/campaign/registry.gd",
+          "scripts/campaign/registry.gd.uid",
+          "scripts/campaign/save_store.gd",
+          "scripts/campaign/save_store.gd.uid",
+          "scripts/campaign/shell.gd",
+          "scripts/campaign/shell.gd.uid",
+          "scripts/campaign/snapshot_codec.gd",
+          "scripts/campaign/snapshot_codec.gd.uid",
+          "scripts/character/player_presentations.gd",
+          "scripts/character/player_presentations.gd.uid",
+          "scripts/combat/body_sweep.gd",
+          "scripts/combat/body_sweep.gd.uid",
+          "scripts/combat/difficulty.gd",
+          "scripts/combat/difficulty.gd.uid",
+          "scripts/combat/lane_mechanism.gd",
+          "scripts/combat/lane_mechanism.gd.uid",
+          "scripts/combat/lunge_motion.gd",
+          "scripts/combat/lunge_motion.gd.uid",
+          "scripts/combat/native_sampled_circle.gd",
+          "scripts/combat/native_sampled_circle.gd.uid",
+          "scripts/combat/threat_geometry.gd",
+          "scripts/combat/threat_geometry.gd.uid",
+          "scripts/combat/threat_scheduler.gd",
+          "scripts/combat/threat_scheduler.gd.uid",
+          "scripts/cues/cue_mesh.gd",
+          "scripts/cues/cue_mesh.gd.uid",
+          "scripts/cues/interaction_cue.gd",
+          "scripts/cues/interaction_cue.gd.uid",
+          "scripts/cues/threat_cue.gd",
+          "scripts/cues/threat_cue.gd.uid",
+          "scripts/dev/dev.py",
+          "scripts/effects.gd",
+          "scripts/effects.gd.uid",
+          "scripts/equipment.gd",
+          "scripts/equipment.gd.uid",
+          "scripts/game.gd",
+          "scripts/game.gd.uid",
+          "scripts/hud.gd",
+          "scripts/hud.gd.uid",
+          "scripts/pixel_sprite.gd",
+          "scripts/pixel_sprite.gd.uid",
+          "scripts/player.gd",
+          "scripts/player.gd.uid",
+          "scripts/presentation/camera_framing.gd",
+          "scripts/presentation/camera_framing.gd.uid",
+          "scripts/settings/game_settings.gd",
+          "scripts/settings/game_settings.gd.uid",
+          "scripts/ui/campaign_menu.gd",
+          "scripts/ui/campaign_menu.gd.uid",
+          "tests/acts/act1/a1_l5_difficulty.gd",
+          "tests/acts/act1/a1_l5_difficulty.gd.uid",
+          "tests/acts/act1/a1_l5_encounter_transition.gd",
+          "tests/acts/act1/a1_l5_encounter_transition.gd.uid",
+          "tests/acts/act1/a1_l5_shell_transport.gd",
+          "tests/acts/act1/a1_l5_shell_transport.gd.uid"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    ]
+  },
+  "git_after": {
+    "scope": "Read-only Git revision/branch and selected-path status; no Git mutations or repository-wide status claim.",
+    "revision": "2ea6a0a553b610f786ff33bfa47e8c4557fbbaeb",
+    "branch": "codex/campaign-act1",
+    "selected_path_count": 111,
+    "selected_status": [],
+    "commands": [
+      {
+        "argv": [
+          "git",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exit_code": 0,
+        "stdout": "2ea6a0a553b610f786ff33bfa47e8c4557fbbaeb\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "git",
+          "branch",
+          "--show-current"
+        ],
+        "exit_code": 0,
+        "stdout": "codex/campaign-act1\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "git",
+          "status",
+          "--short",
+          "--untracked-files=all",
+          "--",
+          ".cinder/a1-shared71-adoption.json",
+          ".cinder/local.json",
+          "assets/acts/act1/launch/riveted_plate.png",
+          "assets/acts/act1/lunar/accents/human_star_performer.png",
+          "assets/acts/act1/lunar/environment/crescent_performer.png",
+          "assets/acts/act1/lunar/environment/floor_silver_tile.png",
+          "assets/acts/act1/lunar/environment/rock_flat_low_a.png",
+          "assets/acts/act1/lunar/environment/rock_flat_low_b.png",
+          "assets/acts/act1/lunar/rusher_back_crouch.png",
+          "assets/acts/act1/lunar/rusher_back_recovery.png",
+          "assets/acts/act1/lunar/rusher_back_rush.png",
+          "assets/acts/act1/lunar/rusher_back_standing.png",
+          "assets/acts/act1/lunar/rusher_front_crouch.png",
+          "assets/acts/act1/lunar/rusher_front_recovery.png",
+          "assets/acts/act1/lunar/rusher_front_rush.png",
+          "assets/acts/act1/lunar/rusher_front_standing.png",
+          "assets/acts/act1/lunar/rusher_side_crouch.png",
+          "assets/acts/act1/lunar/rusher_side_recovery.png",
+          "assets/acts/act1/lunar/rusher_side_rush.png",
+          "assets/acts/act1/lunar/rusher_side_standing.png",
+          "data/campaign/act1/a1_l5_difficulty_arrangements.json",
+          "data/campaign/registry.json",
+          "data/design/difficulty_profiles.json",
+          "data/design/player_equipment.json",
+          "project.godot",
+          "scenes/acts/act1/a1_l5.tscn",
+          "scenes/main.tscn",
+          "scenes/player.tscn",
+          "scripts/acts/act1/living_moon.gd",
+          "scripts/acts/act1/living_moon.gd.uid",
+          "scripts/acts/act1/living_moon_art.gd",
+          "scripts/acts/act1/living_moon_art.gd.uid",
+          "scripts/acts/act1/living_moon_body.gd",
+          "scripts/acts/act1/living_moon_body.gd.uid",
+          "scripts/acts/act1/living_moon_capsule.gd",
+          "scripts/acts/act1/living_moon_capsule.gd.uid",
+          "scripts/acts/act1/living_moon_codec.gd",
+          "scripts/acts/act1/living_moon_codec.gd.uid",
+          "scripts/acts/act1/living_moon_layout.gd",
+          "scripts/acts/act1/living_moon_layout.gd.uid",
+          "scripts/acts/act1/living_moon_nose.gd",
+          "scripts/acts/act1/living_moon_nose.gd.uid",
+          "scripts/acts/act1/living_moon_scenery.gd",
+          "scripts/acts/act1/living_moon_scenery.gd.uid",
+          "scripts/acts/act1/rush_selenite.gd",
+          "scripts/acts/act1/rush_selenite.gd.uid",
+          "scripts/acts/act1/rush_selenite_art.gd",
+          "scripts/acts/act1/rush_selenite_art.gd.uid",
+          "scripts/attack_footprint.gd",
+          "scripts/attack_footprint.gd.uid",
+          "scripts/campaign/attempts.gd",
+          "scripts/campaign/attempts.gd.uid",
+          "scripts/campaign/exact_json.gd",
+          "scripts/campaign/exact_json.gd.uid",
+          "scripts/campaign/level.gd",
+          "scripts/campaign/level.gd.uid",
+          "scripts/campaign/registry.gd",
+          "scripts/campaign/registry.gd.uid",
+          "scripts/campaign/save_store.gd",
+          "scripts/campaign/save_store.gd.uid",
+          "scripts/campaign/shell.gd",
+          "scripts/campaign/shell.gd.uid",
+          "scripts/campaign/snapshot_codec.gd",
+          "scripts/campaign/snapshot_codec.gd.uid",
+          "scripts/character/player_presentations.gd",
+          "scripts/character/player_presentations.gd.uid",
+          "scripts/combat/body_sweep.gd",
+          "scripts/combat/body_sweep.gd.uid",
+          "scripts/combat/difficulty.gd",
+          "scripts/combat/difficulty.gd.uid",
+          "scripts/combat/lane_mechanism.gd",
+          "scripts/combat/lane_mechanism.gd.uid",
+          "scripts/combat/lunge_motion.gd",
+          "scripts/combat/lunge_motion.gd.uid",
+          "scripts/combat/native_sampled_circle.gd",
+          "scripts/combat/native_sampled_circle.gd.uid",
+          "scripts/combat/threat_geometry.gd",
+          "scripts/combat/threat_geometry.gd.uid",
+          "scripts/combat/threat_scheduler.gd",
+          "scripts/combat/threat_scheduler.gd.uid",
+          "scripts/cues/cue_mesh.gd",
+          "scripts/cues/cue_mesh.gd.uid",
+          "scripts/cues/interaction_cue.gd",
+          "scripts/cues/interaction_cue.gd.uid",
+          "scripts/cues/threat_cue.gd",
+          "scripts/cues/threat_cue.gd.uid",
+          "scripts/dev/dev.py",
+          "scripts/effects.gd",
+          "scripts/effects.gd.uid",
+          "scripts/equipment.gd",
+          "scripts/equipment.gd.uid",
+          "scripts/game.gd",
+          "scripts/game.gd.uid",
+          "scripts/hud.gd",
+          "scripts/hud.gd.uid",
+          "scripts/pixel_sprite.gd",
+          "scripts/pixel_sprite.gd.uid",
+          "scripts/player.gd",
+          "scripts/player.gd.uid",
+          "scripts/presentation/camera_framing.gd",
+          "scripts/presentation/camera_framing.gd.uid",
+          "scripts/settings/game_settings.gd",
+          "scripts/settings/game_settings.gd.uid",
+          "scripts/ui/campaign_menu.gd",
+          "scripts/ui/campaign_menu.gd.uid",
+          "tests/acts/act1/a1_l5_difficulty.gd",
+          "tests/acts/act1/a1_l5_difficulty.gd.uid",
+          "tests/acts/act1/a1_l5_encounter_transition.gd",
+          "tests/acts/act1/a1_l5_encounter_transition.gd.uid",
+          "tests/acts/act1/a1_l5_shell_transport.gd",
+          "tests/acts/act1/a1_l5_shell_transport.gd.uid"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    ]
+  },
+  "literal_native_scope": "Actual new17 Challenge born at real entry, disclosed TEST prefix/public Rusher injury/supported Hero approach placements, eight actual ordinary20-damage primaries and native Sneeze demonstration/CP2/CP3. Separate literal whole current/checkpoint/Attempts/raw original Store branches archived at CP2 BEFORE CP3, then first actual final Sneeze Save. Pure native preselection diagnostics are observations, not both-eligibility or difficulty-novelty claims. No source HP/phase/clock/lease/profile seed, CP2 transplantation, manufactured history, earned route, final response comparison, boss defeat/hatch/transition, gesture/portrait/all-kit/balance/performance claim. Exact selected runtime source pins remain retained.",
+  "checks": 172,
+  "failures": 0,
+  "scope_complete": true,
+  "native_success": true,
+  "native_parse_error": null,
+  "case": "fresh-producer",
+  "first_failure_label": null,
+  "first_failure_pointer": "native.json#/first_failure",
+  "wall_seconds": 113.56517375000112,
+  "native_elapsed_ms": 98477,
+  "queue_observations": [
+    {
+      "at": "2026-10-16T05:20:31.346082+00:00",
+      "elapsed_s": 0.04376849999971455,
+      "line": "Waiting for the shared Godot session to close\u2026"
+    }
+  ],
+  "queue_message_to_banner_observed_s": 14.07761983400269,
+  "raw_error_warning_lines": [],
+  "recorded_source_changes_at_banner": [],
+  "recorded_source_changes_after": [],
+  "source_pre_manifest_sha256": "2b117660db409ce884d168b495df74bd7cd28bb7e79813185757dd64eec1574c",
+  "source_post_manifest_sha256": "2b117660db409ce884d168b495df74bd7cd28bb7e79813185757dd64eec1574c",
+  "native_report_sha256": "4375d37e0bfa65571b3a43ff080ae8b7aa7d35ad26baebb50668f87442970b14",
+  "literal_native_report_original": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-l5-difficulty-14396-99253354.json",
+  "literal_source_reports": [],
+  "literal_report_arguments": [],
+  "native_receipt_labels": [
+    "actual capsule checkpoint",
+    "blink preparing",
+    "blink genuine recovery",
+    "actual moon-phase-2",
+    "sneeze preparing",
+    "sneeze genuine recovery",
+    "actual moon-phase-3"
+  ],
+  "companions": [
+    {
+      "native_pointer": "/branches/cp2/all_original_disk_files/campaign.json",
+      "branch_label": "cp2",
+      "member": "campaign.json",
+      "verified": true,
+      "archive_path": "branches/cp2/campaign.json",
+      "literal_path": "res://.cinder/a1-l5-difficulty-14396-777009/cp2/campaign.json",
+      "original_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-l5-difficulty-14396-777009/cp2/campaign.json",
+      "bytes": 104700,
+      "sha256": "828e02b938d5a8fb37c16ad850b0c68f97b0f5bfa884b047b0a0b4d0a60b8a49",
+      "recorded_bytes": 104700,
+      "recorded_sha256": "828e02b938d5a8fb37c16ad850b0c68f97b0f5bfa884b047b0a0b4d0a60b8a49",
+      "recorded_hex_present": true
+    },
+    {
+      "native_pointer": "/branches/cp2/all_original_disk_files/campaign.json.bak",
+      "branch_label": "cp2",
+      "member": "campaign.json.bak",
+      "verified": true,
+      "archive_path": "branches/cp2/campaign.json.bak",
+      "literal_path": "res://.cinder/a1-l5-difficulty-14396-777009/cp2/campaign.json.bak",
+      "original_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-l5-difficulty-14396-777009/cp2/campaign.json.bak",
+      "bytes": 104700,
+      "sha256": "da0e2ce7b4f1783bcaba5ed86f84932e35af8a76a54d1f67af674f9f225adccf",
+      "recorded_bytes": 104700,
+      "recorded_sha256": "da0e2ce7b4f1783bcaba5ed86f84932e35af8a76a54d1f67af674f9f225adccf",
+      "recorded_hex_present": true
+    },
+    {
+      "native_pointer": "/branches/cp2/all_original_disk_files/preferences.json",
+      "branch_label": "cp2",
+      "member": "preferences.json",
+      "verified": true,
+      "archive_path": "branches/cp2/preferences.json",
+      "literal_path": "res://.cinder/a1-l5-difficulty-14396-777009/cp2/preferences.json",
+      "original_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-l5-difficulty-14396-777009/cp2/preferences.json",
+      "bytes": 299,
+      "sha256": "edd537ce9745ca27cedd5cd96d7aa180286314101e7887890ea843467cbf0666",
+      "recorded_bytes": 299,
+      "recorded_sha256": "edd537ce9745ca27cedd5cd96d7aa180286314101e7887890ea843467cbf0666",
+      "recorded_hex_present": true
+    },
+    {
+      "native_pointer": "/branches/cp2",
+      "branch_label": "cp2",
+      "member": "branch.json",
+      "verified": true,
+      "archive_path": "branches/cp2/branch.json",
+      "literal_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-l5-difficulty-14396-777009/cp2/branch.json",
+      "original_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-l5-difficulty-14396-777009/cp2/branch.json",
+      "bytes": 839780,
+      "sha256": "bfbe78a668736e14a5c4902fe7a968d7c46c104b38bc77b2be63b876c2a80976"
+    },
+    {
+      "native_pointer": "/branches/cp3/all_original_disk_files/campaign.json",
+      "branch_label": "cp3",
+      "member": "campaign.json",
+      "verified": true,
+      "archive_path": "branches/cp3/campaign.json",
+      "literal_path": "res://.cinder/a1-l5-difficulty-14396-777009/cp3/campaign.json",
+      "original_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-l5-difficulty-14396-777009/cp3/campaign.json",
+      "bytes": 155059,
+      "sha256": "ea64e291463aecbf7eb8668d8831fb64ff99e4b398578349f67eb791dd27a6b8",
+      "recorded_bytes": 155059,
+      "recorded_sha256": "ea64e291463aecbf7eb8668d8831fb64ff99e4b398578349f67eb791dd27a6b8",
+      "recorded_hex_present": true
+    },
+    {
+      "native_pointer": "/branches/cp3/all_original_disk_files/campaign.json.bak",
+      "branch_label": "cp3",
+      "member": "campaign.json.bak",
+      "verified": true,
+      "archive_path": "branches/cp3/campaign.json.bak",
+      "literal_path": "res://.cinder/a1-l5-difficulty-14396-777009/cp3/campaign.json.bak",
+      "original_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-l5-difficulty-14396-777009/cp3/campaign.json.bak",
+      "bytes": 155059,
+      "sha256": "237ef2de9fc9d042a02485550a60978183850b9366ab2cc86a2016776d7d3e17",
+      "recorded_bytes": 155059,
+      "recorded_sha256": "237ef2de9fc9d042a02485550a60978183850b9366ab2cc86a2016776d7d3e17",
+      "recorded_hex_present": true
+    },
+    {
+      "native_pointer": "/branches/cp3/all_original_disk_files/preferences.json",
+      "branch_label": "cp3",
+      "member": "preferences.json",
+      "verified": true,
+      "archive_path": "branches/cp3/preferences.json",
+      "literal_path": "res://.cinder/a1-l5-difficulty-14396-777009/cp3/preferences.json",
+      "original_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-l5-difficulty-14396-777009/cp3/preferences.json",
+      "bytes": 299,
+      "sha256": "edd537ce9745ca27cedd5cd96d7aa180286314101e7887890ea843467cbf0666",
+      "recorded_bytes": 299,
+      "recorded_sha256": "edd537ce9745ca27cedd5cd96d7aa180286314101e7887890ea843467cbf0666",
+      "recorded_hex_present": true
+    },
+    {
+      "native_pointer": "/branches/cp3",
+      "branch_label": "cp3",
+      "member": "branch.json",
+      "verified": true,
+      "archive_path": "branches/cp3/branch.json",
+      "literal_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-l5-difficulty-14396-777009/cp3/branch.json",
+      "original_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-l5-difficulty-14396-777009/cp3/branch.json",
+      "bytes": 1242651,
+      "sha256": "ce05454d280bba22fc820261d174b7c67c4ef085f44b76a73d14bc7abc31a7f3"
+    },
+    {
+      "native_pointer": "/branches/entry/all_original_disk_files/campaign.json",
+      "branch_label": "entry",
+      "member": "campaign.json",
+      "verified": true,
+      "archive_path": "branches/entry/campaign.json",
+      "literal_path": "res://.cinder/a1-l5-difficulty-14396-777009/entry/campaign.json",
+      "original_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-l5-difficulty-14396-777009/entry/campaign.json",
+      "bytes": 40432,
+      "sha256": "c5f92b0684e92a70f17615595fff6cfd9b622da16b73bd2ed27ffff8d5aa51d4",
+      "recorded_bytes": 40432,
+      "recorded_sha256": "c5f92b0684e92a70f17615595fff6cfd9b622da16b73bd2ed27ffff8d5aa51d4",
+      "recorded_hex_present": true
+    },
+    {
+      "native_pointer": "/branches/entry/all_original_disk_files/preferences.json",
+      "branch_label": "entry",
+      "member": "preferences.json",
+      "verified": true,
+      "archive_path": "branches/entry/preferences.json",
+      "literal_path": "res://.cinder/a1-l5-difficulty-14396-777009/entry/preferences.json",
+      "original_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-l5-difficulty-14396-777009/entry/preferences.json",
+      "bytes": 299,
+      "sha256": "edd537ce9745ca27cedd5cd96d7aa180286314101e7887890ea843467cbf0666",
+      "recorded_bytes": 299,
+      "recorded_sha256": "edd537ce9745ca27cedd5cd96d7aa180286314101e7887890ea843467cbf0666",
+      "recorded_hex_present": true
+    },
+    {
+      "native_pointer": "/branches/entry",
+      "branch_label": "entry",
+      "member": "branch.json",
+      "verified": true,
+      "archive_path": "branches/entry/branch.json",
+      "literal_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-l5-difficulty-14396-777009/entry/branch.json",
+      "original_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-l5-difficulty-14396-777009/entry/branch.json",
+      "bytes": 244529,
+      "sha256": "7bcc4590f788b28be187cf29ce9a34bb929bf83d7f7afaff2ea41fc6f9e840d0"
+    },
+    {
+      "native_pointer": "/branches/first-final-sneeze/all_original_disk_files/campaign.json",
+      "branch_label": "first-final-sneeze",
+      "member": "campaign.json",
+      "verified": true,
+      "archive_path": "branches/first-final-sneeze/campaign.json",
+      "literal_path": "res://.cinder/a1-l5-difficulty-14396-777009/first-final-sneeze/campaign.json",
+      "original_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-l5-difficulty-14396-777009/first-final-sneeze/campaign.json",
+      "bytes": 160598,
+      "sha256": "b425d53672a2f154c2d78a320dcce065e19319ce924c983de31610bfe65c6202",
+      "recorded_bytes": 160598,
+      "recorded_sha256": "b425d53672a2f154c2d78a320dcce065e19319ce924c983de31610bfe65c6202",
+      "recorded_hex_present": true
+    },
+    {
+      "native_pointer": "/branches/first-final-sneeze/all_original_disk_files/campaign.json.bak",
+      "branch_label": "first-final-sneeze",
+      "member": "campaign.json.bak",
+      "verified": true,
+      "archive_path": "branches/first-final-sneeze/campaign.json.bak",
+      "literal_path": "res://.cinder/a1-l5-difficulty-14396-777009/first-final-sneeze/campaign.json.bak",
+      "original_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-l5-difficulty-14396-777009/first-final-sneeze/campaign.json.bak",
+      "bytes": 160598,
+      "sha256": "aa6dea51bbd9955cdc59f7ef4cc1f25a7d26f42021b63b2bd17b61426c81f718",
+      "recorded_bytes": 160598,
+      "recorded_sha256": "aa6dea51bbd9955cdc59f7ef4cc1f25a7d26f42021b63b2bd17b61426c81f718",
+      "recorded_hex_present": true
+    },
+    {
+      "native_pointer": "/branches/first-final-sneeze/all_original_disk_files/preferences.json",
+      "branch_label": "first-final-sneeze",
+      "member": "preferences.json",
+      "verified": true,
+      "archive_path": "branches/first-final-sneeze/preferences.json",
+      "literal_path": "res://.cinder/a1-l5-difficulty-14396-777009/first-final-sneeze/preferences.json",
+      "original_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-l5-difficulty-14396-777009/first-final-sneeze/preferences.json",
+      "bytes": 299,
+      "sha256": "edd537ce9745ca27cedd5cd96d7aa180286314101e7887890ea843467cbf0666",
+      "recorded_bytes": 299,
+      "recorded_sha256": "edd537ce9745ca27cedd5cd96d7aa180286314101e7887890ea843467cbf0666",
+      "recorded_hex_present": true
+    },
+    {
+      "native_pointer": "/branches/first-final-sneeze",
+      "branch_label": "first-final-sneeze",
+      "member": "branch.json",
+      "verified": true,
+      "archive_path": "branches/first-final-sneeze/branch.json",
+      "literal_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-l5-difficulty-14396-777009/first-final-sneeze/branch.json",
+      "original_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-l5-difficulty-14396-777009/first-final-sneeze/branch.json",
+      "bytes": 1287038,
+      "sha256": "688aa051ad6c23cc06d9cccafc0c6478cb7ae97c0de9e6b3e105f936547e52fd"
+    }
+  ],
+  "archival_errors": [],
+  "archival_complete": true,
+  "original_files": {
+    "native.json": {
+      "bytes": 5245263,
+      "sha256": "4375d37e0bfa65571b3a43ff080ae8b7aa7d35ad26baebb50668f87442970b14"
+    },
+    "raw.log": {
+      "bytes": 237,
+      "sha256": "e143488348c3677865bf53a44d47f39dde9b97c8568e9d7efd6246b55bcd75b6"
+    },
+    "receipt.json": {
+      "bytes": 31773,
+      "sha256": "990ecd3625bc502595fa799201a96f5d2dab2978d10694383e5a8fe1198045af"
+    },
+    "source-post/.cinder/a1-shared71-adoption.json": {
+      "bytes": 3311,
+      "sha256": "24379a7b1529e8c7079a6726c53a3f3402cbf7714405a68c2cc1ab26ada0d19b"
+    },
+    "source-post/.cinder/local.json": {
+      "bytes": 200,
+      "sha256": "a8f12f7f0059e1b09abd2325e0ce6d1ec47e529e4832bed57475a4d8080fd2b8"
+    },
+    "source-post/_external/71b30f0ec2f4-run_a1_l5_difficulty_job.py": {
+      "bytes": 20196,
+      "sha256": "18f14c78bf6bbcfc08e877d9c6582382169dceefcbac806dafcbc5b792f74b24"
+    },
+    "source-post/assets/acts/act1/launch/riveted_plate.png": {
+      "bytes": 239,
+      "sha256": "78c9d87d7f9176b001ec2a2b0ee10ac5af16f86068bdc313772838455ae14b0b"
+    },
+    "source-post/assets/acts/act1/lunar/accents/human_star_performer.png": {
+      "bytes": 1091,
+      "sha256": "ce3f5e1205bce88304fba1b3c7f4c883a267e523ec7268c682d3d83a09a613c9"
+    },
+    "source-post/assets/acts/act1/lunar/environment/crescent_performer.png": {
+      "bytes": 1595,
+      "sha256": "381e3f96628091fbeb11710b557c212dd0c398cd83f0d91f902a85fbf8506822"
+    },
+    "source-post/assets/acts/act1/lunar/environment/floor_silver_tile.png": {
+      "bytes": 543,
+      "sha256": "927971422809f26e5492ec6701a69d7b1ced7d1e6498c7d4736542e5b8831c64"
+    },
+    "source-post/assets/acts/act1/lunar/environment/rock_flat_low_a.png": {
+      "bytes": 1314,
+      "sha256": "57935ff87becdcb8c706ea30f0e9ef76a920f7dd0ae17d35a5bce43a7dfc79a3"
+    },
+    "source-post/assets/acts/act1/lunar/environment/rock_flat_low_b.png": {
+      "bytes": 1217,
+      "sha256": "9a022b4def380f71559175c3959af51884f9d1d461711aebc22d8ca37fc15ddf"
+    },
+    "source-post/assets/acts/act1/lunar/rusher_back_crouch.png": {
+      "bytes": 1248,
+      "sha256": "fae5502a7871cd40db819ed0e660e1c5104165d24a765f25f70e4ea795e86296"
+    },
+    "source-post/assets/acts/act1/lunar/rusher_back_recovery.png": {
+      "bytes": 1362,
+      "sha256": "1fb3d30ca37b355dc430e389eaade7c12ade92dd9e5e6b7fefe719e52b44ade9"
+    },
+    "source-post/assets/acts/act1/lunar/rusher_back_rush.png": {
+      "bytes": 1268,
+      "sha256": "48edc2244ce28fb3eeeb3f017a0f9620fcfae3b1d2e14a69a35b5c5074f3166c"
+    },
+    "source-post/assets/acts/act1/lunar/rusher_back_standing.png": {
+      "bytes": 1241,
+      "sha256": "f89c57fabac8a6dc2e26dbb29ea0f8a098cfa1d1201690f93d908cd7e73c2c7a"
+    },
+    "source-post/assets/acts/act1/lunar/rusher_front_crouch.png": {
+      "bytes": 1268,
+      "sha256": "808b068d928226be9cf369a937af0b94fed65958ba160bdad6f3e688e711e6d1"
+    },
+    "source-post/assets/acts/act1/lunar/rusher_front_recovery.png": {
+      "bytes": 1352,
+      "sha256": "9c8df565524773b8d83523d1fde9c94a9c4639375088b4a61d0c8e7e62ab2df9"
+    },
+    "source-post/assets/acts/act1/lunar/rusher_front_rush.png": {
+      "bytes": 1314,
+      "sha256": "f64aba46d666711813d99fdd13e047b47e5b20ad7f1a5f8ac7c0b45d5fcfe623"
+    },
+    "source-post/assets/acts/act1/lunar/rusher_front_standing.png": {
+      "bytes": 1222,
+      "sha256": "2cfeac6364399cb4969ea93fb6a0819b94c8cf5a4e63860023adb7021af724a3"
+    },
+    "source-post/assets/acts/act1/lunar/rusher_side_crouch.png": {
+      "bytes": 1220,
+      "sha256": "c35c4be1566c8bd790d1b3822776ba39ff83ca089188373843079562a1e17aa8"
+    },
+    "source-post/assets/acts/act1/lunar/rusher_side_recovery.png": {
+      "bytes": 1348,
+      "sha256": "2504243da7f599e8decc898e104798377148dfc6bd9d3b14fa4a24b34a0941e9"
+    },
+    "source-post/assets/acts/act1/lunar/rusher_side_rush.png": {
+      "bytes": 1373,
+      "sha256": "e790577c1ee948bf78003080e7b46f577668f7b133ab98d5bf2754b0efc84924"
+    },
+    "source-post/assets/acts/act1/lunar/rusher_side_standing.png": {
+      "bytes": 1102,
+      "sha256": "8e58bf8024807d80fadb8d1aa6d335a6b2220797093f5ac82151779e2537e459"
+    },
+    "source-post/data/campaign/act1/a1_l5_difficulty_arrangements.json": {
+      "bytes": 454,
+      "sha256": "06b65a15b5f56791291d2614346b0973be0d09f91c2466dad8f0ecf20f4463c9"
+    },
+    "source-post/data/campaign/registry.json": {
+      "bytes": 12319,
+      "sha256": "db8bd30ceb754a10fa434d01d415ebb428c84912f8d34d84829e03f9ebb5ff19"
+    },
+    "source-post/data/design/difficulty_profiles.json": {
+      "bytes": 1313,
+      "sha256": "891baa4d087a1f35da0581c5dc6b888274296686144b3c8f5609249245def41c"
+    },
+    "source-post/data/design/player_equipment.json": {
+      "bytes": 32678,
+      "sha256": "737cf534df88fa965ab568f750515eb17098688d268e5b6b699de5cd519b98d1"
+    },
+    "source-post/project.godot": {
+      "bytes": 841,
+      "sha256": "cc0fcb840085aaf7e59ca231df3cf1b21f67dd17a5e87f9f4c46729a5f7bbb1f"
+    },
+    "source-post/scenes/acts/act1/a1_l5.tscn": {
+      "bytes": 1697,
+      "sha256": "8a60db6ad82a34a372c012ad74aa6d05a54f2d7706cddd5e0f7338d7d1197b8d"
+    },
+    "source-post/scenes/main.tscn": {
+      "bytes": 171,
+      "sha256": "c0c169890eed0afb26b1a09a017d45c90a64aa8ba874a683deb141c4190ee06b"
+    },
+    "source-post/scenes/player.tscn": {
+      "bytes": 1184,
+      "sha256": "68cf79442eb217cb0e2afcc4099080ba79c3f3b2c548655195d0864f4fc8bfac"
+    },
+    "source-post/scripts/acts/act1/living_moon.gd": {
+      "bytes": 53607,
+      "sha256": "89dc49fe6e37c05679d1f4592c9873f01f1c4ea92720d2ec0209624985be7e7f"
+    },
+    "source-post/scripts/acts/act1/living_moon.gd.uid": {
+      "bytes": 20,
+      "sha256": "495e9c8184b2a4b9a598eabdcba5233514332eb20b7e406f762130b0882c172c"
+    },
+    "source-post/scripts/acts/act1/living_moon_art.gd": {
+      "bytes": 18985,
+      "sha256": "0a90563bb93693e6bafa51421de61cfdb4ea61676e6fbef4db0762b383b25aba"
+    },
+    "source-post/scripts/acts/act1/living_moon_art.gd.uid": {
+      "bytes": 20,
+      "sha256": "51d27efb305fe226f6ae77e660f7212d1fbc243ab0ea1187c4f605b3a3718347"
+    },
+    "source-post/scripts/acts/act1/living_moon_body.gd": {
+      "bytes": 48958,
+      "sha256": "ee0ae2057bf6d57d17f14021adfd65687c099248fc9b63d74b86b930e4129cc5"
+    },
+    "source-post/scripts/acts/act1/living_moon_body.gd.uid": {
+      "bytes": 20,
+      "sha256": "5c669a9388da5e9e2793cad85d61b984f1145edefc1d429a3432eefde3cb0eb8"
+    },
+    "source-post/scripts/acts/act1/living_moon_capsule.gd": {
+      "bytes": 11964,
+      "sha256": "a995ab879a6f060ff580976455df32458125b12d482ad0ee6407de078872cffd"
+    },
+    "source-post/scripts/acts/act1/living_moon_capsule.gd.uid": {
+      "bytes": 20,
+      "sha256": "e2f154cd88044e400cd2f98a0b5bfdb679a941505cc9e819294093d1f4ebda34"
+    },
+    "source-post/scripts/acts/act1/living_moon_codec.gd": {
+      "bytes": 18824,
+      "sha256": "25bca033d4ce0e1f04abdeb08fb1645887e72246bb978ee7d1d5ae46a4ba73b9"
+    },
+    "source-post/scripts/acts/act1/living_moon_codec.gd.uid": {
+      "bytes": 20,
+      "sha256": "61de823cd219c409ae1a147ab1b58d68ff48ad93be515363b290c3d87530ea29"
+    },
+    "source-post/scripts/acts/act1/living_moon_layout.gd": {
+      "bytes": 2959,
+      "sha256": "72810024dc58b80bbe0862088db302e1d107412de174327f497abdde21313809"
+    },
+    "source-post/scripts/acts/act1/living_moon_layout.gd.uid": {
+      "bytes": 19,
+      "sha256": "e32be9f8a6b5b7dcd0ca3ba51d6a7f6b951cf00cf64b0292fa02a9291b1d7f33"
+    },
+    "source-post/scripts/acts/act1/living_moon_nose.gd": {
+      "bytes": 48897,
+      "sha256": "7aaa08ffc044998d3665f23ceaaa0b05b80736ff1dab286fef9e93d9233a55ac"
+    },
+    "source-post/scripts/acts/act1/living_moon_nose.gd.uid": {
+      "bytes": 20,
+      "sha256": "bb98303b5245c0ec2189ac5164192d18f9d7ebcb8c816789e9651a6c59a71f70"
+    },
+    "source-post/scripts/acts/act1/living_moon_scenery.gd": {
+      "bytes": 10848,
+      "sha256": "185b39cbcd582bfabbc26142cc93ed8fe8b0dd60464ae7b8fd81ef9715754964"
+    },
+    "source-post/scripts/acts/act1/living_moon_scenery.gd.uid": {
+      "bytes": 19,
+      "sha256": "7e1a4969602d1d455b4744fee688e2b42edaaf24d9b2a47cf81349f5e4e4b9f2"
+    },
+    "source-post/scripts/acts/act1/rush_selenite.gd": {
+      "bytes": 50071,
+      "sha256": "5a46be35dd1dce4958bf235ced2c4e63cd442a412d340b0744c3922f479d4c92"
+    },
+    "source-post/scripts/acts/act1/rush_selenite.gd.uid": {
+      "bytes": 21,
+      "sha256": "dd3143c57523045abfb26b62cfdc3eeb4d944d43e359e7e22640593f2136358d"
+    },
+    "source-post/scripts/acts/act1/rush_selenite_art.gd": {
+      "bytes": 7843,
+      "sha256": "195c9de893c985a94a326ca7e3847f3de3a06185263a76588d9db37909c0d7c9"
+    },
+    "source-post/scripts/acts/act1/rush_selenite_art.gd.uid": {
+      "bytes": 20,
+      "sha256": "cfa2daa5b4da5d424b665cc508b552a4ff154261c0abba08c51306988f22ef0e"
+    },
+    "source-post/scripts/attack_footprint.gd": {
+      "bytes": 4138,
+      "sha256": "e202873c089e018231a7ac01d6f665f323654804edeea3cb39dd1a0f16d2fcbb"
+    },
+    "source-post/scripts/attack_footprint.gd.uid": {
+      "bytes": 19,
+      "sha256": "6f49cf6ffe2b06ba65e11a0d8a0ace2d6678c08b37285068ae718b1c555bd627"
+    },
+    "source-post/scripts/campaign/attempts.gd": {
+      "bytes": 18347,
+      "sha256": "6701abec6181beb3934490e468b00868c14e69eb229f708d562b98efe32a43a0"
+    },
+    "source-post/scripts/campaign/attempts.gd.uid": {
+      "bytes": 20,
+      "sha256": "b9d15a9997fe9a59fc5b31ab8d30779dad9769cdfcd306306e40afd61435eec0"
+    },
+    "source-post/scripts/campaign/exact_json.gd": {
+      "bytes": 9330,
+      "sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc"
+    },
+    "source-post/scripts/campaign/exact_json.gd.uid": {
+      "bytes": 20,
+      "sha256": "17b8db6b593b5d323901d318d07cf82a9562731d8254bfe418e70a7544f883e0"
+    },
+    "source-post/scripts/campaign/level.gd": {
+      "bytes": 23949,
+      "sha256": "27fdab6686d8ba4b8282c48af84c0c3f63d8c8fa7620ae462a4642ec225100c1"
+    },
+    "source-post/scripts/campaign/level.gd.uid": {
+      "bytes": 20,
+      "sha256": "3f1289a9ee3e3586e0e5b16600517f7af18a79ae7bdc01b1a440ec7f9155b812"
+    },
+    "source-post/scripts/campaign/registry.gd": {
+      "bytes": 6006,
+      "sha256": "2b29babb103d121d8f4d185b0d56cb094e9693f099a10731ac6363ead9ee4fe2"
+    },
+    "source-post/scripts/campaign/registry.gd.uid": {
+      "bytes": 20,
+      "sha256": "80713da50c61c6b08bed5ce5a8a9cf2bf0e2506e4369ec4b593c69c53b4cff91"
+    },
+    "source-post/scripts/campaign/save_store.gd": {
+      "bytes": 7310,
+      "sha256": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0"
+    },
+    "source-post/scripts/campaign/save_store.gd.uid": {
+      "bytes": 20,
+      "sha256": "9d900a8ada96ac304fb1df06c8b93a6dc5e4d5ce0569158d0c3f00e362ac39d1"
+    },
+    "source-post/scripts/campaign/shell.gd": {
+      "bytes": 70657,
+      "sha256": "f8df3b798544b79d66985f5e468f13ade5485bccc6050b54c9d9d242b3211a0f"
+    },
+    "source-post/scripts/campaign/shell.gd.uid": {
+      "bytes": 20,
+      "sha256": "e193ac7ff2bdcbbf75ca177a71194161a8f6bb3c5a184c304caeec690723eda6"
+    },
+    "source-post/scripts/campaign/snapshot_codec.gd": {
+      "bytes": 3350,
+      "sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac"
+    },
+    "source-post/scripts/campaign/snapshot_codec.gd.uid": {
+      "bytes": 20,
+      "sha256": "3d1e2bebc4e99f59d00b208037bef7e66119959d08b935c2b2b4fc72d7df5e82"
+    },
+    "source-post/scripts/character/player_presentations.gd": {
+      "bytes": 12558,
+      "sha256": "046b716e4030926ac89788bc4fb33ca893c9cf4ba20cdbd8284954d15dfc3f01"
+    },
+    "source-post/scripts/character/player_presentations.gd.uid": {
+      "bytes": 20,
+      "sha256": "c355fe1b339f0cd9f9ce696caa5c1856cc16b482d97db52481e1d07c6ac92651"
+    },
+    "source-post/scripts/combat/body_sweep.gd": {
+      "bytes": 17456,
+      "sha256": "bddf3956d85c656fedea6bbce952ceb494c76867cdba895ff089abeb4c31eab9"
+    },
+    "source-post/scripts/combat/body_sweep.gd.uid": {
+      "bytes": 20,
+      "sha256": "ef81e08a544e454636c523ea797029954359eead30c94e225c7de6893dcdcc74"
+    },
+    "source-post/scripts/combat/difficulty.gd": {
+      "bytes": 4882,
+      "sha256": "e6a0aba9b39697cf59837165ebec858b0dd15c7573f66d79eadc58595ed2e7ae"
+    },
+    "source-post/scripts/combat/difficulty.gd.uid": {
+      "bytes": 20,
+      "sha256": "67649a881ed65fed80580798646a09b1916ad8ca03a7442dca805f234087685b"
+    },
+    "source-post/scripts/combat/lane_mechanism.gd": {
+      "bytes": 43768,
+      "sha256": "bcf6558d4ae57c4bf8714ae6fe6b1896b3c7c0be3b6a8a9f3178451653bd031d"
+    },
+    "source-post/scripts/combat/lane_mechanism.gd.uid": {
+      "bytes": 19,
+      "sha256": "458facdf13d863350dc2ebe082dbf77f6ef5bdaf2f1ceba7ebeba34055c20a6f"
+    },
+    "source-post/scripts/combat/lunge_motion.gd": {
+      "bytes": 15016,
+      "sha256": "52b048392c7ea5d5728b500d1cc68fa478947f59f5b321bd81f377c265be9a66"
+    },
+    "source-post/scripts/combat/lunge_motion.gd.uid": {
+      "bytes": 20,
+      "sha256": "26b4d5dc7cbd8540bb060cac7c9e0153860810d20b8cffcb9f4ea30f322e2432"
+    },
+    "source-post/scripts/combat/native_sampled_circle.gd": {
+      "bytes": 45564,
+      "sha256": "27e212c6ae3fce94e980a59617f22732bc69300958404712be55aa82be35aa6f"
+    },
+    "source-post/scripts/combat/native_sampled_circle.gd.uid": {
+      "bytes": 20,
+      "sha256": "c4661e41198524a974c521f1dacc8ba1639d89670c448771b84df1ed852ae826"
+    },
+    "source-post/scripts/combat/threat_geometry.gd": {
+      "bytes": 14303,
+      "sha256": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09"
+    },
+    "source-post/scripts/combat/threat_geometry.gd.uid": {
+      "bytes": 20,
+      "sha256": "dbffe6e46566832c1126d98a643d508a68219fec591d4662f7bccfe297ddccdd"
+    },
+    "source-post/scripts/combat/threat_scheduler.gd": {
+      "bytes": 266033,
+      "sha256": "c28ea9f4cd6c1ff9aedbc9cfc45a28826c589c095b9193b565f45d23c3df903d"
+    },
+    "source-post/scripts/combat/threat_scheduler.gd.uid": {
+      "bytes": 18,
+      "sha256": "54a051d030eef72dfce3f58a9073b3bce0f469720124e948c251f22a064e974d"
+    },
+    "source-post/scripts/cues/cue_mesh.gd": {
+      "bytes": 9589,
+      "sha256": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d"
+    },
+    "source-post/scripts/cues/cue_mesh.gd.uid": {
+      "bytes": 19,
+      "sha256": "aab103bd0966b0b298f2a10e8107167ca7e23c451dd94d8be76136bd1bdc4d3a"
+    },
+    "source-post/scripts/cues/interaction_cue.gd": {
+      "bytes": 2936,
+      "sha256": "2dcd082ea187250e227829957a04f1eb56e255b648aaabcf977b95a28cf2ffc2"
+    },
+    "source-post/scripts/cues/interaction_cue.gd.uid": {
+      "bytes": 20,
+      "sha256": "e60bea9dccf00e376e4869c338851a7162dfd547a1327297b28910ccc4cb1ac2"
+    },
+    "source-post/scripts/cues/threat_cue.gd": {
+      "bytes": 37198,
+      "sha256": "c8a7abbbd4c021ec92c45e1e57fc966873110231b781dba00bd1ff3d63f5cc5a"
+    },
+    "source-post/scripts/cues/threat_cue.gd.uid": {
+      "bytes": 19,
+      "sha256": "147d2f591ebb3ad3af17a4111b3118811c23bc2e83f3fc6f7574c38c860d4425"
+    },
+    "source-post/scripts/dev/dev.py": {
+      "bytes": 30466,
+      "sha256": "dc333c45353be73300b74ffc8a4f30415acc1ee4891b5a2deab56ec762f96c19"
+    },
+    "source-post/scripts/effects.gd": {
+      "bytes": 21962,
+      "sha256": "c5b8294b88e999d913a9043fd9f588a2b1f7f942280c71945a92d91d1be5b6d7"
+    },
+    "source-post/scripts/effects.gd.uid": {
+      "bytes": 19,
+      "sha256": "d0042236bbd05c3b01e337610154c0b00d3e38970ee381441832b2a7f9fcc831"
+    },
+    "source-post/scripts/equipment.gd": {
+      "bytes": 9130,
+      "sha256": "2f721f0e7af0d1034ae9f92c37b4af3c3223171d0e5d2c120e42c00ae9155ab0"
+    },
+    "source-post/scripts/equipment.gd.uid": {
+      "bytes": 20,
+      "sha256": "25917e75633ca2b0c2133142882fc15ab97373c69a71fc1377bed7ff1d096b4a"
+    },
+    "source-post/scripts/game.gd": {
+      "bytes": 38685,
+      "sha256": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26"
+    },
+    "source-post/scripts/game.gd.uid": {
+      "bytes": 19,
+      "sha256": "ef1b176ec4e92535f63b4913fd257364b2e2e20250bb21ab152d44a55f083129"
+    },
+    "source-post/scripts/hud.gd": {
+      "bytes": 16609,
+      "sha256": "3a76c06a97da117b2fbd43824d88f3ef5150e6ad0045b5e27766b8d70542897b"
+    },
+    "source-post/scripts/hud.gd.uid": {
+      "bytes": 20,
+      "sha256": "70a9ef089b6201cdd4e82f8c617ac548e11145f62e7fcd1aaa36f82f425a85c5"
+    },
+    "source-post/scripts/pixel_sprite.gd": {
+      "bytes": 25114,
+      "sha256": "69a1846a55d251b1e8b44764b429546b814f97aba18379c7ee06b3267938747a"
+    },
+    "source-post/scripts/pixel_sprite.gd.uid": {
+      "bytes": 20,
+      "sha256": "e122d2f88538ac29e667e57008aacc678de4ed9d92a1be0493f37687b0a0b9d3"
+    },
+    "source-post/scripts/player.gd": {
+      "bytes": 48906,
+      "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743"
+    },
+    "source-post/scripts/player.gd.uid": {
+      "bytes": 19,
+      "sha256": "064e4b400f36f2e612baa7a0ec47fd22ac2de3dac6646e02b9921f3675784d70"
+    },
+    "source-post/scripts/presentation/camera_framing.gd": {
+      "bytes": 10132,
+      "sha256": "daf839d1e35497c88a59d4c1c2af7bb02194418e2c667aceb677242bd642c39b"
+    },
+    "source-post/scripts/presentation/camera_framing.gd.uid": {
+      "bytes": 20,
+      "sha256": "64b72a728eb61dfdd37069ff53b7259483bef7d3c238660617af463b1b50778a"
+    },
+    "source-post/scripts/settings/game_settings.gd": {
+      "bytes": 13348,
+      "sha256": "60d76e75d66f757d5601903ff92007b3da55a77d5c79e1ba7dbb3da2925bb162"
+    },
+    "source-post/scripts/settings/game_settings.gd.uid": {
+      "bytes": 19,
+      "sha256": "f1b82776f1b83f512b5ed0d6307de1fda84ac886456ce53b7276770c2d7c03ab"
+    },
+    "source-post/scripts/ui/campaign_menu.gd": {
+      "bytes": 41162,
+      "sha256": "bef10eaa96e1e94a2f7f4dc1c9502ed00f57696c3b3e3a33fa3856eae11d73c1"
+    },
+    "source-post/scripts/ui/campaign_menu.gd.uid": {
+      "bytes": 19,
+      "sha256": "27d6486d87eb8162cc7e6c714ce9db11d313b66236870281aa2e615d8d5fc2e8"
+    },
+    "source-post/tests/acts/act1/a1_l5_difficulty.gd": {
+      "bytes": 32931,
+      "sha256": "a68ae47054c367f2329a807edd24a8431de34baa1eebf840c49933128e6241ef"
+    },
+    "source-post/tests/acts/act1/a1_l5_difficulty.gd.uid": {
+      "bytes": 20,
+      "sha256": "3a6b60b84253113cc898d89048cdff6719876b80dbb59e8b4b4b3b9d8814d259"
+    },
+    "source-post/tests/acts/act1/a1_l5_encounter_transition.gd": {
+      "bytes": 42247,
+      "sha256": "347572471b590e1a7dc18a5f28aa303106f65707606238bb738dd5601eeb5f00"
+    },
+    "source-post/tests/acts/act1/a1_l5_encounter_transition.gd.uid": {
+      "bytes": 20,
+      "sha256": "4131ce674e5bbec150fd92d8f28d3af4c911552b6e211ac78b2c0cf995a5a424"
+    },
+    "source-post/tests/acts/act1/a1_l5_shell_transport.gd": {
+      "bytes": 45396,
+      "sha256": "adc7f0064be1be999ae670dd6c87271a93c55d34a1884935c263e2758fb5afc8"
+    },
+    "source-post/tests/acts/act1/a1_l5_shell_transport.gd.uid": {
+      "bytes": 19,
+      "sha256": "8a837fa750be5aa61900f942259857c3c5775a2d2f006bf9387f0319cfac32bf"
+    },
+    "source-post.json": {
+      "bytes": 35466,
+      "sha256": "2b117660db409ce884d168b495df74bd7cd28bb7e79813185757dd64eec1574c"
+    },
+    "source-pre/.cinder/a1-shared71-adoption.json": {
+      "bytes": 3311,
+      "sha256": "24379a7b1529e8c7079a6726c53a3f3402cbf7714405a68c2cc1ab26ada0d19b"
+    },
+    "source-pre/.cinder/local.json": {
+      "bytes": 200,
+      "sha256": "a8f12f7f0059e1b09abd2325e0ce6d1ec47e529e4832bed57475a4d8080fd2b8"
+    },
+    "source-pre/_external/71b30f0ec2f4-run_a1_l5_difficulty_job.py": {
+      "bytes": 20196,
+      "sha256": "18f14c78bf6bbcfc08e877d9c6582382169dceefcbac806dafcbc5b792f74b24"
+    },
+    "source-pre/assets/acts/act1/launch/riveted_plate.png": {
+      "bytes": 239,
+      "sha256": "78c9d87d7f9176b001ec2a2b0ee10ac5af16f86068bdc313772838455ae14b0b"
+    },
+    "source-pre/assets/acts/act1/lunar/accents/human_star_performer.png": {
+      "bytes": 1091,
+      "sha256": "ce3f5e1205bce88304fba1b3c7f4c883a267e523ec7268c682d3d83a09a613c9"
+    },
+    "source-pre/assets/acts/act1/lunar/environment/crescent_performer.png": {
+      "bytes": 1595,
+      "sha256": "381e3f96628091fbeb11710b557c212dd0c398cd83f0d91f902a85fbf8506822"
+    },
+    "source-pre/assets/acts/act1/lunar/environment/floor_silver_tile.png": {
+      "bytes": 543,
+      "sha256": "927971422809f26e5492ec6701a69d7b1ced7d1e6498c7d4736542e5b8831c64"
+    },
+    "source-pre/assets/acts/act1/lunar/environment/rock_flat_low_a.png": {
+      "bytes": 1314,
+      "sha256": "57935ff87becdcb8c706ea30f0e9ef76a920f7dd0ae17d35a5bce43a7dfc79a3"
+    },
+    "source-pre/assets/acts/act1/lunar/environment/rock_flat_low_b.png": {
+      "bytes": 1217,
+      "sha256": "9a022b4def380f71559175c3959af51884f9d1d461711aebc22d8ca37fc15ddf"
+    },
+    "source-pre/assets/acts/act1/lunar/rusher_back_crouch.png": {
+      "bytes": 1248,
+      "sha256": "fae5502a7871cd40db819ed0e660e1c5104165d24a765f25f70e4ea795e86296"
+    },
+    "source-pre/assets/acts/act1/lunar/rusher_back_recovery.png": {
+      "bytes": 1362,
+      "sha256": "1fb3d30ca37b355dc430e389eaade7c12ade92dd9e5e6b7fefe719e52b44ade9"
+    },
+    "source-pre/assets/acts/act1/lunar/rusher_back_rush.png": {
+      "bytes": 1268,
+      "sha256": "48edc2244ce28fb3eeeb3f017a0f9620fcfae3b1d2e14a69a35b5c5074f3166c"
+    },
+    "source-pre/assets/acts/act1/lunar/rusher_back_standing.png": {
+      "bytes": 1241,
+      "sha256": "f89c57fabac8a6dc2e26dbb29ea0f8a098cfa1d1201690f93d908cd7e73c2c7a"
+    },
+    "source-pre/assets/acts/act1/lunar/rusher_front_crouch.png": {
+      "bytes": 1268,
+      "sha256": "808b068d928226be9cf369a937af0b94fed65958ba160bdad6f3e688e711e6d1"
+    },
+    "source-pre/assets/acts/act1/lunar/rusher_front_recovery.png": {
+      "bytes": 1352,
+      "sha256": "9c8df565524773b8d83523d1fde9c94a9c4639375088b4a61d0c8e7e62ab2df9"
+    },
+    "source-pre/assets/acts/act1/lunar/rusher_front_rush.png": {
+      "bytes": 1314,
+      "sha256": "f64aba46d666711813d99fdd13e047b47e5b20ad7f1a5f8ac7c0b45d5fcfe623"
+    },
+    "source-pre/assets/acts/act1/lunar/rusher_front_standing.png": {
+      "bytes": 1222,
+      "sha256": "2cfeac6364399cb4969ea93fb6a0819b94c8cf5a4e63860023adb7021af724a3"
+    },
+    "source-pre/assets/acts/act1/lunar/rusher_side_crouch.png": {
+      "bytes": 1220,
+      "sha256": "c35c4be1566c8bd790d1b3822776ba39ff83ca089188373843079562a1e17aa8"
+    },
+    "source-pre/assets/acts/act1/lunar/rusher_side_recovery.png": {
+      "bytes": 1348,
+      "sha256": "2504243da7f599e8decc898e104798377148dfc6bd9d3b14fa4a24b34a0941e9"
+    },
+    "source-pre/assets/acts/act1/lunar/rusher_side_rush.png": {
+      "bytes": 1373,
+      "sha256": "e790577c1ee948bf78003080e7b46f577668f7b133ab98d5bf2754b0efc84924"
+    },
+    "source-pre/assets/acts/act1/lunar/rusher_side_standing.png": {
+      "bytes": 1102,
+      "sha256": "8e58bf8024807d80fadb8d1aa6d335a6b2220797093f5ac82151779e2537e459"
+    },
+    "source-pre/data/campaign/act1/a1_l5_difficulty_arrangements.json": {
+      "bytes": 454,
+      "sha256": "06b65a15b5f56791291d2614346b0973be0d09f91c2466dad8f0ecf20f4463c9"
+    },
+    "source-pre/data/campaign/registry.json": {
+      "bytes": 12319,
+      "sha256": "db8bd30ceb754a10fa434d01d415ebb428c84912f8d34d84829e03f9ebb5ff19"
+    },
+    "source-pre/data/design/difficulty_profiles.json": {
+      "bytes": 1313,
+      "sha256": "891baa4d087a1f35da0581c5dc6b888274296686144b3c8f5609249245def41c"
+    },
+    "source-pre/data/design/player_equipment.json": {
+      "bytes": 32678,
+      "sha256": "737cf534df88fa965ab568f750515eb17098688d268e5b6b699de5cd519b98d1"
+    },
+    "source-pre/project.godot": {
+      "bytes": 841,
+      "sha256": "cc0fcb840085aaf7e59ca231df3cf1b21f67dd17a5e87f9f4c46729a5f7bbb1f"
+    },
+    "source-pre/scenes/acts/act1/a1_l5.tscn": {
+      "bytes": 1697,
+      "sha256": "8a60db6ad82a34a372c012ad74aa6d05a54f2d7706cddd5e0f7338d7d1197b8d"
+    },
+    "source-pre/scenes/main.tscn": {
+      "bytes": 171,
+      "sha256": "c0c169890eed0afb26b1a09a017d45c90a64aa8ba874a683deb141c4190ee06b"
+    },
+    "source-pre/scenes/player.tscn": {
+      "bytes": 1184,
+      "sha256": "68cf79442eb217cb0e2afcc4099080ba79c3f3b2c548655195d0864f4fc8bfac"
+    },
+    "source-pre/scripts/acts/act1/living_moon.gd": {
+      "bytes": 53607,
+      "sha256": "89dc49fe6e37c05679d1f4592c9873f01f1c4ea92720d2ec0209624985be7e7f"
+    },
+    "source-pre/scripts/acts/act1/living_moon.gd.uid": {
+      "bytes": 20,
+      "sha256": "495e9c8184b2a4b9a598eabdcba5233514332eb20b7e406f762130b0882c172c"
+    },
+    "source-pre/scripts/acts/act1/living_moon_art.gd": {
+      "bytes": 18985,
+      "sha256": "0a90563bb93693e6bafa51421de61cfdb4ea61676e6fbef4db0762b383b25aba"
+    },
+    "source-pre/scripts/acts/act1/living_moon_art.gd.uid": {
+      "bytes": 20,
+      "sha256": "51d27efb305fe226f6ae77e660f7212d1fbc243ab0ea1187c4f605b3a3718347"
+    },
+    "source-pre/scripts/acts/act1/living_moon_body.gd": {
+      "bytes": 48958,
+      "sha256": "ee0ae2057bf6d57d17f14021adfd65687c099248fc9b63d74b86b930e4129cc5"
+    },
+    "source-pre/scripts/acts/act1/living_moon_body.gd.uid": {
+      "bytes": 20,
+      "sha256": "5c669a9388da5e9e2793cad85d61b984f1145edefc1d429a3432eefde3cb0eb8"
+    },
+    "source-pre/scripts/acts/act1/living_moon_capsule.gd": {
+      "bytes": 11964,
+      "sha256": "a995ab879a6f060ff580976455df32458125b12d482ad0ee6407de078872cffd"
+    },
+    "source-pre/scripts/acts/act1/living_moon_capsule.gd.uid": {
+      "bytes": 20,
+      "sha256": "e2f154cd88044e400cd2f98a0b5bfdb679a941505cc9e819294093d1f4ebda34"
+    },
+    "source-pre/scripts/acts/act1/living_moon_codec.gd": {
+      "bytes": 18824,
+      "sha256": "25bca033d4ce0e1f04abdeb08fb1645887e72246bb978ee7d1d5ae46a4ba73b9"
+    },
+    "source-pre/scripts/acts/act1/living_moon_codec.gd.uid": {
+      "bytes": 20,
+      "sha256": "61de823cd219c409ae1a147ab1b58d68ff48ad93be515363b290c3d87530ea29"
+    },
+    "source-pre/scripts/acts/act1/living_moon_layout.gd": {
+      "bytes": 2959,
+      "sha256": "72810024dc58b80bbe0862088db302e1d107412de174327f497abdde21313809"
+    },
+    "source-pre/scripts/acts/act1/living_moon_layout.gd.uid": {
+      "bytes": 19,
+      "sha256": "e32be9f8a6b5b7dcd0ca3ba51d6a7f6b951cf00cf64b0292fa02a9291b1d7f33"
+    },
+    "source-pre/scripts/acts/act1/living_moon_nose.gd": {
+      "bytes": 48897,
+      "sha256": "7aaa08ffc044998d3665f23ceaaa0b05b80736ff1dab286fef9e93d9233a55ac"
+    },
+    "source-pre/scripts/acts/act1/living_moon_nose.gd.uid": {
+      "bytes": 20,
+      "sha256": "bb98303b5245c0ec2189ac5164192d18f9d7ebcb8c816789e9651a6c59a71f70"
+    },
+    "source-pre/scripts/acts/act1/living_moon_scenery.gd": {
+      "bytes": 10848,
+      "sha256": "185b39cbcd582bfabbc26142cc93ed8fe8b0dd60464ae7b8fd81ef9715754964"
+    },
+    "source-pre/scripts/acts/act1/living_moon_scenery.gd.uid": {
+      "bytes": 19,
+      "sha256": "7e1a4969602d1d455b4744fee688e2b42edaaf24d9b2a47cf81349f5e4e4b9f2"
+    },
+    "source-pre/scripts/acts/act1/rush_selenite.gd": {
+      "bytes": 50071,
+      "sha256": "5a46be35dd1dce4958bf235ced2c4e63cd442a412d340b0744c3922f479d4c92"
+    },
+    "source-pre/scripts/acts/act1/rush_selenite.gd.uid": {
+      "bytes": 21,
+      "sha256": "dd3143c57523045abfb26b62cfdc3eeb4d944d43e359e7e22640593f2136358d"
+    },
+    "source-pre/scripts/acts/act1/rush_selenite_art.gd": {
+      "bytes": 7843,
+      "sha256": "195c9de893c985a94a326ca7e3847f3de3a06185263a76588d9db37909c0d7c9"
+    },
+    "source-pre/scripts/acts/act1/rush_selenite_art.gd.uid": {
+      "bytes": 20,
+      "sha256": "cfa2daa5b4da5d424b665cc508b552a4ff154261c0abba08c51306988f22ef0e"
+    },
+    "source-pre/scripts/attack_footprint.gd": {
+      "bytes": 4138,
+      "sha256": "e202873c089e018231a7ac01d6f665f323654804edeea3cb39dd1a0f16d2fcbb"
+    },
+    "source-pre/scripts/attack_footprint.gd.uid": {
+      "bytes": 19,
+      "sha256": "6f49cf6ffe2b06ba65e11a0d8a0ace2d6678c08b37285068ae718b1c555bd627"
+    },
+    "source-pre/scripts/campaign/attempts.gd": {
+      "bytes": 18347,
+      "sha256": "6701abec6181beb3934490e468b00868c14e69eb229f708d562b98efe32a43a0"
+    },
+    "source-pre/scripts/campaign/attempts.gd.uid": {
+      "bytes": 20,
+      "sha256": "b9d15a9997fe9a59fc5b31ab8d30779dad9769cdfcd306306e40afd61435eec0"
+    },
+    "source-pre/scripts/campaign/exact_json.gd": {
+      "bytes": 9330,
+      "sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc"
+    },
+    "source-pre/scripts/campaign/exact_json.gd.uid": {
+      "bytes": 20,
+      "sha256": "17b8db6b593b5d323901d318d07cf82a9562731d8254bfe418e70a7544f883e0"
+    },
+    "source-pre/scripts/campaign/level.gd": {
+      "bytes": 23949,
+      "sha256": "27fdab6686d8ba4b8282c48af84c0c3f63d8c8fa7620ae462a4642ec225100c1"
+    },
+    "source-pre/scripts/campaign/level.gd.uid": {
+      "bytes": 20,
+      "sha256": "3f1289a9ee3e3586e0e5b16600517f7af18a79ae7bdc01b1a440ec7f9155b812"
+    },
+    "source-pre/scripts/campaign/registry.gd": {
+      "bytes": 6006,
+      "sha256": "2b29babb103d121d8f4d185b0d56cb094e9693f099a10731ac6363ead9ee4fe2"
+    },
+    "source-pre/scripts/campaign/registry.gd.uid": {
+      "bytes": 20,
+      "sha256": "80713da50c61c6b08bed5ce5a8a9cf2bf0e2506e4369ec4b593c69c53b4cff91"
+    },
+    "source-pre/scripts/campaign/save_store.gd": {
+      "bytes": 7310,
+      "sha256": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0"
+    },
+    "source-pre/scripts/campaign/save_store.gd.uid": {
+      "bytes": 20,
+      "sha256": "9d900a8ada96ac304fb1df06c8b93a6dc5e4d5ce0569158d0c3f00e362ac39d1"
+    },
+    "source-pre/scripts/campaign/shell.gd": {
+      "bytes": 70657,
+      "sha256": "f8df3b798544b79d66985f5e468f13ade5485bccc6050b54c9d9d242b3211a0f"
+    },
+    "source-pre/scripts/campaign/shell.gd.uid": {
+      "bytes": 20,
+      "sha256": "e193ac7ff2bdcbbf75ca177a71194161a8f6bb3c5a184c304caeec690723eda6"
+    },
+    "source-pre/scripts/campaign/snapshot_codec.gd": {
+      "bytes": 3350,
+      "sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac"
+    },
+    "source-pre/scripts/campaign/snapshot_codec.gd.uid": {
+      "bytes": 20,
+      "sha256": "3d1e2bebc4e99f59d00b208037bef7e66119959d08b935c2b2b4fc72d7df5e82"
+    },
+    "source-pre/scripts/character/player_presentations.gd": {
+      "bytes": 12558,
+      "sha256": "046b716e4030926ac89788bc4fb33ca893c9cf4ba20cdbd8284954d15dfc3f01"
+    },
+    "source-pre/scripts/character/player_presentations.gd.uid": {
+      "bytes": 20,
+      "sha256": "c355fe1b339f0cd9f9ce696caa5c1856cc16b482d97db52481e1d07c6ac92651"
+    },
+    "source-pre/scripts/combat/body_sweep.gd": {
+      "bytes": 17456,
+      "sha256": "bddf3956d85c656fedea6bbce952ceb494c76867cdba895ff089abeb4c31eab9"
+    },
+    "source-pre/scripts/combat/body_sweep.gd.uid": {
+      "bytes": 20,
+      "sha256": "ef81e08a544e454636c523ea797029954359eead30c94e225c7de6893dcdcc74"
+    },
+    "source-pre/scripts/combat/difficulty.gd": {
+      "bytes": 4882,
+      "sha256": "e6a0aba9b39697cf59837165ebec858b0dd15c7573f66d79eadc58595ed2e7ae"
+    },
+    "source-pre/scripts/combat/difficulty.gd.uid": {
+      "bytes": 20,
+      "sha256": "67649a881ed65fed80580798646a09b1916ad8ca03a7442dca805f234087685b"
+    },
+    "source-pre/scripts/combat/lane_mechanism.gd": {
+      "bytes": 43768,
+      "sha256": "bcf6558d4ae57c4bf8714ae6fe6b1896b3c7c0be3b6a8a9f3178451653bd031d"
+    },
+    "source-pre/scripts/combat/lane_mechanism.gd.uid": {
+      "bytes": 19,
+      "sha256": "458facdf13d863350dc2ebe082dbf77f6ef5bdaf2f1ceba7ebeba34055c20a6f"
+    },
+    "source-pre/scripts/combat/lunge_motion.gd": {
+      "bytes": 15016,
+      "sha256": "52b048392c7ea5d5728b500d1cc68fa478947f59f5b321bd81f377c265be9a66"
+    },
+    "source-pre/scripts/combat/lunge_motion.gd.uid": {
+      "bytes": 20,
+      "sha256": "26b4d5dc7cbd8540bb060cac7c9e0153860810d20b8cffcb9f4ea30f322e2432"
+    },
+    "source-pre/scripts/combat/native_sampled_circle.gd": {
+      "bytes": 45564,
+      "sha256": "27e212c6ae3fce94e980a59617f22732bc69300958404712be55aa82be35aa6f"
+    },
+    "source-pre/scripts/combat/native_sampled_circle.gd.uid": {
+      "bytes": 20,
+      "sha256": "c4661e41198524a974c521f1dacc8ba1639d89670c448771b84df1ed852ae826"
+    },
+    "source-pre/scripts/combat/threat_geometry.gd": {
+      "bytes": 14303,
+      "sha256": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09"
+    },
+    "source-pre/scripts/combat/threat_geometry.gd.uid": {
+      "bytes": 20,
+      "sha256": "dbffe6e46566832c1126d98a643d508a68219fec591d4662f7bccfe297ddccdd"
+    },
+    "source-pre/scripts/combat/threat_scheduler.gd": {
+      "bytes": 266033,
+      "sha256": "c28ea9f4cd6c1ff9aedbc9cfc45a28826c589c095b9193b565f45d23c3df903d"
+    },
+    "source-pre/scripts/combat/threat_scheduler.gd.uid": {
+      "bytes": 18,
+      "sha256": "54a051d030eef72dfce3f58a9073b3bce0f469720124e948c251f22a064e974d"
+    },
+    "source-pre/scripts/cues/cue_mesh.gd": {
+      "bytes": 9589,
+      "sha256": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d"
+    },
+    "source-pre/scripts/cues/cue_mesh.gd.uid": {
+      "bytes": 19,
+      "sha256": "aab103bd0966b0b298f2a10e8107167ca7e23c451dd94d8be76136bd1bdc4d3a"
+    },
+    "source-pre/scripts/cues/interaction_cue.gd": {
+      "bytes": 2936,
+      "sha256": "2dcd082ea187250e227829957a04f1eb56e255b648aaabcf977b95a28cf2ffc2"
+    },
+    "source-pre/scripts/cues/interaction_cue.gd.uid": {
+      "bytes": 20,
+      "sha256": "e60bea9dccf00e376e4869c338851a7162dfd547a1327297b28910ccc4cb1ac2"
+    },
+    "source-pre/scripts/cues/threat_cue.gd": {
+      "bytes": 37198,
+      "sha256": "c8a7abbbd4c021ec92c45e1e57fc966873110231b781dba00bd1ff3d63f5cc5a"
+    },
+    "source-pre/scripts/cues/threat_cue.gd.uid": {
+      "bytes": 19,
+      "sha256": "147d2f591ebb3ad3af17a4111b3118811c23bc2e83f3fc6f7574c38c860d4425"
+    },
+    "source-pre/scripts/dev/dev.py": {
+      "bytes": 30466,
+      "sha256": "dc333c45353be73300b74ffc8a4f30415acc1ee4891b5a2deab56ec762f96c19"
+    },
+    "source-pre/scripts/effects.gd": {
+      "bytes": 21962,
+      "sha256": "c5b8294b88e999d913a9043fd9f588a2b1f7f942280c71945a92d91d1be5b6d7"
+    },
+    "source-pre/scripts/effects.gd.uid": {
+      "bytes": 19,
+      "sha256": "d0042236bbd05c3b01e337610154c0b00d3e38970ee381441832b2a7f9fcc831"
+    },
+    "source-pre/scripts/equipment.gd": {
+      "bytes": 9130,
+      "sha256": "2f721f0e7af0d1034ae9f92c37b4af3c3223171d0e5d2c120e42c00ae9155ab0"
+    },
+    "source-pre/scripts/equipment.gd.uid": {
+      "bytes": 20,
+      "sha256": "25917e75633ca2b0c2133142882fc15ab97373c69a71fc1377bed7ff1d096b4a"
+    },
+    "source-pre/scripts/game.gd": {
+      "bytes": 38685,
+      "sha256": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26"
+    },
+    "source-pre/scripts/game.gd.uid": {
+      "bytes": 19,
+      "sha256": "ef1b176ec4e92535f63b4913fd257364b2e2e20250bb21ab152d44a55f083129"
+    },
+    "source-pre/scripts/hud.gd": {
+      "bytes": 16609,
+      "sha256": "3a76c06a97da117b2fbd43824d88f3ef5150e6ad0045b5e27766b8d70542897b"
+    },
+    "source-pre/scripts/hud.gd.uid": {
+      "bytes": 20,
+      "sha256": "70a9ef089b6201cdd4e82f8c617ac548e11145f62e7fcd1aaa36f82f425a85c5"
+    },
+    "source-pre/scripts/pixel_sprite.gd": {
+      "bytes": 25114,
+      "sha256": "69a1846a55d251b1e8b44764b429546b814f97aba18379c7ee06b3267938747a"
+    },
+    "source-pre/scripts/pixel_sprite.gd.uid": {
+      "bytes": 20,
+      "sha256": "e122d2f88538ac29e667e57008aacc678de4ed9d92a1be0493f37687b0a0b9d3"
+    },
+    "source-pre/scripts/player.gd": {
+      "bytes": 48906,
+      "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743"
+    },
+    "source-pre/scripts/player.gd.uid": {
+      "bytes": 19,
+      "sha256": "064e4b400f36f2e612baa7a0ec47fd22ac2de3dac6646e02b9921f3675784d70"
+    },
+    "source-pre/scripts/presentation/camera_framing.gd": {
+      "bytes": 10132,
+      "sha256": "daf839d1e35497c88a59d4c1c2af7bb02194418e2c667aceb677242bd642c39b"
+    },
+    "source-pre/scripts/presentation/camera_framing.gd.uid": {
+      "bytes": 20,
+      "sha256": "64b72a728eb61dfdd37069ff53b7259483bef7d3c238660617af463b1b50778a"
+    },
+    "source-pre/scripts/settings/game_settings.gd": {
+      "bytes": 13348,
+      "sha256": "60d76e75d66f757d5601903ff92007b3da55a77d5c79e1ba7dbb3da2925bb162"
+    },
+    "source-pre/scripts/settings/game_settings.gd.uid": {
+      "bytes": 19,
+      "sha256": "f1b82776f1b83f512b5ed0d6307de1fda84ac886456ce53b7276770c2d7c03ab"
+    },
+    "source-pre/scripts/ui/campaign_menu.gd": {
+      "bytes": 41162,
+      "sha256": "bef10eaa96e1e94a2f7f4dc1c9502ed00f57696c3b3e3a33fa3856eae11d73c1"
+    },
+    "source-pre/scripts/ui/campaign_menu.gd.uid": {
+      "bytes": 19,
+      "sha256": "27d6486d87eb8162cc7e6c714ce9db11d313b66236870281aa2e615d8d5fc2e8"
+    },
+    "source-pre/tests/acts/act1/a1_l5_difficulty.gd": {
+      "bytes": 32931,
+      "sha256": "a68ae47054c367f2329a807edd24a8431de34baa1eebf840c49933128e6241ef"
+    },
+    "source-pre/tests/acts/act1/a1_l5_difficulty.gd.uid": {
+      "bytes": 20,
+      "sha256": "3a6b60b84253113cc898d89048cdff6719876b80dbb59e8b4b4b3b9d8814d259"
+    },
+    "source-pre/tests/acts/act1/a1_l5_encounter_transition.gd": {
+      "bytes": 42247,
+      "sha256": "347572471b590e1a7dc18a5f28aa303106f65707606238bb738dd5601eeb5f00"
+    },
+    "source-pre/tests/acts/act1/a1_l5_encounter_transition.gd.uid": {
+      "bytes": 20,
+      "sha256": "4131ce674e5bbec150fd92d8f28d3af4c911552b6e211ac78b2c0cf995a5a424"
+    },
+    "source-pre/tests/acts/act1/a1_l5_shell_transport.gd": {
+      "bytes": 45396,
+      "sha256": "adc7f0064be1be999ae670dd6c87271a93c55d34a1884935c263e2758fb5afc8"
+    },
+    "source-pre/tests/acts/act1/a1_l5_shell_transport.gd.uid": {
+      "bytes": 19,
+      "sha256": "8a837fa750be5aa61900f942259857c3c5775a2d2f006bf9387f0319cfac32bf"
+    },
+    "source-pre.json": {
+      "bytes": 35466,
+      "sha256": "2b117660db409ce884d168b495df74bd7cd28bb7e79813185757dd64eec1574c"
+    }
+  },
+  "recorded_hash_files_verified": [
+    "raw.log",
+    "source-pre.json",
+    "source-post.json",
+    "native.json"
+  ],
+  "shots": [],
+  "scope": "Only explicitly selected closed L5 jobs. Original run trees and recorded native shot/branch companion bytes retained; no current-runtime equality, global dependency census, new test execution or visual-review claim.",
+  "archiver_evaluated_gameplay_or_pixels": false
+}

@@ -1,5 +1,5 @@
 extends "res://tests/acts/act1/a1_l5_encounter_transition.gd"
-## Separate private fresh-writer draft; unparsed/unexecuted. Original producer untouched.
+## Separate private producer/transport integration; unparsed/unexecuted. Original drafts untouched.
 ## Same real parent, eight ordinary primaries and native CP2/CP3. TEST prefix,
 ## public Rusher injury and supported Hero placement are explicitly disclosed.
 ## No source HP/phase/clock/lease/profile/forecast/history assignment.
@@ -22,6 +22,7 @@ class BeforeParentProbe extends Node:
 		before_parent.emit()
 
 var difficulty_case: String = ""
+var transport_request: Dictionary = {}
 var producer_profile: String = "challenge"
 var selector_test_roots: Array[String] = []
 var selector_parent_root: String = ""
@@ -49,12 +50,7 @@ func _initialize() -> void:
 func _run() -> void:
 	root.size = Vector2i(540, 1170)
 	registry_bytes = FileAccess.get_file_as_bytes(Registry.DATA_PATH)
-	for argument: String in OS.get_cmdline_user_args():
-		if argument.begins_with("--case="): difficulty_case = argument.trim_prefix("--case=")
-		elif argument.begins_with("--level-scene") or argument in ["--capture", "--capture-polish", "--first-primary-only", "--later-phase-transport-only"]:
-			_expect(false, "difficulty producer cannot combine preview or inherited alternate selectors"); await _finish(); return
-	if not _expect(difficulty_case in ["legacy-producer", "fresh-producer", "selectors"], "explicit legacy-producer, fresh-producer or selectors case required"):
-		await _finish(); return
+	if not _parse_difficulty_arguments(): await _finish(); return
 	source_pre = _source_pins()
 	if difficulty_case == "legacy-producer":
 		# Preserve the original old-writer gate; this case cannot run on new code.
@@ -73,6 +69,12 @@ func _run() -> void:
 			entry.scene_path = ScenePath; entry.readiness = "accepted"; entry.accepted_commit = "f".repeat(40); entry.api_revision = Registry.API_REVISION
 	var registry := Registry.new(raw)
 	if not _expect(registry.last_error.is_empty() and registry.scene_error(Layout.LEVEL_ID).is_empty(), "only owned L5 receives isolated TEST registration; no canonical metadata changes"):
+		await _finish(); return
+	if difficulty_case in ["transport", "metadata"]:
+		if difficulty_case == "transport":
+			difficulty_complete = await _run_transport_case(transport_request.source_report, transport_request.source_sha256, transport_request.branch, transport_request.future_profile)
+		else:
+			difficulty_complete = await _run_metadata_case(transport_request.source_report, transport_request.source_sha256, transport_request.branch, transport_request.future_profile)
 		await _finish(); return
 	probe = NativeTickProbe.new(); probe.process_physics_priority = 3000; root.add_child(probe)
 	if difficulty_case == "selectors":
@@ -124,6 +126,23 @@ func _run() -> void:
 		await _finish(); return
 	difficulty_complete = true
 	await _finish()
+
+
+func _parse_difficulty_arguments() -> bool:
+	var values: Dictionary = {}
+	var allowed: Array[String] = ["--case", "--source-report", "--source-sha256", "--branch", "--future-profile"]
+	for argument: String in OS.get_cmdline_user_args():
+		var separator: int = argument.find("=")
+		var key: String = argument.left(separator) if separator >= 0 else argument
+		if not _expect(separator >= 0 and key in allowed and not values.has(key) and not argument.substr(separator + 1).is_empty(), "one explicit known nonempty difficulty selector: " + argument): return false
+		values[key] = argument.substr(separator + 1)
+	difficulty_case = String(values.get("--case", ""))
+	if not _expect(difficulty_case in ["legacy-producer", "fresh-producer", "selectors", "transport", "metadata"], "explicit scoped difficulty case required"): return false
+	if difficulty_case not in ["transport", "metadata"]:
+		return _expect(values.size() == 1, "producer/entry selectors accept no donor or inherited alternate arguments")
+	if not _expect(values.size() == allowed.size(), "transport/metadata require exact report, full SHA256, branch and opposite future profile selectors"): return false
+	transport_request = {"source_report": values["--source-report"], "source_sha256": values["--source-sha256"], "branch": values["--branch"], "future_profile": values["--future-profile"]}
+	return _expect(String(transport_request.source_sha256).length() == 64 and transport_request.branch in ["cp2", "cp3", "first-final-blink", "first-final-sneeze"] and transport_request.future_profile in ["standard", "assisted", "challenge"], "transport input selector shape is exact; producer bytes and saved opposite profile are verified before use")
 
 
 func _seed_actual_pristine_story(registry: CinderCampaignRegistry) -> bool:
@@ -229,6 +248,10 @@ func _run_selectors(registry: CinderCampaignRegistry) -> void:
 
 
 func _case_scope() -> String:
+	if difficulty_case == "transport":
+		return "One SHA-pinned complete successful producer report and one entire contemporaneous CP2, CP3 or first-final branch. Literal original Store/settings/preferences/backup bytes are cloned into a unique isolated destination; actual fresh Title Continue, public opposite future preference and paused Save preserve exact native current/checkpoint/full Attempts. Only an independently selected CP2 branch receives public Retry with fresh identities and quiet native restoration. Original report and available original artifacts remain unchanged; unavailable original paths are disclosed. No gameplay Resume, later phase-three order after Retry, further primaries, held-landing/return distinction, portrait, gesture, full route, boss defeat, balance or performance claim. Original producer checks retain their source attribution and are not credited as new checks."
+	if difficulty_case == "metadata":
+		return "One SHA-pinned complete successful producer report and entire genuine branch, cloned byte-exactly for actual fresh Continue and paused Save. Valid actual candidate stages schema0 before successful paired Player/whole-level quiet commit and current presentation gate installs the saved format/descriptor. Complete synthetic negative copies test exact closed metadata/type/profile refusals through pure live validation and fresh public Level lifecycle, with no native binding or policy installation and normal retirement. Synthetic negatives are refusal inputs, never historical producers. No gameplay Resume, later final-order/Retry progression, held-landing/return distinction, portrait, gesture, full route, boss defeat, balance or performance claim."
 	if difficulty_case == "selectors":
 		return "Two genuine new17 Standard/Assisted production L5 entries from their public pre-entry preferences, exact native/Shell profile and closed Blink-first descriptor, pristine local/source/clock state, full literal Store/Attempts/current/checkpoint archive and normal cleanup. Disclosed TEST predecessor prefix only; no phase progression, CP3 fabrication, attack, final admission, route/ordinary-response/portrait/balance/performance claim."
 	var format_label: String = "old16" if difficulty_case == "legacy-producer" else "new17"
@@ -350,7 +373,7 @@ func _finish() -> void:
 		if is_instance_valid(node): refs.append_array(_refs(node)); node.free()
 	paused = false
 	await create_timer(0.5, true).timeout; await process_frame
-	_expect(_freed(refs) and get_nodes_in_group("enemies").is_empty() and get_nodes_in_group("required_cues").is_empty(), "normal producer Shell/native-source/cue/probe cleanup releases every descendant and group")
+	_expect((refs.is_empty() or _freed(refs)) and get_nodes_in_group("enemies").is_empty() and get_nodes_in_group("required_cues").is_empty(), "normal difficulty Shell/native-source/cue/probe cleanup releases every created descendant and group")
 	_expect(FileAccess.get_file_as_bytes(Registry.DATA_PATH) == registry_bytes, "TEST prefix and registration never modify canonical registry bytes")
 	source_post = _source_pins()
 	_expect(not source_pre.is_empty() and source_post == source_pre, "selected writer and all named inherited inputs remain byte-identical through the case")
@@ -374,10 +397,290 @@ func _finish() -> void:
 		_expect(false, "difficulty native report is writable")
 	else:
 		var complete: bool = difficulty_complete and failures == 0 and not aborted
-		var body: Dictionary = {"case": difficulty_case, "checks": checks, "failures": failures, "success": complete, "complete": complete, "assertions": assertion_rows, "first_failure": first_failure, "branches": branches, "branch_order": branch_order, "artifact_root": artifact_root, "source_pre": source_pre, "source_post": source_post, "setups": setups, "receipts": receipts, "primary_receipts": primary_receipts, "phase_observers": phase_observers, "hp_boundaries": hp_boundaries, "checkpoint_pause_requests": checkpoint_pause_requests, "first_final_admission": first_final_admission, "selection_observation_count": selection_observation_count, "selection_rows_retained_last32": selection_rows, "circle_cycles": circle_cycles, "dash_requests": dash_requests, "drive_diagnostics": drive_diagnostics, "observations": observations, "wall_ms": Time.get_ticks_msec() - started_ms, "scope": _case_scope()}
+		var body: Dictionary = {"case": difficulty_case, "checks": checks, "failures": failures, "success": complete, "complete": complete, "assertions": assertion_rows, "first_failure": first_failure, "branches": branches, "branch_order": branch_order, "artifact_root": artifact_root, "source_pre": source_pre, "source_post": source_post, "setups": setups, "receipts": receipts, "primary_receipts": primary_receipts, "phase_observers": phase_observers, "hp_boundaries": hp_boundaries, "checkpoint_pause_requests": checkpoint_pause_requests, "first_final_admission": first_final_admission, "selection_observation_count": selection_observation_count, "selection_rows_retained_last32": selection_rows, "circle_cycles": circle_cycles, "dash_requests": dash_requests, "drive_diagnostics": drive_diagnostics, "observations": observations, "wall_ms": Time.get_ticks_msec() - started_ms, "scope": _case_scope(), "transport_request": transport_request.duplicate(true)}
 		file.store_string(JSON.stringify(body, "\t")); file.flush()
 		var report_error: Error = file.get_error(); file.close()
 		if report_error != OK: _expect(false, "difficulty report write closes successfully")
 	var completed: bool = difficulty_complete and failures == 0 and not aborted
 	print("A1-L5 DIFFICULTY: %d checks, %d failures; complete=%s; report=%s" % [checks, failures, "true" if completed else "false", report])
 	quit(1 if failures > 0 or not completed else 0)
+
+
+# PRIVATE SOURCE FRAGMENT; append to the owned difficulty fixture after review.
+# No extends/parser/_run/_finish override. Caller supplies canonical TEST raw,
+# source_pre, registry_bytes and existing observer setup; each invocation loads
+# ONE exact contemporaneous producer branch. This fragment never resumes play.
+var transport_input_path: String = ""
+var transport_input_sha256: String = ""
+var transport_input_branch: Dictionary = {}
+var transport_input_unit: Dictionary = {}
+var transport_input_checkpoint: Dictionary = {}
+var transport_input_attempts: Dictionary = {}
+var transport_original_files: Dictionary = {}
+var transport_unavailable_original_paths: Array[String] = []
+
+
+func _transport_hash(bytes: PackedByteArray) -> String:
+	var context := HashingContext.new()
+	if context.start(HashingContext.HASH_SHA256) != OK or context.update(bytes) != OK: return ""
+	return context.finish().hex_encode()
+
+
+func _transport_read_input(path: String, expected_sha256: String, label: String) -> bool:
+	var bytes: PackedByteArray = FileAccess.get_file_as_bytes(path)
+	var digest: String = _transport_hash(bytes)
+	if not _expect(not bytes.is_empty() and expected_sha256.length() == 64 and digest == expected_sha256, "read exact complete producer report with caller-pinned SHA256"): return false
+	var value: Variant = JSON.parse_string(bytes.get_string_from_utf8())
+	if not _expect(value is Dictionary and value.get("case") in ["legacy-producer", "fresh-producer"] and value.get("complete") == true and value.get("success") == true and value.get("failures") == 0 and value.get("first_failure") is Dictionary and value.first_failure.is_empty() and value.get("assertions") is Array and value.assertions.size() == int(value.get("checks", -1)), "input is a complete successful original producer report, not an incomplete branch rescue"): return false
+	var original_rows_pass: bool = true
+	for assertion: Variant in value.assertions:
+		original_rows_pass = original_rows_pass and assertion is Dictionary and assertion.get("passed") == true
+	if not _expect(original_rows_pass, "every original producer assertion is passing; original count retained without replay credit"): return false
+	if not _expect(value.get("source_pre") is Dictionary and not value.source_pre.is_empty() and value.get("source_post") is Dictionary and _same(value.source_pre, value.source_post) and value.get("branches") is Dictionary and value.branches.get(label) is Dictionary, "original producer source custody and selected complete branch are present"): return false
+	var row: Dictionary = value.branches[label]
+	if not _expect(row.get("label") == label and row.get("raw_store") is Dictionary and row.get("all_original_disk_files") is Dictionary and row.all_original_disk_files.get("campaign.json") is Dictionary and _same(row.raw_store, row.all_original_disk_files["campaign.json"]), "selected original branch retains its original campaign file record"): return false
+	for pair: Array in [["current_exact", "current_sha256"], ["checkpoint_exact", "checkpoint_sha256"], ["attempts_exact", "attempts_sha256"]]:
+		if not _expect(row.get(pair[0]) is String and not String(row[pair[0]]).is_empty() and row.get(pair[1]) == String(row[pair[0]]).sha256_text(), "complete original typed wire and SHA join: " + String(pair[0])): return false
+	var current: Dictionary = Exact.parse(row.current_exact)
+	var checkpoint: Dictionary = Exact.parse(row.checkpoint_exact)
+	var attempts: Dictionary = Exact.parse(row.attempts_exact)
+	if not _expect(current.get("accepted") == true and checkpoint.get("accepted") == true and attempts.get("accepted") == true and current.value is Dictionary and checkpoint.value is Dictionary and attempts.value is Dictionary and Exact.stringify(current.value) == row.current_exact and Exact.stringify(checkpoint.value) == row.checkpoint_exact and Exact.stringify(attempts.value) == row.attempts_exact, "all three original typed wires parse and reencode exactly within unchanged budgets"): return false
+	var state: Dictionary = attempts.value
+	if not _expect(state.get("story") is Dictionary and state.get("side_attempt") == null and state.story.get("level_id") == Layout.LEVEL_ID and Exact.stringify(state.story.snapshot) == row.current_exact and Exact.stringify(state.story.checkpoint) == row.checkpoint_exact, "original whole Attempts contains these exact current and checkpoint units, with no transplant"): return false
+	if not _closed(current.value) or not _closed(checkpoint.value): return false
+	var local: Dictionary = current.value.level.local
+	var cp_local: Dictionary = checkpoint.value.level.local
+	var schema: int = int(local.schema_version)
+	if not _expect(schema in [1, 2] and row.get("local_schema") == schema and cp_local.schema_version == schema and local.scheduler.profile.id == row.get("profile_id") and cp_local.scheduler.profile.id == row.profile_id and current.value.shell.difficulty_at_entry == row.profile_id and checkpoint.value.shell.difficulty_at_entry == row.profile_id, "whole branch retains one native entry profile and literal authored format"): return false
+	if not _expect((schema == 1 and local.size() == 16 and cp_local.size() == 16 and not local.has("final_arrangement") and not cp_local.has("final_arrangement")) or (schema == 2 and local.size() == 17 and cp_local.size() == 17 and _same(local.final_arrangement, cp_local.final_arrangement)), "old16 omission or new17 exact saved descriptor holds across the actual branch"): return false
+	if value["case"] == "legacy-producer":
+		if not _expect(schema == 1 and value.source_pre.get(LEGACY_HOST_PATH) == LEGACY_HOST_SHA and value.source_pre.get(LEGACY_CODEC_PATH) == LEGACY_CODEC_SHA, "legacy producer is pinned to the original writer, not a relabeled new packet"): return false
+	else:
+		if not _expect(schema == 2 and value.source_pre.get(LEGACY_HOST_PATH) == FRESH_HOST_SHA and value.source_pre.get(LEGACY_CODEC_PATH) == FRESH_CODEC_SHA and value.source_pre.get(RECIPE_PATH) == RECIPE_SHA, "fresh producer retains the exact native new writer/codec/recipe source pins"): return false
+	var current_sources: Dictionary = _source_pins()
+	if not _expect(current_sources.get(RECIPE_PATH) == RECIPE_SHA, "promoted reader uses the exact authorized arrangement definition"): return false
+	var historical_recipe_pin: Variant = value.source_pre.get(RECIPE_PATH, "<not-pinned-in-native-report>")
+	if value["case"] == "legacy-producer":
+		if not _expect(historical_recipe_pin in ["<absent>", "<not-pinned-in-native-report>"], "old native report retains its literal absent or omitted recipe observation without relabeling"): return false
+	for path_key: String in value.source_pre:
+		if path_key in [LEGACY_HOST_PATH, LEGACY_CODEC_PATH]: continue
+		if path_key == RECIPE_PATH and value["case"] == "legacy-producer": continue
+		if not _expect(current_sources.get(path_key) == value.source_pre[path_key], "unchanged directly pinned native/layout/scene/base-fixture input: " + path_key): return false
+	if label == "cp2":
+		if not _expect(row.checkpoint_id == "moon-phase-2" and row.primary_count == 4 and checkpoint.value.level.progress.checkpoint_id == "moon-phase-2" and cp_local.stage == "sneeze" and cp_local.eye.hp == 160.0 and cp_local.scheduler.reservations.is_empty(), "CP2 input is the independent fourth-primary branch with its own native CP2"): return false
+	elif label == "cp3":
+		if not _expect(row.checkpoint_id == "moon-phase-3" and row.primary_count == 8 and cp_local.stage == "final" and cp_local.eye.hp == 80.0 and cp_local.scheduler.reservations.is_empty(), "CP3 input is its separate eighth-primary branch"): return false
+	else:
+		if not _expect(label in ["first-final-blink", "first-final-sneeze"] and row.primary_count == 8 and row.checkpoint_id == "moon-phase-3" and local.stage == "final" and local.eye.hp == 80.0 and not local.scheduler.reservations.is_empty() and cp_local.scheduler.reservations.is_empty(), "active final branch retains its contemporaneous CP3 and actual lease"): return false
+	transport_input_path = path; transport_input_sha256 = digest
+	transport_input_branch = row.duplicate(true)
+	transport_input_unit = current.value.duplicate(true)
+	transport_input_checkpoint = checkpoint.value.duplicate(true)
+	transport_input_attempts = state.duplicate(true)
+	for original: Dictionary in row.all_original_disk_files.values():
+		var original_path: String = String(original.get("path", ""))
+		if not original_path.is_empty() and FileAccess.file_exists(original_path):
+			if not _expect(FileAccess.get_sha256(original_path) == original.get("sha256"), "available original branch artifact matches literal report bytes"): return false
+			transport_original_files[original_path] = original.sha256
+		else:
+			transport_unavailable_original_paths.append(original_path)
+	receipts.append({"stage": "pinned whole producer input", "source_report": path, "source_sha256": digest, "producer_case": value["case"], "original_checks": int(value.checks), "available_original_files": transport_original_files.duplicate(true), "unavailable_original_paths": transport_unavailable_original_paths.duplicate(), "branch": label, "current_sha256": row.current_sha256, "checkpoint_sha256": row.checkpoint_sha256, "attempts_sha256": row.attempts_sha256, "raw_store_sha256": row.raw_store.sha256, "producer_source_pre": value.source_pre.duplicate(true), "producer_source_post": value.source_post.duplicate(true), "historical_recipe_pin": historical_recipe_pin, "current_recipe_sha256": current_sources[RECIPE_PATH], "recipe_scope": "Omitted old native key is disclosed, not an original absence witness; runner source bank retains any separate file-presence evidence."})
+	return true
+
+
+func _transport_clone_original_files() -> bool:
+	if not _expect(not is_instance_valid(game) and DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(test_root)) == OK, "unique isolated clone exists before any recipient Shell"): return false
+	var existing := DirAccess.open(test_root)
+	if not _expect(existing != null and existing.get_files().is_empty() and existing.get_directories().is_empty(), "transport destination is empty; no prior or donor files overwritten"): return false
+	for name: String in transport_input_branch.all_original_disk_files:
+		var row: Variant = transport_input_branch.all_original_disk_files[name]
+		if not _expect(name == name.get_file() and name not in ["", ".", ".."] and row is Dictionary and row.get("hex") is String and row.get("sha256") is String, "original branch file has a confined leaf name and exact bytes"): return false
+		var bytes: PackedByteArray = String(row.hex).hex_decode()
+		if not _expect(bytes.size() == row.get("bytes") and bytes.hex_encode() == row.hex and _transport_hash(bytes) == row.sha256, "original branch hex/byte count/SHA agree: " + name): return false
+		var output := FileAccess.open(test_root.path_join(name), FileAccess.WRITE)
+		if not _expect(output != null, "isolated recipient file opens: " + name): return false
+		output.store_buffer(bytes); output.flush()
+		var error: Error = output.get_error(); output.close()
+		if not _expect(error == OK and FileAccess.get_file_as_bytes(test_root.path_join(name)) == bytes and FileAccess.get_sha256(test_root.path_join(name)) == row.sha256, "isolated original file clone is byte-exact: " + name): return false
+	var envelope: Variant = JSON.parse_string(FileAccess.get_file_as_string(test_root + "campaign.json"))
+	if not _expect(envelope is Dictionary and envelope.get("format_version") == Store.FORMAT_VERSION and envelope.get("payload_json") == transport_input_branch.attempts_exact and envelope.get("sha256") == String(transport_input_branch.attempts_exact).sha256_text(), "copied original format2 envelope contains complete exact original Attempts"): return false
+	return true
+
+
+func _transport_wait_idle(label: String) -> bool:
+	var until: int = Time.get_ticks_msec() + 20000
+	while not finishing and not aborted and Time.get_ticks_msec() <= until:
+		if _shell_idle(): return true
+		await process_frame
+	return _expect(false, "bounded actual Shell operation settlement: " + label)
+
+
+func _transport_policy_matches(shell: CinderCampaignShell, saved: Dictionary) -> bool:
+	if not shell.active_level.has_method("final_arrangement_state"): return _expect(false, "transport requires the promoted dual reader's readonly installed-policy observation")
+	var expected: Dictionary = {"schema_version": saved.level.local.schema_version, "final_arrangement": saved.level.local.final_arrangement.duplicate(true) if saved.level.local.schema_version == 2 else {}}
+	return _expect(_same(shell.active_level.call("final_arrangement_state"), expected), "installed policy exactly matches literal saved format/descriptor")
+
+
+func _transport_open_original(future_preference: String) -> bool:
+	if not _transport_clone_original_files(): return false
+	_begin_watch("fresh clone Title and validation recipients", null, null, true)
+	game = _new_shell()
+	if game == null or not await _settle() or not await _transport_wait_idle("fresh Title"): return false
+	if not _expect(paused and game.player == null and game.active_level == null and game.menu.page_name() == "title" and game.campaign_error.is_empty() and Exact.stringify(game.attempts.state()) == transport_input_branch.attempts_exact and FileAccess.get_sha256(test_root + "campaign.json") == transport_input_branch.raw_store.sha256 and events.is_empty(), "fresh Title loads exact whole original branch without native callbacks or campaign-file rewriting"): return false
+	if not _expect(future_preference in ["assisted", "standard", "challenge"] and future_preference != transport_input_branch.profile_id, "future preference intentionally differs from saved native entry profile"): return false
+	game.menu.difficulty_preference_requested.emit(future_preference)
+	if not await _settle() or not _expect(game.get_difficulty_preference() == future_preference and Exact.stringify(game.attempts.state()) == transport_input_branch.attempts_exact and FileAccess.get_sha256(test_root + "campaign.json") == transport_input_branch.raw_store.sha256, "public future preference changes only isolated preferences, never this saved attempt"): return false
+	if not await _click(game, "ContinueStoryButton") or not await _transport_wait_idle("fresh Continue") or not _bindings(game): return false
+	moon = game.active_level
+	if not _expect(paused and Exact.stringify(game.capture_campaign_snapshot()) == transport_input_branch.current_exact and Exact.stringify(game.attempts.state()) == transport_input_branch.attempts_exact and FileAccess.get_sha256(test_root + "campaign.json") == transport_input_branch.raw_store.sha256 and events.is_empty(), "independent actual disk Continue quietly retains complete original current/checkpoint/Attempts/native clocks/samples/leases"): return false
+	if not _transport_policy_matches(game, transport_input_unit): return false
+	receipts.append({"stage": "whole original branch fresh Continue", "branch": transport_input_branch.label, "future_preference": future_preference, "exact_current": Exact.stringify(game.capture_campaign_snapshot()), "exact_attempts": Exact.stringify(game.attempts.state()), "recipient_ids": _ids(game.active_level, game.player), "quiet_callbacks": events.duplicate(true)})
+	if not await _pause(): return false
+	if not _expect(Exact.stringify(game.capture_campaign_snapshot()) == transport_input_branch.current_exact and Exact.stringify(game.attempts.state()) == transport_input_branch.attempts_exact and _durable(game) and events.is_empty(), "public paused Save keeps exact whole native unit and full original Attempts; only isolated Store generation may advance"): return false
+	_end_watch("after actual paused Save")
+	return true
+
+
+func _run_transport_case(path: String, sha256: String, label: String, future_preference: String) -> bool:
+	if not _transport_read_input(path, sha256, label) or not await _transport_open_original(future_preference): return false
+	if label == "cp2":
+		var prior_ids: Dictionary = _ids(game.active_level, game.player)
+		var prior_refs: Array[WeakRef] = _refs(game.world)
+		_begin_watch("actual original CP2 public Retry recipients", null, null, true)
+		if not await _click(game, "RetryButton") or not await _transport_wait_idle("CP2 Retry") or not _bindings(game): return false
+		moon = game.active_level
+		var after: Dictionary = game.attempts.state()
+		var expected: Dictionary = transport_input_attempts.duplicate(true)
+		# Expected model comparison only. Never submitted or written as history.
+		expected["story"]["snapshot"] = transport_input_checkpoint.duplicate(true)
+		if not _expect(paused and game.menu.page_name() == "resume" and Exact.stringify(game.capture_campaign_snapshot()) == transport_input_branch.checkpoint_exact and Exact.stringify(after.story.checkpoint) == transport_input_branch.checkpoint_exact and _same(after, expected) and _ids(game.active_level, game.player) != prior_ids and _freed(prior_refs) and _durable(game) and events.is_empty() and game.get_difficulty_preference() == future_preference, "public Retry of independently loaded CP2 restores exactly its native CP2 with fresh identities, zero recipient callbacks and normal predecessor retirement"): return false
+		if not _transport_policy_matches(game, transport_input_checkpoint): return false
+		receipts.append({"stage": "genuine CP2 branch public Retry", "source_report": path, "source_sha256": sha256, "exact_checkpoint": transport_input_branch.checkpoint_exact, "exact_after_attempts": Exact.stringify(after), "before_ids": prior_ids, "after_ids": _ids(game.active_level, game.player), "quiet_callbacks": events.duplicate(true), "scope": "Original independently archived CP2 session; no CP3 checkpoint transplantation and no gameplay Resume."})
+		_end_watch("normal CP2 retry scope complete")
+	return _transport_input_unchanged()
+
+
+func _transport_input_unchanged() -> bool:
+	for path: String in transport_original_files:
+		if not _expect(FileAccess.get_sha256(path) == transport_original_files[path], "available original branch artifact remains byte-exact: " + path): return false
+	return _expect(FileAccess.get_sha256(transport_input_path) == transport_input_sha256 and String(transport_input_branch.current_exact).sha256_text() == transport_input_branch.current_sha256 and String(transport_input_branch.checkpoint_exact).sha256_text() == transport_input_branch.checkpoint_sha256 and String(transport_input_branch.attempts_exact).sha256_text() == transport_input_branch.attempts_sha256, "complete original input report and literal branch witnesses remain unchanged")
+
+
+func _run_metadata_case(path: String, sha256: String, label: String, future_preference: String) -> bool:
+	if not _transport_read_input(path, sha256, label) or not await _transport_open_original(future_preference): return false
+	var saved: Dictionary = transport_input_unit
+	var donor: Dictionary = _donor()
+	var installed: Dictionary = game.active_level.call("final_arrangement_state")
+	candidate = game._prepare(Layout.LEVEL_ID, saved.equipment_ids, {}, saved)
+	if not _expect(not candidate.is_empty(), "real valid fresh recipient construction stages metadata using the dual reader"): return false
+	var recipient: CinderLevel = candidate.level
+	var uncommitted: Dictionary = {"schema_version": 0, "final_arrangement": {}}
+	var staged: Dictionary = recipient.get("_staged_restore_policy").duplicate(true)
+	if not _expect(_same(recipient.call("final_arrangement_state"), uncommitted) and not staged.is_empty(), "valid fresh construction stages intent but installs no authoritative format or recipe"): return false
+	var before: String = _physical(recipient, candidate.player)
+	_begin_watch("pure valid staged recipient validation", recipient, candidate.player)
+	if not _expect(not before.is_empty() and recipient.snapshot_error_with_player(saved.level, saved.player).is_empty() and _physical(recipient, candidate.player) == before and _same(recipient.call("final_arrangement_state"), uncommitted) and _same(recipient.get("_staged_restore_policy"), staged) and _same(game.active_level.call("final_arrangement_state"), installed) and _donor() == donor and events.is_empty(), "complete successful paired prevalidation changes no candidate or installed policy"): return false
+	if not _expect(candidate.player.restore_state(saved.player) and recipient.restore_state(saved.level), "original quiet Player then whole native recipient commit succeeds"): return false
+	var optical: String = game._candidate_presentation_error(candidate, saved.shell)
+	var expected_policy: Dictionary = {"schema_version": saved.level.local.schema_version, "final_arrangement": saved.level.local.final_arrangement.duplicate(true) if saved.level.local.schema_version == 2 else {}}
+	if not _expect(optical.is_empty() and _same(recipient.call("final_arrangement_state"), expected_policy) and recipient.get("_staged_restore_policy").is_empty() and _same(recipient.call("_capture_local_state"), saved.level.local) and events.is_empty() and _donor() == donor, "only successful full quiet commit installs exact saved policy and original native unit"): return false
+	_end_watch("normal valid candidate disposal")
+	var refs: Array[WeakRef] = _refs(candidate.container)
+	game._dispose(candidate); candidate = {}
+	if not _expect(_freed(refs) and _donor() == donor, "valid candidate disposes normally without donor/whole Store changes"): return false
+	if not _metadata_late_native_refusal(saved, donor, installed): return false
+	var rows: Array[Dictionary] = []
+	var bad: Dictionary
+	# Complete typed negative copies only; bracket String keys deliberately avoid
+	# creating StringName keys that would fail before the intended metadata gate.
+	bad = saved.duplicate(true); bad["level"]["local"]["extra"] = true; rows.append({"label": "closed local rejects extra field", "unit": bad, "error": "Snapshot has missing or unsupported fields"})
+	bad = saved.duplicate(true); bad["level"]["local"].erase("world_revision"); rows.append({"label": "missing required local field", "unit": bad, "error": "Snapshot has missing or unsupported fields"})
+	bad = saved.duplicate(true); bad["level"]["local"]["schema_version"] = float(saved.level.local.schema_version); rows.append({"label": "authored schema requires exact integer", "unit": bad, "error": "Unsupported exact L5 metadata revision"})
+	bad = saved.duplicate(true); bad["level"]["local"]["api_revision"] = 1; rows.append({"label": "authored API requires exact string", "unit": bad, "error": "Unsupported exact L5 metadata revision"})
+	if saved.level.local.schema_version == 2:
+		bad = saved.duplicate(true); bad["level"]["local"].erase("final_arrangement"); rows.append({"label": "missing required v2 field", "unit": bad, "error": "Snapshot has missing or unsupported fields"})
+		bad = saved.duplicate(true); bad["level"]["local"]["api_revision"] = "act1-living-moon-level-1"; rows.append({"label": "mixed v1 API with v2 schema", "unit": bad, "error": "Unsupported exact L5 metadata revision"})
+		bad = saved.duplicate(true); bad["level"]["local"]["final_arrangement"] = MoonCodec.fresh_final_arrangement(future_preference); rows.append({"label": "canonical descriptor from wrong native profile", "unit": bad, "error": "Final arrangement differs from the saved native entry profile"})
+		bad = saved.duplicate(true); bad["level"]["local"]["final_arrangement"]["initial_attack"] = 1; rows.append({"label": "descriptor exact type", "unit": bad, "error": "Final arrangement descriptor retains exact strings"})
+		bad = saved.duplicate(true); bad["level"]["local"]["final_arrangement"]["extra"] = true; rows.append({"label": "descriptor closed keys", "unit": bad, "error": "Closed final arrangement descriptor required"})
+		bad = saved.duplicate(true); bad["level"]["local"]["schema_version"] = 1; rows.append({"label": "mixed v2 API with v1 schema", "unit": bad, "error": "Unsupported exact L5 metadata revision"})
+		bad = saved.duplicate(true); bad["level"]["local"]["final_arrangement"] = false; rows.append({"label": "descriptor requires dictionary", "unit": bad, "error": "Closed final arrangement descriptor required"})
+		bad = saved.duplicate(true); bad["level"]["local"]["final_arrangement"].erase("recipe_id"); rows.append({"label": "descriptor requires every closed field", "unit": bad, "error": "Closed final arrangement descriptor required"})
+		bad = saved.duplicate(true); bad["level"]["local"]["final_arrangement"]["profile_id"] = 1; rows.append({"label": "descriptor profile exact string type", "unit": bad, "error": "Final arrangement descriptor retains exact strings"})
+		bad = saved.duplicate(true); bad["level"]["local"]["final_arrangement"]["recipe_id"] = 1; rows.append({"label": "descriptor recipe exact string type", "unit": bad, "error": "Final arrangement descriptor retains exact strings"})
+		bad = saved.duplicate(true); bad["level"]["local"]["final_arrangement"]["profile_id"] = String("unsupported-profile"); rows.append({"label": "unknown descriptor profile", "unit": bad, "error": "Unknown or inconsistent final arrangement descriptor"})
+		bad = saved.duplicate(true); bad["level"]["local"]["final_arrangement"]["recipe_id"] = String("A1-L5/unsupported-recipe@v1"); rows.append({"label": "unknown descriptor recipe", "unit": bad, "error": "Unknown or inconsistent final arrangement descriptor"})
+		bad = saved.duplicate(true); bad["level"]["local"]["final_arrangement"]["initial_attack"] = String("unsupported-attack"); rows.append({"label": "unknown descriptor initial attack", "unit": bad, "error": "Unknown or inconsistent final arrangement descriptor"})
+	else:
+		bad = saved.duplicate(true); bad["level"]["local"]["final_arrangement"] = MoonCodec.fresh_final_arrangement(String(saved.level.local.scheduler.profile.id)); rows.append({"label": "legacy exact16 cannot carry new field", "unit": bad, "error": "Snapshot has missing or unsupported fields"})
+		bad = saved.duplicate(true); bad["level"]["local"]["schema_version"] = 2; rows.append({"label": "mixed legacy API and new schema", "unit": bad, "error": "Unsupported exact L5 metadata revision"})
+		bad = saved.duplicate(true); bad["level"]["local"]["api_revision"] = String("act1-living-moon-level-2"); rows.append({"label": "mixed new API and legacy schema", "unit": bad, "error": "Unsupported exact L5 metadata revision"})
+	for row: Dictionary in rows:
+		if not _metadata_refusal(row, donor, installed): return false
+	return _transport_input_unchanged()
+
+
+func _metadata_late_native_refusal(saved: Dictionary, donor: Dictionary, installed: Dictionary) -> bool:
+	# This complete copy is a refusal input only. Actual body/HP/phase/source
+	# state is untouched. Native eye validation owns its fixed authored position.
+	var bad: Dictionary = saved.duplicate(true)
+	bad["level"]["local"]["eye"]["position"][0] = float(bad.level.local.eye.position[0]) + 0.125
+	var wire: String = Exact.stringify(bad)
+	var decoded: Dictionary = Exact.parse(wire)
+	if not _expect(not wire.is_empty() and decoded.get("accepted") == true and Exact.stringify(decoded.value) == wire and Store.json_error(bad).is_empty() and MoonCodec.metadata_error(bad.level.local).is_empty(), "complete synthetic fixed-eye-position negative passes exact typed wire and authored metadata"): return false
+	candidate = game._prepare(Layout.LEVEL_ID, saved.equipment_ids, {}, saved)
+	if not _expect(not candidate.is_empty(), "separate valid restore candidate stages metadata before late native refusal"): return false
+	var level: CinderLevel = candidate.level
+	var before: String = _physical(level, candidate.player)
+	var policy: Dictionary = level.call("final_arrangement_state")
+	var staged: Dictionary = level.get("_staged_restore_policy").duplicate(true)
+	_begin_watch("paired native refusal after valid metadata staging", level, candidate.player)
+	if not _expect(not before.is_empty() and policy.schema_version == 0 and policy.final_arrangement.is_empty() and not staged.is_empty() and level.snapshot_error_with_player(saved.level, saved.player).is_empty() and _physical(level, candidate.player) == before and events.is_empty(), "uncommitted staged candidate accepts the complete genuine baseline without installing policy"): return false
+	var reason: String = level.snapshot_error_with_player(bad.level, bad.player)
+	if not _expect(reason == "Invalid immutable eye identity/configuration/HP/phase/fixed position" and _physical(level, candidate.player) == before and _same(level.call("final_arrangement_state"), policy) and _same(level.get("_staged_restore_policy"), staged) and _same(game.active_level.call("final_arrangement_state"), installed) and _donor() == donor and events.is_empty(), "actual native fixed-position refusal preserves candidate physical state/staged intent/schema0 and installed donor"): return false
+	receipts.append({"stage": "late native refusal after valid metadata staging", "mutation": "synthetic saved eye.position[0] plus0.125 only; never applied", "metadata_error": MoonCodec.metadata_error(bad.level.local), "actual_error": reason, "synthetic_negative_sha256": wire.sha256_text(), "before_policy": policy, "after_policy": level.call("final_arrangement_state"), "staged_before": staged, "staged_after": level.get("_staged_restore_policy").duplicate(true), "native_before_exact": before, "native_after_exact": _physical(level, candidate.player), "quiet_callbacks": events.duplicate(true), "provenance_claim": false})
+	_end_watch("normal uncommitted native-refused candidate retirement")
+	var refs: Array[WeakRef] = _refs(candidate.container)
+	game._dispose(candidate); candidate = {}
+	return _expect(_freed(refs) and _same(game.active_level.call("final_arrangement_state"), installed) and _donor() == donor, "late native-refused candidate retires normally without forced commit or donor change")
+
+
+func _metadata_refusal(row: Dictionary, donor: Dictionary, installed: Dictionary) -> bool:
+	var unit: Dictionary = row.unit
+	var wire: String = Exact.stringify(unit)
+	var decoded: Dictionary = Exact.parse(wire)
+	if not _expect(not wire.is_empty() and decoded.get("accepted") == true and Exact.stringify(decoded.value) == wire and Store.json_error(unit).is_empty() and MoonCodec.metadata_error(unit.level.local) == row.error, "synthetic negative remains valid complete typed JSON and reaches intended exact metadata error: " + row.label): return false
+	_begin_watch("pure installed-donor metadata refusal", game.active_level, game.player)
+	var live_error: String = game.active_level.snapshot_error_with_player(unit.level, unit.player)
+	if not _expect(live_error == row.error and _same(game.active_level.call("final_arrangement_state"), installed) and _donor() == donor and events.is_empty(), "live failed prevalidation leaves policy/native unit/full Attempts/disk unchanged: " + row.label): return false
+	_begin_watch("raw fresh recipient metadata refusal", null, null, true)
+	# Existing Shell raw constructor creates actual native children but deliberately
+	# does not enter/bind them. The public Level lifecycle must reject metadata.
+	candidate = game._prepare(Layout.LEVEL_ID, unit.equipment_ids, {}, unit, true)
+	if not _expect(not candidate.is_empty(), "actual raw recipient exists before metadata rejection: " + row.label): return false
+	var level: CinderLevel = candidate.level
+	var before: String = _physical(level, candidate.player)
+	var policy: Dictionary = level.call("final_arrangement_state")
+	var staged: Dictionary = level.get("_staged_restore_policy").duplicate(true)
+	if not _expect(_transport_sources_unbound(level), "all actual native recipients are unbound before metadata entry: " + row.label): return false
+	var entered: bool = level.enter_restore_candidate(candidate.player, candidate.fx, game, unit.level, unit.player)
+	var reason: String = level.last_snapshot_error
+	if not _expect(not entered and reason == row.error and not before.is_empty() and _physical(level, candidate.player) == before and _same(level.call("final_arrangement_state"), policy) and policy.schema_version == 0 and policy.final_arrangement.is_empty() and _same(level.get("_staged_restore_policy"), staged) and staged.is_empty() and level.get("_running") == false and level.get("scheduler").encounter_profile().is_empty() and _transport_sources_unbound(level) and events.is_empty() and _donor() == donor, "actual fresh lifecycle refuses intended metadata before binding/processing/policy mutation: " + row.label): return false
+	receipts.append({"stage": "actual fresh metadata refusal", "label": row.label, "expected_error": row.error, "actual_error": reason, "synthetic_negative_sha256": wire.sha256_text(), "before_policy": policy, "after_policy": level.call("final_arrangement_state"), "native_before_exact": before, "native_after_exact": _physical(level, candidate.player), "quiet_callbacks": events.duplicate(true), "provenance_claim": false})
+	_end_watch("normal refused candidate retirement")
+	var refs: Array[WeakRef] = _refs(candidate.container)
+	game._dispose(candidate); candidate = {}
+	return _expect(_freed(refs) and _same(game.active_level.call("final_arrangement_state"), installed) and _donor() == donor, "refused candidate retires all descendants while original donor remains exact: " + row.label)
+
+
+func _transport_sources_unbound(level: CinderLevel) -> bool:
+	# Passive native reference reads only; base Level.hero is allowed to stage
+	# identity during enter_restore_candidate, but no native source may bind it.
+	for name: String in ["rusher", "eye"]:
+		var actor: Node = level.get(name)
+		if actor.get("_scheduler") != null or actor.get("_hero") != null: return false
+	for name: String in ["impact", "nose"]:
+		var actor: Node = level.get(name)
+		if actor.get("_scheduler") != null or not actor.get("_heroes").is_empty(): return false
+	var consumer: Node = level.get("blink")
+	return consumer.get("_scheduler_ref") == null and consumer.get("_hero_ref") == null and consumer.get("_world_ref") == null and level.get("eye").call("get_native_bindings").is_empty() and level.get("eye").call("get_sampled_circle_binding").is_empty()

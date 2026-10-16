@@ -1,0 +1,55 @@
+{
+  "status": "source_review_only_unparsed_unexecuted",
+  "concrete_findings": [],
+  "source_hashes": {
+    "runtime/living_moon.gd": "89dc49fe6e37c05679d1f4592c9873f01f1c4ea92720d2ec0209624985be7e7f",
+    "runtime/living_moon_codec.gd": "25bca033d4ce0e1f04abdeb08fb1645887e72246bb978ee7d1d5ae46a4ba73b9",
+    "runtime/a1_l5_difficulty_arrangements.json": "06b65a15b5f56791291d2614346b0973be0d09f91c2466dad8f0ecf20f4463c9",
+    "a1_l5_difficulty_fresh_draft.gd": "a68ae47054c367f2329a807edd24a8431de34baa1eebf840c49933128e6241ef"
+  },
+  "comparison_to": "literal legacy-producer01/source-pre old writer",
+  "method_comparison": [
+    {
+      "path": "living_moon.gd",
+      "changed_existing_methods": [
+        "_on_enter_level",
+        "_on_enter_restore_candidate",
+        "_settle_phase",
+        "_capture_local_state",
+        "_local_snapshot_error_with_player",
+        "_restore_local_state"
+      ],
+      "new_methods": [
+        "final_arrangement_state",
+        "_saved_policy"
+      ],
+      "removed_methods": [],
+      "unchanged_method_count": 72
+    },
+    {
+      "path": "living_moon_codec.gd",
+      "changed_existing_methods": [
+        "envelope_error"
+      ],
+      "new_methods": [
+        "arrangement_configuration_error",
+        "fresh_final_arrangement",
+        "final_arrangement_error"
+      ],
+      "removed_methods": [],
+      "unchanged_method_count": 7
+    }
+  ],
+  "review_scope": [
+    "closed dual-format/schema metadata and guarded access",
+    "candidate staging before native bind and install only after original quiet commits",
+    "unchanged legacy capture omission and saved next_attack",
+    "fresh producer exact-source gates and actual entry profile assertions",
+    "changed-method GDScript type/signature consistency against actual shared callers"
+  ],
+  "limitations": [
+    "No Godot parse/import/runtime/API execution.",
+    "Native admission feasibility, restore/candidate negative cases, actual changed response and optics remain future focused work.",
+    "New fresh producer may naturally wait for retained Nose cooldown; no simultaneous eligibility inferred from old report."
+  ]
+}
