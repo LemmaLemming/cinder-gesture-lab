@@ -1,3 +1,9 @@
+## Integration retained L5 policy decision —16 October2026
+
+The specific six-exercise retention record438fd107 is independently accepted: unchanged canonical Blink-first host9056/Codec2fafe, source-backed staged unlike-shape lessons/useful ordinary return/quiet checkpoint/contact escape. [Decision and exact sources/evidence](../../../docs/development/ACT1_L5_DIFFICULTY_RETENTION.md). This is documentation-only, no new engine or Challenge-response claim. Original24 acceptances stay; current difficulty14/24 (12 authored,2 bounded retention), ten remaining. Both86/1 trials remain failed and unaccepted Sneeze-first runtime/Codec/recipe stays out of canonical content. Original producer/entry/CP2 transport results retain their sources.
+
+Root has exact narrow forecast-cleanup ownership ACK1bff94bf; separate repair/regression remain pending, recorded cancellation cause unproved. Current worker next scope remains its separately acknowledged read-only O1 proposal until exact implementation response. No original playthrough/human/other-act gate. Root first help contact; Agent02 remains inactive. Historical source/branch/count statements below retain their original attribution.
+
 # Act 1 — current progress
 
 ## Act 1 desktop scope complete — 15 October 2026
