@@ -1,5 +1,6 @@
 extends RefCounted
-## INERT owned full-route aggregate draft. Not imported, parsed or executed.
+## Whole authored route aggregate; versioned priority metadata stays separate
+## from the original native motion, proof and environmental packet authority.
 ## Native codecs own all attack, motion, field, Route, timing and dedupe rules.
 ## The Level owns immutable world/resource custody, saved framing and progress.
 ## This helper never constructs recipients, restores Player, admits or advances.
@@ -15,7 +16,12 @@ const Consumer = preload("res://scripts/environment/spore_repulsion.gd")
 const Protocol = preload("res://scripts/environment/scheduler_spore_source_protocol.gd")
 const Level = preload("res://scripts/campaign/level.gd")
 const Player = preload("res://scripts/player.gd")
-const AUTHORED_VERSION: int = 1
+const AUTHORED_VERSION: int = 2
+const LEGACY_AUTHORED_VERSION: int = 1
+const Arrangement = preload("res://scripts/combat/encounter_arrangement.gd")
+const CROSSED_ARRANGEMENTS_PATH: String = "res://data/campaign/act1/a1_l3_difficulty_arrangements.json"
+static var _crossed_definition: Variant = JSON.parse_string(FileAccess.get_file_as_string(CROSSED_ARRANGEMENTS_PATH))
+static var _crossed_recipes: CinderEncounterArrangement = Arrangement.new(_crossed_definition)
 const CONSTRUCTION_REVISION: String = "act1-restore-recipient-construction-1"
 const SOURCE_IDS: Array[String] = ["umbrella-1", "umbrella-2", "umbrella-3", "breathing-1", "breathing-2", "breathing-3", "crossed-1", "crossed-2", "crossed-3", "crossed-4", "crossed-5", "crossed-6", "crossed-7", "crossed-8", "lone-guard", "court-1", "court-2", "court-3", "court-guard"]
 const ROOM_IDS: Array[String] = ["umbrella", "breathing", "crossed", "lone-guard", "court"]
@@ -28,11 +34,34 @@ const CHECKPOINT_IDS: Array[String] = ["umbrella-grove", "breathing-chamber", "c
 const LOCAL_KEYS: Array[String] = ["authored_snapshot_version", "beat_index", "completed_beats", "room_stage", "actors", "scheduler", "fields", "consumers", "framing"]
 const AUTHORED_KEYS: Array[String] = ["source_ids", "room_ids", "room_sources", "field_ids", "room_fields", "consumer_rooms", "beat_ids", "checkpoint_ids", "completion_id", "exit_id", "source_positions", "field_positions", "world_revision", "controller_id", "player_id"]
 const BINDING_KEYS: Array[String] = ["level", "player", "scheduler", "actors", "fields", "consumers", "protocols", "scheduler_bindings", "runtime_error", "framing_error"]
-const METADATA_KEYS: Array[String] = ["beat_index", "completed_beats", "room_stage", "framing"]
+const METADATA_KEYS: Array[String] = ["authored_snapshot_version", "beat_index", "completed_beats", "room_stage", "framing"]
 const FRAME_KEYS: Array[String] = ["reservation_id", "landing", "attack_position", "primary_time_s", "response_complete_s", "action_escape"]
 
 var last_error: String = ""
 var last_commit_error: String = ""
+
+
+## Closed authored metadata only; the construction/state paths still perform
+## every original native packet/world check after this early format boundary.
+func metadata_error(saved_local: Dictionary) -> String:
+	return _local_structure_error(saved_local)
+
+
+static func arrangement_configuration_error() -> String:
+	var error: String = Arrangement.definition_error(_crossed_definition)
+	if not error.is_empty(): return error
+	return "" if _crossed_definition.unit_ids == ROOM_SOURCES[2] else "Crossed recipe inventory must retain the canonical eight-source membership"
+
+
+static func fresh_crossed_arrangement(profile: String) -> Dictionary:
+	return {} if not arrangement_configuration_error().is_empty() else _crossed_recipes.select_fresh(profile)
+
+
+static func crossed_arrangement_error(selected: Dictionary) -> String:
+	var error: String = arrangement_configuration_error()
+	if not error.is_empty(): return error
+	if not selected.get("schema_version") is int: return "Crossed receipt must retain its exact integer descriptor version"
+	return _crossed_recipes.saved_error(selected)
 
 
 func configuration_error(authored: Dictionary) -> String:
@@ -79,7 +108,7 @@ func construction_plan(saved_local: Dictionary, saved_player: Dictionary, author
 func capture_state(metadata: Dictionary, saved_player: Dictionary, bindings: Dictionary, authored: Dictionary) -> Dictionary:
 	last_error = configuration_error(authored)
 	if last_error.is_empty(): last_error = _bindings_error(bindings, authored)
-	if last_error.is_empty() and (Exact.stringify(metadata).is_empty() or not Codec.keys_error(metadata, METADATA_KEYS).is_empty()): last_error = "Exact closed authored capture metadata required"
+	if last_error.is_empty(): last_error = _capture_metadata_error(metadata)
 	if not last_error.is_empty(): return {}
 	last_error = bindings.player.snapshot_error(saved_player)
 	if not last_error.is_empty(): return {}
@@ -91,7 +120,9 @@ func capture_state(metadata: Dictionary, saved_player: Dictionary, bindings: Dic
 	if control.is_empty():
 		last_error = "Whole actual Scheduler capture rejected: " + bindings.scheduler.last_snapshot_error
 		return {}
-	var saved: Dictionary = {"authored_snapshot_version": AUTHORED_VERSION, "beat_index": metadata.beat_index, "completed_beats": metadata.completed_beats.duplicate(true) if metadata.completed_beats is Array else metadata.completed_beats, "room_stage": metadata.room_stage, "actors": {}, "scheduler": control, "fields": {}, "consumers": {}, "framing": metadata.framing.duplicate(true) if metadata.framing is Dictionary else metadata.framing}
+	var saved: Dictionary = {"authored_snapshot_version": metadata.authored_snapshot_version, "beat_index": metadata.beat_index, "completed_beats": metadata.completed_beats.duplicate(true) if metadata.completed_beats is Array else metadata.completed_beats, "room_stage": metadata.room_stage, "actors": {}, "scheduler": control, "fields": {}, "consumers": {}, "framing": metadata.framing.duplicate(true) if metadata.framing is Dictionary else metadata.framing}
+	if metadata.authored_snapshot_version == AUTHORED_VERSION:
+		saved["crossed_arrangement"] = metadata.crossed_arrangement.duplicate(true)
 	var pair: Dictionary = {"controllers": {authored.controller_id: control}, "players": {authored.player_id: saved_player}}
 	for id: String in SOURCE_IDS:
 		var room: String = ROOM_IDS[_source_room(id)]
@@ -247,9 +278,23 @@ func consumer_context(saved_local: Dictionary, saved_player: Dictionary, room_id
 	return _consumer_context(saved_local, saved_player, room_id, authored)
 
 
+func _capture_metadata_error(metadata: Dictionary) -> String:
+	var current: bool = metadata.get("authored_snapshot_version") is int and metadata.authored_snapshot_version == AUTHORED_VERSION
+	var keys: Array = METADATA_KEYS.duplicate()
+	if current: keys.append("crossed_arrangement")
+	if Exact.stringify(metadata).is_empty() or not Codec.keys_error(metadata, keys).is_empty() or not metadata.authored_snapshot_version is int or metadata.authored_snapshot_version not in [LEGACY_AUTHORED_VERSION, AUTHORED_VERSION]:
+		return "Closed exact authored capture metadata with its retained format required"
+	if current and not metadata.crossed_arrangement is Dictionary: return "Closed Crossed capture receipt dictionary required"
+	return ""
+
+
 func _local_structure_error(saved: Dictionary) -> String:
-	if Exact.stringify(saved).is_empty() or not Codec.keys_error(saved, LOCAL_KEYS).is_empty() or not saved.authored_snapshot_version is int or saved.authored_snapshot_version != AUTHORED_VERSION or not saved.beat_index is int or saved.beat_index < 0 or saved.beat_index > 5 or not saved.completed_beats is Array or not saved.room_stage is String or saved.room_stage not in ["approach", "active", "complete"]:
-		return "Closed exact authored L3 schema1/complete lifecycle boundary required"
+	var current: bool = saved.get("authored_snapshot_version") is int and saved.authored_snapshot_version == AUTHORED_VERSION
+	var keys: Array = LOCAL_KEYS.duplicate()
+	if current: keys.append("crossed_arrangement")
+	if Exact.stringify(saved).is_empty() or not Codec.keys_error(saved, keys).is_empty() or not saved.authored_snapshot_version is int or saved.authored_snapshot_version not in [LEGACY_AUTHORED_VERSION, AUTHORED_VERSION] or not saved.beat_index is int or saved.beat_index < 0 or saved.beat_index > 5 or not saved.completed_beats is Array or not saved.room_stage is String or saved.room_stage not in ["approach", "active", "complete"]:
+		return "Closed exact authored L3 schema1/2 and complete lifecycle boundary required"
+	if current and not saved.crossed_arrangement is Dictionary: return "Closed Crossed receipt dictionary required"
 	if not _same(saved.completed_beats, BEAT_IDS.slice(0, int(saved.beat_index))) or (saved.room_stage == "complete") != (saved.beat_index == 5):
 		return "Completed beat order and final stage must be the literal five-room prefix"
 	for key: String in ["actors", "scheduler", "fields", "consumers", "framing"]:
@@ -264,6 +309,31 @@ func _local_structure_error(saved: Dictionary) -> String:
 	for room: String in CONSUMER_ROOMS:
 		var installed: bool = room in topology.installed_rooms
 		if (saved.consumers[room] is Dictionary) != installed or (not installed and saved.consumers[room] != null): return "Installed/future Consumer presence differs from the genuine prefix: " + room
+	return _crossed_arrangement_metadata_error(saved)
+
+
+func _crossed_arrangement_metadata_error(saved: Dictionary) -> String:
+	# Literal authored1 remains authored1 for the whole restored attempt, even
+	# when its future preference selects Challenge at a later fresh room begin.
+	if saved.authored_snapshot_version == LEGACY_AUTHORED_VERSION: return ""
+	var error: String = arrangement_configuration_error()
+	if not error.is_empty(): return error
+	var selected: Dictionary = saved.crossed_arrangement
+	var started: bool = saved.beat_index > 2 or (saved.beat_index == 2 and saved.room_stage == "active")
+	if not started:
+		return "" if selected.is_empty() else "Crossed recipe cannot precede the genuine fresh Crossed boundary"
+	error = crossed_arrangement_error(selected)
+	if not error.is_empty(): return error
+	if saved.beat_index == 2 and saved.room_stage == "active":
+		if not saved.scheduler.get("profile") is Dictionary or saved.scheduler.profile.get("id") != selected.profile:
+			return "Crossed recipe differs from the actual saved native Scheduler profile"
+	# Later epochs/idle Scheduler cannot reselect or erase the retained receipt.
+	# Cycle-zero actors legitimately carry no executed profile; native codecs
+	# still validate the complete cycle/role/profile correspondence separately.
+	for id: String in ROOM_SOURCES[2]:
+		var actor: Dictionary = saved.actors[id]
+		if actor.get("profile_id", "") != "" and actor.profile_id != selected.profile:
+			return "Retained Crossed source differs from its saved recipe profile: " + id
 	return ""
 
 

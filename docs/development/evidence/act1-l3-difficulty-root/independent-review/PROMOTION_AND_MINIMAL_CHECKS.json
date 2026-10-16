@@ -1,0 +1,147 @@
+{
+  "archive_only": [
+    "data/campaign/act1/ACT_MEMORY.md",
+    "data/campaign/act1/PROGRESS.md"
+  ],
+  "evidence_selection": {
+    "logical_257MB_repeats_dedup_to230selectedGitblobs": "Selected source tree3475rows has230uniqueGitblobs/60,025,074payloadbytes; manifestself adds1blob separately. Root chooses archive strategy; originalmaps/index/failedraw mustremainbyteexact.",
+    "manifest_self_additional": true,
+    "no_flat_bank_copy_requested": true,
+    "original_manifest": "docs/acts/act1/evidence/A1-L3-difficulty/handoff-manifest.json",
+    "original_manifest_sha256": "6b173b7590f65e104d1e9ac5d37c0bf5cd246ee1f829161ccf9e6f375681909b",
+    "selected_evidence_rows_excluding_manifest_self": 3462
+  },
+  "live_paths": [
+    {
+      "bytes": 1269,
+      "git_blob_sha1": "61d6ea8606c7dfa6d47c9f9a9c7504ed3c385911",
+      "mode": "100644",
+      "path": "data/campaign/act1/a1_l3_difficulty_arrangements.json",
+      "sha256": "06acf2849f3386436693ff831a67ab0b467a58edc7a6ba30e1b25ad940168fce"
+    },
+    {
+      "bytes": 135938,
+      "git_blob_sha1": "09cb16e004349830f2ee1bd4cd090d5c246e2be3",
+      "mode": "100644",
+      "path": "data/campaign/act1/levels/A1-L3.md",
+      "sha256": "e1ce1768269f456024c7ada247c9c9f97cc5dc25b2a91813631cca339686806d"
+    },
+    {
+      "bytes": 11405,
+      "git_blob_sha1": "a47a8141f33bafa51a1dbc0fd4021dd29f496799",
+      "mode": "100644",
+      "path": "docs/acts/act1/A1_L3_DIFFICULTY.md",
+      "sha256": "804ab9d89c7425361d725ddcd72d8d2df6844f41cdf493cfd64883ee8b187da9"
+    },
+    {
+      "bytes": 60777,
+      "git_blob_sha1": "236d3502ca6017e7c9819f293c2e97da192c3d5a",
+      "mode": "100644",
+      "path": "scripts/acts/act1/mushroom_caverns_full.gd",
+      "sha256": "cd4ded947e8f902b16bc2aa0ecb178e835e07f9643654252a4abd20abac7191c"
+    },
+    {
+      "bytes": 39377,
+      "git_blob_sha1": "41a09504598732bc12646ec376a9301a90e805db",
+      "mode": "100644",
+      "path": "scripts/acts/act1/mushroom_caverns_route.gd",
+      "sha256": "c878342daffe2f0f17aae240102bb82c46ecc24402a1602cc92dd1386dad5d05"
+    },
+    {
+      "bytes": 50106,
+      "git_blob_sha1": "afcbcb790d8b2040adb16b9ffa5ca5c6f4fa2feb",
+      "mode": "100644",
+      "path": "scripts/acts/act1/mushroom_caverns_route_codec.gd",
+      "sha256": "cf81630818dbf7f32579c3f3f7d2035a8550c66fb1316029b88192bba8d15201"
+    },
+    {
+      "bytes": 101747,
+      "git_blob_sha1": "5e2b2611e1109b9e1b4ed083cecab571c48e5fb3",
+      "mode": "100644",
+      "path": "tests/acts/act1/a1_l3_difficulty.gd",
+      "sha256": "e36bd3b0cb1e6412256ef74db27954ce2b27f2370ef66d026b8144e26d230859"
+    },
+    {
+      "bytes": 19,
+      "git_blob_sha1": "04fa167b39e19a202e56755a7bd368c97cfb8679",
+      "mode": "100644",
+      "path": "tests/acts/act1/a1_l3_difficulty.gd.uid",
+      "sha256": "1000db0c9e403895f2f27feff2f7c12063c26fc22864ffc78ddafb8b5e100bfc"
+    },
+    {
+      "bytes": 237800,
+      "git_blob_sha1": "c7502094d017ce2da2e566462343068889eac9ea",
+      "mode": "100644",
+      "path": "tests/acts/act1/fixtures/a1_l3_difficulty_legacy/cp2.original.attempts.exact.json",
+      "sha256": "b46d13ee903e341857972af6209c314c52cd1a550f7a0505d3bca59263fb1b4a"
+    },
+    {
+      "bytes": 271077,
+      "git_blob_sha1": "cc4e75e5e9f83176ce3ff3b0f9aa7975fe706dd3",
+      "mode": "100644",
+      "path": "tests/acts/act1/fixtures/a1_l3_difficulty_legacy/cp2.original.campaign.json",
+      "sha256": "c1f4eb2333f61248998844dd7a13ecdb4cf2505448f7ab787cf984a78083c4ef"
+    },
+    {
+      "bytes": 9445,
+      "git_blob_sha1": "a1fdae5eb4996714da9dc95961f26516a721114a",
+      "mode": "100644",
+      "path": "tests/acts/act1/fixtures/a1_l3_difficulty_legacy/cp2.provenance.json",
+      "sha256": "787cd6dab3b5b87a73bd3e6890f4e910889f71ce3e9597a53d43f7d7dc3f0887"
+    }
+  ],
+  "live_promotion_count": 11,
+  "registration_source_gap": {
+    "actual_source_edited": false,
+    "before_sha256": "2fca37abe8b3d8a1f1f8362f87e09d5d0f22fe81a0e5ee5e3e4bf93e64a13c13",
+    "existing_fixture": "tests/act1_l3_registration_smoke.gd",
+    "existing_lines": [
+      23,
+      161
+    ],
+    "finding": "Fresh pristine expectation is hardcoded exact9keys/authored1, so current fresh writer2/10keys cannot pass unchanged. This is existing Root fixture expectation, not a runtime defect.",
+    "inert_patch": "registration-authored2-only.patch.txt",
+    "method": "_initial_local",
+    "minimum_change": "Require exact10key fresh authored2 and required empty crossed_arrangement at entrance; retain all19native/pristine/schema/progress/Store/Retry/cleanup assertions and original accepted-content0129 Registry provenance. Do not accept an optional receipt or relax fresh expectation to bothformats. Owner final235 covers genuine old1 separately.",
+    "parser_or_engine_executed": false,
+    "proposed_after_sha256": "2dc536193aff6adf93184673848727d951182275d722fd19730ee0a9476b77b4",
+    "proposed_patch_sha256": "342d7639f77a2f95ca1cc6806d69367d92a3c9531ce9dc2e5119b1db2f84df3a"
+  },
+  "schema_version": 1,
+  "scope": "Root alone promotes/editsRootfixture/seals/queues/publishes. No source/production/worker/Git/engine/mail/run change byreviewer.",
+  "shortest_existing_canonical_suite": {
+    "already_existing_affected_runtime": [
+      "scripts/acts/act1/mushroom_caverns_full.gd",
+      "scripts/acts/act1/mushroom_caverns_route.gd",
+      "scripts/acts/act1/mushroom_caverns_route_codec.gd"
+    ],
+    "canonical_command": [
+      "python3",
+      "scripts/dev/dev.py",
+      "engine",
+      "--headless",
+      "--path",
+      ".",
+      "--script",
+      "tests/act1_l3_registration_smoke.gd"
+    ],
+    "coverage": "OriginalTitle/Journey lockedprefix, actualfreshFull seed from nativewriter, actualContinue/onepublicswipe entranceDash/PauseSave/freshNULLPlayerdiskContinue/earlierentranceRetry/cleanup. No longCrossedproducer/transport/ordinary/portrait repeat.",
+    "dev_alias_exists": false,
+    "import": "Existingactualpublished testUID1000db0c is copiedexact, originalResourceUIDs alreadyexist. NecessaryimportonlyifRoot's exactcurrentUIDavailabilityneedsit; no blanket/globalUIDcensus or fabricatedsidecar.",
+    "inherits": "tests/act1_l2_registration_smoke.gd",
+    "minimal_parser": "Parse only the amended existingRootregistration fixture (and submitted ownedfixture ifRootneeds directparse;7clean ownerjobs alreadycompile its finalsource). PreloadcoverscurrentFull/Route/Codec/helper.",
+    "overlap": "11livepaths areAct1-only, disjoint fromCanalAct2root/data/testcohort. Rootregistrationtest is a separateexistingRootfile. No sharedBase/controller/Shell/actor/Registry/equipmentmutations.",
+    "path": "tests/act1_l3_registration_smoke.gd",
+    "queue": "Canonical engine command uses shared devqueue; Root owns exact source seal/uniqueoutput/terminal capture. No directengine or inventedtestalias.",
+    "required_source_seal_additions": [
+      "data/campaign/act1/a1_l3_difficulty_arrangements.json",
+      "scripts/combat/encounter_arrangement.gd",
+      "scripts/combat/encounter_arrangement.gd.uid",
+      "tests/acts/act1/a1_l3_difficulty.gd",
+      "tests/acts/act1/a1_l3_difficulty.gd.uid"
+    ],
+    "source_default_supplement": "Notnecessary if narrowexisting _initial_local expectation updated: suite alreadychecks strictactualfresh10emptyreceipt+19native/scenemetadata/save/Retrycleanup. FreshCrossedselection/retainedold1/oppositeprofile/ordinary/portrait scopedownerresults are reused."
+  },
+  "source_commit": "89b3c42f0f6fa61b7cbb4ea40f51903902d9e663",
+  "status": "EXACT_SCOPED_PROMOTION_AND_MINIMAL_ROOT_CHECK_PROPOSAL_NOT_APPLIED"
+}

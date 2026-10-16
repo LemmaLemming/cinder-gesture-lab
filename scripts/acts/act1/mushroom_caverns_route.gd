@@ -197,6 +197,11 @@ func _begin_room() -> void:
 		_changing = false
 		_entry_failed(scheduler.last_error)
 		return
+	var policy_error: String = _on_authored_room_begun(String(scheduler.encounter_profile().get("id", "")))
+	if not policy_error.is_empty():
+		_changing = false
+		_entry_failed(policy_error)
+		return
 	encounter_started = true
 	room_stage = "preparing_environment"
 	for id: String in current_source_ids():
@@ -218,6 +223,12 @@ func _begin_room() -> void:
 	_refresh_render_state()
 	_apply_route_presentation()
 	_framing_ready(_camera_framing_points()) # Truthful diagnostic; admission remains guarded.
+
+
+## Called only after the actual native profile resolves, before activation.
+## Default route/scaffold behavior retains its original encounter policy.
+func _on_authored_room_begun(_profile: String) -> String:
+	return ""
 
 
 func _install_room_environment() -> String:

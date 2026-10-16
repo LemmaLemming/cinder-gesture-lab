@@ -1,0 +1,15 @@
+{
+  "failed_run": "legacy-transport03",
+  "checks": 217,
+  "failures": 1,
+  "measured_refusal": "Snapshot dictionary keys must be strings",
+  "native_player_preflight_error": "",
+  "registration_error": "",
+  "actual_process_signals": 2,
+  "callback_events_during_entry": 0,
+  "callback_map_size_before_exit": 0,
+  "teardown_null_callable_diagnostics": 0,
+  "diagnosis": "The TEST copy added crossed_arrangement through dictionary dot assignment, producing a new StringName key. The outer Level JSON boundary correctly rejected it before Full metadata. The earlier legacy01 refusal was not latched and is not retrospectively claimed measured.",
+  "test_correction": "Use explicit bracket String key; require Codec.value_error(bad.level) empty before native construction, then require exact intended codec metadata error. Keep two paused native registration signals and full pre-disposal latches.",
+  "result": "Final legacy-transport04 passed235/0 clean with literal nine-key original attempt and canonical Challenge order. No production format/guard relaxation."
+}
