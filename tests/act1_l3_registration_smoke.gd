@@ -20,7 +20,7 @@ const L3_ROOMS: Array = [
 	["lone-guard"], ["court-1", "court-2", "court-3", "court-guard"]]
 const L3_BEATS: Array[String] = ["umbrella-grove", "breathing-chamber", "crossed-grotto", "spear-pocket", "court-approach"]
 const L3_THRESHOLDS: Array[float] = [13.0, 2.0, -10.0, -25.0, -38.0]
-const L3_LOCAL_KEYS: Array[String] = ["authored_snapshot_version", "beat_index", "completed_beats", "room_stage", "actors", "scheduler", "fields", "consumers", "framing"]
+const L3_LOCAL_KEYS: Array[String] = ["authored_snapshot_version", "beat_index", "completed_beats", "room_stage", "actors", "scheduler", "fields", "consumers", "framing", "crossed_arrangement"]
 
 var _restore_watch_epoch: int = 0
 var _l3_option_error: String = ""
@@ -158,7 +158,7 @@ func _initial_local(snapshot: Dictionary) -> bool:
 	if snapshot.is_empty() or snapshot.get("local_snapshot_version") != 1: return false
 	var local: Dictionary = snapshot.get("local", {})
 	var progress: Dictionary = snapshot.get("progress", {})
-	if not Codec.keys_error(local, L3_LOCAL_KEYS).is_empty() or local.get("authored_snapshot_version") != 1 or local.get("beat_index") != 0 or local.get("completed_beats") != [] or local.get("room_stage") != "approach" or not local.get("actors") is Dictionary or local.actors.size() != 19 or not local.get("scheduler") is Dictionary or local.scheduler.get("clock_s") != 0.0 or not local.scheduler.get("profile", {"invalid": true}).is_empty() or not local.scheduler.get("reservations", [1]).is_empty() or not local.get("framing", {"invalid": true}).is_empty() or progress.get("completed") != false or not progress.get("checkpoint_ids", {"invalid": true}).is_empty() or progress.get("contact_exit_id") != "": return false
+	if not Codec.keys_error(local, L3_LOCAL_KEYS).is_empty() or local.get("authored_snapshot_version") != 2 or not local.get("crossed_arrangement") is Dictionary or not local.crossed_arrangement.is_empty() or local.get("beat_index") != 0 or local.get("completed_beats") != [] or local.get("room_stage") != "approach" or not local.get("actors") is Dictionary or local.actors.size() != 19 or not local.get("scheduler") is Dictionary or local.scheduler.get("clock_s") != 0.0 or not local.scheduler.get("profile", {"invalid": true}).is_empty() or not local.scheduler.get("reservations", [1]).is_empty() or not local.get("framing", {"invalid": true}).is_empty() or progress.get("completed") != false or not progress.get("checkpoint_ids", {"invalid": true}).is_empty() or progress.get("contact_exit_id") != "": return false
 	for room: Array in L3_ROOMS:
 		for id: String in room:
 			var actor: Dictionary = local.actors.get(id, {})
