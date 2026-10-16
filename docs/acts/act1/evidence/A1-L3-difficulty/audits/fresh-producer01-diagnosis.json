@@ -1,0 +1,15 @@
+{
+  "failed_run": "fresh-producer01",
+  "native_checks": 109,
+  "failures": 1,
+  "original_failure_preserved": true,
+  "measured_before_failure": {
+    "hero_y": 0.100000001490116,
+    "grounded": false,
+    "stable": false,
+    "stage": "beat0/approach",
+    "actor_or_epoch_started": false
+  },
+  "source_backed_inference": "Supported sweep requires floor foot gap<=.015; original source-pristine spawn remains .1 above actual floor before native physics. Original returned support dictionary was not latched, so exact returned reason is not reconstructed.",
+  "change": "Resume original native spawn before any TEST relocation, wait actual stable native ground contact under unchanged4s bound, public Pause Save; latch future support dictionaries before assertions. No production/native guard/world/heading/clock changes."
+}

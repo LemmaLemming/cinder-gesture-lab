@@ -906,6 +906,13 @@ func _same(left: Variant, right: Variant) -> bool:
 
 
 func _on_exit_level() -> void:
+	# A rejected candidate may fail in Level before this subclass's entry hook.
+	# Base normal cleanup queries each handle; prepare only absent unconnected
+	# references here, without binding/configuring actors or touching live ones.
+	for id: String in NORMAL_SOURCE_IDS:
+		var callback: Variant = _source_callbacks.get(id)
+		if not callback is Callable or not callback.is_valid():
+			_source_callbacks[id] = Callable(self, "_on_source_state").bind(id)
 	_constructor_open = false
 	_constructor_entitlements.clear()
 	_accepted_frames.clear()

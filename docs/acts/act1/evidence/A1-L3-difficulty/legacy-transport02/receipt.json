@@ -1,0 +1,59 @@
+{
+  "scope": "Explicit selected L3 runtime/test/native dependencies and supplied input reports; existing paired UIDs. Not a global source, asset, resource-graph or filesystem census.",
+  "checkout": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea",
+  "run_directory": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/l3-difficulty/legacy-transport02",
+  "command": [
+    "python3",
+    "scripts/dev/dev.py",
+    "engine",
+    "--headless",
+    "--path",
+    ".",
+    "--script",
+    "tests/acts/act1/a1_l3_difficulty.gd",
+    "--",
+    "--case=transport",
+    "--source-report=res://docs/acts/act1/evidence/A1-L3-difficulty/legacy-producer02/native.json",
+    "--source-sha256=cbe45ff196a16088210f78795970da42bd91e18fe4bd4c6c6a35e42dcb24bf10",
+    "--retry-profile=challenge"
+  ],
+  "fixture_arguments": [
+    "--case=transport",
+    "--source-report=res://docs/acts/act1/evidence/A1-L3-difficulty/legacy-producer02/native.json",
+    "--source-sha256=cbe45ff196a16088210f78795970da42bd91e18fe4bd4c6c6a35e42dcb24bf10",
+    "--retry-profile=challenge"
+  ],
+  "report_arguments": [
+    {
+      "argument": "--source-report=res://docs/acts/act1/evidence/A1-L3-difficulty/legacy-producer02/native.json",
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/docs/acts/act1/evidence/A1-L3-difficulty/legacy-producer02/native.json",
+      "exists_before": true
+    }
+  ],
+  "state": "closed",
+  "prepared_at": "2026-10-16T03:04:30.977653+00:00",
+  "source_pre_manifest_sha256": "89491312fa106e8990381d5f773e296f80ea5d86ff59a7acf01d7f064f0d4a86",
+  "source_count": 98,
+  "external_watchdog": "none; fixture owns its bounded watchdog",
+  "native_start_timing_scope": "Godot banner observation is not an exact process-start or lock-acquisition timestamp",
+  "queue_observations": [],
+  "interrupt_forwarded": false,
+  "started_at": "2026-10-16T03:04:30.977933+00:00",
+  "child_pid": 68680,
+  "native_banner_observed_at": "2026-10-16T03:04:31.281507+00:00",
+  "startup_to_banner_observed_s": 0.3035623340001621,
+  "selected_input_changes_at_banner": [],
+  "exit_code": 0,
+  "closed_at": "2026-10-16T03:04:31.855126+00:00",
+  "wall_seconds": 0.8772056670022721,
+  "selected_input_changes": [],
+  "source_post_manifest_sha256": "89491312fa106e8990381d5f773e296f80ea5d86ff59a7acf01d7f064f0d4a86",
+  "raw_sha256": "ceb31e51fe4a569d02111ae08887275548904bd007d0f3be9b9d91fdfde4603d",
+  "raw_error_warning_lines": [
+    "SCRIPT ERROR: Parse Error: Function \"_metadata_constructor_negative()\" is a coroutine, so it must be called with \"await\".",
+    "ERROR: Failed to load script \"res://tests/acts/act1/a1_l3_difficulty.gd\" with error \"Parse error\"."
+  ],
+  "footer_count": 0,
+  "footers": [],
+  "result": "incomplete_no_unique_footer"
+}
