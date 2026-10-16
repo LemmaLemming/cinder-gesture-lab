@@ -963,6 +963,10 @@ func _component_case(selector: String) -> bool:
 	_component_hero = _component_main.get("player") as CinderPlayer
 	_component_scheduler = _component_level.threat_scheduler if _component_level != null else null
 	if not _expect(_component_level != null and _component_scheduler != null and paused and _component_level.contract_error().is_empty() and _component_level.hero == _component_hero and _component_level.shared_shell == _component_main and _component_scheduler.get_clock() == 0.0 and _component_hero.get_world_action_clock() == 0.0 and _component_hero.global_position == FinalCourtLab.TEST_SPAWN and _component_hero.get_world_action_records().is_empty() and _component_hero.equipment.snapshot() == kit and _component_hero.hp == _component_hero.max_hp and not _component_hero.dead,"TEST construction uses one genuine native Hero/world/zero-clock spawn; no post-entry state seed"): return false
+	var provider: Dictionary = _component_level.combat_response(COMPONENT_STALKER)
+	var string_keys: bool = true
+	for key: Variant in provider.keys(): string_keys = string_keys and key is String
+	if not _expect(string_keys,"owned native response provider uses actual String keys required by closed native wire"): return false
 	_component_kit = _component_hero.equipment.snapshot()
 	_component_start_hp = _component_hero.hp
 	_component_origins = _component_level.selected_source_positions()
@@ -1161,7 +1165,10 @@ func _component_dispose() -> bool:
 			for owner: Node3D in bindings.owners.values():
 				var raw_control: Dictionary = _component_scheduler.source_control_state(owner)
 				released_control = released_control and not raw_control.is_empty() and raw_control.reservations.is_empty()
-	if is_instance_valid(_component_main): _component_main.queue_free()
+	if is_instance_valid(_component_main):
+		var effects: PixelEffects = _component_main.get("fx") as PixelEffects
+		if effects != null: effects.clear() # Public stop before native audio owners retire.
+		_component_main.queue_free()
 	_component_main = null
 	if is_instance_valid(_component_barrier):
 		_component_barrier.call("_wake","component_dispose")
@@ -1178,6 +1185,8 @@ func _component_dispose() -> bool:
 		for reference: WeakRef in _component_refs:
 			if reference.get_ref() != null: released = false; break
 		if released: break
+	# Match existing focused cleanup: allow stopped native audio callbacks to drain.
+	await create_timer(0.15,true,false,true).timeout
 	var no_cache: bool = _component_scene_path.is_empty() or not ResourceLoader.has_cached(_component_scene_path)
 	var scene_gone: bool = scene_ref == null or scene_ref.get_ref() == null
 	_component_level = null; _component_hero = null; _component_scheduler = null

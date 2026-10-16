@@ -362,14 +362,14 @@ func combat_response(id: String) -> Dictionary:
 		if returns.size() == 16: break
 		if not returns.has(candidate): returns.append(candidate)
 	if SOURCE_KINDS[id]=="stalker": returns=directions.duplicate()
-	response.world_root = get_parent() as Node3D
-	response.world_revision = WORLD_REVISION
-	response.encounter_id = ENCOUNTER_ID
-	response.recognition_s = 0.25
-	response.attack_input_margin_s = 0.06
-	response.escape_directions = directions
-	response.return_directions = returns
-	response.floor_regions = [_floor_region]
+	response["world_root"] = get_parent() as Node3D
+	response["world_revision"] = WORLD_REVISION
+	response["encounter_id"] = ENCOUNTER_ID
+	response["recognition_s"] = 0.25
+	response["attack_input_margin_s"] = 0.06
+	response["escape_directions"] = directions
+	response["return_directions"] = returns
+	response["floor_regions"] = [_floor_region]
 	return response
 
 
