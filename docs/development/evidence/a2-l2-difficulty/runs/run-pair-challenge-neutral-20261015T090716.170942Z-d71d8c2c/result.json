@@ -1,0 +1,1791 @@
+{
+  "phase": "run",
+  "test": "pair",
+  "case": {
+    "profile": "challenge",
+    "kit": "neutral"
+  },
+  "portraits_directory": null,
+  "started": "2026-10-15T09:07:16.171533+00:00",
+  "engine_started": true,
+  "validation_returned": true,
+  "closed": true,
+  "passed": false,
+  "scope": "Fixed named changed A2-L2 and directly affected source/UID subset plus eight literal original packets and provenance; not complete resource/global UID/dependency or bank closure. Optional actual renderer artifacts require separate optical review. No full route, campaign clear, all-kit, balance or performance credit.",
+  "engine_started_at": "2026-10-15T09:07:16.291812+00:00",
+  "dev_return_code": 1,
+  "returned_at": "2026-10-15T09:07:21.322709+00:00",
+  "source_delta": {
+    "changed": [],
+    "added": []
+  },
+  "retained_native_report": {
+    "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l2-difficulty-20261015/run-pair-challenge-neutral-20261015T090716.170942Z-d71d8c2c/native-report.json",
+    "sha256": "13309f40fc600a5a87768e8d96ab47ff35815f72428dedbb38087e0b1a8bbef2",
+    "bytes": 108087,
+    "scope": "Original raw report retained regardless of native or host validation result."
+  },
+  "native_observations": {
+    "checks": 147,
+    "failures": 1,
+    "first_failure": {
+      "check": 144,
+      "detail": "",
+      "label": "actual native movement/commitment retains Hero HP without fabricated progression",
+      "ok": false
+    },
+    "complete": false,
+    "success": false,
+    "profile": "challenge",
+    "kit_name": "neutral",
+    "target_hits": {},
+    "phases": {
+      "shelter_handler": {
+        "lock": true,
+        "warning": true
+      },
+      "shelter_scout": {
+        "active": true,
+        "lock": true,
+        "warning": true
+      }
+    },
+    "held_union_observation": {
+      "both_real_armed_nonrecovery": true,
+      "clock_s": 1.95,
+      "held": [
+        {
+          "active_from_s": 2.53333333333333,
+          "active_until_s": 2.73333333333333,
+          "armed": true,
+          "cooldown_until_s": 4.43333333333333,
+          "geometry": {
+            "from": [
+              -0.600000023841858,
+              0.0,
+              -33.0
+            ],
+            "kind": "lane",
+            "radius": 0.31,
+            "to": [
+              -0.600000023841858,
+              0.0,
+              -29.2000007629395
+            ]
+          },
+          "id": "threat-1",
+          "lock_from_s": 1.43333333333333,
+          "opening_position": [
+            -0.600000023841858,
+            0.0,
+            -33.0
+          ],
+          "profile_id": "challenge",
+          "recovery_until_s": 4.63333333333333,
+          "source_instance_id": 130090537537,
+          "source_position": [
+            -0.600000023841858,
+            0.0,
+            -33.0
+          ],
+          "start_s": 0.333333333333333,
+          "state": "lock",
+          "world_revision": 1
+        },
+        {
+          "active_from_s": 1.93333333333333,
+          "active_until_s": 2.09333333333333,
+          "adapter": {
+            "active_s": 0.16,
+            "attack_interval_s": 1.6,
+            "kind": "tracking",
+            "lock_s": 1.1,
+            "locked": true,
+            "radius": 0.31,
+            "reach": 3.80000066757202,
+            "recovery_s": 1.6
+          },
+          "armed": true,
+          "cooldown_until_s": 3.53333333333333,
+          "geometry": {
+            "from": [
+              0.649999976158142,
+              0.0,
+              -35.2000007629395
+            ],
+            "kind": "lane",
+            "radius": 0.31,
+            "to": [
+              -0.108299791812897,
+              0.0,
+              -31.4764289855957
+            ]
+          },
+          "id": "threat-2",
+          "lock_from_s": 0.833333333333334,
+          "opening_position": [
+            0.649999976158142,
+            0.0,
+            -35.2000007629395
+          ],
+          "profile_id": "challenge",
+          "recovery_until_s": 3.69333333333333,
+          "source_instance_id": 120108093432,
+          "source_position": [
+            0.649999976158142,
+            0.0,
+            -35.2000007629395
+          ],
+          "start_s": 0.383333333333333,
+          "state": "active",
+          "world_revision": 1
+        }
+      ],
+      "source_reservation_ids": {
+        "shelter_handler": "threat-1",
+        "shelter_scout": "threat-2"
+      },
+      "sources": {
+        "apron_handler": {
+          "api_revision": "lane-mechanism-1",
+          "cycle": 0,
+          "geometry": {
+            "from": [
+              -0.449999988079071,
+              0.0,
+              -15.1999998092651
+            ],
+            "kind": "lane",
+            "radius": 0.31,
+            "to": [
+              -0.449999988079071,
+              0.0,
+              -11.3999996185303
+            ]
+          },
+          "hit_ids": [],
+          "last_cancel_reason": "",
+          "mechanism_id": "tool_apron_handler",
+          "opening_position": [
+            -0.449999988079071,
+            0.0,
+            -15.1999998092651
+          ],
+          "phase": "clear",
+          "proof": {},
+          "remaining_s": 0.0,
+          "reservation_id": "",
+          "resolved_role": {},
+          "source_position": [
+            -0.449999988079071,
+            0.0,
+            -15.1999998092651
+          ],
+          "status": "idle"
+        },
+        "crossing_scout": {
+          "actor_id": "crossing_scout",
+          "api_revision": "act2-ray-exchange-1",
+          "armed": false,
+          "cycle": 0,
+          "direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "exchange": {},
+          "geometry": {},
+          "hit_consumed": false,
+          "last_cancel_reason": "",
+          "phase": "clear",
+          "presentation_witness": {},
+          "proof": {},
+          "proof_available": false,
+          "remaining_s": 0.0,
+          "reservation_id": "",
+          "resolved_role": {
+            "active_s": 0.16,
+            "attack_interval_s": 1.6,
+            "damage": 10.0,
+            "difficulty_profile": "challenge",
+            "difficulty_schema": 1,
+            "lock_s": 1.1,
+            "max_hp": 30.0,
+            "move_speed": 0.0,
+            "raw_damage": 10.0,
+            "raw_role": {
+              "active_s": 0.16,
+              "attack_interval_s": 1.6,
+              "lock_s": 1.1,
+              "max_hp": 30.0,
+              "move_speed": 0.0,
+              "raw_damage": 10.0,
+              "recovery_s": 1.6,
+              "windup_s": 1.55
+            },
+            "recovery_s": 1.6,
+            "tuning_status": "provisional_unplaytested",
+            "windup_s": 1.55
+          },
+          "source_position": [
+            0.449999988079071,
+            0.0,
+            -23.5
+          ],
+          "status": "idle"
+        },
+        "shelter_handler": {
+          "api_revision": "lane-mechanism-1",
+          "cycle": 1,
+          "geometry": {
+            "from": [
+              -0.600000023841858,
+              0.0,
+              -33.0
+            ],
+            "kind": "lane",
+            "radius": 0.31,
+            "to": [
+              -0.600000023841858,
+              0.0,
+              -29.2000007629395
+            ]
+          },
+          "hit_ids": [],
+          "last_cancel_reason": "",
+          "mechanism_id": "tool_shelter_handler",
+          "opening_position": [
+            -0.600000023841858,
+            0.0,
+            -33.0
+          ],
+          "phase": "lock",
+          "proof": {
+            "accepted": true,
+            "attack_position": [
+              -1.42541944980621,
+              -0.00494791707023978,
+              -32.4745483398438
+            ],
+            "landing": [
+              -1.42541944980621,
+              -0.00494791707023978,
+              -32.4745483398438
+            ],
+            "path": [
+              {
+                "end_s": 0.756666666666667,
+                "from": [
+                  0.483768790960312,
+                  -0.00494791707023978,
+                  -34.3837356567383
+                ],
+                "kind": "recognition_and_ready",
+                "start_s": 0.333333333333333,
+                "to": [
+                  0.483768790960312,
+                  -0.00494791707023978,
+                  -34.3837356567383
+                ]
+              },
+              {
+                "end_s": 0.936666666666667,
+                "from": [
+                  0.483768790960312,
+                  -0.00494791707023978,
+                  -34.3837356567383
+                ],
+                "kind": "escape_dash",
+                "start_s": 0.756666666666667,
+                "to": [
+                  -1.42541944980621,
+                  -0.00494791707023978,
+                  -32.4745483398438
+                ]
+              },
+              {
+                "end_s": 2.83433333333333,
+                "from": [
+                  -1.42541944980621,
+                  -0.00494791707023978,
+                  -32.4745483398438
+                ],
+                "kind": "recovery_wait",
+                "start_s": 0.936666666666667,
+                "to": [
+                  -1.42541944980621,
+                  -0.00494791707023978,
+                  -32.4745483398438
+                ]
+              },
+              {
+                "end_s": 3.13433333333333,
+                "from": [
+                  -1.42541944980621,
+                  -0.00494791707023978,
+                  -32.4745483398438
+                ],
+                "kind": "ordinary_primary",
+                "start_s": 2.83433333333333,
+                "to": [
+                  -1.42541944980621,
+                  -0.00494791707023978,
+                  -32.4745483398438
+                ]
+              }
+            ],
+            "primary_time_s": 2.83433333333333,
+            "proof_scope": "static_box_floor_full_dash_stationary_primary",
+            "response_complete_s": 3.13433333333333,
+            "uses_blast": false,
+            "uses_invulnerability": false
+          },
+          "remaining_s": 0.583333333333336,
+          "reservation_id": "threat-1",
+          "resolved_role": {
+            "active_s": 0.2,
+            "attack_interval_s": 1.9,
+            "damage": 10.0,
+            "difficulty_profile": "challenge",
+            "difficulty_schema": 1,
+            "lock_s": 1.1,
+            "max_hp": 30.0,
+            "move_speed": 0.0,
+            "raw_damage": 10.0,
+            "raw_role": {
+              "active_s": 0.2,
+              "attack_interval_s": 1.9,
+              "lock_s": 1.1,
+              "max_hp": 30.0,
+              "move_speed": 0.0,
+              "raw_damage": 10.0,
+              "recovery_s": 1.9,
+              "windup_s": 2.2
+            },
+            "recovery_s": 1.9,
+            "tuning_status": "provisional_unplaytested",
+            "windup_s": 2.2
+          },
+          "source_position": [
+            -0.600000023841858,
+            0.0,
+            -33.0
+          ],
+          "status": "running"
+        },
+        "shelter_scout": {
+          "actor_id": "shelter_scout",
+          "api_revision": "act2-ray-exchange-1",
+          "armed": true,
+          "cycle": 1,
+          "direction": [
+            -0.199552536010742,
+            0.0,
+            0.979887127876282
+          ],
+          "exchange": {
+            "active_from_s": 1.93333333333333,
+            "active_until_s": 2.09333333333333,
+            "adapter": {
+              "active_s": 0.16,
+              "attack_interval_s": 1.6,
+              "kind": "tracking",
+              "lock_s": 1.1,
+              "locked": true,
+              "radius": 0.31,
+              "reach": 3.80000066757202,
+              "recovery_s": 1.6
+            },
+            "cooldown_until_s": 3.53333333333333,
+            "geometry": {
+              "from": [
+                0.649999976158142,
+                0.0,
+                -35.2000007629395
+              ],
+              "kind": "lane",
+              "radius": 0.31,
+              "to": [
+                -0.108299791812897,
+                0.0,
+                -31.4764289855957
+              ]
+            },
+            "id": "threat-2",
+            "lock_from_s": 0.833333333333334,
+            "opening_position": [
+              0.649999976158142,
+              0.0,
+              -35.2000007629395
+            ],
+            "profile_id": "challenge",
+            "recovery_until_s": 3.69333333333333,
+            "source_position": [
+              0.649999976158142,
+              0.0,
+              -35.2000007629395
+            ],
+            "start_s": 0.383333333333333,
+            "world_revision": 1
+          },
+          "geometry": {
+            "from": [
+              0.649999976158142,
+              0.0,
+              -35.2000007629395
+            ],
+            "kind": "lane",
+            "radius": 0.31,
+            "to": [
+              -0.108299791812897,
+              0.0,
+              -31.4764289855957
+            ]
+          },
+          "hit_consumed": true,
+          "last_cancel_reason": "",
+          "phase": "active",
+          "presentation_witness": {
+            "attack_position": [
+              0.483768820762634,
+              -0.00494791707023978,
+              -34.3837356567383
+            ],
+            "landing": [
+              -1.42541944980621,
+              -0.00494791707023978,
+              -32.4745483398438
+            ]
+          },
+          "proof": {
+            "accepted": true,
+            "attack_position": [
+              0.483768820762634,
+              -0.00494791707023978,
+              -34.3837356567383
+            ],
+            "landing": [
+              -1.42541944980621,
+              -0.00494791707023978,
+              -32.4745483398438
+            ],
+            "path": [
+              {
+                "end_s": 1.13333333333333,
+                "from": [
+                  0.483768790960312,
+                  -0.00494791707023978,
+                  -34.3837356567383
+                ],
+                "kind": "recognition_and_ready",
+                "start_s": 0.833333333333334,
+                "to": [
+                  0.483768790960312,
+                  -0.00494791707023978,
+                  -34.3837356567383
+                ]
+              },
+              {
+                "end_s": 1.31333333333333,
+                "from": [
+                  0.483768790960312,
+                  -0.00494791707023978,
+                  -34.3837356567383
+                ],
+                "kind": "escape_dash",
+                "start_s": 1.13333333333333,
+                "to": [
+                  -1.42541944980621,
+                  -0.00494791707023978,
+                  -32.4745483398438
+                ]
+              },
+              {
+                "end_s": 2.09433333333333,
+                "from": [
+                  -1.42541944980621,
+                  -0.00494791707023978,
+                  -32.4745483398438
+                ],
+                "kind": "recovery_wait",
+                "start_s": 1.31333333333333,
+                "to": [
+                  -1.42541944980621,
+                  -0.00494791707023978,
+                  -32.4745483398438
+                ]
+              },
+              {
+                "end_s": 2.27433333333333,
+                "from": [
+                  -1.42541944980621,
+                  -0.00494791707023978,
+                  -32.4745483398438
+                ],
+                "kind": "positioning_dash",
+                "start_s": 2.09433333333333,
+                "to": [
+                  0.483768820762634,
+                  -0.00494791707023978,
+                  -34.3837356567383
+                ]
+              },
+              {
+                "end_s": 2.37433333333333,
+                "from": [
+                  0.483768820762634,
+                  -0.00494791707023978,
+                  -34.3837356567383
+                ],
+                "kind": "primary_ready",
+                "start_s": 2.27433333333333,
+                "to": [
+                  0.483768820762634,
+                  -0.00494791707023978,
+                  -34.3837356567383
+                ]
+              },
+              {
+                "end_s": 2.67433333333333,
+                "from": [
+                  0.483768820762634,
+                  -0.00494791707023978,
+                  -34.3837356567383
+                ],
+                "kind": "ordinary_primary",
+                "start_s": 2.37433333333333,
+                "to": [
+                  0.483768820762634,
+                  -0.00494791707023978,
+                  -34.3837356567383
+                ]
+              }
+            ],
+            "primary_time_s": 2.37433333333333,
+            "proof_scope": "static_box_floor_full_dash_stationary_primary",
+            "response_complete_s": 2.67433333333333,
+            "uses_blast": false,
+            "uses_invulnerability": false
+          },
+          "proof_available": true,
+          "remaining_s": 0.143333333333337,
+          "reservation_id": "threat-2",
+          "resolved_role": {
+            "active_s": 0.16,
+            "attack_interval_s": 1.6,
+            "damage": 10.0,
+            "difficulty_profile": "challenge",
+            "difficulty_schema": 1,
+            "lock_s": 1.1,
+            "max_hp": 30.0,
+            "move_speed": 0.0,
+            "raw_damage": 10.0,
+            "raw_role": {
+              "active_s": 0.16,
+              "attack_interval_s": 1.6,
+              "lock_s": 1.1,
+              "max_hp": 30.0,
+              "move_speed": 0.0,
+              "raw_damage": 10.0,
+              "recovery_s": 1.6,
+              "windup_s": 1.55
+            },
+            "recovery_s": 1.6,
+            "tuning_status": "provisional_unplaytested",
+            "windup_s": 1.55
+          },
+          "source_position": [
+            0.649999976158142,
+            0.0,
+            -35.2000007629395
+          ],
+          "status": "running"
+        },
+        "village_scout": {
+          "actor_id": "village_scout",
+          "api_revision": "act2-ray-exchange-1",
+          "armed": false,
+          "cycle": 0,
+          "direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "exchange": {},
+          "geometry": {},
+          "hit_consumed": false,
+          "last_cancel_reason": "",
+          "phase": "clear",
+          "presentation_witness": {},
+          "proof": {},
+          "proof_available": false,
+          "remaining_s": 0.0,
+          "reservation_id": "",
+          "resolved_role": {
+            "active_s": 0.16,
+            "attack_interval_s": 1.6,
+            "damage": 10.0,
+            "difficulty_profile": "challenge",
+            "difficulty_schema": 1,
+            "lock_s": 1.1,
+            "max_hp": 30.0,
+            "move_speed": 0.0,
+            "raw_damage": 10.0,
+            "raw_role": {
+              "active_s": 0.16,
+              "attack_interval_s": 1.6,
+              "lock_s": 1.1,
+              "max_hp": 30.0,
+              "move_speed": 0.0,
+              "raw_damage": 10.0,
+              "recovery_s": 1.6,
+              "windup_s": 1.55
+            },
+            "recovery_s": 1.6,
+            "tuning_status": "provisional_unplaytested",
+            "windup_s": 1.55
+          },
+          "source_position": [
+            0.0,
+            0.0,
+            -0.5
+          ],
+          "status": "idle"
+        },
+        "yard_handler": {
+          "api_revision": "lane-mechanism-1",
+          "cycle": 0,
+          "geometry": {
+            "from": [
+              0.5,
+              0.0,
+              -5.69999980926514
+            ],
+            "kind": "lane",
+            "radius": 0.31,
+            "to": [
+              0.5,
+              0.0,
+              -1.89999985694885
+            ]
+          },
+          "hit_ids": [],
+          "last_cancel_reason": "",
+          "mechanism_id": "tool_yard_handler",
+          "opening_position": [
+            0.5,
+            0.0,
+            -5.69999980926514
+          ],
+          "phase": "clear",
+          "proof": {},
+          "remaining_s": 0.0,
+          "reservation_id": "",
+          "resolved_role": {},
+          "source_position": [
+            0.5,
+            0.0,
+            -5.69999980926514
+          ],
+          "status": "idle"
+        }
+      }
+    },
+    "captures": {},
+    "progression_events": [],
+    "final_or_failed_observation": {
+      "TEST_context": "TEST stage_index10 and initial Hero(-.3,0,-31.8) before first physics; all6 actual actor HP unchanged, prior4 alive/dormant, no fake defeated/contact/clock/history and no valid packet/earned route/Save/Continue/Retry claim. Actual Main/parent loop/Scheduler/camera/proofs and direct dash/ordinary slash only; initial zero ammo, no blast.",
+      "actors": {
+        "apron_handler": {
+          "hp": 30.0,
+          "position": [
+            -0.449999988079071,
+            0.0,
+            -15.1999998092651
+          ],
+          "visible": false
+        },
+        "crossing_scout": {
+          "hp": 30.0,
+          "position": [
+            0.449999988079071,
+            0.0,
+            -23.5
+          ],
+          "visible": false
+        },
+        "shelter_handler": {
+          "hp": 30.0,
+          "position": [
+            -0.600000023841858,
+            0.0,
+            -33.0
+          ],
+          "visible": true
+        },
+        "shelter_scout": {
+          "hp": 30.0,
+          "position": [
+            0.649999976158142,
+            0.0,
+            -35.2000007629395
+          ],
+          "visible": true
+        },
+        "village_scout": {
+          "hp": 30.0,
+          "position": [
+            0.0,
+            0.0,
+            -0.5
+          ],
+          "visible": false
+        },
+        "yard_handler": {
+          "hp": 30.0,
+          "position": [
+            0.5,
+            0.0,
+            -5.69999980926514
+          ],
+          "visible": false
+        }
+      },
+      "held": [
+        {
+          "active_from_s": 2.53333333333333,
+          "active_until_s": 2.73333333333333,
+          "armed": true,
+          "cooldown_until_s": 4.43333333333333,
+          "geometry": {
+            "from": [
+              -0.600000023841858,
+              0.0,
+              -33.0
+            ],
+            "kind": "lane",
+            "radius": 0.31,
+            "to": [
+              -0.600000023841858,
+              0.0,
+              -29.2000007629395
+            ]
+          },
+          "id": "threat-1",
+          "lock_from_s": 1.43333333333333,
+          "opening_position": [
+            -0.600000023841858,
+            0.0,
+            -33.0
+          ],
+          "profile_id": "challenge",
+          "recovery_until_s": 4.63333333333333,
+          "source_instance_id": 130090537537,
+          "source_position": [
+            -0.600000023841858,
+            0.0,
+            -33.0
+          ],
+          "start_s": 0.333333333333333,
+          "state": "lock",
+          "world_revision": 1
+        },
+        {
+          "active_from_s": 1.93333333333333,
+          "active_until_s": 2.09333333333333,
+          "adapter": {
+            "active_s": 0.16,
+            "attack_interval_s": 1.6,
+            "kind": "tracking",
+            "lock_s": 1.1,
+            "locked": true,
+            "radius": 0.31,
+            "reach": 3.80000066757202,
+            "recovery_s": 1.6
+          },
+          "armed": true,
+          "cooldown_until_s": 3.53333333333333,
+          "geometry": {
+            "from": [
+              0.649999976158142,
+              0.0,
+              -35.2000007629395
+            ],
+            "kind": "lane",
+            "radius": 0.31,
+            "to": [
+              -0.108299791812897,
+              0.0,
+              -31.4764289855957
+            ]
+          },
+          "id": "threat-2",
+          "lock_from_s": 0.833333333333334,
+          "opening_position": [
+            0.649999976158142,
+            0.0,
+            -35.2000007629395
+          ],
+          "profile_id": "challenge",
+          "recovery_until_s": 3.69333333333333,
+          "source_instance_id": 120108093432,
+          "source_position": [
+            0.649999976158142,
+            0.0,
+            -35.2000007629395
+          ],
+          "start_s": 0.383333333333333,
+          "state": "active",
+          "world_revision": 1
+        }
+      ],
+      "hero": {
+        "hp": 90.0,
+        "position": [
+          0.483768790960312,
+          -0.00494791707023978,
+          -34.3837356567383
+        ],
+        "response": {
+          "action_clock_s": 1.95,
+          "actor": {
+            "class": "CharacterBody3D",
+            "observed_instance_id": 73870084598
+          },
+          "commitment_remaining_s": 0.16,
+          "dash_cooldown_left_s": 0.0,
+          "equipment_ids": {
+            "jacket": "CLOTH-J0",
+            "pants": "CLOTH-P0",
+            "shoes": "CLOTH-S0",
+            "weapon": "WEAPON-01"
+          },
+          "motion": {
+            "dash_left_s": 0.0,
+            "grounded": true,
+            "knockback_left_s": 0.16,
+            "position": [
+              0.483768790960312,
+              -0.00494791707023978,
+              -34.3837356567383
+            ],
+            "queued_dash": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "velocity": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "pending_weapon_id": "",
+          "primary_commitment_s": 0.13,
+          "primary_cooldown_left_s": 0.0,
+          "stable": false,
+          "stats": {
+            "armour": 1.0,
+            "capped_stats": [],
+            "damage_reduction": 0.0,
+            "dash_cooldown": 0.34,
+            "dash_distance": 2.7,
+            "dash_duration": 0.18,
+            "dash_invulnerability": 0.12,
+            "dash_speed": 15.0,
+            "effective_health": 100.0,
+            "followup_cone_min_dot": 0.5,
+            "followup_cooldown": 0.45,
+            "followup_damage": 42.0,
+            "followup_range": 3.1,
+            "gear_multipliers": {
+              "armour": 1.0,
+              "attack_range": 1.0,
+              "attack_speed": 1.0,
+              "damage": 1.0,
+              "dash_distance": 1.0,
+              "dash_speed": 1.0,
+              "max_health": 1.0
+            },
+            "hurt_invulnerability": 0.8,
+            "max_health": 100.0,
+            "primary_cadence_estimate": 0.3,
+            "primary_cone_min_dot": 0.05,
+            "primary_cooldown": 0.3,
+            "primary_damage": 20.0,
+            "primary_hit_reload_credit": 0.45,
+            "primary_range": 2.0,
+            "raw_gear_multipliers": {
+              "armour": 1.0,
+              "attack_range": 1.0,
+              "attack_speed": 1.0,
+              "damage": 1.0,
+              "dash_distance": 1.0,
+              "dash_speed": 1.0,
+              "max_health": 1.0
+            },
+            "shell_capacity": 2,
+            "shell_reload": 1.15,
+            "total_multipliers": {
+              "armour": 1.0,
+              "attack_range": 1.0,
+              "attack_speed": 1.0,
+              "damage": 1.0,
+              "dash_distance": 1.0,
+              "dash_speed": 1.0,
+              "max_health": 1.0
+            },
+            "weapon_id": "WEAPON-01",
+            "weapon_name": "Balanced Edge"
+          }
+        },
+        "shells": 1
+      },
+      "kit": "neutral",
+      "parent": {
+        "active_ids": [
+          "shelter_scout",
+          "shelter_handler"
+        ],
+        "admission_errors": {
+          "shelter_scout": {},
+          "tool_shelter_handler": {}
+        },
+        "beat": "shelter_pair",
+        "clock_s": 1.95,
+        "exchanges": {
+          "apron_handler": {
+            "api_revision": "lane-mechanism-1",
+            "cycle": 0,
+            "geometry": {
+              "from": [
+                -0.449999988079071,
+                0.0,
+                -15.1999998092651
+              ],
+              "kind": "lane",
+              "radius": 0.31,
+              "to": [
+                -0.449999988079071,
+                0.0,
+                -11.3999996185303
+              ]
+            },
+            "hit_ids": [],
+            "last_cancel_reason": "",
+            "mechanism_id": "tool_apron_handler",
+            "opening_position": [
+              -0.449999988079071,
+              0.0,
+              -15.1999998092651
+            ],
+            "phase": "clear",
+            "proof": {},
+            "remaining_s": 0.0,
+            "reservation_id": "",
+            "resolved_role": {},
+            "source_position": [
+              -0.449999988079071,
+              0.0,
+              -15.1999998092651
+            ],
+            "status": "idle"
+          },
+          "crossing_scout": {
+            "actor_id": "crossing_scout",
+            "api_revision": "act2-ray-exchange-1",
+            "armed": false,
+            "cycle": 0,
+            "direction": [
+              0.0,
+              0.0,
+              1.0
+            ],
+            "exchange": {},
+            "geometry": {},
+            "hit_consumed": false,
+            "last_cancel_reason": "",
+            "phase": "clear",
+            "presentation_witness": {},
+            "proof": {},
+            "proof_available": false,
+            "remaining_s": 0.0,
+            "reservation_id": "",
+            "resolved_role": {
+              "active_s": 0.16,
+              "attack_interval_s": 1.6,
+              "damage": 10.0,
+              "difficulty_profile": "challenge",
+              "difficulty_schema": 1,
+              "lock_s": 1.1,
+              "max_hp": 30.0,
+              "move_speed": 0.0,
+              "raw_damage": 10.0,
+              "raw_role": {
+                "active_s": 0.16,
+                "attack_interval_s": 1.6,
+                "lock_s": 1.1,
+                "max_hp": 30.0,
+                "move_speed": 0.0,
+                "raw_damage": 10.0,
+                "recovery_s": 1.6,
+                "windup_s": 1.55
+              },
+              "recovery_s": 1.6,
+              "tuning_status": "provisional_unplaytested",
+              "windup_s": 1.55
+            },
+            "source_position": [
+              0.449999988079071,
+              0.0,
+              -23.5
+            ],
+            "status": "idle"
+          },
+          "shelter_handler": {
+            "api_revision": "lane-mechanism-1",
+            "cycle": 1,
+            "geometry": {
+              "from": [
+                -0.600000023841858,
+                0.0,
+                -33.0
+              ],
+              "kind": "lane",
+              "radius": 0.31,
+              "to": [
+                -0.600000023841858,
+                0.0,
+                -29.2000007629395
+              ]
+            },
+            "hit_ids": [],
+            "last_cancel_reason": "",
+            "mechanism_id": "tool_shelter_handler",
+            "opening_position": [
+              -0.600000023841858,
+              0.0,
+              -33.0
+            ],
+            "phase": "lock",
+            "proof": {
+              "accepted": true,
+              "attack_position": [
+                -1.42541944980621,
+                -0.00494791707023978,
+                -32.4745483398438
+              ],
+              "landing": [
+                -1.42541944980621,
+                -0.00494791707023978,
+                -32.4745483398438
+              ],
+              "path": [
+                {
+                  "end_s": 0.756666666666667,
+                  "from": [
+                    0.483768790960312,
+                    -0.00494791707023978,
+                    -34.3837356567383
+                  ],
+                  "kind": "recognition_and_ready",
+                  "start_s": 0.333333333333333,
+                  "to": [
+                    0.483768790960312,
+                    -0.00494791707023978,
+                    -34.3837356567383
+                  ]
+                },
+                {
+                  "end_s": 0.936666666666667,
+                  "from": [
+                    0.483768790960312,
+                    -0.00494791707023978,
+                    -34.3837356567383
+                  ],
+                  "kind": "escape_dash",
+                  "start_s": 0.756666666666667,
+                  "to": [
+                    -1.42541944980621,
+                    -0.00494791707023978,
+                    -32.4745483398438
+                  ]
+                },
+                {
+                  "end_s": 2.83433333333333,
+                  "from": [
+                    -1.42541944980621,
+                    -0.00494791707023978,
+                    -32.4745483398438
+                  ],
+                  "kind": "recovery_wait",
+                  "start_s": 0.936666666666667,
+                  "to": [
+                    -1.42541944980621,
+                    -0.00494791707023978,
+                    -32.4745483398438
+                  ]
+                },
+                {
+                  "end_s": 3.13433333333333,
+                  "from": [
+                    -1.42541944980621,
+                    -0.00494791707023978,
+                    -32.4745483398438
+                  ],
+                  "kind": "ordinary_primary",
+                  "start_s": 2.83433333333333,
+                  "to": [
+                    -1.42541944980621,
+                    -0.00494791707023978,
+                    -32.4745483398438
+                  ]
+                }
+              ],
+              "primary_time_s": 2.83433333333333,
+              "proof_scope": "static_box_floor_full_dash_stationary_primary",
+              "response_complete_s": 3.13433333333333,
+              "uses_blast": false,
+              "uses_invulnerability": false
+            },
+            "remaining_s": 0.583333333333336,
+            "reservation_id": "threat-1",
+            "resolved_role": {
+              "active_s": 0.2,
+              "attack_interval_s": 1.9,
+              "damage": 10.0,
+              "difficulty_profile": "challenge",
+              "difficulty_schema": 1,
+              "lock_s": 1.1,
+              "max_hp": 30.0,
+              "move_speed": 0.0,
+              "raw_damage": 10.0,
+              "raw_role": {
+                "active_s": 0.2,
+                "attack_interval_s": 1.9,
+                "lock_s": 1.1,
+                "max_hp": 30.0,
+                "move_speed": 0.0,
+                "raw_damage": 10.0,
+                "recovery_s": 1.9,
+                "windup_s": 2.2
+              },
+              "recovery_s": 1.9,
+              "tuning_status": "provisional_unplaytested",
+              "windup_s": 2.2
+            },
+            "source_position": [
+              -0.600000023841858,
+              0.0,
+              -33.0
+            ],
+            "status": "running"
+          },
+          "shelter_scout": {
+            "actor_id": "shelter_scout",
+            "api_revision": "act2-ray-exchange-1",
+            "armed": true,
+            "cycle": 1,
+            "direction": [
+              -0.199552536010742,
+              0.0,
+              0.979887127876282
+            ],
+            "exchange": {
+              "active_from_s": 1.93333333333333,
+              "active_until_s": 2.09333333333333,
+              "adapter": {
+                "active_s": 0.16,
+                "attack_interval_s": 1.6,
+                "kind": "tracking",
+                "lock_s": 1.1,
+                "locked": true,
+                "radius": 0.31,
+                "reach": 3.80000066757202,
+                "recovery_s": 1.6
+              },
+              "cooldown_until_s": 3.53333333333333,
+              "geometry": {
+                "from": [
+                  0.649999976158142,
+                  0.0,
+                  -35.2000007629395
+                ],
+                "kind": "lane",
+                "radius": 0.31,
+                "to": [
+                  -0.108299791812897,
+                  0.0,
+                  -31.4764289855957
+                ]
+              },
+              "id": "threat-2",
+              "lock_from_s": 0.833333333333334,
+              "opening_position": [
+                0.649999976158142,
+                0.0,
+                -35.2000007629395
+              ],
+              "profile_id": "challenge",
+              "recovery_until_s": 3.69333333333333,
+              "source_position": [
+                0.649999976158142,
+                0.0,
+                -35.2000007629395
+              ],
+              "start_s": 0.383333333333333,
+              "world_revision": 1
+            },
+            "geometry": {
+              "from": [
+                0.649999976158142,
+                0.0,
+                -35.2000007629395
+              ],
+              "kind": "lane",
+              "radius": 0.31,
+              "to": [
+                -0.108299791812897,
+                0.0,
+                -31.4764289855957
+              ]
+            },
+            "hit_consumed": true,
+            "last_cancel_reason": "",
+            "phase": "active",
+            "presentation_witness": {
+              "attack_position": [
+                0.483768820762634,
+                -0.00494791707023978,
+                -34.3837356567383
+              ],
+              "landing": [
+                -1.42541944980621,
+                -0.00494791707023978,
+                -32.4745483398438
+              ]
+            },
+            "proof": {
+              "accepted": true,
+              "attack_position": [
+                0.483768820762634,
+                -0.00494791707023978,
+                -34.3837356567383
+              ],
+              "landing": [
+                -1.42541944980621,
+                -0.00494791707023978,
+                -32.4745483398438
+              ],
+              "path": [
+                {
+                  "end_s": 1.13333333333333,
+                  "from": [
+                    0.483768790960312,
+                    -0.00494791707023978,
+                    -34.3837356567383
+                  ],
+                  "kind": "recognition_and_ready",
+                  "start_s": 0.833333333333334,
+                  "to": [
+                    0.483768790960312,
+                    -0.00494791707023978,
+                    -34.3837356567383
+                  ]
+                },
+                {
+                  "end_s": 1.31333333333333,
+                  "from": [
+                    0.483768790960312,
+                    -0.00494791707023978,
+                    -34.3837356567383
+                  ],
+                  "kind": "escape_dash",
+                  "start_s": 1.13333333333333,
+                  "to": [
+                    -1.42541944980621,
+                    -0.00494791707023978,
+                    -32.4745483398438
+                  ]
+                },
+                {
+                  "end_s": 2.09433333333333,
+                  "from": [
+                    -1.42541944980621,
+                    -0.00494791707023978,
+                    -32.4745483398438
+                  ],
+                  "kind": "recovery_wait",
+                  "start_s": 1.31333333333333,
+                  "to": [
+                    -1.42541944980621,
+                    -0.00494791707023978,
+                    -32.4745483398438
+                  ]
+                },
+                {
+                  "end_s": 2.27433333333333,
+                  "from": [
+                    -1.42541944980621,
+                    -0.00494791707023978,
+                    -32.4745483398438
+                  ],
+                  "kind": "positioning_dash",
+                  "start_s": 2.09433333333333,
+                  "to": [
+                    0.483768820762634,
+                    -0.00494791707023978,
+                    -34.3837356567383
+                  ]
+                },
+                {
+                  "end_s": 2.37433333333333,
+                  "from": [
+                    0.483768820762634,
+                    -0.00494791707023978,
+                    -34.3837356567383
+                  ],
+                  "kind": "primary_ready",
+                  "start_s": 2.27433333333333,
+                  "to": [
+                    0.483768820762634,
+                    -0.00494791707023978,
+                    -34.3837356567383
+                  ]
+                },
+                {
+                  "end_s": 2.67433333333333,
+                  "from": [
+                    0.483768820762634,
+                    -0.00494791707023978,
+                    -34.3837356567383
+                  ],
+                  "kind": "ordinary_primary",
+                  "start_s": 2.37433333333333,
+                  "to": [
+                    0.483768820762634,
+                    -0.00494791707023978,
+                    -34.3837356567383
+                  ]
+                }
+              ],
+              "primary_time_s": 2.37433333333333,
+              "proof_scope": "static_box_floor_full_dash_stationary_primary",
+              "response_complete_s": 2.67433333333333,
+              "uses_blast": false,
+              "uses_invulnerability": false
+            },
+            "proof_available": true,
+            "remaining_s": 0.143333333333337,
+            "reservation_id": "threat-2",
+            "resolved_role": {
+              "active_s": 0.16,
+              "attack_interval_s": 1.6,
+              "damage": 10.0,
+              "difficulty_profile": "challenge",
+              "difficulty_schema": 1,
+              "lock_s": 1.1,
+              "max_hp": 30.0,
+              "move_speed": 0.0,
+              "raw_damage": 10.0,
+              "raw_role": {
+                "active_s": 0.16,
+                "attack_interval_s": 1.6,
+                "lock_s": 1.1,
+                "max_hp": 30.0,
+                "move_speed": 0.0,
+                "raw_damage": 10.0,
+                "recovery_s": 1.6,
+                "windup_s": 1.55
+              },
+              "recovery_s": 1.6,
+              "tuning_status": "provisional_unplaytested",
+              "windup_s": 1.55
+            },
+            "source_position": [
+              0.649999976158142,
+              0.0,
+              -35.2000007629395
+            ],
+            "status": "running"
+          },
+          "village_scout": {
+            "actor_id": "village_scout",
+            "api_revision": "act2-ray-exchange-1",
+            "armed": false,
+            "cycle": 0,
+            "direction": [
+              0.0,
+              0.0,
+              1.0
+            ],
+            "exchange": {},
+            "geometry": {},
+            "hit_consumed": false,
+            "last_cancel_reason": "",
+            "phase": "clear",
+            "presentation_witness": {},
+            "proof": {},
+            "proof_available": false,
+            "remaining_s": 0.0,
+            "reservation_id": "",
+            "resolved_role": {
+              "active_s": 0.16,
+              "attack_interval_s": 1.6,
+              "damage": 10.0,
+              "difficulty_profile": "challenge",
+              "difficulty_schema": 1,
+              "lock_s": 1.1,
+              "max_hp": 30.0,
+              "move_speed": 0.0,
+              "raw_damage": 10.0,
+              "raw_role": {
+                "active_s": 0.16,
+                "attack_interval_s": 1.6,
+                "lock_s": 1.1,
+                "max_hp": 30.0,
+                "move_speed": 0.0,
+                "raw_damage": 10.0,
+                "recovery_s": 1.6,
+                "windup_s": 1.55
+              },
+              "recovery_s": 1.6,
+              "tuning_status": "provisional_unplaytested",
+              "windup_s": 1.55
+            },
+            "source_position": [
+              0.0,
+              0.0,
+              -0.5
+            ],
+            "status": "idle"
+          },
+          "yard_handler": {
+            "api_revision": "lane-mechanism-1",
+            "cycle": 0,
+            "geometry": {
+              "from": [
+                0.5,
+                0.0,
+                -5.69999980926514
+              ],
+              "kind": "lane",
+              "radius": 0.31,
+              "to": [
+                0.5,
+                0.0,
+                -1.89999985694885
+              ]
+            },
+            "hit_ids": [],
+            "last_cancel_reason": "",
+            "mechanism_id": "tool_yard_handler",
+            "opening_position": [
+              0.5,
+              0.0,
+              -5.69999980926514
+            ],
+            "phase": "clear",
+            "proof": {},
+            "remaining_s": 0.0,
+            "reservation_id": "",
+            "resolved_role": {},
+            "source_position": [
+              0.5,
+              0.0,
+              -5.69999980926514
+            ],
+            "status": "idle"
+          }
+        },
+        "exit_open": false,
+        "foot_id": "",
+        "mechanisms": {
+          "foot_apron": {
+            "api_revision": "lane-mechanism-1",
+            "cycle": 0,
+            "geometry": {
+              "kind": "circle",
+              "origin": [
+                0.300000011920929,
+                0.0,
+                -13.1999998092651
+              ],
+              "radius": 1.1
+            },
+            "hit_ids": [],
+            "last_cancel_reason": "",
+            "mechanism_id": "foot_apron",
+            "opening_position": [
+              -1.25,
+              0.0,
+              -13.1999998092651
+            ],
+            "phase": "clear",
+            "remaining_s": 0.0,
+            "reservation_id": "",
+            "resolved_role": {},
+            "source_position": [
+              0.300000011920929,
+              0.0,
+              -13.1999998092651
+            ],
+            "status": "idle"
+          },
+          "foot_demo": {
+            "api_revision": "lane-mechanism-1",
+            "cycle": 0,
+            "geometry": {
+              "kind": "circle",
+              "origin": [
+                -0.25,
+                0.0,
+                -10.5
+              ],
+              "radius": 1.1
+            },
+            "hit_ids": [],
+            "last_cancel_reason": "",
+            "mechanism_id": "foot_demo",
+            "opening_position": [
+              1.29999995231628,
+              0.0,
+              -10.5
+            ],
+            "phase": "clear",
+            "remaining_s": 0.0,
+            "reservation_id": "",
+            "resolved_role": {},
+            "source_position": [
+              -0.25,
+              0.0,
+              -10.5
+            ],
+            "status": "idle"
+          },
+          "foot_left": {
+            "api_revision": "lane-mechanism-1",
+            "cycle": 0,
+            "geometry": {
+              "kind": "circle",
+              "origin": [
+                -0.75,
+                0.0,
+                -21.0
+              ],
+              "radius": 1.1
+            },
+            "hit_ids": [],
+            "last_cancel_reason": "",
+            "mechanism_id": "foot_left",
+            "opening_position": [
+              0.799999952316284,
+              0.0,
+              -21.0
+            ],
+            "phase": "clear",
+            "remaining_s": 0.0,
+            "reservation_id": "",
+            "resolved_role": {},
+            "source_position": [
+              -0.75,
+              0.0,
+              -21.0
+            ],
+            "status": "idle"
+          },
+          "foot_right": {
+            "api_revision": "lane-mechanism-1",
+            "cycle": 0,
+            "geometry": {
+              "kind": "circle",
+              "origin": [
+                0.75,
+                0.0,
+                -24.6000003814697
+              ],
+              "radius": 1.1
+            },
+            "hit_ids": [],
+            "last_cancel_reason": "",
+            "mechanism_id": "foot_right",
+            "opening_position": [
+              -0.799999952316284,
+              0.0,
+              -24.6000003814697
+            ],
+            "phase": "clear",
+            "remaining_s": 0.0,
+            "reservation_id": "",
+            "resolved_role": {},
+            "source_position": [
+              0.75,
+              0.0,
+              -24.6000003814697
+            ],
+            "status": "idle"
+          },
+          "tool_apron_handler": {
+            "api_revision": "lane-mechanism-1",
+            "cycle": 0,
+            "geometry": {
+              "from": [
+                -0.449999988079071,
+                0.0,
+                -15.1999998092651
+              ],
+              "kind": "lane",
+              "radius": 0.31,
+              "to": [
+                -0.449999988079071,
+                0.0,
+                -11.3999996185303
+              ]
+            },
+            "hit_ids": [],
+            "last_cancel_reason": "",
+            "mechanism_id": "tool_apron_handler",
+            "opening_position": [
+              -0.449999988079071,
+              0.0,
+              -15.1999998092651
+            ],
+            "phase": "clear",
+            "remaining_s": 0.0,
+            "reservation_id": "",
+            "resolved_role": {},
+            "source_position": [
+              -0.449999988079071,
+              0.0,
+              -15.1999998092651
+            ],
+            "status": "idle"
+          },
+          "tool_shelter_handler": {
+            "api_revision": "lane-mechanism-1",
+            "cycle": 1,
+            "geometry": {
+              "from": [
+                -0.600000023841858,
+                0.0,
+                -33.0
+              ],
+              "kind": "lane",
+              "radius": 0.31,
+              "to": [
+                -0.600000023841858,
+                0.0,
+                -29.2000007629395
+              ]
+            },
+            "hit_ids": [],
+            "last_cancel_reason": "",
+            "mechanism_id": "tool_shelter_handler",
+            "opening_position": [
+              -0.600000023841858,
+              0.0,
+              -33.0
+            ],
+            "phase": "lock",
+            "remaining_s": 0.583333333333336,
+            "reservation_id": "threat-1",
+            "resolved_role": {
+              "active_s": 0.2,
+              "attack_interval_s": 1.9,
+              "damage": 10.0,
+              "difficulty_profile": "challenge",
+              "difficulty_schema": 1,
+              "lock_s": 1.1,
+              "max_hp": 30.0,
+              "move_speed": 0.0,
+              "raw_damage": 10.0,
+              "raw_role": {
+                "active_s": 0.2,
+                "attack_interval_s": 1.9,
+                "lock_s": 1.1,
+                "max_hp": 30.0,
+                "move_speed": 0.0,
+                "raw_damage": 10.0,
+                "recovery_s": 1.9,
+                "windup_s": 2.2
+              },
+              "recovery_s": 1.9,
+              "tuning_status": "provisional_unplaytested",
+              "windup_s": 2.2
+            },
+            "source_position": [
+              -0.600000023841858,
+              0.0,
+              -33.0
+            ],
+            "status": "running"
+          },
+          "tool_yard_handler": {
+            "api_revision": "lane-mechanism-1",
+            "cycle": 0,
+            "geometry": {
+              "from": [
+                0.5,
+                0.0,
+                -5.69999980926514
+              ],
+              "kind": "lane",
+              "radius": 0.31,
+              "to": [
+                0.5,
+                0.0,
+                -1.89999985694885
+              ]
+            },
+            "hit_ids": [],
+            "last_cancel_reason": "",
+            "mechanism_id": "tool_yard_handler",
+            "opening_position": [
+              0.5,
+              0.0,
+              -5.69999980926514
+            ],
+            "phase": "clear",
+            "remaining_s": 0.0,
+            "reservation_id": "",
+            "resolved_role": {},
+            "source_position": [
+              0.5,
+              0.0,
+              -5.69999980926514
+            ],
+            "status": "idle"
+          }
+        },
+        "runtime_error": ""
+      },
+      "profile": "challenge",
+      "runtime_error": ""
+    }
+  },
+  "native": {
+    "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l2-difficulty-20261015/run-pair-challenge-neutral-20261015T090716.170942Z-d71d8c2c/native-report.json",
+    "sha256": "13309f40fc600a5a87768e8d96ab47ff35815f72428dedbb38087e0b1a8bbef2",
+    "checks": 147,
+    "failures": 1,
+    "complete": false,
+    "success": false,
+    "first_failure": {
+      "check": 144,
+      "detail": "",
+      "label": "actual native movement/commitment retains Hero HP without fabricated progression",
+      "ok": false
+    },
+    "footer_rows_and_named_source_joins": true,
+    "portrait_joins": {}
+  },
+  "error": "ValueError('Canonical owned validation returned 1')",
+  "closed_at": "2026-10-15T09:07:21.338393+00:00",
+  "runner_return_code": 2,
+  "wall_s_including_queue": 5.166808583002421,
+  "raw_error_lines": [
+    "ERROR: Condition \"ret != noErr\" is true. Returning: \"\""
+  ],
+  "raw_warning_lines": [],
+  "raw_error_warning_free": false
+}

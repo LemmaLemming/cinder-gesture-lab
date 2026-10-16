@@ -1,0 +1,13 @@
+# Original Weybridge capture results
+
+Actual queued session44073 closed terminal0:71 actual true assertion rows,0 failures, empty first failure, complete/success true and4 complete literal pairs. Native report SHA256:12ef54eaefdddcb9ccc2f750ef8b2853a0cd6fd502603006f6e8cd45ba29d403. Successful folder:native-20261015T072603.840712Z-670b8f04.
+
+Standard and oldChallenge each retain a paused constructor entrance and a genuine first village-Scout warning at the original spawn. Only TEST pre-tree preference is supplied; no live transform/resource/HP/clock/phase/lease/stage/history or packet assignment. Entrance has no settled-floor claim; warning requires the real stable grounded Hero and owner-bound unarmed tracking reservation. All6 native actor roots,7 mechanisms and4 floors remain configured, including dormant future shelter recipients.
+
+Opaque Exact strings and raw format2 Store byte copies join native full paired preflight, actual Store writes, independent disk reads, checksum and exact scalar tags/bits. All70 observations match before queue/at lock/after child/close;68 present named inputs have pre-queue retained blobs. Original Weybridge17168048/sequence d28de782 stay unchanged. Current shared Main/Player/Scheduler/etc use the exact recorded mixed baseline; no whole untouched repository/dependency/globalUID/bank claim.
+
+Original failures remain:28100 runner2/native18/1 incomplete0 complete packets was denied its unique user:// Store directory, with a CA diagnostic. Identical-source scoped retry46393 runner2/native25/1 incomplete1 complete Standard entrance paused at the first warning before floor readiness. The only correction waits the same warning AND existing grounded/stable condition before pausing; capture assertion,20s wait,150s watchdog and180s canonical post-queue timeout remain. Old source/seals/partial files/raw logs/reports are intact. A later host provenance probe used a nonexistent encoded armed key; the corrected exact adapter.locked tag check is separately recorded, with no native rerun.
+
+Both successful profile lifetimes pass normal public exit/native owner lease release and complete Main WeakRef/enemy/required-cue group cleanup. Successful raw/engine logs contain no observed error/warning lines. All three owned execution handles are terminal. Root alone may authorize the production amendment.
+
+This is newly executed old-source caller evidence, not historical recovery, CampaignAttempts/public Shell, earned route/checkpoint/clear, portrait, all-kit balance, performance or acceptance. Dormant late source configuration is retained, not mechanically exercised. The source-planned original clear/empty Scheduler-profile branch is unexecuted here. Agent02 and worker-owned checkouts/records remain untouched.

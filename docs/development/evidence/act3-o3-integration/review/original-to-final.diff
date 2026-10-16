@@ -1,0 +1,49 @@
+--- original-sealed-run.py
++++ frozen-final-run.py
+@@ -21,6 +21,8 @@
+ SCRIPT = "tests/act3_o3_registration_smoke.gd"
+ SCRIPT_UID = SCRIPT + ".uid"
+ CONTENT = "b92a56556c8fdce4f32be9c2b379aa73c2f8e243"
++DRAFT = ".cinder/act3-o3-early-review-20261015/registration.gd.txt"
++DRAFT_SHA = "7c5e6c3ca04520588c0f848a1f37cb5d8da6c4c9efc4112ad8f1dc1b6afd7d94"
+ CONFIG_PATH = HERE / "wrapper-named-inputs.json"
+ REPORT_ENV = "CINDER_A3_O3_SHORT_REGISTRATION_REPORT"
+ STAGES = ["canonical entrance", "canonical entrance Retry", "public entrance Save",
+@@ -185,7 +187,8 @@
+     out = HERE / (args.phase + "-" + datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%S.%fZ") + "-" + uuid.uuid4().hex[:8])
+     out.mkdir(exist_ok=False)
+     result = {"kind": "a3-o3-short-registration-" + args.phase, "started_at": now(), "closed": False,
+-              "engine_started": False, "owned_child_terminal": False, "engine_return_code": None, "passed": False, "scope": SCOPE}
++              "engine_launch_attempted": False, "engine_started": False, "owned_child_terminal": False,
++              "engine_return_code": None, "passed": False, "scope": SCOPE}
+     queue = {"queued": False, "acquired": False}
+     save(out / "result.json", result)
+     save(out / "queue.json", queue)
+@@ -202,6 +205,13 @@
+             before = observe(names, out, "before-queue")
+             require(all(value is not None or name == SCRIPT_UID for name, value in before.items()), "Every existing selected source/UID must exist; only new test UID may be absent")
+             fixture = (ROOT / SCRIPT).read_text()
++            require(before[DRAFT] == DRAFT_SHA, "Original reviewed private draft must remain byte exact")
++            prepared = (ROOT / DRAFT).read_text().replace("PLACEHOLDER_FINAL_CONTENT_COMMIT", CONTENT)
++            # Root may correct explanatory comment/header text only. All code,
++            # indentation and inline comments remain exactly the reviewed draft.
++            def code_lines(text):
++                return [line for line in text.splitlines() if line.strip() and not line.lstrip().startswith("#")]
++            require(code_lines(fixture) == code_lines(prepared), "Promoted fixture permits only comment/blank-line and exact content-commit substitutions")
+             require('const ACCEPTED_CONTENT: String = "' + CONTENT + '"' in fixture
+                     and 'const SHORT_WATCHDOG_S: float = 600.0' in fixture, "Root must promote reviewed content and unchanged watchdog")
+             for constant, listed in (("SHORT_PATHS", config["short"]),):
+@@ -259,10 +269,11 @@
+                         save(out / "queue.json", queue)
+                         at_lock = observe(names, out, "at-lock")
+                         same_sources(expected, at_lock, "At-lock")
+-                        result.update({"engine_started": True, "engine_started_at": now()})
++                        result.update({"engine_launch_attempted": True, "engine_launch_attempted_at": now(), "engine_started": None,
++                            "engine_started_scope": "Canonical run_validation launches internally; actual start is unconfirmed until it returns. An exception may occur before or after Popen; do not infer no child."})
+                         save(out / "result.json", result)
+                         returned = dev.run_validation(command, context, fd, timeout, detect_godot_errors=True)
+-                        result.update({"owned_child_terminal": True, "owned_child_terminal_at": now(), "engine_return_code": returned,
++                        result.update({"engine_started": True, "owned_child_terminal": True, "owned_child_terminal_at": now(), "engine_return_code": returned,
+                             "return_code_scope": "Canonical dev returned after owned child wait/cleanup. Nonzero may represent timeout/script-error detection; no separate raw child exit status is exposed."})
+                         save(out / "result.json", result)
+                         after = observe(names, out, "after-child")

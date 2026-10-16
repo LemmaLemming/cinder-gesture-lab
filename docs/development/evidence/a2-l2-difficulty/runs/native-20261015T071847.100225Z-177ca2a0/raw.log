@@ -1,0 +1,15 @@
+Waiting for the shared Godot session to close…
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ERROR: Condition "ret != noErr" is true. Returning: ""
+   at: get_system_ca_certificates (platform/macos/os_macos.mm:1035)
+ERROR: Could not create directory: '/Users/howardchen/Library/Application Support/Godot/app_userdata/Cinder/test-a2-l2-new-api1-producer-87549-589395'.
+   at: make_dir_recursive (core/io/dir_access.cpp:179)
+   GDScript backtrace (most recent call first):
+       [0] write_payload (res://scripts/campaign/save_store.gd:75)
+       [1] _capture (res://.cinder/a2-l2-difficulty-20261015/producer.gd:144)
+FAIL legacy producer: actual format2 Store writes the original native caller pair; Cannot create save directory
+CINDER_A2_L2_LEGACY_REPORT path=/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l2-difficulty-20261015/native-20261015T071847.100225Z-177ca2a0/native-report.json sha256=7bbfaad4468c66915d2e95bfe289b5fd189fe892d4236ad37fa76da7ba7c7906
+A2-L2 original15-key producer: 18 checks/1 failures; complete=false; packets=0
+Original Weybridge producer failed: ValueError('Canonical owned validation returned 1')
+Weybridge original producer runner CLOSED code=2
