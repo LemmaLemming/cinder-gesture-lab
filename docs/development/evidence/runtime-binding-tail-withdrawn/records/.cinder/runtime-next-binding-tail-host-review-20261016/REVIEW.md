@@ -1,0 +1,19 @@
+# Binding-tail host source review
+
+No blocking defect identified in frozen host6537fc27/spec eb7fa591/readiness091da01f. This is source review, not engine execution. Root selected exact265line renderer-hook-v2 leaf23f419/0644 with UID absent during review; its separate host-only seal b1cae2fc is CLOSED0 and every indexed hash/size verifies. No native parse/test result follows that seal.
+
+The pair holds one canonical dev.godot_lock across a serial original child, candidate subject swap, candidate child and original restoration. Both fresh engine processes use the same leaf and actual canonical Script path. Each run_validation owns one direct child and180s timeout after acquisition. There is no queue bypass, foreign kill or lock deletion.
+
+Original9aed bytes/0644 are durably backed up before swap and retained in byteCAS with logical hash/size/mode maps. Candidate4b0f installation and finally restoration occur only inside the lock. Candidate parsing failure, missingreport, refusal, timeout or cooperative exception cannot be relabelled passing; normal finally restores/verifies original before release. Unexpected candidate bytes are retained separately and force failure.
+
+Each cell preserves actual raw/engine log/command/report or absence/result/index. Native kind/source/variant/rows/count/firstfailure/bool completion/footer/pathSHA joins are strict. Native success+canonicalAPI0 is a functional fact; all captured diagnostics keep Host2 NONCLEAN. A functional original may permit the single alreadydeclared candidate despite diagnostics, but the pair cannot then pass cleanly. Original functional failure leaves candidate UNEXECUTED. The API return is explicitly not an independent OSchild terminal receipt.
+
+Cross-phase comparison preserves ordered observations and opaque initial_wire_exact, using JSON text to keep bool/int and int/float distinct. SourceSHA/variant differ intentionally. Equality proves neither acceptance nor material runtime gain.
+
+All77 fixed named inputs/modes now verify after Root selection:76 present inputs plus one genuinely absent UID. All8 nonrecursive frozen selfhashes verify; all9 controls join the seal, with readiness pinned in this handoff. The32-resource/125-edge bounded graph has no unresolved literal ref. Related UIDs, actual Scriptclass/UID caches, project/localconfig/dev/data and producer controls are pinned. Engine expected path/SHA/351,312,912bytes/0755 matches read-only metadata observation. No globalUID/worker/archive census, separate import/Editor/parse or alternate-engine operation is introduced.
+
+The native source closure writes only the fresh owned report; Difficulty/Equipment read pinnedJSON. No user Store/network/process call appears in that named scope, no autoload is present, and --script uses the declared direct native arena. No catalogue write or new current-catalogue-mismatch test is claimed; platform filesystem behavior is not exhaustively traced.
+
+Producer7 mocked host checks passed, and I inspected their source/output without rerunning them. They are private/fakeAPI protocol/copy/cell-closure checks, not full actual lock/pair/native or performance evidence. Source freeze remains required: arbitrary pre-swap external drift is detected rather than repaired. SIGKILL/crash/power loss or cleanup interruption/I/O can prevent finally completion; durable original custody supports Root recovery under canonical lock, and failed restoration remains failed. No inode/mtime guarantee.
+
+No further host change or broad suite/allUID/fullroute/allkit gate is recommended. Root alone runs the explicit pair and reviews actual failures/nonclean outcomes and final9aed restoration. Both runtime requests remain open; gain remains unmeasured. Exact file pins, host-only seal audit, source lines and limitations are in JSON. No reviewer engine/import/host/Git/source/mail/worker action.

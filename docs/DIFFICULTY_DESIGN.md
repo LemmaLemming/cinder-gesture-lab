@@ -1,6 +1,6 @@
 # Cinder difficulty design plan
 
-**Current desktop status, 16 October 2026:** all 24 content levels are independently accepted. [Current difficulty coverage](development/DIFFICULTY_COVERAGE.md) records twelve authored policies and four bounded retention policies, with eight separate policies unfinished. Focused automated checks and brief actual visual inspection govern acceptance; human balance and full campaign playthroughs are untested limits. The dated plan and implementation snapshot below retain their historical scope.
+**Current desktop status, 16 October 2026:** all 24 content levels are independently accepted. [Current difficulty coverage](development/DIFFICULTY_COVERAGE.md) records twelve authored policies and five bounded retention policies, with seven separate policies unfinished. Focused automated checks and brief actual visual inspection govern acceptance; human balance and full campaign playthroughs are untested limits. The dated plan and implementation snapshot below retain their historical scope.
 
 **Original plan: 8 October 2026.** Build difficulty through increasingly demanding encounter decisions and optional Assisted, Standard and Challenge settings. All preset values below are unplaytested starting points. Saving this plan does not implement difficulty settings or establish campaign balance.
 

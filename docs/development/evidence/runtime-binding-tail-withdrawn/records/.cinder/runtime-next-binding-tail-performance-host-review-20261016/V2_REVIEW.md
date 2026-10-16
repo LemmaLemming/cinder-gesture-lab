@@ -1,0 +1,9 @@
+The frozen custody-v2 host has no material source blocker in the reviewed delta. All 111 fixed input hashes/modes and 12 self-controls match; metrics and dependency graph remain byte-identical to v1. The retained patch exactly describes the runner delta, and the specification changes only custody_v2 and self_files.
+
+Selection and restoration recheck exact expected bytes, size, mode and regular/no-symlink type immediately before replacement. Finally performs a three-way decision after tracked owned children close: exact original is a no-op, exact candidate receives guarded restoration, and unknown bytes/mode/type remain in situ with failed custody. The final guard also refuses an edit made after the initial restore decision. A cooperative engine lock cannot eliminate an uncooperative external edit in the final OS observation/replacement gap; the source states that limit.
+
+The retained 15/0 mocked-host result covers foreign bytes/mode/symlink/directory before swap and finally, a later final-guard conflict, partial-swap original no-op and open-child refusal. I read the tests/results but did not rerun them. Their historical113 raw fixture is parser evidence, not a new measurement. Four Python files were AST-parsed only.
+
+The existing113 fixture, UID, guards, native parser, workload/semantic comparator, selected metrics and one-child canonical queue path are unchanged. One original-first/candidate-second pair remains order-sensitive. Functional113/API0/Popen0 may still be Host2 NONCLEAN for retained diagnostics; no rerun for cleanliness or CPU/FPS/causal gain claim follows.
+
+V1 remains frozen SOURCEBLOCKED and unexecuted. This additive review provides source readiness for Root's selected seal and one ordered pair, without engine, dev import/resolver, preflight, seal, live-source, Git, worker or acceptance actions.

@@ -1,0 +1,902 @@
+{
+  "schema_version": 1,
+  "reviewed_at_utc": "2026-10-16T10:10:27.412288+00:00",
+  "status": "BOUNDED_ACTUAL_FUNCTIONAL_EQUIVALENCE_VERIFIED_HOST_NONCLEAN; NO_PERFORMANCE_OR_PROMOTION",
+  "run": ".cinder/runtime-next-binding-tail-host-prepare-20261016/run-pair-20261016T100459.319865Z-ae4df055",
+  "root_receipt": {
+    "path": ".cinder/runtime-next-binding-tail-root-actual-review-20261016.json",
+    "sha256": "11a2a3eaee0a5c773684f28606fd41d9e97ad6d4761593e8afd51e87f525e45d",
+    "bytes": 594,
+    "mode": "0644"
+  },
+  "closed_indexes": [
+    {
+      "cell": "outer",
+      "index": {
+        "path": ".cinder/runtime-next-binding-tail-host-prepare-20261016/run-pair-20261016T100459.319865Z-ae4df055/evidence-index.json",
+        "sha256": "b3d8c3486dab30eb76aa7325816bfd5b074f9dd28213422542baf57ccb96143a",
+        "bytes": 68044,
+        "mode": "0644"
+      },
+      "verified_files": 311,
+      "created_after_raw_close": true
+    },
+    {
+      "cell": "original",
+      "index": {
+        "path": ".cinder/runtime-next-binding-tail-host-prepare-20261016/run-pair-20261016T100459.319865Z-ae4df055/original/evidence-index.json",
+        "sha256": "a0d07c15c76ba0571b4758e3ed0c709f03a4da185f7c44367ec5488443c8a9d2",
+        "bytes": 21082,
+        "mode": "0644"
+      },
+      "verified_files": 98,
+      "created_after_raw_close": true
+    },
+    {
+      "cell": "candidate",
+      "index": {
+        "path": ".cinder/runtime-next-binding-tail-host-prepare-20261016/run-pair-20261016T100459.319865Z-ae4df055/candidate/evidence-index.json",
+        "sha256": "02a8780f69562336fddb0ef136a450f7228967a046e665fe1a23e23fe037038b",
+        "bytes": 21082,
+        "mode": "0644"
+      },
+      "verified_files": 98,
+      "created_after_raw_close": true
+    }
+  ],
+  "pair_artifacts": [
+    {
+      "path": ".cinder/runtime-next-binding-tail-host-prepare-20261016/run-pair-20261016T100459.319865Z-ae4df055/result.json",
+      "sha256": "ebfbf1e1d0eb71bf1b350420cb06d8e347ff3a2208b837b3fd1c856fbffc301f",
+      "bytes": 3136,
+      "mode": "0644"
+    },
+    {
+      "path": ".cinder/runtime-next-binding-tail-host-prepare-20261016/run-pair-20261016T100459.319865Z-ae4df055/raw.log",
+      "sha256": "78db675e8aaba26d0074d271f8e6e1714a34d55a3d387b4afe6fc875e653fd32",
+      "bytes": 14337,
+      "mode": "0644"
+    },
+    {
+      "path": ".cinder/runtime-next-binding-tail-host-prepare-20261016/run-pair-20261016T100459.319865Z-ae4df055/queue.json",
+      "sha256": "7b246baef850037476bd71854bcf72a26ecbddfdf64914de346f98f11da71563",
+      "bytes": 169,
+      "mode": "0644"
+    },
+    {
+      "path": ".cinder/runtime-next-binding-tail-host-prepare-20261016/run-pair-20261016T100459.319865Z-ae4df055/semantic-comparison.json",
+      "sha256": "4068e772fd6f649e2a002c275eafea7a92de5fe7e8b865f282b0eab71ade779c",
+      "bytes": 448,
+      "mode": "0644"
+    },
+    {
+      "path": ".cinder/runtime-next-binding-tail-host-prepare-20261016/run-pair-20261016T100459.319865Z-ae4df055/swap-receipt.json",
+      "sha256": "45d01f62137db0728ac7697b46a883ec638d231d006389efb20c1937dc135184",
+      "bytes": 404,
+      "mode": "0644"
+    },
+    {
+      "path": ".cinder/runtime-next-binding-tail-host-prepare-20261016/run-pair-20261016T100459.319865Z-ae4df055/subject-original.bin",
+      "sha256": "9aed90b797bdef3388a82b63f40390e2b779f2fec671ed3914a33b1ff42950a3",
+      "bytes": 37426,
+      "mode": "0644"
+    },
+    {
+      "path": ".cinder/runtime-next-binding-tail-host-prepare-20261016/run-pair-20261016T100459.319865Z-ae4df055/subject-original-custody.json",
+      "sha256": "6f41b81350a966f84105c93b145781a2b5652aaaecd47076193be654a7a9b40b",
+      "bytes": 527,
+      "mode": "0644"
+    },
+    {
+      "path": ".cinder/runtime-next-binding-tail-host-prepare-20261016/run-pair-20261016T100459.319865Z-ae4df055/restore-receipt.json",
+      "sha256": "37287354dd6b8ad98adb09982715e5f12d2da7bb4e0e3075ff3515799e02ff9e",
+      "bytes": 307,
+      "mode": "0644"
+    }
+  ],
+  "cells": [
+    {
+      "variant": "original",
+      "artifacts": [
+        {
+          "path": ".cinder/runtime-next-binding-tail-host-prepare-20261016/run-pair-20261016T100459.319865Z-ae4df055/original/result.json",
+          "sha256": "62291b890005b346a690d33a78e8578e6885da15177b13896ceb893fb33097f0",
+          "bytes": 962,
+          "mode": "0644"
+        },
+        {
+          "path": ".cinder/runtime-next-binding-tail-host-prepare-20261016/run-pair-20261016T100459.319865Z-ae4df055/original/raw.log",
+          "sha256": "0a018db3d5d20a1d316cbc7d960a176ef937ac8adaf5d7c5b295e6e5e9247f36",
+          "bytes": 7098,
+          "mode": "0644"
+        },
+        {
+          "path": ".cinder/runtime-next-binding-tail-host-prepare-20261016/run-pair-20261016T100459.319865Z-ae4df055/original/engine.log",
+          "sha256": "60c4e098aab1071cfb88c7163a9e328722e18576f81d4dc658bdf7233440f8ab",
+          "bytes": 7010,
+          "mode": "0644"
+        },
+        {
+          "path": ".cinder/runtime-next-binding-tail-host-prepare-20261016/run-pair-20261016T100459.319865Z-ae4df055/original/native-report.json",
+          "sha256": "c6afaab99f03366dd65970fa6e1a9a564f7143fffe459dfbb24b3c41dff633d6",
+          "bytes": 33995,
+          "mode": "0644"
+        },
+        {
+          "path": ".cinder/runtime-next-binding-tail-host-prepare-20261016/run-pair-20261016T100459.319865Z-ae4df055/original/native-control-joins.json",
+          "sha256": "82243236cdc65cb207c62c1198e875701648676162201fdfe5a1e5feb8a5db78",
+          "bytes": 297,
+          "mode": "0644"
+        },
+        {
+          "path": ".cinder/runtime-next-binding-tail-host-prepare-20261016/run-pair-20261016T100459.319865Z-ae4df055/original/command.json",
+          "sha256": "5dd557a3da984a21278fc29bd3cb01318c0d0a2e0cebdec2713e602ad19f1c76",
+          "bytes": 941,
+          "mode": "0644"
+        },
+        {
+          "path": ".cinder/runtime-next-binding-tail-host-prepare-20261016/run-pair-20261016T100459.319865Z-ae4df055/original/engine-before.json",
+          "sha256": "a19aff464053070c383711b882af790a109f2784f6dd269fdfbb26ec43d7396d",
+          "bytes": 394,
+          "mode": "0644"
+        },
+        {
+          "path": ".cinder/runtime-next-binding-tail-host-prepare-20261016/run-pair-20261016T100459.319865Z-ae4df055/original/engine-after.json",
+          "sha256": "a19aff464053070c383711b882af790a109f2784f6dd269fdfbb26ec43d7396d",
+          "bytes": 394,
+          "mode": "0644"
+        },
+        {
+          "path": ".cinder/runtime-next-binding-tail-host-prepare-20261016/run-pair-20261016T100459.319865Z-ae4df055/original/native-report-retention.json",
+          "sha256": "54ae7813e0647d76f87584036c38b2299b4971779f9f68026c0f4443957e7e68",
+          "bytes": 181,
+          "mode": "0644"
+        }
+      ],
+      "actual_native": {
+        "checks": 81,
+        "failures": 0,
+        "complete": true,
+        "success": true,
+        "first_failure": {},
+        "source_sha256": "9aed90b797bdef3388a82b63f40390e2b779f2fec671ed3914a33b1ff42950a3"
+      },
+      "host_result": {
+        "phase": "original",
+        "closed": true,
+        "passed": false,
+        "native_functional_pass": true,
+        "engine_launch_attempted": true,
+        "owned_validation_returned": true,
+        "canonical_validation_return_code": 0,
+        "independent_os_child_return_code": null,
+        "terminal_scope": "Canonical run_validation API only; OS child status is not independently exposed. Timeout124/script1 may be synthetic. Canonical dev owns cleanup.",
+        "native_observation": {
+          "checks": 81,
+          "failures": 0,
+          "complete": true,
+          "success": true,
+          "first_failure": {},
+          "report_sha256": "c6afaab99f03366dd65970fa6e1a9a564f7143fffe459dfbb24b3c41dff633d6",
+          "variant": "original",
+          "source_sha256": "9aed90b797bdef3388a82b63f40390e2b779f2fec671ed3914a33b1ff42950a3"
+        },
+        "error": "Raw diagnostic NONCLEAN; no diagnostic suppression or rerun",
+        "runner_return_code": 2,
+        "raw_diagnostic_lines": [
+          "ERROR: Condition \"ret != noErr\" is true. Returning: \"\""
+        ]
+      },
+      "raw_PASS_rows": 81,
+      "raw_and_engine_CA_occurrences": [
+        1,
+        1
+      ],
+      "diagnostics": [
+        "ERROR: Condition \"ret != noErr\" is true. Returning: \"\""
+      ]
+    },
+    {
+      "variant": "candidate",
+      "artifacts": [
+        {
+          "path": ".cinder/runtime-next-binding-tail-host-prepare-20261016/run-pair-20261016T100459.319865Z-ae4df055/candidate/result.json",
+          "sha256": "56841c2cb8d35c26a5fed8c01bc35bc737312c923e5e1aa7053dcb8370a3c3a7",
+          "bytes": 964,
+          "mode": "0644"
+        },
+        {
+          "path": ".cinder/runtime-next-binding-tail-host-prepare-20261016/run-pair-20261016T100459.319865Z-ae4df055/candidate/raw.log",
+          "sha256": "cf6bba1696e3d481f2b1149cd5dd51bcec411c36e8677aa21aefc205fea8c41f",
+          "bytes": 7099,
+          "mode": "0644"
+        },
+        {
+          "path": ".cinder/runtime-next-binding-tail-host-prepare-20261016/run-pair-20261016T100459.319865Z-ae4df055/candidate/engine.log",
+          "sha256": "6d01f655d6997c750d3eadaf987c2a0541fca12ab950fcea38b31d0d3f1d79b0",
+          "bytes": 7011,
+          "mode": "0644"
+        },
+        {
+          "path": ".cinder/runtime-next-binding-tail-host-prepare-20261016/run-pair-20261016T100459.319865Z-ae4df055/candidate/native-report.json",
+          "sha256": "ad2224187f11d420c42e106d980617639d76bae0acb3a182a22c759496cf76bd",
+          "bytes": 33996,
+          "mode": "0644"
+        },
+        {
+          "path": ".cinder/runtime-next-binding-tail-host-prepare-20261016/run-pair-20261016T100459.319865Z-ae4df055/candidate/native-control-joins.json",
+          "sha256": "a0daf9350e20d8de59c9f09b218d3c2ee32a5abc86e9abc166315826153abe95",
+          "bytes": 298,
+          "mode": "0644"
+        },
+        {
+          "path": ".cinder/runtime-next-binding-tail-host-prepare-20261016/run-pair-20261016T100459.319865Z-ae4df055/candidate/command.json",
+          "sha256": "9946236c09c3777d1f58c256d24e9195126240dcca59024d2a2af427224fb0e0",
+          "bytes": 944,
+          "mode": "0644"
+        },
+        {
+          "path": ".cinder/runtime-next-binding-tail-host-prepare-20261016/run-pair-20261016T100459.319865Z-ae4df055/candidate/engine-before.json",
+          "sha256": "a19aff464053070c383711b882af790a109f2784f6dd269fdfbb26ec43d7396d",
+          "bytes": 394,
+          "mode": "0644"
+        },
+        {
+          "path": ".cinder/runtime-next-binding-tail-host-prepare-20261016/run-pair-20261016T100459.319865Z-ae4df055/candidate/engine-after.json",
+          "sha256": "a19aff464053070c383711b882af790a109f2784f6dd269fdfbb26ec43d7396d",
+          "bytes": 394,
+          "mode": "0644"
+        },
+        {
+          "path": ".cinder/runtime-next-binding-tail-host-prepare-20261016/run-pair-20261016T100459.319865Z-ae4df055/candidate/native-report-retention.json",
+          "sha256": "1829e03e7c65d0f7fb382b1b121bbf9f302eb8fac2f42e48ddeec942f4af4a2d",
+          "bytes": 181,
+          "mode": "0644"
+        }
+      ],
+      "actual_native": {
+        "checks": 81,
+        "failures": 0,
+        "complete": true,
+        "success": true,
+        "first_failure": {},
+        "source_sha256": "4b0f0db64ca52e28f7bbe8fa269b1a146b4c847570f1fb130673de4dfe97c153"
+      },
+      "host_result": {
+        "phase": "candidate",
+        "closed": true,
+        "passed": false,
+        "native_functional_pass": true,
+        "engine_launch_attempted": true,
+        "owned_validation_returned": true,
+        "canonical_validation_return_code": 0,
+        "independent_os_child_return_code": null,
+        "terminal_scope": "Canonical run_validation API only; OS child status is not independently exposed. Timeout124/script1 may be synthetic. Canonical dev owns cleanup.",
+        "native_observation": {
+          "checks": 81,
+          "failures": 0,
+          "complete": true,
+          "success": true,
+          "first_failure": {},
+          "report_sha256": "ad2224187f11d420c42e106d980617639d76bae0acb3a182a22c759496cf76bd",
+          "variant": "candidate",
+          "source_sha256": "4b0f0db64ca52e28f7bbe8fa269b1a146b4c847570f1fb130673de4dfe97c153"
+        },
+        "error": "Raw diagnostic NONCLEAN; no diagnostic suppression or rerun",
+        "runner_return_code": 2,
+        "raw_diagnostic_lines": [
+          "ERROR: Condition \"ret != noErr\" is true. Returning: \"\""
+        ]
+      },
+      "raw_PASS_rows": 81,
+      "raw_and_engine_CA_occurrences": [
+        1,
+        1
+      ],
+      "diagnostics": [
+        "ERROR: Condition \"ret != noErr\" is true. Returning: \"\""
+      ]
+    }
+  ],
+  "source_custody": {
+    "maps_and_retention_joins": [
+      {
+        "cell": "outer",
+        "map": {
+          "path": ".cinder/runtime-next-binding-tail-host-prepare-20261016/run-pair-20261016T100459.319865Z-ae4df055/sources-before-queue.json",
+          "sha256": "bd5dbcb001616972078c5a8dabda89e45465b7b9b356e4dff373898e9f42da44",
+          "bytes": 10173,
+          "mode": "0644"
+        },
+        "slots": 86,
+        "present_retained_paths": 85,
+        "all_retained_blob_hash_size_exact": true,
+        "subject_sha256": "9aed90b797bdef3388a82b63f40390e2b779f2fec671ed3914a33b1ff42950a3"
+      },
+      {
+        "cell": "outer",
+        "map": {
+          "path": ".cinder/runtime-next-binding-tail-host-prepare-20261016/run-pair-20261016T100459.319865Z-ae4df055/sources-after-candidate-swap.json",
+          "sha256": "961c699325fdb1f74d4efeb88326e1bf98704eafde3de14bd788073cf000e5f2",
+          "bytes": 10173,
+          "mode": "0644"
+        },
+        "slots": 86,
+        "present_retained_paths": 85,
+        "all_retained_blob_hash_size_exact": true,
+        "subject_sha256": "4b0f0db64ca52e28f7bbe8fa269b1a146b4c847570f1fb130673de4dfe97c153"
+      },
+      {
+        "cell": "outer",
+        "map": {
+          "path": ".cinder/runtime-next-binding-tail-host-prepare-20261016/run-pair-20261016T100459.319865Z-ae4df055/sources-at-runner-close.json",
+          "sha256": "bd5dbcb001616972078c5a8dabda89e45465b7b9b356e4dff373898e9f42da44",
+          "bytes": 10173,
+          "mode": "0644"
+        },
+        "slots": 86,
+        "present_retained_paths": 85,
+        "all_retained_blob_hash_size_exact": true,
+        "subject_sha256": "9aed90b797bdef3388a82b63f40390e2b779f2fec671ed3914a33b1ff42950a3"
+      },
+      {
+        "cell": "outer",
+        "map": {
+          "path": ".cinder/runtime-next-binding-tail-host-prepare-20261016/run-pair-20261016T100459.319865Z-ae4df055/sources-after-restore.json",
+          "sha256": "bd5dbcb001616972078c5a8dabda89e45465b7b9b356e4dff373898e9f42da44",
+          "bytes": 10173,
+          "mode": "0644"
+        },
+        "slots": 86,
+        "present_retained_paths": 85,
+        "all_retained_blob_hash_size_exact": true,
+        "subject_sha256": "9aed90b797bdef3388a82b63f40390e2b779f2fec671ed3914a33b1ff42950a3"
+      },
+      {
+        "cell": "outer",
+        "map": {
+          "path": ".cinder/runtime-next-binding-tail-host-prepare-20261016/run-pair-20261016T100459.319865Z-ae4df055/sources-at-lock.json",
+          "sha256": "bd5dbcb001616972078c5a8dabda89e45465b7b9b356e4dff373898e9f42da44",
+          "bytes": 10173,
+          "mode": "0644"
+        },
+        "slots": 86,
+        "present_retained_paths": 85,
+        "all_retained_blob_hash_size_exact": true,
+        "subject_sha256": "9aed90b797bdef3388a82b63f40390e2b779f2fec671ed3914a33b1ff42950a3"
+      },
+      {
+        "cell": "outer",
+        "map": {
+          "path": ".cinder/runtime-next-binding-tail-host-prepare-20261016/run-pair-20261016T100459.319865Z-ae4df055/preflight-observed.json",
+          "sha256": "bd5dbcb001616972078c5a8dabda89e45465b7b9b356e4dff373898e9f42da44",
+          "bytes": 10173,
+          "mode": "0644"
+        },
+        "slots": 86,
+        "present_retained_paths": 85,
+        "all_retained_blob_hash_size_exact": true,
+        "subject_sha256": "9aed90b797bdef3388a82b63f40390e2b779f2fec671ed3914a33b1ff42950a3"
+      },
+      {
+        "cell": "outer",
+        "map": {
+          "path": ".cinder/runtime-next-binding-tail-host-prepare-20261016/run-pair-20261016T100459.319865Z-ae4df055/sources-before-candidate-swap.json",
+          "sha256": "bd5dbcb001616972078c5a8dabda89e45465b7b9b356e4dff373898e9f42da44",
+          "bytes": 10173,
+          "mode": "0644"
+        },
+        "slots": 86,
+        "present_retained_paths": 85,
+        "all_retained_blob_hash_size_exact": true,
+        "subject_sha256": "9aed90b797bdef3388a82b63f40390e2b779f2fec671ed3914a33b1ff42950a3"
+      },
+      {
+        "cell": "original",
+        "map": {
+          "path": ".cinder/runtime-next-binding-tail-host-prepare-20261016/run-pair-20261016T100459.319865Z-ae4df055/original/sources-after-child.json",
+          "sha256": "bd5dbcb001616972078c5a8dabda89e45465b7b9b356e4dff373898e9f42da44",
+          "bytes": 10173,
+          "mode": "0644"
+        },
+        "slots": 86,
+        "present_retained_paths": 85,
+        "all_retained_blob_hash_size_exact": true,
+        "subject_sha256": "9aed90b797bdef3388a82b63f40390e2b779f2fec671ed3914a33b1ff42950a3"
+      },
+      {
+        "cell": "original",
+        "map": {
+          "path": ".cinder/runtime-next-binding-tail-host-prepare-20261016/run-pair-20261016T100459.319865Z-ae4df055/original/sources-at-lock.json",
+          "sha256": "bd5dbcb001616972078c5a8dabda89e45465b7b9b356e4dff373898e9f42da44",
+          "bytes": 10173,
+          "mode": "0644"
+        },
+        "slots": 86,
+        "present_retained_paths": 85,
+        "all_retained_blob_hash_size_exact": true,
+        "subject_sha256": "9aed90b797bdef3388a82b63f40390e2b779f2fec671ed3914a33b1ff42950a3"
+      },
+      {
+        "cell": "candidate",
+        "map": {
+          "path": ".cinder/runtime-next-binding-tail-host-prepare-20261016/run-pair-20261016T100459.319865Z-ae4df055/candidate/sources-after-child.json",
+          "sha256": "961c699325fdb1f74d4efeb88326e1bf98704eafde3de14bd788073cf000e5f2",
+          "bytes": 10173,
+          "mode": "0644"
+        },
+        "slots": 86,
+        "present_retained_paths": 85,
+        "all_retained_blob_hash_size_exact": true,
+        "subject_sha256": "4b0f0db64ca52e28f7bbe8fa269b1a146b4c847570f1fb130673de4dfe97c153"
+      },
+      {
+        "cell": "candidate",
+        "map": {
+          "path": ".cinder/runtime-next-binding-tail-host-prepare-20261016/run-pair-20261016T100459.319865Z-ae4df055/candidate/sources-at-lock.json",
+          "sha256": "961c699325fdb1f74d4efeb88326e1bf98704eafde3de14bd788073cf000e5f2",
+          "bytes": 10173,
+          "mode": "0644"
+        },
+        "slots": 86,
+        "present_retained_paths": 85,
+        "all_retained_blob_hash_size_exact": true,
+        "subject_sha256": "4b0f0db64ca52e28f7bbe8fa269b1a146b4c847570f1fb130673de4dfe97c153"
+      }
+    ],
+    "only_cross_cell_source_difference": [
+      "scripts/combat/authored_enemy_sequence.gd"
+    ],
+    "each_cell_atlock_afterchild_bytes_and_metadata_exact": true,
+    "restored_close_current86slots_exact": true,
+    "present_named_paths": 85,
+    "genuinely_absent_selected_uid": true,
+    "backup_sha256": "9aed90b797bdef3388a82b63f40390e2b779f2fec671ed3914a33b1ff42950a3",
+    "actual_restore_receipt": {
+      "restored_exact_bytes_and_mode": true,
+      "restored": {
+        "exists": true,
+        "regular": true,
+        "symlink": false,
+        "mode": "0644",
+        "sha256": "9aed90b797bdef3388a82b63f40390e2b779f2fec671ed3914a33b1ff42950a3",
+        "bytes": 37426
+      },
+      "swap_attempted": true,
+      "under_canonical_lock": true
+    },
+    "queue_receipt": {
+      "queued": true,
+      "acquired": true,
+      "lock_context_released": true,
+      "lock_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/locks/godot.lock"
+    },
+    "scope": "86 named slots including77fixed+9hostcontrols; not86presentblobs/globalUID or source-bank census. Current equality is this timestamped observation, not permanentlatest status."
+  },
+  "semantic_comparison": {
+    "reported": {
+      "equal": true,
+      "original_projection_sha256": "3cacb73155d8eb429f90fe6f5d6773a4855cb848f22bd89dd2837b6edfa567c2",
+      "candidate_projection_sha256": "3cacb73155d8eb429f90fe6f5d6773a4855cb848f22bd89dd2837b6edfa567c2",
+      "keys": [
+        "observations",
+        "initial_wire_exact"
+      ],
+      "excluded_report_metadata": [
+        "variant",
+        "source_sha256"
+      ],
+      "ordered_observations": true,
+      "candidate_accepted": false,
+      "performance_claim": false
+    },
+    "independently_reproduced_sha256": "3cacb73155d8eb429f90fe6f5d6773a4855cb848f22bd89dd2837b6edfa567c2",
+    "ordered_observations": 29,
+    "initial_wire_chars": 9923,
+    "initial_wire_utf8_sha256": "034cd96422ff4ad445ea7a3b7bebf607e845f1978a8af679a4a8c1cc3bc8b50d",
+    "all29_actual_observations_and_initial_wire_equal": true,
+    "type_semantics": "Host-equivalent canonicalJSON text, not Python numeric coercion; preserves bool/int/int-vsfloat, array order and opaque exact-wire String bytes.",
+    "opaque_limit": "No invented Variant decoder, reconstructed packet or typed.var file. Initial exact-wire String is retained actual native output; known-state before/after observations are hashes and native equality assertions, not retained full originaltypedvar before/after files."
+  },
+  "actual_scope_matrix": [
+    {
+      "scope": "declared codec-tail control after actual getter",
+      "label": "normal",
+      "error": "",
+      "getter_trace": [
+        "actual_native_getter"
+      ],
+      "callbacks": [],
+      "dependency_consumed": true,
+      "private_wire_unchanged": true,
+      "native_state_digest_equal": true
+    },
+    {
+      "scope": "declared codec-tail control after actual getter",
+      "label": "staged_normal",
+      "error": "",
+      "getter_trace": [
+        "actual_native_getter"
+      ],
+      "callbacks": [],
+      "dependency_consumed": true,
+      "private_wire_unchanged": true,
+      "native_state_digest_equal": true
+    },
+    {
+      "scope": "declared codec-tail control after actual getter",
+      "label": "wrong_source",
+      "error": "Actual source/definition/cycle/profile/world binding differs",
+      "getter_trace": [
+        "actual_native_getter"
+      ],
+      "callbacks": [],
+      "dependency_consumed": true,
+      "private_wire_unchanged": true,
+      "native_state_digest_equal": true
+    },
+    {
+      "scope": "declared codec-tail control after actual getter",
+      "label": "wrong_profile",
+      "error": "Actual source/definition/cycle/profile/world binding differs",
+      "getter_trace": [
+        "actual_native_getter"
+      ],
+      "callbacks": [],
+      "dependency_consumed": true,
+      "private_wire_unchanged": true,
+      "native_state_digest_equal": true
+    },
+    {
+      "scope": "declared codec-tail control after actual getter",
+      "label": "definition_bit",
+      "error": "Actual source/definition/cycle/profile/world binding differs",
+      "getter_trace": [
+        "actual_native_getter"
+      ],
+      "callbacks": [],
+      "dependency_consumed": true,
+      "private_wire_unchanged": true,
+      "native_state_digest_equal": true
+    },
+    {
+      "scope": "declared codec-tail control after actual getter",
+      "label": "native_then_bad_stage",
+      "error": "Actual source/definition/cycle/profile/world binding differs",
+      "getter_trace": [
+        "actual_native_getter"
+      ],
+      "callbacks": [],
+      "dependency_consumed": true,
+      "private_wire_unchanged": true,
+      "native_state_digest_equal": true
+    },
+    {
+      "scope": "declared codec-tail control after actual getter",
+      "label": "native_shape_then_bad_stage",
+      "error": "Actual source/definition/cycle/profile/world binding differs",
+      "getter_trace": [
+        "actual_native_getter"
+      ],
+      "callbacks": [],
+      "dependency_consumed": true,
+      "private_wire_unchanged": true,
+      "native_state_digest_equal": true
+    },
+    {
+      "scope": "declared codec-tail control after actual getter",
+      "label": "staged_shape",
+      "error": "Staged immutable source definition differs",
+      "getter_trace": [
+        "actual_native_getter"
+      ],
+      "callbacks": [],
+      "dependency_consumed": true,
+      "private_wire_unchanged": true,
+      "native_state_digest_equal": true
+    },
+    {
+      "scope": "declared codec-tail control after actual getter",
+      "label": "staged_bit",
+      "error": "Staged immutable source definition differs",
+      "getter_trace": [
+        "actual_native_getter"
+      ],
+      "callbacks": [],
+      "dependency_consumed": true,
+      "private_wire_unchanged": true,
+      "native_state_digest_equal": true
+    },
+    {
+      "scope": "declared codec-tail control after actual getter",
+      "label": "staged_native_shape",
+      "error": "Staged immutable source definition differs",
+      "getter_trace": [
+        "actual_native_getter"
+      ],
+      "callbacks": [],
+      "dependency_consumed": true,
+      "private_wire_unchanged": true,
+      "native_state_digest_equal": true
+    },
+    {
+      "scope": "declared codec-tail control after actual getter",
+      "label": "world_type",
+      "error": "Actual source/definition/cycle/profile/world binding differs",
+      "getter_trace": [
+        "actual_native_getter"
+      ],
+      "callbacks": [],
+      "dependency_consumed": true,
+      "private_wire_unchanged": true,
+      "native_state_digest_equal": true
+    },
+    {
+      "scope": "declared codec-tail control after actual getter",
+      "label": "world_bit",
+      "error": "Actual source/definition/cycle/profile/world binding differs",
+      "getter_trace": [
+        "actual_native_getter"
+      ],
+      "callbacks": [],
+      "dependency_consumed": true,
+      "private_wire_unchanged": true,
+      "native_state_digest_equal": true
+    },
+    {
+      "scope": "declared codec-tail control after actual getter",
+      "label": "world_stringname",
+      "error": "Actual source/definition/cycle/profile/world binding differs",
+      "getter_trace": [
+        "actual_native_getter"
+      ],
+      "callbacks": [],
+      "dependency_consumed": true,
+      "private_wire_unchanged": true,
+      "native_state_digest_equal": true
+    },
+    {
+      "scope": "declared codec-tail control after actual getter",
+      "label": "world_object",
+      "error": "Actual source/definition/cycle/profile/world binding differs",
+      "getter_trace": [
+        "actual_native_getter"
+      ],
+      "callbacks": [],
+      "dependency_consumed": true,
+      "private_wire_unchanged": true,
+      "native_state_digest_equal": true
+    },
+    {
+      "scope": "declared codec-tail control after actual getter",
+      "label": "world_cycle",
+      "error": "Actual source/definition/cycle/profile/world binding differs",
+      "getter_trace": [
+        "actual_native_getter"
+      ],
+      "callbacks": [],
+      "dependency_consumed": true,
+      "private_wire_unchanged": true,
+      "native_state_digest_equal": true
+    },
+    {
+      "scope": "declared codec-tail control after actual getter",
+      "label": "world_depth",
+      "error": "Actual source/definition/cycle/profile/world binding differs",
+      "getter_trace": [
+        "actual_native_getter"
+      ],
+      "callbacks": [],
+      "dependency_consumed": true,
+      "private_wire_unchanged": true,
+      "native_state_digest_equal": true
+    },
+    {
+      "scope": "declared codec-tail control after actual getter",
+      "label": "world_alias_budget",
+      "error": "Actual source/definition/cycle/profile/world binding differs",
+      "getter_trace": [
+        "actual_native_getter"
+      ],
+      "callbacks": [],
+      "dependency_consumed": true,
+      "private_wire_unchanged": true,
+      "native_state_digest_equal": true
+    },
+    {
+      "scope": "declared codec-tail control after actual getter",
+      "label": "world_utf8",
+      "error": "Actual source/definition/cycle/profile/world binding differs",
+      "getter_trace": [
+        "actual_native_getter"
+      ],
+      "callbacks": [],
+      "dependency_consumed": true,
+      "private_wire_unchanged": true,
+      "native_state_digest_equal": true
+    },
+    {
+      "scope": "declared codec-tail control after actual getter",
+      "label": "wire_after_getter",
+      "error": "Role, compact timeline and every enemy action must derive exactly from the immutable definition",
+      "getter_trace": [
+        "actual_native_getter",
+        "synchronous_test_callback"
+      ],
+      "callbacks": [],
+      "dependency_consumed": true,
+      "private_wire_unchanged": true,
+      "native_state_digest_equal": true
+    },
+    {
+      "scope": "declared codec-tail control after actual getter",
+      "label": "stale_epoch",
+      "error": "Authored enemy API/provenance/epoch/generation differs",
+      "getter_trace": [
+        "actual_native_getter"
+      ],
+      "callbacks": [],
+      "dependency_consumed": true,
+      "private_wire_unchanged": true,
+      "native_state_digest_equal": true
+    },
+    {
+      "scope": "declared codec-tail control after actual getter",
+      "label": "consumed_again",
+      "error": "",
+      "getter_trace": [
+        "actual_native_getter"
+      ],
+      "callbacks": [],
+      "dependency_consumed": true,
+      "private_wire_unchanged": true,
+      "native_state_digest_equal": true
+    },
+    {
+      "scope": "unchanged public/reusefalse/subclass paths",
+      "label": "public_fallback",
+      "error": null,
+      "getter_trace": null,
+      "callbacks": [],
+      "dependency_consumed": null,
+      "private_wire_unchanged": null,
+      "native_state_digest_equal": null
+    },
+    {
+      "scope": "actual Scheduler source-error and real synchronous getter callback",
+      "label": "normal",
+      "error": "",
+      "getter_trace": [
+        "actual_native_getter"
+      ],
+      "callbacks": [],
+      "dependency_consumed": null,
+      "private_wire_unchanged": null,
+      "native_state_digest_equal": true
+    },
+    {
+      "scope": "actual Scheduler source-error and real synchronous getter callback",
+      "label": "program_callback",
+      "error": "Role, compact timeline and every enemy action must derive exactly from the immutable definition",
+      "getter_trace": [
+        "actual_native_getter",
+        "synchronous_test_callback"
+      ],
+      "callbacks": [],
+      "dependency_consumed": null,
+      "private_wire_unchanged": null,
+      "native_state_digest_equal": true
+    },
+    {
+      "scope": "actual Scheduler source-error and real synchronous getter callback",
+      "label": "native_callback",
+      "error": "Actual source/definition/cycle/profile/world binding differs",
+      "getter_trace": [
+        "actual_native_getter",
+        "synchronous_test_callback"
+      ],
+      "callbacks": [],
+      "dependency_consumed": null,
+      "private_wire_unchanged": null,
+      "native_state_digest_equal": true
+    },
+    {
+      "scope": "actual Scheduler source-error and real synchronous getter callback",
+      "label": "staged_callback",
+      "error": "Staged immutable source definition differs",
+      "getter_trace": [
+        "actual_native_getter",
+        "synchronous_test_callback"
+      ],
+      "callbacks": [],
+      "dependency_consumed": null,
+      "private_wire_unchanged": null,
+      "native_state_digest_equal": true
+    },
+    {
+      "scope": "actual Scheduler source-error and real synchronous getter callback",
+      "label": "floor_callback",
+      "error": "Actual authored floor/collision guards differ",
+      "getter_trace": [
+        "actual_native_getter",
+        "synchronous_test_callback"
+      ],
+      "callbacks": [],
+      "dependency_consumed": null,
+      "private_wire_unchanged": null,
+      "native_state_digest_equal": true
+    },
+    {
+      "scope": "actual Scheduler source-error and real synchronous getter callback",
+      "label": "pose_callback",
+      "error": "Authored physical owner must remain stationary at its exact knot",
+      "getter_trace": [
+        "actual_native_getter",
+        "synchronous_test_callback"
+      ],
+      "callbacks": [],
+      "dependency_consumed": null,
+      "private_wire_unchanged": null,
+      "native_state_digest_equal": true
+    },
+    {
+      "scope": "real queued then freed TEST source",
+      "label": "queued_freed_owner",
+      "error": "Actual pure authored source binding rejected",
+      "getter_trace": [
+        "actual_native_getter",
+        "synchronous_test_callback"
+      ],
+      "callbacks": [],
+      "dependency_consumed": null,
+      "private_wire_unchanged": null,
+      "native_state_digest_equal": null
+    }
+  ],
+  "proof_obligation_assessment": [
+    {
+      "obligation": "Genuine same-call private left validation and consume-once dependency",
+      "actual": "Rows6\u201368 show all21 fresh exact-native restores/privatecopy/dependency checks; all21 controls consume dependency and retain exact private wire. Consumed-again returns empty through unchanged full fallback with no valid flag reset. Source pins preserve exactScript/wire/catalogue predicate.",
+      "limit": "Branch is supported by actual preconditions/source, not a new exported runtime receipt or injected trustedbool."
+    },
+    {
+      "obligation": "Right operand full safety/exactness",
+      "actual": "Definition one-bit; world numeric type/bit and StringName-key refusal; real RefCounted/cycle/depth/aliased expanding nodebudget/UTF8 oversize rights all reject equally. Actual right malformed graphs are handled without report serialization and cleaned.",
+      "limit": "Specific rejection samples, not exhaustive boundary/allprimitive matrix. Unchanged walker/comparator source and prior reference/subtree controls retain their scope; no new accepted-limit/signed-zero matrix was run here."
+    },
+    {
+      "obligation": "Native-first/staged-second error order",
+      "actual": "native_then_bad_stage and native_shape_then_bad_stage return generic native binding error before bad staged shape. staged_shape/bit/native_shape and real staged_callback return staged error only after valid native branch. Normal/staged_normal both accept."
+    },
+    {
+      "obligation": "Fresh callback/native authority survives",
+      "actual": "Actual Scheduler real getter runs once; program callback triggers derivation fallback; invalid returned native definition triggers generic bind error; staged callback mapsstageerror; real floorpriority and ownerpose mutation refuse at original earlier native errors. All known-state digests return exactbaseline and no state/event/hit/defeat/renderer/invalidation callbacks occur.",
+      "limit": "Adversarial getter-return/physical TEST controls, not a production bug or arbitrary reentrancy proof. No catalogue write/current mismatch test was included."
+    },
+    {
+      "obligation": "Public/reusefalse/subclass remain strict",
+      "actual": "Publicbinding/fullpublicrestore/no fastdependency accept valid input; subclass factory refuses exact-native preparation, virtual full path runs once; late post-root malformedleft mutation rejects. Stale epoch keeps original APIerror. Byte-pinned critical public/fallback source remains unchanged."
+    },
+    {
+      "obligation": "Real lifecycle/cleanup/source restoration",
+      "actual": "Actual queued source refuses immediately after getter; real freed weakref refuses before getter. Rows79\u201381 pass inherited world/Scheduler/enemygroup cleanup, unchanged selected source through native cleanup and actual fresh report open. Host restores9aed/0644 under acquired queue; all86afterrestore/close/current equal.",
+      "limit": "Source-error-only owner has no Playback plan/lease, admission/damage/campaign completion or earnedhistory. No terminal managed-source cleanup or Player response credit."
+    }
+  ],
+  "diagnostic_qualification": {
+    "each_native": "81/0 complete/success, canonicalAPI0",
+    "each_host": "CLOSED2, passed=false, native_functional_pass=true",
+    "pair": "CLOSED2 passed=false candidate_accepted=false",
+    "exact_diagnostic": "ERROR: Condition \"ret != noErr\" is true. Returning: \"\"; at get_system_ca_certificates (platform/macos/os_macos.mm:1035). One raw+engine occurrence percell.",
+    "unproved": "No OS/environment cause beyond the named native API; no independentOSexit exposed. No other ScriptError/leak/warning diagnosed in actual streams.",
+    "action": "RetainNONCLEAN exactly; no81 rerun merely for CA/green."
+  },
+  "decision": "No bounded correctness blocker identified against the narrow source hypothesis. Root may consider its one unchanged directlyaffected113 original/candidate cost pair under separate exact-source/queue/finally custody; current81 supplies no timing or materialgain and authorizes no production/policy promotion.",
+  "untested": [
+    "Current-catalogue mismatch mutation and every numeric/alias budget boundary; unchanged predicate/original controls retain their scopes.",
+    "Actual admitted Playback firstcycle/cues/proof/routedPlayer response and production16visual costs; these belong to separate113 workload, not81 sourceguard matrix.",
+    "Campaign persistence/save/route/art/device/FPS/sustainedCPU or material gain.",
+    "Full typed native before/after state files beyond retained exact-wireString/actual row/hash observations."
+  ],
+  "review_actions": "Read/hash/JSON/source review of these named immutable artifacts only. No engine, host/dev import/execution, source/host edit, Git, queue, mailbox/run, worker/Agent02 operation. Writes only this private review directory."
+}

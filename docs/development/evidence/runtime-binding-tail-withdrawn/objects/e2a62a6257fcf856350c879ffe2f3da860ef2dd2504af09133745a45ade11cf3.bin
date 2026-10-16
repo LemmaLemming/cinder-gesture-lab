@@ -1,0 +1,45 @@
+--- a/scripts/combat/authored_enemy_sequence.gd
++++ b/scripts/combat/authored_enemy_sequence.gd
+@@ -199,12 +199,26 @@
+ 	var validation_input: PackedByteArray = _validation_input
+ 	_validation_input = PackedByteArray()
+ 	var reuse: bool = get_script() == CinderAuthoredEnemySequence and _source_guard_inputs == null and not validation_input.is_empty() and not _json.is_empty() and _json.source_epoch == source_epoch and typeof(_json.generation) == TYPE_INT and _json.generation == generation and _same_source_guard_reference(snapshot, _json) and Difficulty._catalogue_validation_input_matches(validation_input)
+-	var error: String = _binding_tail(snapshot, expected_source_id, profile_id, expected_native_definition, actual_world) if reuse else binding_error(snapshot, expected_source_id, source_epoch, generation, profile_id, expected_native_definition, actual_world)
++	var error: String = ""
++	if reuse:
++		# This fresh reader's private LEFT was fully validated and rechecked above.
++		# The newly measured/encoded RIGHT still receives its complete safety walk.
++		var encoded: Dictionary = _encode_definition(expected_native_definition)
++		if encoded.is_empty() or _json.source_id != expected_source_id or _json.profile_id != profile_id or not _same_validated_snapshot_branch(_json.definition, encoded) or not _same_validated_snapshot_branch(_json.world, actual_world):
++			error = "Actual source/definition/cycle/profile/world binding differs"
++	else:
++		error = binding_error(snapshot, expected_source_id, source_epoch, generation, profile_id, expected_native_definition, actual_world)
+ 	if not error.is_empty(): return error
+ 	if not staged_binding.is_empty():
+ 		if not staged_binding.get("definition") is Dictionary:
+ 			return "Staged immutable source definition differs"
+-		var staged_error: String = _binding_tail(snapshot, expected_source_id, profile_id, staged_binding.definition, actual_world) if reuse else binding_error(snapshot, expected_source_id, source_epoch, generation, profile_id, staged_binding.definition, actual_world)
++		var staged_error: String = ""
++		if reuse:
++			var encoded_staged: Dictionary = _encode_definition(staged_binding.definition)
++			if encoded_staged.is_empty() or _json.source_id != expected_source_id or _json.profile_id != profile_id or not _same_validated_snapshot_branch(_json.definition, encoded_staged) or not _same_validated_snapshot_branch(_json.world, actual_world):
++				staged_error = "Actual source/definition/cycle/profile/world binding differs"
++		else:
++			staged_error = binding_error(snapshot, expected_source_id, source_epoch, generation, profile_id, staged_binding.definition, actual_world)
+ 		if not staged_error.is_empty(): return "Staged immutable source definition differs"
+ 	return ""
+ 
+@@ -281,9 +295,10 @@
+ 
+ 
+ static func _same_validated_snapshot_branch(left: Variant, right: Variant) -> bool:
+-	# Only snapshot_error calls this, after its unchanged full root safety walk
+-	# AND a locally captured exact shared Script identity. No virtual subclass
+-	# uses this path. The newly derived RIGHT still receives its COMPLETE walk.
++	# snapshot_error uses this after its full root walk and exact Script check;
++	# the fresh source-guard tail uses only its validated private LEFT after the
++	# complete post-getter wire/catalogue recheck. No virtual subclass uses either
++	# path. Each newly derived/encoded/measured RIGHT retains its COMPLETE walk.
+ 	return _safe_json_error(right).is_empty() and _same_closed_exact(left, right)
+ 
+ 

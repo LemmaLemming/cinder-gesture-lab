@@ -1,0 +1,73 @@
+{
+  "status": "SOURCE_ONLY_MINIMAL_V2_SUCCESSOR_NOT_PARSED_NOT_SELECTED_NOT_EXECUTED",
+  "original_v1": {
+    "path": ".cinder/runtime-next-binding-tail-prepare-20261016/authored_binding_tail_differential.gd.txt",
+    "sha256": "5f23964b4c9ba3fa538b2bda19cc0591598f3b7c1a4cfa1f7288753dc8f3f15d",
+    "bytes": 20169,
+    "mode": "0644"
+  },
+  "leaf": {
+    "path": ".cinder/runtime-next-binding-tail-prepare-20261016/renderer-hook-v2/authored_binding_tail_differential.gd.txt",
+    "sha256": "23f419e5bc17a8d868ed2d87534fa0925d0ca5cb5bf8ebc8bd4f5542701c8f7d",
+    "bytes": 20591,
+    "mode": "0644"
+  },
+  "patch": {
+    "path": ".cinder/runtime-next-binding-tail-prepare-20261016/renderer-hook-v2/RENDERER_HOOK_FIX.patch",
+    "sha256": "4951f42c4dccd754b1f1687a36179fa9a4c79cd5ecf15afabde8697875a3549a",
+    "bytes": 1344,
+    "mode": "0644"
+  },
+  "candidate_unchanged": {
+    "path": ".cinder/runtime-next-binding-tail-prepare-20261016/authored_enemy_sequence.candidate.gd.txt",
+    "sha256": "4b0f0db64ca52e28f7bbe8fa269b1a146b4c847570f1fb130673de4dfe97c153",
+    "bytes": 38306,
+    "mode": "0644"
+  },
+  "original_subject_unchanged": {
+    "path": "scripts/combat/authored_enemy_sequence.gd",
+    "sha256": "9aed90b797bdef3388a82b63f40390e2b779f2fec671ed3914a33b1ff42950a3",
+    "bytes": 37426,
+    "mode": "0644"
+  },
+  "source_pins": [
+    {
+      "path": "tests/fixtures/authored_echo_actor.gd",
+      "sha256": "bd78c8392f70b6f01e96d4a40c8adafc791a605e43487144e26aa8bb0173d542",
+      "bytes": 10038,
+      "mode": "0644"
+    },
+    {
+      "path": "scripts/combat/replay_playback.gd",
+      "sha256": "53af575a415f0a8365c71eb92b54c03847a52eb694369afc413d191958ee7cd1",
+      "bytes": 141870,
+      "mode": "0644"
+    },
+    {
+      "path": "scripts/combat/threat_scheduler.gd",
+      "sha256": "c28ea9f4cd6c1ff9aedbc9cfc45a28826c589c095b9193b565f45d23c3df903d",
+      "bytes": 266033,
+      "mode": "0644"
+    },
+    {
+      "path": "tests/authored_enemy_sequence_smoke.gd",
+      "sha256": "32322795347664f178e818637a45a57860267f7955cf7d879f3e49c21b7f6243",
+      "bytes": 24723,
+      "mode": "0644"
+    }
+  ],
+  "concrete_defect": "Playback.get_enemy_apparition requires _authored()==true; initialize_source only owns native source data/renderer, no Playback._plan, so v1 getter is null. It was unselected/unexecuted.",
+  "fix": "Use actual source hook get_authored_echo_renderer and require live Node3D+pose_presented signal before connection. No plan/configure/lease/guard/callback behavior is introduced.",
+  "other_callbacks_source_verified": {
+    "Replay.state_changed": "Dictionary value",
+    "Replay.event_dispatched": "Dictionary event, Dictionary receipt",
+    "Actor.source_hit_resolved": "Dictionary result",
+    "Actor.source_defeated": "Dictionary result",
+    "Scheduler.reservation_invalidated": "String id, String reason",
+    "Actor.EnemyRenderer.pose_presented": "Dictionary value"
+  },
+  "scope_unchanged": "Same21 tail controls, public/subclass fallback and real Scheduler callbacks; no catalogue write/current mismatch claim, no engine/native/performance result. All v1 bytes/readiness/plan remain intact.",
+  "host_successor_requirement": "Only select this v2 leaf/future sibling .gd (UID absent) after Root full review. Re-freeze dependency/spec/readiness before any host seal. Candidate source4b0f and original9aed unchanged.",
+  "future_leaf": ".cinder/runtime-next-binding-tail-prepare-20261016/renderer-hook-v2/authored_binding_tail_differential.gd",
+  "future_uid_expected_absent": true
+}

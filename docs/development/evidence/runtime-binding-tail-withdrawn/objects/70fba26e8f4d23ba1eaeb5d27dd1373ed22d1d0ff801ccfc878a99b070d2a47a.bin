@@ -1,0 +1,144 @@
+--- .cinder/runtime-next-binding-tail-performance-prepare-20261016/run.py
++++ .cinder/runtime-next-binding-tail-performance-host-v2-20261016/run.py
+@@ -142,7 +142,8 @@
+     return cost_metrics.semantic_projection(packet)
+ 
+ 
+-def replace_subject(path, data, mode):
++def replace_subject(path, data, mode, expected_prior):
++    require(expected_prior["regular"] and not expected_prior["symlink"], "Expected prior subject must be a regular non-symlink")
+     temporary = path.with_name(path.name + ".binding-tail-owned-" + uuid.uuid4().hex + ".tmp")
+     try:
+         with temporary.open("xb") as stream:
+@@ -150,10 +151,62 @@
+             stream.flush()
+             os.fsync(stream.fileno())
+         os.chmod(temporary, int(mode, 8))
++        # Recheck exact prior bytes/size/mode/type AFTER the replacement is ready,
++        # immediately before replace, for both selection and restoration. The
++        # cooperating canonical lock cannot remove an uncooperative OS TOCTOU.
++        require(file_record(path)[0] == expected_prior, "Subject prior bytes/size/mode/type changed; left in situ")
+         os.replace(temporary, path)
+     finally:
+         if temporary.exists():
+             temporary.unlink()
++
++
++def retain_unexpected_subject(path, out, label):
++    record, data = file_record(path)
++    if data is not None:
++        with (out / (label + ".bin")).open("xb") as stream:
++            stream.write(data)
++            stream.flush()
++            os.fsync(stream.fileno())
++    metadata = dict(record, subject=str(path), left_in_situ=True)
++    if record["symlink"]:
++        metadata["link_target"] = os.readlink(path)  # Never read the foreign target.
++    save(out / (label + ".json"), metadata)
++    return record
++
++
++def restore_subject_if_known(path, original, original_record, candidate_record, out,
++                             owned_children_closed, swap_attempted):
++    receipt = {"restored_exact_bytes_and_mode": False, "swap_attempted": swap_attempted,
++               "under_canonical_lock": True, "owned_children_closed": owned_children_closed,
++               "subject_write_attempted": False, "unknown_subject_overwrite_authorized": False}
++    if not owned_children_closed:
++        receipt.update(status="FAILED_OWNED_CHILD_STILL_OPEN_NO_WRITE", restored=file_record(path)[0])
++    else:
++        current = file_record(path)[0]
++        if current == original_record:
++            # Covers an interruption before atomic swap; do not misclassify an
++            # unchanged original as a foreign edit or rewrite it needlessly.
++            receipt.update(status="ALREADY_EXACT_ORIGINAL_NO_WRITE", restored=current,
++                           restored_exact_bytes_and_mode=True)
++        elif current == candidate_record:
++            receipt["subject_write_attempted"] = True
++            try:
++                replace_subject(path, original, original_record["mode"], candidate_record)
++                restored = file_record(path)[0]
++                receipt.update(status="RESTORED_KNOWN_CANDIDATE" if restored == original_record else "FAILED_POST_RESTORE_DRIFT",
++                               restored=restored, restored_exact_bytes_and_mode=restored == original_record)
++                if restored != original_record:
++                    retain_unexpected_subject(path, out, "unexpected-subject-after-restore")
++            except Exception as error:
++                # A final-guard conflict is left untouched, including mode/type.
++                receipt.update(status="FAILED_GUARDED_RESTORE_NO_UNKNOWN_WRITE", error=str(error),
++                               restored=retain_unexpected_subject(path, out, "unexpected-subject-at-restore-guard"))
++        else:
++            receipt.update(status="FAILED_UNKNOWN_SUBJECT_LEFT_IN_SITU",
++                           restored=retain_unexpected_subject(path, out, "unexpected-subject-before-restore"))
++    save(out / "restore-receipt.json", receipt)
++    return receipt
+ 
+ 
+ def previous_seal(path):
+@@ -167,7 +220,7 @@
+     return seal
+ 
+ 
+-def execute_phase(dev, spec, pair_out, variant, context, engine, lock_fd):
++def execute_phase(dev, spec, pair_out, variant, context, engine, lock_fd, owned_registry=None):
+     out = pair_out / variant
+     out.mkdir(exist_ok=False)
+     result = {"phase": variant, "closed": False, "passed": False, "native_functional_pass": False,
+@@ -197,6 +250,8 @@
+                         keywords.get("env") == native_context.environ and keywords.get("pass_fds") == (lock_fd,), "Actual canonical child command/context/lock differs")
+                 child = actual_popen(*arguments, **keywords)
+                 owned.append(child)
++                if owned_registry is not None:
++                    owned_registry.append(child)
+                 return child
+             try:
+                 dev.subprocess.Popen = tracked_popen
+@@ -309,8 +364,11 @@
+                             os.fsync(stream.fileno())
+                         save(out / "subject-original-custody.json", dict(original_record, path=spec["subject"], backup=str(backup), recovery="Root must hold canonical Godot lock before any recovery; never bypass or delete another lock"))
+                         swapped = False
++                        owned_children = []
++                        candidate_record = dict(original_record, sha256=spec["subject_variants"]["candidate"]["sha256"],
++                                                bytes=(ROOT / spec["candidate_source"]).stat().st_size)
+                         try:
+-                            old_result, old_packet = execute_phase(dev, spec, out, "original", context, engine, lock_fd)
++                            old_result, old_packet = execute_phase(dev, spec, out, "original", context, engine, lock_fd, owned_children)
+                             # Preserve a warning-only Host2 honestly, while still
+                             # allowing the one declared second functional cell.
+                             require(old_result["native_functional_pass"], "Original functional cell failed; candidate remains unexecuted")
+@@ -318,11 +376,11 @@
+                             candidate = (ROOT / spec["candidate_source"]).read_bytes()
+                             require(digest(candidate) == spec["subject_variants"]["candidate"]["sha256"], "Candidate source drift")
+                             swapped = True  # Set before replacement so any partial exception restores.
+-                            replace_subject(subject, candidate, original_record["mode"])
++                            replace_subject(subject, candidate, original_record["mode"], original_record)
+                             save(out / "swap-receipt.json", {"actual_canonical_script": spec["subject"], "original": original_record,
+                                                               "candidate_sha256": digest(candidate), "under_canonical_lock": True})
+                             snapshot(spec, out, "sources-after-candidate-swap", "candidate")
+-                            new_result, new_packet = execute_phase(dev, spec, out, "candidate", context, engine, lock_fd)
++                            new_result, new_packet = execute_phase(dev, spec, out, "candidate", context, engine, lock_fd, owned_children)
+                             require(new_result["native_functional_pass"], "Candidate functional cell failed")
+                             left, right = semantic_projection(old_packet), semantic_projection(new_packet)
+                             comparison = {"equal": left == right, "original_projection_sha256": digest(left.encode()),
+@@ -334,20 +392,10 @@
+                             save(out / "cost-comparison.json", cost_metrics.comparison(old_packet, new_packet))
+                             require(old_result["passed"] and new_result["passed"], "One or both functional cells NONCLEAN; comparison retained without clean success")
+                         finally:
+-                            if swapped:
+-                                current_record, current_bytes = file_record(subject)
+-                                unexpected = current_record["sha256"] != spec["subject_variants"]["candidate"]["sha256"]
+-                                if unexpected:
+-                                    if current_bytes is not None:
+-                                        (out / "unexpected-subject-before-restore.bin").write_bytes(current_bytes)
+-                                    save(out / "unexpected-subject-before-restore.json", current_record)
+-                                replace_subject(subject, original, original_record["mode"])
+-                            restored, _ = file_record(subject)
+-                            save(out / "restore-receipt.json", {"restored_exact_bytes_and_mode": restored == original_record,
+-                                                                 "restored": restored, "swap_attempted": swapped, "under_canonical_lock": True})
+-                            require(restored == original_record, "Original subject restoration failed")
++                            receipt = restore_subject_if_known(subject, original, original_record, candidate_record, out,
++                                                               all(child.poll() is not None for child in owned_children), swapped)
+                             require(snapshot(spec, out, "sources-after-restore") == sealed["records"], "Source drift after original restoration")
+-                            require(not swapped or not unexpected, "Unexpected subject bytes preserved before owned original restoration")
++                            require(receipt["restored_exact_bytes_and_mode"], "Original restoration refused/failed: " + receipt["status"])
+                 finally:
+                     if queue["acquired"]:
+                         queue["lock_context_released"] = True

@@ -1,0 +1,265 @@
+extends "res://tests/authored_enemy_sequence_smoke.gd"
+## INERT TEST draft. Run unchanged in SEPARATE original/candidate canonical phases.
+## Renamed private codecs cannot exercise the exact CinderAuthoredEnemySequence guard.
+## Synthetic malformed RIGHT controls are codec tests, never valid gameplay/Store proof.
+const ORIGINAL_SHA: String = "9aed90b797bdef3388a82b63f40390e2b779f2fec671ed3914a33b1ff42950a3"
+const CANDIDATE_SHA: String = "4b0f0db64ca52e28f7bbe8fa269b1a146b4c847570f1fb130673de4dfe97c153"
+const BINDING_ERROR: String = "Actual source/definition/cycle/profile/world binding differs"
+const STAGED_ERROR: String = "Staged immutable source definition differs"
+const DERIVATION_ERROR: String = "Role, compact timeline and every enemy action must derive exactly from the immutable definition"
+const TAIL_CASES: Array[String] = ["normal", "staged_normal", "wrong_source", "wrong_profile", "definition_bit", "native_then_bad_stage", "native_shape_then_bad_stage", "staged_shape", "staged_bit", "staged_native_shape", "world_type", "world_bit", "world_stringname", "world_object", "world_cycle", "world_depth", "world_alias_budget", "world_utf8", "wire_after_getter", "stale_epoch", "consumed_again"]
+
+class HookActor:
+	extends "res://tests/fixtures/authored_echo_actor.gd"
+	var test_hook: Callable
+	var getter_trace: Array[String] = []
+	var returned_definition_fault: bool = false
+	func get_authored_echo_binding() -> Dictionary:
+		getter_trace.append("actual_native_getter")
+		if test_hook.is_valid():
+			getter_trace.append("synchronous_test_callback")
+			test_hook.call()
+		var binding: Dictionary = super.get_authored_echo_binding()
+		if returned_definition_fault:
+			binding.definition.slash.visual_duration_s = float(binding.definition.slash.visual_duration_s) + 0.001
+		return binding
+
+class PublicSubclass:
+	extends "res://scripts/combat/authored_enemy_sequence.gd"
+	var virtual_calls: int = 0
+	var mutate_after_input: bool = false
+	func _input_error(sequence_id: Variant, definition: Dictionary, source_id: Variant, source_epoch: String, generation: int, profile_id: Variant, world: Dictionary) -> String:
+		virtual_calls += 1
+		var error: String = super._input_error(sequence_id, definition, source_id, source_epoch, generation, profile_id, world)
+		if error.is_empty() and mutate_after_input:
+			world.collision_fingerprint["late_test_value"] = NAN
+		return error
+
+var _rows: Array[Dictionary] = []
+var _observations: Array[Dictionary] = []
+var _callback_trace: Array[String] = []
+var _actual: Dictionary = {}
+var _owner: HookActor
+var _seed: Dictionary = {}
+var _report_path: String = ""
+var _variant: String = ""
+var _source_sha: String = ""
+var _initial_wire: String = ""
+var _initial_enemies: int = 0
+var _finishing: bool = false
+var _deadline: SceneTreeTimer
+
+func _initialize() -> void:
+	_run.call_deferred()
+
+func _run() -> void:
+	root.size = Vector2i(540, 1170)
+	_report_path = OS.get_environment("CINDER_BINDING_TAIL_REPORT")
+	_variant = OS.get_environment("CINDER_BINDING_TAIL_VARIANT")
+	_source_sha = FileAccess.get_sha256("res://scripts/combat/authored_enemy_sequence.gd")
+	if not _need(_variant in ["original", "candidate"] and _report_path.is_absolute_path() and not FileAccess.file_exists(_report_path), "explicit original/candidate phase and fresh absolute report path"): await _stop(false); return
+	if not _need(_source_sha == (ORIGINAL_SHA if _variant == "original" else CANDIDATE_SHA), "actual canonical selected source pin"): await _stop(false); return
+	_deadline = create_timer(90.0, true)
+	_deadline.timeout.connect(func() -> void: _stop.call_deferred(false))
+	_initial_enemies = get_nodes_in_group("enemies").size()
+	_actual = await _arena() # Existing real paused floor/obstacle/Scheduler constructor.
+	_owner = HookActor.new()
+	_owner.name = "ActualTailGuardSource"
+	_actual.world.add_child(_owner)
+	var world: Dictionary = _world_guards(_actual)
+	if not _need(_owner.initialize_source(SOURCE_ID, EPOCH, GENERATION, _definition(_actual.source.global_position), "standard", world) and _owner.attach_source_scheduler(_actual.scheduler), "actual Playback subclass owns a native immutable source, knot, HP and renderer"): await _stop(false); return
+	_owner.state_changed.connect(func(_value: Dictionary) -> void: _callback_trace.append("state"))
+	_owner.event_dispatched.connect(func(_event: Dictionary, _receipt: Dictionary) -> void: _callback_trace.append("event"))
+	_owner.source_hit_resolved.connect(func(_value: Dictionary) -> void: _callback_trace.append("hit"))
+	_owner.source_defeated.connect(func(_value: Dictionary) -> void: _callback_trace.append("defeat"))
+	# source_error-only setup has no Playback plan/apparition; observe the actual
+	# already-created source renderer hook, without configuring a fake plan/lease.
+	var source_renderer: Node3D = _owner.get_authored_echo_renderer()
+	if not _need(is_instance_valid(source_renderer) and source_renderer.has_signal("pose_presented"), "actual source renderer exposes native pose observer before any Playback plan"): await _stop(false); return
+	source_renderer.connect("pose_presented", func(_value: Dictionary) -> void: _callback_trace.append("renderer"))
+	_actual.scheduler.reservation_invalidated.connect(func(_id: String, _reason: String) -> void: _callback_trace.append("invalidation"))
+	_seed = _owner.source_program()
+	_initial_wire = Exact.stringify(_seed)
+	if not _need(not _initial_wire.is_empty() and _owner.source_native_error().is_empty() and paused, "real finite original source program and paused native resources"): await _stop(false); return
+	for label: String in TAIL_CASES:
+		if not _tail_case(label): await _stop(false); return
+	if not _public_cases(): await _stop(false); return
+	for label: String in ["normal", "program_callback", "native_callback", "staged_callback", "floor_callback", "pose_callback"]:
+		if not _scheduler_case(label): await _stop(false); return
+	await _queued_owner_case()
+	await _stop(_failures == 0)
+
+func _context() -> Dictionary:
+	var world: Dictionary = _world_guards(_actual)
+	return {"world_root":_actual.world,"source_id":SOURCE_ID,"source_epoch":EPOCH,"generation":GENERATION,"world_collision_fingerprint":world.collision_fingerprint,"world_floor_signature":world.floor_signature}
+
+func _state_wire() -> String:
+	# Known finite native state only; never touches a hostile request/right operand.
+	return Exact.stringify({"world":_world_guards(_actual),"clock":_actual.scheduler.get_clock(),"scheduler_diagnostics":[_actual.scheduler.last_error,_actual.scheduler.last_snapshot_error],"source_program":_owner.source_program(),"source_hp":_owner.hp,"source_hits":_owner.source_hits,"source_dead":_owner.dead,"source_position":Codec.vector3(_owner.global_position),"source_basis":[Codec.vector3(_owner.global_basis.x),Codec.vector3(_owner.global_basis.y),Codec.vector3(_owner.global_basis.z)],"source_native_error":_owner.source_native_error()})
+
+func _tail_case(label: String) -> bool:
+	var reader = Authored.new()
+	var submitted: Dictionary = _seed.duplicate(true)
+	var before: String = _state_wire()
+	if not _need(reader.get_script() == CinderAuthoredEnemySequence and reader._restore_for_source_guard(submitted, EPOCH, GENERATION), label + " actual exact-native fresh full restore"): return false
+	var dependency: PackedByteArray = reader.get("_validation_input")
+	if not _need(not dependency.is_empty() and reader.get("_source_guard_inputs") == null and Authored.exact_equal(reader.snapshot_state(), submitted), label + " genuine private copy/dependency from real validation, never fabricated"): return false
+	_owner.getter_trace.clear()
+	_owner.test_hook = Callable()
+	if label == "wire_after_getter":
+		_owner.test_hook = func() -> void: submitted.timeline.slots[0].events[0].record.damage = _one_bit(float(submitted.timeline.slots[0].events[0].record.damage))
+	var native: Dictionary = _owner.get_authored_echo_binding() # AFTER full restore, at real getter boundary.
+	_owner.test_hook = Callable()
+	var actual_world: Dictionary = _world_guards(_actual)
+	var staged: Dictionary = {}
+	var source_id: String = SOURCE_ID
+	var profile: String = "standard"
+	var epoch: String = EPOCH
+	var expected: String = ""
+	var loop: Dictionary = {}
+	var object_value: RefCounted
+	match label:
+		"staged_normal": staged = {"definition":native.definition.duplicate(true)}
+		"wrong_source": source_id += "/other"; expected = BINDING_ERROR
+		"wrong_profile": profile = "challenge"; expected = BINDING_ERROR
+		"definition_bit", "native_then_bad_stage":
+			native.definition.slash.visual_duration_s = _one_bit(float(native.definition.slash.visual_duration_s)); expected = BINDING_ERROR
+			if label == "native_then_bad_stage": staged = {"definition":7}
+		"native_shape_then_bad_stage": native.definition.route = []; staged = {"definition":7}; expected = BINDING_ERROR
+		"staged_shape": staged = {"definition":7}; expected = STAGED_ERROR
+		"staged_bit":
+			staged = {"definition":native.definition.duplicate(true)}
+			staged.definition.slash.visual_duration_s = _one_bit(float(staged.definition.slash.visual_duration_s)); expected = STAGED_ERROR
+		"staged_native_shape": staged = {"definition":native.definition.duplicate(true)}; staged.definition.route = []; expected = STAGED_ERROR
+		"world_type": actual_world.world_revision = float(actual_world.world_revision); expected = BINDING_ERROR
+		"world_bit": actual_world.floor_signature[0].top_y = _one_bit(float(actual_world.floor_signature[0].top_y)); expected = BINDING_ERROR
+		"world_stringname":
+			var value: Variant = actual_world.collision_fingerprint.physics_engine
+			actual_world.collision_fingerprint.erase("physics_engine")
+			actual_world.collision_fingerprint[StringName("physics_engine")] = value; expected = BINDING_ERROR
+		"world_object": object_value = RefCounted.new(); actual_world.collision_fingerprint["late"] = object_value; expected = BINDING_ERROR
+		"world_cycle": loop["self"] = loop; actual_world.collision_fingerprint["late"] = loop; expected = BINDING_ERROR
+		"world_depth":
+			var nested: Variant = null
+			for _depth: int in range(Authored.MAX_INPUT_DEPTH + 1): nested = [nested]
+			actual_world.collision_fingerprint["late"] = nested; expected = BINDING_ERROR
+		"world_alias_budget":
+			var expanded: Array = [null]
+			for _depth: int in range(17): expanded = [expanded, expanded]
+			actual_world.collision_fingerprint["late"] = expanded; expected = BINDING_ERROR
+		"world_utf8": actual_world.collision_fingerprint["late"] = "港".repeat(int(Authored.MAX_INPUT_BYTES / 3) + 1); expected = BINDING_ERROR
+		"wire_after_getter": expected = DERIVATION_ERROR
+		"stale_epoch": epoch += "/stale"; expected = "Authored enemy API/provenance/epoch/generation differs"
+	var error: String = reader._binding_error_for_source_guard(submitted, source_id, epoch, GENERATION, profile, native.definition, actual_world, staged)
+	var consumed: bool = (reader.get("_validation_input") as PackedByteArray).is_empty()
+	var second: String = ""
+	if label == "consumed_again": second = reader._binding_error_for_source_guard(submitted, source_id, epoch, GENERATION, profile, native.definition, actual_world, staged)
+	# Break hostile graphs before any report/copy. They never enter source authority.
+	loop.clear(); actual_world.clear(); staged.clear(); native.clear(); object_value = null
+	var after: String = _state_wire()
+	_observations.append({"scope":"declared codec-tail control after actual getter","label":label,"error":error,"second_error":second,"getter_trace":_owner.getter_trace.duplicate(),"dependency_consumed":consumed,"callbacks":_callback_trace.duplicate(),"before_sha256":before.sha256_text(),"after_sha256":after.sha256_text(),"private_wire_unchanged":Exact.stringify(reader.snapshot_state()) == _initial_wire})
+	return _need(error == expected and second.is_empty() and consumed and _owner.getter_trace.count("actual_native_getter") == 1 and _owner.getter_trace.count("synchronous_test_callback") == (1 if label == "wire_after_getter" else 0) and not before.is_empty() and before == after and Exact.stringify(reader.snapshot_state()) == _initial_wire and _callback_trace.is_empty(), label + " actual error/order/right safety/one-call state and getter contract")
+
+func _public_cases() -> bool:
+	_owner.getter_trace.clear()
+	var native: Dictionary = _owner.get_authored_echo_binding()
+	var world: Dictionary = _world_guards(_actual)
+	var public_reader = Authored.new()
+	var public_error: String = public_reader.binding_error(_seed, SOURCE_ID, EPOCH, GENERATION, "standard", native.definition, world)
+	var fallback = Authored.new()
+	if not _need(fallback.restore_state(_seed, EPOCH, GENERATION) and (fallback.get("_validation_input") as PackedByteArray).is_empty(), "public restore creates no one-call fast dependency"): return false
+	var fallback_error: String = fallback._binding_error_for_source_guard(_seed, SOURCE_ID, EPOCH, GENERATION, "standard", native.definition, world)
+	var subclass = PublicSubclass.new()
+	var subclass_factory: bool = subclass._restore_for_source_guard(_seed, EPOCH, GENERATION)
+	var subclass_error: String = subclass._binding_error_for_source_guard(_seed, SOURCE_ID, EPOCH, GENERATION, "standard", native.definition, world)
+	var mutated: Dictionary = _seed.duplicate(true)
+	var hostile = PublicSubclass.new()
+	hostile.mutate_after_input = true
+	var mutation_error: String = hostile._binding_error_for_source_guard(mutated, SOURCE_ID, EPOCH, GENERATION, "standard", native.definition, world)
+	mutated.world.collision_fingerprint.erase("late_test_value")
+	_observations.append({"scope":"unchanged public/reusefalse/subclass paths","label":"public_fallback","public_error":public_error,"fallback_error":fallback_error,"subclass_factory":subclass_factory,"subclass_factory_error":subclass.last_snapshot_error,"subclass_error":subclass_error,"subclass_virtual_calls":subclass.virtual_calls,"mutation_error":mutation_error,"mutation_virtual_calls":hostile.virtual_calls,"callbacks":_callback_trace.duplicate()})
+	return _need(public_error.is_empty() and fallback_error.is_empty() and not subclass_factory and subclass.last_snapshot_error == "Fresh exact-native source-guard reader required" and subclass_error.is_empty() and subclass.virtual_calls == 1 and mutation_error == BINDING_ERROR and hostile.virtual_calls == 1 and _callback_trace.is_empty(), "actual unchanged public/full/subclass virtual paths and late-left mutation refusal")
+
+func _scheduler_case(label: String) -> bool:
+	var submitted: Dictionary = _seed.duplicate(true)
+	var staged: Dictionary = _owner.get_authored_echo_binding().duplicate(true) if label == "staged_callback" else {}
+	var context: Dictionary = _context()
+	var before: String = _state_wire()
+	var priority: float = _actual.floor.collision_priority
+	var position: Vector3 = _owner.global_position
+	_owner.getter_trace.clear()
+	var expected: String = ""
+	_owner.test_hook = func() -> void:
+		match label:
+			"program_callback": submitted.timeline.slots[0].events[0].record.damage = _one_bit(float(submitted.timeline.slots[0].events[0].record.damage))
+			"native_callback": _owner.returned_definition_fault = true
+			"staged_callback": staged.definition.slash.visual_duration_s = _one_bit(float(staged.definition.slash.visual_duration_s))
+			"floor_callback": _actual.floor.collision_priority = _one_bit32(priority)
+			"pose_callback": _owner.global_position += Vector3(0.01, 0, 0)
+	if label == "normal": _owner.test_hook = Callable()
+	match label:
+		"program_callback": expected = DERIVATION_ERROR
+		"native_callback": expected = BINDING_ERROR
+		"staged_callback": expected = STAGED_ERROR
+		"floor_callback": expected = "Actual authored floor/collision guards differ"
+		"pose_callback": expected = "Authored physical owner must remain stationary at its exact knot"
+	var error: String = _actual.scheduler.authored_replay_source_error(_owner, submitted, context, _actual.floors, "standard", 1, staged)
+	_owner.test_hook = Callable()
+	# Restore only declared TEST physical changes/invalid-return selector.
+	# No immutable native definition, saved packet or proof state is rewritten.
+	_actual.floor.collision_priority = priority
+	_owner.global_position = position
+	_owner.returned_definition_fault = false
+	var after: String = _state_wire()
+	_observations.append({"scope":"actual Scheduler source-error and real synchronous getter callback","label":label,"error":error,"getter_trace":_owner.getter_trace.duplicate(),"before_sha256":before.sha256_text(),"after_sha256":after.sha256_text(),"physical_test_delta_restored":before == after,"callbacks":_callback_trace.duplicate()})
+	return _need(error == expected and _owner.getter_trace.count("actual_native_getter") == 1 and _owner.getter_trace.count("synchronous_test_callback") == (0 if label == "normal" else 1) and not before.is_empty() and before == after and _callback_trace.is_empty(), label + " actual Scheduler retains native-first callback/floor/pose refusal and clean known state")
+
+func _queued_owner_case() -> void:
+	var submitted: Dictionary = _seed.duplicate(true)
+	var context: Dictionary = _context()
+	var owned_ref: WeakRef = weakref(_owner)
+	_owner.getter_trace.clear()
+	_owner.test_hook = func() -> void: _owner.queue_free()
+	var error: String = _actual.scheduler.authored_replay_source_error(_owner, submitted, context, _actual.floors, "standard", 1)
+	var calls: Array = _owner.getter_trace.duplicate()
+	_need(error == "Actual pure authored source binding rejected" and _owner.is_queued_for_deletion() and calls == ["actual_native_getter", "synchronous_test_callback"], "actual queued owner refuses immediately after its one real getter")
+	await process_frame
+	var absent: bool = not is_instance_valid(owned_ref.get_ref())
+	var freed_error: String = _actual.scheduler.authored_replay_source_error(owned_ref.get_ref(), submitted, context, _actual.floors, "standard", 1)
+	_need(absent and freed_error == "Actual ready authored Playback/C52 lease owner required", "actual freed owner refuses before getter with no retained live lease")
+	_observations.append({"scope":"real queued then freed TEST source","label":"queued_freed_owner","error":error,"getter_trace":calls,"freed":absent,"freed_error":freed_error,"cleanup_callbacks":_callback_trace.duplicate()})
+
+func _expect(condition: bool, description: String) -> void:
+	_checks += 1
+	if not condition: _failures += 1
+	_rows.append({"check":_checks,"ok":condition,"label":description,"note":{}})
+	print(("PASS: " if condition else "FAIL: ") + description)
+
+func _need(condition: bool, label: String) -> bool:
+	_expect(condition, label)
+	return condition
+
+func _stop(complete: bool) -> void:
+	if _finishing: return
+	_finishing = true
+	if not complete: _need(false, "bounded differential stopped/incomplete; no synthetic success")
+	var world_ref: WeakRef
+	var scheduler_ref: WeakRef
+	if not _actual.is_empty():
+		world_ref = weakref(_actual.world)
+		scheduler_ref = weakref(_actual.scheduler)
+		await _dispose(_actual)
+		_need(not is_instance_valid(world_ref.get_ref()) and not is_instance_valid(scheduler_ref.get_ref()) and get_nodes_in_group("enemies").size() == _initial_enemies, "normal inherited world/Scheduler/group cleanup")
+	_need(FileAccess.get_sha256("res://scripts/combat/authored_enemy_sequence.gd") == _source_sha, "selected actual canonical source unchanged through cleanup")
+	var first: Dictionary = {}
+	for row: Dictionary in _rows:
+		if not row.ok: first = row; break
+	var file: FileAccess = FileAccess.open(_report_path, FileAccess.WRITE) if _report_path.is_absolute_path() and not FileAccess.file_exists(_report_path) else null
+	_need(file != null, "fresh actual differential report opens")
+	var finished: bool = complete and _failures == 0
+	var packet: Dictionary = {"kind":"authored-binding-tail-differential-1","variant":_variant,"source_sha256":_source_sha,"checks":_checks,"failures":_failures,"complete":finished,"success":finished,"first_failure":first,"rows":_rows,"observations":_observations,"initial_wire_exact":_initial_wire,"scope":"Actual canonical original OR candidate in separate closed phases; compare actual semantic observations across both. Pure malformed-right/refusal probes and actual source-error/getter/body controls only, no lease/admission/gameplay/campaign/performance proof. No catalogue writes; current fresh catalogue proof remains unchanged."}
+	if file != null:
+		file.store_string(JSON.stringify(packet)); file.flush(); file.close()
+		print("CINDER_BINDING_TAIL_REPORT=" + _report_path + " sha256=" + FileAccess.get_sha256(_report_path))
+	print("BINDING TAIL DIFFERENTIAL: %d checks, %d failures; complete=%s" % [_checks,_failures,str(finished)])
+	quit(0 if finished else 2)

@@ -1,0 +1,138 @@
+{
+  "schema_version": 1,
+  "status": "SOURCE_REVIEW_READY_FOR_ROOT_SELECTED_SEAL_AND_ONE_ORDERED_PAIR_UNEXECUTED",
+  "scope": "Additive v2 custody delta, retained mocked negatives and unchanged native113 contract; predecessor V1 SOURCEBLOCKED remains unchanged.",
+  "selected_capsule": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/runtime-next-binding-tail-performance-host-v2-20261016",
+  "read_pins": {
+    ".cinder/runtime-next-binding-tail-performance-host-v2-20261016/run.py": {
+      "sha256": "57b01001c01cbd18b4b2fbdffcb4ef8e21498a41fd59856f2452e142b4448843",
+      "bytes": 25880,
+      "mode": "0644"
+    },
+    ".cinder/runtime-next-binding-tail-performance-host-v2-20261016/cost_metrics.py": {
+      "sha256": "403ab2d1a37da8f528fa1abcac017cebf4642fb3fbecde05e90fe63c25dbc9be",
+      "bytes": 12254,
+      "mode": "0644"
+    },
+    ".cinder/runtime-next-binding-tail-performance-host-v2-20261016/prepare_inputs.py": {
+      "sha256": "180b517374376c8e97ee7b4a5251bd63f002cea51f35a9f70a12e789d6e3e5a3",
+      "bytes": 14145,
+      "mode": "0644"
+    },
+    ".cinder/runtime-next-binding-tail-performance-host-v2-20261016/host_tests.py": {
+      "sha256": "a16a4b1460a2662a5c67e850ba07c9d756727c777d941b98c6b17821779a66eb",
+      "bytes": 16764,
+      "mode": "0644"
+    },
+    ".cinder/runtime-next-binding-tail-performance-host-v2-20261016/host-tests-original113.log.txt": {
+      "sha256": "f59808b5b4419d8e5ecf770d4ea6f4a0759461b82f5a284515eb9f3217ab41f6",
+      "bytes": 31170,
+      "mode": "0644"
+    },
+    ".cinder/runtime-next-binding-tail-performance-host-v2-20261016/HOST_TESTS.json": {
+      "sha256": "cac322990bc614b56cd21d02bb7ba9d3a66f777a0eec48e6d1b7cfa55b2e797d",
+      "bytes": 2356,
+      "mode": "0644"
+    },
+    ".cinder/runtime-next-binding-tail-performance-host-v2-20261016/README.md": {
+      "sha256": "414ad02fc61dcfd7b13f10aaae119e6720e88097d7c22e1ca916a04067adf0b4",
+      "bytes": 7829,
+      "mode": "0644"
+    },
+    ".cinder/runtime-next-binding-tail-performance-host-v2-20261016/PROVENANCE.json": {
+      "sha256": "7fe8a760aa23134556d49c990daa481c033d0fe9f25428c8c46241919686c702",
+      "bytes": 7541,
+      "mode": "0644"
+    },
+    ".cinder/runtime-next-binding-tail-performance-host-v2-20261016/DEPENDENCY_GRAPH.json": {
+      "sha256": "3eb58fc93def1009625be32ae435ff8dff2904b913dc87e3e23315328edef9c1",
+      "bytes": 47466,
+      "mode": "0644"
+    },
+    ".cinder/runtime-next-binding-tail-performance-host-v2-20261016/CUSTODY_FIX.patch": {
+      "sha256": "70fba26e8f4d23ba1eaeb5d27dd1373ed22d1d0ff801ccfc878a99b070d2a47a",
+      "bytes": 9861,
+      "mode": "0644"
+    },
+    ".cinder/runtime-next-binding-tail-performance-host-v2-20261016/INPUT_SPEC.json": {
+      "sha256": "01af6cb8b06a3e1cd6bebbdef48d5c290b69a017317d4fb0e82e6ac592ae4da9",
+      "bytes": 21826,
+      "mode": "0644"
+    },
+    ".cinder/runtime-next-binding-tail-performance-host-v2-20261016/READINESS.json": {
+      "sha256": "e98579a2a66763a32a39ee4d3a0dc6976a5f449dd5e805e44e7502d0ae4cb3f2",
+      "bytes": 4766,
+      "mode": "0644"
+    }
+  },
+  "independent_joins": {
+    "fixed_named_source_hashes_and_modes": 111,
+    "fixed_source_drift": [],
+    "self_controls": 12,
+    "frozen_control_drift": [],
+    "total_named_slots": 123,
+    "fixed_maps_and_modes_byte_values_equal_v1": true,
+    "metrics_byte_equal_v1": true,
+    "dependency_graph_byte_equal_v1": true,
+    "retained_CUSTODY_FIX_patch_body_exact_v1_to_v2": true,
+    "spec_changes_only": [
+      "custody_v2",
+      "self_files"
+    ],
+    "python_AST_only_files": [
+      "run.py",
+      "host_tests.py",
+      "prepare_inputs.py",
+      "cost_metrics.py"
+    ]
+  },
+  "material_blockers": [],
+  "custody_findings": [
+    "Selection and restoration require exact prior hash, size, mode, regular-file and no-symlink state after the own temporary donor is complete and immediately before os.replace.",
+    "Finally checks tracked actual owned children are closed, then accepts only exact original as no-op or exact known candidate for guarded restoration. Unknown bytes/mode/type are retained and left in situ with failure.",
+    "Conflict after the restore decision is caught by the same immediate guard; source receipt and final snapshots prevent complete success on conflict. Foreign symlink targets are never opened and foreign directories never traversed.",
+    "All source writes remain inside canonical dev.godot_lock; one actual canonical child per cell is registered and closed before selection/restoration or lock release.",
+    "Uncooperative external modification between final observation and OS replacement remains a disclosed TOCTOU limit; this is a cooperative-lock custody safeguard, not an OS atomic compare-and-swap guarantee."
+  ],
+  "mocked_evidence": {
+    "source_read": true,
+    "retained_result": ".cinder/runtime-next-binding-tail-performance-host-v2-20261016/HOST_TESTS.json",
+    "retained_tests": 15,
+    "failures": 0,
+    "errors": 0,
+    "rerun_by_reviewer": false,
+    "meaningful_negatives": [
+      "foreign bytes/mode/symlink/directory before swap",
+      "foreign bytes/mode/symlink/directory before finally",
+      "foreign edit after restore decision before replacement",
+      "open owned child prevents any restoration source write"
+    ],
+    "positive_controls": [
+      "partial swap with exact original is no-op",
+      "known candidate guarded restoration",
+      "historical parser and mock API/Popen distinction retained"
+    ],
+    "qualification": "Host mock evidence only; historical113 log is parser input, not a fresh baseline or native execution."
+  },
+  "native_contract_unchanged": {
+    "fixture": "tests/authored_echo_performance_smoke.gd",
+    "sha256": "8817689cca194962b1aaa85aa950a2222ba8e56c04d1a72008e45a5e6b333ecb",
+    "existing_uid": "uid://bxcu5vfbmmo7d",
+    "original_subject": "9aed90b797bdef3388a82b63f40390e2b779f2fec671ed3914a33b1ff42950a3",
+    "candidate_subject": "4b0f0db64ca52e28f7bbe8fa269b1a146b4c847570f1fb130673de4dfe97c153",
+    "scope": "Original first then candidate once, single Authored path only, finally exact original restoration under same lock; max180 seconds per child after queue. No Crossed, new leaf, import, UID generation or extra child.",
+    "validation": "Actual113 PASS/footer/native JSON, 72 automatic+1 manual advances, 15 fixed-clock probes, four phases, two dashes, primary damage20, native1.2s and semantic comparison remain unchanged.",
+    "diagnostics": "Canonical API and same-owned Popen returns remain distinct. Functional API0/Popen0 can remain Host2 NONCLEAN for CA; raw diagnostics preserved, no green rerun.",
+    "metrics": "Predeclared inclusive wall intervals in one ordered pair; no exclusive CPU/FPS/causal gain/dynamic nested counts claim."
+  },
+  "reviewer_actions": {
+    "engine": false,
+    "dev_import_or_resolver": false,
+    "seal_or_preflight": false,
+    "host_test_rerun": false,
+    "production_or_frozen_source_write": false,
+    "Git": false,
+    "worker_contact": false
+  },
+  "remaining_decision": "Root may select reviewed frozen source for its one seal and pair; readiness is not execution, gain, permanent promotion, or acceptance credit."
+}

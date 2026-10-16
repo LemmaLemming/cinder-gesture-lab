@@ -1,0 +1,15 @@
+--- v1/authored_binding_tail_differential.gd.txt
++++ renderer-hook-v2/authored_binding_tail_differential.gd.txt
+@@ -72,7 +72,11 @@
+ 	_owner.event_dispatched.connect(func(_event: Dictionary, _receipt: Dictionary) -> void: _callback_trace.append("event"))
+ 	_owner.source_hit_resolved.connect(func(_value: Dictionary) -> void: _callback_trace.append("hit"))
+ 	_owner.source_defeated.connect(func(_value: Dictionary) -> void: _callback_trace.append("defeat"))
+-	_owner.get_enemy_apparition().pose_presented.connect(func(_value: Dictionary) -> void: _callback_trace.append("renderer"))
++	# source_error-only setup has no Playback plan/apparition; observe the actual
++	# already-created source renderer hook, without configuring a fake plan/lease.
++	var source_renderer: Node3D = _owner.get_authored_echo_renderer()
++	if not _need(is_instance_valid(source_renderer) and source_renderer.has_signal("pose_presented"), "actual source renderer exposes native pose observer before any Playback plan"): await _stop(false); return
++	source_renderer.connect("pose_presented", func(_value: Dictionary) -> void: _callback_trace.append("renderer"))
+ 	_actual.scheduler.reservation_invalidated.connect(func(_id: String, _reason: String) -> void: _callback_trace.append("invalidation"))
+ 	_seed = _owner.source_program()
+ 	_initial_wire = Exact.stringify(_seed)
