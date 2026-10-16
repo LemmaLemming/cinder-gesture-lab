@@ -1,5 +1,13 @@
 # Act 1 — durable memory
 
+## L5 retention accepted; exact O1 trial acknowledged, old writer first — 16 October 2026
+
+Integration ACCEPTED `75edb83d`, ACK `d2914a21`, accepts L5's specific retained Blink-first policy and acknowledges exactly one O1 east-impact trial. Documentation checkpoint `bfac20b4` was actually preserving-adopted at `a4bd7551` with six current owned trees/50 named physical inputs/594 UID bytes and modes/122600 nonowned publication rows exact; receipt SHA `eec093c3f638611a1e44cc078619186452b644a06b3e447b06774ebd614f3946`. Shared coverage14/24,10 remaining; original eight/all24 and L3 complete. Both L5 failed86/1 trials and recoverable unaccepted runtime history stay unchanged; Root alone owns L5 cleanup.
+
+The [current O1 trial record](../../../docs/acts/act1/A1_O1_DIFFICULTY.md) starts with genuine unchanged-old-writer custody. Named accepted O1 archives are Standard and lack the required whole Challenge branch set. One necessary bounded original producer must preserve entrance/one-part live, independent genuine pre-final checkpoint current, and later opposite-profile final current with the same earlier checkpoint before any host/Codec/recipe reader promotion. Public Retry produces the real checkpoint branch; no transplantation/conversion. Old13/new14, all four origin authorities, unchanged ordinary opening and independent final future-profile semantics are the exact scope. No new runtime/route/native/portrait pass yet; only a private producer-fixture draft is underway. Four canonical grid/ability queries exit0/revision0/no allocations. Refusal/equivalence/no useful old response stops for Root without another location or guard/timing change. All own jobs closed; no human permission/unlock/full-route/all-kit/other-act gate or new original goal.
+
+> Earlier read-only/pending sections retain their historical state; this accepted scope controls current work.
+
 ## Actual Shared73 adoption; policy proposals remain separate — 16 October 2026
 
 Shared73 publication `b11464156639af78afd63d823fdf6ae88da1e943` was actually preserving-adopted at `18589b1849185b08e9283c11ef618f70e3120747`, parents `8ee234d1389088cf2e2849f6e43d0f93d4ab3785` and that publication. Canonical ACK `20da62ef-f3d0-4003-86ce-2f332d8138ee` and the [durable custody receipt](../../../docs/acts/act1/evidence/shared73-adoption/index.json) record six then-current owned Git trees,48 named physical files,592 prior active UID bytes/modes plus2 published paths/594 total, and122591 exact nonowned publication rows. No conflict, engine/import/retest or historical repin. This later note is additive metadata; original producer/failed-trial/proposal/index bytes keep their original dates and sources.
