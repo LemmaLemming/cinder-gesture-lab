@@ -8,19 +8,30 @@ extends RefCounted
 const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
 const Exact = preload("res://scripts/campaign/exact_json.gd")
 const Layout = preload("res://scripts/acts/act1/spore_bloom_layout.gd")
-const API_REVISION: String = "act1-spore-bloom-1"
-const SCHEMA_VERSION: int = 1
+const API_REVISION: String = "act1-spore-bloom-2"
+const SCHEMA_VERSION: int = 2
+const LEGACY_API_REVISION: String = "act1-spore-bloom-1"
+const LEGACY_SCHEMA_VERSION: int = 1
 const WORLD_REVISION: int = 1
 const LOCAL_KEYS: Array[String] = ["api_revision", "schema_version", "world_revision", "beat_index", "room_stage", "completed_beats", "activated_source_ids", "installed_consumers", "checkpoint_published", "sources", "fields", "consumers", "scheduler", "framing"]
+const Arrangement = preload("res://scripts/combat/encounter_arrangement.gd")
+const FINAL_ARRANGEMENTS_PATH: String = "res://data/campaign/act1/a1_o2_difficulty_arrangements.json"
+static var _final_definition: Variant = JSON.parse_string(FileAccess.get_file_as_string(FINAL_ARRANGEMENTS_PATH))
+static var _final_recipes: CinderEncounterArrangement = Arrangement.new(_final_definition)
 const PROGRESS_KEYS: Array[String] = ["completed", "completion_id", "contact_exit_id", "checkpoint_id", "checkpoint_kind", "checkpoint_ids"]
 
 
 static func metadata_error(local: Dictionary) -> String:
 	if Exact.stringify(local).is_empty(): return "O2 requires complete exact finite typed transport"
-	var error: String = Codec.keys_error(local, LOCAL_KEYS)
+	var current: bool = local.get("schema_version") is int and local.schema_version == SCHEMA_VERSION
+	var keys: Array = LOCAL_KEYS.duplicate()
+	if current: keys.append("final_arrangement")
+	var error: String = Codec.keys_error(local, keys)
 	if not error.is_empty(): return error
-	if not local.api_revision is String or local.api_revision != API_REVISION or not local.schema_version is int or local.schema_version != SCHEMA_VERSION or not local.world_revision is int or local.world_revision != WORLD_REVISION:
+	if not local.api_revision is String or not local.schema_version is int or local.schema_version not in [LEGACY_SCHEMA_VERSION, SCHEMA_VERSION] or local.api_revision != (API_REVISION if current else LEGACY_API_REVISION) or not local.world_revision is int or local.world_revision != WORLD_REVISION:
 		return "Unsupported exact O2 local metadata revision"
+	if current and not local.final_arrangement is Dictionary:
+		return "Closed O2 final arrangement dictionary required"
 	if not local.beat_index is int or local.beat_index < 0 or local.beat_index > 3 or not local.room_stage is String:
 		return "Exact O2 exercise index and authored stage required"
 	if local.room_stage not in (["approach", "active"] if local.beat_index < 3 else ["hatch", "departed"]):
@@ -46,7 +57,45 @@ static func metadata_error(local: Dictionary) -> String:
 		return "Installed consumers retain their exact permanent ordered ID prefix"
 	error = _installation_error(local.fields, Layout.FIELD_IDS, topology.installed_fields, "field")
 	if not error.is_empty(): return error
-	return _installation_error(local.consumers, Layout.CONSUMER_IDS, topology.installed_consumers, "consumer")
+	error = _installation_error(local.consumers, Layout.CONSUMER_IDS, topology.installed_consumers, "consumer")
+	return _final_arrangement_metadata_error(local) if error.is_empty() else error
+
+
+## The retained recipes describe admission priority only, never membership or
+## native eligibility. Cache immutable source data rather than reading per tick.
+static func arrangement_configuration_error() -> String:
+	var error: String = Arrangement.definition_error(_final_definition)
+	if not error.is_empty(): return error
+	return "" if _final_definition.unit_ids == Layout.group_ids(2) else "Final recipe inventory must retain canonical four-source membership"
+
+
+static func fresh_final_arrangement(profile: String) -> Dictionary:
+	return {} if not arrangement_configuration_error().is_empty() else _final_recipes.select_fresh(profile)
+
+
+static func final_arrangement_error(selected: Dictionary) -> String:
+	var error: String = arrangement_configuration_error()
+	return _final_recipes.saved_error(selected) if error.is_empty() else error
+
+
+static func _final_arrangement_metadata_error(local: Dictionary) -> String:
+	# Literal API1 remains API1 for the complete restored attempt, including a
+	# Challenge checkpoint that has not entered the final group yet.
+	if local.schema_version == LEGACY_SCHEMA_VERSION: return ""
+	var selected: Dictionary = local.final_arrangement
+	var started: bool = local.beat_index > 2 or local.beat_index == 2 and local.room_stage == "active"
+	if not started:
+		return "" if selected.is_empty() else "Final recipe cannot precede the genuine fresh final boundary"
+	var error: String = final_arrangement_error(selected)
+	if not error.is_empty(): return error
+	if local.room_stage == "active":
+		if not local.scheduler.get("profile") is Dictionary or local.scheduler.profile.get("id") != selected.profile:
+			return "Final recipe differs from the actual saved native Scheduler profile"
+	for id: String in Layout.group_ids(2):
+		var actor: Dictionary = local.sources[id]
+		if actor.get("profile_id", "") != "" and actor.profile_id != selected.profile:
+			return "Retained final source differs from its saved recipe profile"
+	return ""
 
 
 ## Saved membership alone. The host must prove actual fresh paused candidate,

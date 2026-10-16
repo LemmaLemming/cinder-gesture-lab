@@ -1,0 +1,181 @@
+{
+  "schema_version": 1,
+  "reviewed_at": "2026-10-16T01:53:28.324862+00:00",
+  "reviewer": "/root/act1_o2_registration_prepare",
+  "status": "PASS_PREVIOUS_PORTRAIT_WITNESS_FINDING_CLOSED",
+  "closes_previous_review": {
+    "path": ".cinder/act1-o2-difficulty-integration-20261016/REVIEW.json",
+    "sha256": "8407eb9abfb63d3c2ded3910d6f4ea6eed0e937d82afb96e019e7c8e235eb20f",
+    "finding": "Empty portrait before/after witness made equality vacuous",
+    "original_review_preserved_unchanged": true
+  },
+  "subject": {
+    "handoff": "a23be3a6-7965-4e99-828b-d4a71cf6101c",
+    "authorization": "37317658-c026-4445-8318-f09bff9ad2e5",
+    "commit": "622f1833ed0fc38c4a2467a6bebb56319a83e5c3",
+    "baseline_commit": "3daad388ccc89a0b56392852a8d845936f9f259d",
+    "manifest_sha256": "87fcf320f3984210449fc50622e80b0d662f3ac36f134b780d98f11820195023",
+    "worker_id": "01a11adf-2ec8-7702-96c6-0fa1e240c332",
+    "revision": "campaign-shared-65"
+  },
+  "blocking_findings": [],
+  "exact_submission": {
+    "members": 267,
+    "manifest_self_additional": true,
+    "selected_paths": 268,
+    "unique_Git_blobs_including_self": 141,
+    "unique_blob_bytes_including_self": 8753169,
+    "listed_logical_bytes": 12746691,
+    "all_Git_mode_blob_SHA256_size_and_physical_joins_exact": true,
+    "all_modes": "100644",
+    "HEAD_before_after_named_audit": "622f1833ed0fc38c4a2467a6bebb56319a83e5c3",
+    "original5204_Git_changed_paths": [
+      "tests/acts/act1/a1_o2_difficulty.gd"
+    ],
+    "original5204_physical_changed_paths": [
+      "tests/acts/act1/a1_o2_difficulty.gd"
+    ],
+    "all_original_portrait02_members_preserved": 258,
+    "only_expected_old_live_fixture_changed": true,
+    "no_changed_committed_paths_outside267_plus_manifest_selection": true,
+    "no_private_L3_proposal_or_later_Memory_Progress_selected": true
+  },
+  "source_review": {
+    "fixture_sha256": "6774fde78587dd7c53157c87c68d16977f9d318717c0fe291db53b4dbef16dec",
+    "old_fixture_sha256": "327b2637b09572b6bbc0184668d4cded28d75ecf3a46e3aea57115ce1b593e4e",
+    "changed_functions": [
+      "_portrait_case",
+      "_portrait_wire"
+    ],
+    "added_functions": [
+      "_portrait_values",
+      "_portrait_wire_valid",
+      "_portrait_encode",
+      "_portrait_unencoded"
+    ],
+    "all_nonportrait_functions_exact": true,
+    "semantics": "Fixture-only Rect2 representation retains native_type, full position/size; existing Basis/Transform3D/native observational encodings remain. Before/draw/restored wires each must be nonempty, Exact.parse accepted, dictionary8 and Exact.stringify roundtrip exact before equality. Pictured snapshot is separately required nonempty and byte-equal real actual paused Save. No runtime/shared transport/schema/guard/timing/camera/art/budget change.",
+    "production_four_pins": {
+      "data/campaign/act1/a1_o2_difficulty_arrangements.json": "f1a64064dd965fc05a78838831a5b399c005b0867d4be50ac10ed330d7de37c7",
+      "scripts/acts/act1/mushroom_caverns.gd": "0f1974c3b3720d2ad6b83976d19adfe63df6feb42771dd4c8275eb7b495c691c",
+      "scripts/acts/act1/spore_bloom.gd": "5046bb81ed0acf77b6b7dd935b08269c13dfe540671d08f173213fde31405a46",
+      "scripts/acts/act1/spore_bloom_codec.gd": "80b2987d5673e4850aeb7c2cc869cacbe3997854a15da9818a512998a4cab0bb"
+    },
+    "current_and_both_source_maps_match_original_four_pins": true
+  },
+  "actual_run": {
+    "native_report_sha256": "3d53ce91cb2d98bf719faaa7c47f5c5a9adb22766da169d2c21ddb0295a249b5",
+    "receipt_sha256": "1491671194f41df05bd14ddc770b96832609e194755b134be144d3d23b057a31",
+    "raw_sha256": "2fe8bd7f3f94a495553ab59c1adf6ccd1dae3224092fe1c5aca4af341075dd39",
+    "source_pre_sha256": "a57be5ecd2dc68a42b37e7228ad07949aba01dbba2bd84e396ea028c1003ce92",
+    "source_post_sha256": "a57be5ecd2dc68a42b37e7228ad07949aba01dbba2bd84e396ea028c1003ce92",
+    "state": "closed",
+    "exit_code": 0,
+    "checks": 75,
+    "failures": 0,
+    "complete": true,
+    "success": true,
+    "actual_assertion_rows": 75,
+    "all_passed_ordinals1through75": true,
+    "first_failure": {},
+    "actual_footer_matches_native_receipt": true,
+    "raw_diagnostic_lines": [],
+    "source_names": 125,
+    "both_source_maps_exact": true,
+    "archived_pre_post_source_byte_joins": 250,
+    "source_byte_join_errors": [],
+    "watchdog_ms": 90000,
+    "elapsed_ms": 59945,
+    "wall_seconds": 61.57973379100076,
+    "qualification": "Owner canonical queued graphical run, one selected portrait case. Reviewer launched no engine; banner time is not exact native/lock acquisition. No speed/FPS claim."
+  },
+  "witness": {
+    "all_three_nonempty_identical": true,
+    "UTF8_bytes_each": 780967,
+    "SHA256": "81649783b9082b6b850d6aff80304a4241cd87972915554716b87401ca2c050e",
+    "closed_typed_tag_tree_valid": true,
+    "native_Exact_parse_and_reencode_required_by_actual_source_and_true_rows": true,
+    "host_inspection": "JSON tag-tree comparison only; no native packet reconstruction/reencoding/submission.",
+    "categories": [
+      "attempts",
+      "camera",
+      "camera_size",
+      "framing",
+      "hud",
+      "input",
+      "native",
+      "snapshot"
+    ],
+    "native_sources": [
+      "bloom-final-east",
+      "bloom-final-guard",
+      "bloom-final-rear",
+      "bloom-final-west",
+      "bloom-first-east",
+      "bloom-first-west",
+      "bloom-pair-east",
+      "bloom-pair-rear",
+      "bloom-pair-west"
+    ],
+    "all9_native_sources_have_body_cue_environment": true,
+    "snapshot_tagged_subtree_exact_equals_Save": true,
+    "Attempts_tagged_subtree_exact_equals_Save": true,
+    "actual_pictured_snapshot_sha256": "372d37fe6bde03e02185c94cb87a1f6ecf26d40137f38df29726a711865f9d17",
+    "actual_pictured_Attempts_sha256": "2fbc40614a03a010dc51e070e82dc3aba6e0e7c773774d88e90e82d5804d4119",
+    "pictured_snapshot_field_joins_actual_Save": true,
+    "input_donor_sha256_separate": "b3ffcb4585efe88e7001e8e2f3a5230fc5c088b61b19413d95773f09329b87e7"
+  },
+  "diagnosis": {
+    "actual_current_paused_measurement": {
+      "accepted": false,
+      "label": "portrait original encoder diagnosis at current paused state",
+      "reason": "Exact JSON accepts only closed JSON values",
+      "remaining_budget": [
+        245842,
+        8116026
+      ],
+      "retrospective_limit": "Original portrait02 aggregate was not retained; current measured rejection does not reconstruct its missing values.",
+      "unsupported_native_values": [
+        {
+          "native_type": "Rect2",
+          "path": "$.framing.screen_bounds"
+        },
+        {
+          "native_type": "Rect2",
+          "path": "$.framing.safe_rect"
+        }
+      ]
+    },
+    "qualification": "Only current measured inherited encoder rejection and unsupported Rect2 paths are demonstrated. Positive remaining budget excludes current exhaustion. Original portrait02 aggregate absent; no reconstruction or exact retrospective cause claim. Prior unsupported-camera-transform hypothesis remains withdrawn."
+  },
+  "visual": {
+    "personally_viewed_actual_original_PNG": true,
+    "path": "docs/acts/act1/evidence/A1-O2-difficulty/portrait03/shots/01-a1-o2-difficulty-final-86468-57441898.png",
+    "sha256": "96bf58ece612feaae424664d398ff1ffe83045cc8db8ec3900b7efc2def2a44f",
+    "dimensions": [
+      540,
+      1170
+    ],
+    "assessment": "Bounded still readable: Hero hat/face/coat/feet/shadow right of left cap, spear source, diagonal yellow warning footprint, clusters, open landing floor and HUD/objective. Local Hero/rear-source/spear silhouettes overlap; sparse gray room. No moving/allstate/fullroom optics or balance claim."
+  },
+  "preserved_original_scope": {
+    "old_portrait02_report": "1136a9e2c3b380d24546406248cbc446d4893b7f208320b67c643fdd660a9cc7",
+    "old73_result": "Actual73/0 remains original, but its empty witness does not prove across-draw exactness. Addendum explicitly supersedes wrong old personal-review metadata sentence.",
+    "old_PNG": "1963ca44a8632a138cec1f033c6b1e82d86c7ecf06064dab3c266442e6aa07b3",
+    "old_Save": "cd58b2c962da3f04da6fd755bb4c6a531a132e382d2d2e028b560c125cee95f5",
+    "old65_visual_failure": "d89e5c8b8f09821cb02dfc70e17522cb8772d7437c697e27ec69b7874b38b3f2",
+    "no_old_report_or_finite_suite_relabel_or_rerun": true
+  },
+  "actions": {
+    "only_private_review_and_publication_plan_updates": true,
+    "engine_parser_import_jobs": 0,
+    "Root_worker_production_or_captured_input_edits": false,
+    "Git_index_or_commit_mutations": false,
+    "canonical_run_or_mail_mutations": false
+  },
+  "limits": [
+    "Closes the one previous evidence finding; does not itself publish/accept the difficulty amendment. Original8Act1/all24level acceptance remains.",
+    "Other content/mechanics/transport/finite evidence reused at original source scopes; no new fullroute/allkills/allkits/FPS gate.",
+    "Root graphics job33089 and captured frozen cohort untouched."
+  ]
+}

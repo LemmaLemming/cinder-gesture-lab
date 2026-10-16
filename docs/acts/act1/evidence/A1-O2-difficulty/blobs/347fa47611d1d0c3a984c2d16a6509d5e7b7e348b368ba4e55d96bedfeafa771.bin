@@ -1,0 +1,71 @@
+{
+  "scope": "Explicit selected O2 runtime/test/native dependencies and supplied input reports; existing paired UIDs. Not a global source, asset, resource-graph or filesystem census.",
+  "checkout": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea",
+  "run_directory": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/o2-difficulty/portrait01",
+  "command": [
+    "python3",
+    "scripts/dev/dev.py",
+    "engine",
+    "--path",
+    ".",
+    "--script",
+    "tests/acts/act1/a1_o2_difficulty.gd",
+    "--",
+    "--case=portrait",
+    "--source-report=res://.cinder/o2-difficulty/admission-challenge01/native.json",
+    "--source-sha256=a3be674d635ba937a3cb7c188ffdd90a10a2d9f8d3d5094132f02cca9546c912",
+    "--source-label=actual challenge final admission Save"
+  ],
+  "fixture_arguments": [
+    "--case=portrait",
+    "--source-report=res://.cinder/o2-difficulty/admission-challenge01/native.json",
+    "--source-sha256=a3be674d635ba937a3cb7c188ffdd90a10a2d9f8d3d5094132f02cca9546c912",
+    "--source-label=actual challenge final admission Save"
+  ],
+  "report_arguments": [
+    {
+      "argument": "--source-report=res://.cinder/o2-difficulty/admission-challenge01/native.json",
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/o2-difficulty/admission-challenge01/native.json",
+      "exists_before": true
+    }
+  ],
+  "state": "closed",
+  "prepared_at": "2026-10-15T09:52:31.318242+00:00",
+  "source_pre_manifest_sha256": "36f127711a5d1ea6bc54e833332fb580a3920d77979f47e41e631afe1c4fa42b",
+  "source_count": 125,
+  "external_watchdog": "none; fixture owns its bounded watchdog",
+  "native_start_timing_scope": "Godot banner observation is not an exact process-start or lock-acquisition timestamp",
+  "queue_observations": [],
+  "interrupt_forwarded": false,
+  "started_at": "2026-10-15T09:52:31.318541+00:00",
+  "child_pid": 19554,
+  "native_banner_observed_at": "2026-10-15T09:52:31.490499+00:00",
+  "startup_to_banner_observed_s": 0.17194145800021943,
+  "selected_input_changes_at_banner": [],
+  "exit_code": 0,
+  "closed_at": "2026-10-15T09:53:02.293601+00:00",
+  "wall_seconds": 30.97458275000099,
+  "selected_input_changes": [],
+  "source_post_manifest_sha256": "36f127711a5d1ea6bc54e833332fb580a3920d77979f47e41e631afe1c4fa42b",
+  "raw_sha256": "5a80a23c842f98d04657b0760acea0c19fe02c5e09fe278b4ce49f5685e8f3ac",
+  "raw_error_warning_lines": [],
+  "footer_count": 1,
+  "footers": [
+    {
+      "checks": 65,
+      "failures": 0,
+      "complete": true,
+      "report": "res://.cinder/a1-o2-difficulty-19557-1398846.json"
+    }
+  ],
+  "result": "passed",
+  "native_report_original": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o2-difficulty-19557-1398846.json",
+  "native_report_sha256": "ab575fe5031f1133260e787f39719dbf908148c17a6570b673a70f6a478f66e8",
+  "native_checks": 65,
+  "native_failures": 0,
+  "native_elapsed_ms": 29323,
+  "first_failure": {},
+  "native_case": "portrait",
+  "native_completion_flag": true,
+  "footer_report_counts_agree": true
+}

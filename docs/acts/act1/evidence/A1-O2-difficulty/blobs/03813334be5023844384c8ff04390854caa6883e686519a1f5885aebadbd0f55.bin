@@ -1,0 +1,42 @@
+--- a/tests/acts/act1/a1_o2_difficulty.gd
++++ b/tests/acts/act1/a1_o2_difficulty.gd
+@@ -208,10 +208,29 @@
+ 			tries+=1
+ 			if not await _public_attack(_source(_living_id(group)),false): return false
+ 		if not _expect(_living_id(group).is_empty() and _all_supplies_pristine(),"actual public primaries defeat required prefix group while retaining every installed finite anchor"): return false
+-	if not await _await_operation(func()->bool:return checkpoint_seen and paused and game.menu.page_name()=="pause" and game.active_level.call("bloom_state").room_stage=="approach","actual Shell commits sole pre-final CP and requested Pause",16.0): return false
++	if not await _await_operation(func()->bool:return checkpoint_seen and paused,"actual pre-final request latches paused Shell custody",16.0): return false
++	# Checkpoint and the observer's public Pause each prepare native registration.
++	# A hidden prior Pause page is not completion. Observe at most two required
++	# process signals per queued operation before starting the completion wait.
++	var barrier_started_ms: int=Time.get_ticks_msec()
++	for signal_index: int in range(4):
++		await process_frame
++		if not _operation_healthy(): return false
++		if not _expect(paused,"checkpoint/Pause retain paused custody during registration signal "+str(signal_index+1)): return false
++	pause_registration_barriers.append({"label":"actual pre-final checkpoint then public Pause","actual_process_signals":4,"barrier_wall_ms":Time.get_ticks_msec()-barrier_started_ms,"scope":"two queued native registration operations; synchronous cost retained, no performance claim"})
++	if not await _await_operation(_prefinal_commit_ready,"actual visible Pause follows durable pre-final checkpoint and paused Save",16.0): return false
+ 	var unit: Dictionary=game.capture_campaign_snapshot(); prefinal=game.attempts.state().side_attempt.checkpoint.duplicate(true)
+-	if not _expect(_same(unit,prefinal) and unit.level.local.beat_index==2 and unit.level.local.final_arrangement=={} and Bloom.group_ids(2).all(func(id:String)->bool:return _source(id).dormant) and _all_supplies_pristine() and (game.active_level.get("_fields") as Dictionary).size()==2,"genuine API2 CP retains five dead/final four dormant, original both supplies and unselected policy"): return false
++	var conjuncts: Dictionary={"whole_unit_equals_checkpoint":_same(unit,prefinal),"beat2":unit.level.local.beat_index==2,"unselected_policy":unit.level.local.final_arrangement=={},"final_four_dormant":Bloom.group_ids(2).all(func(id:String)->bool:return _source(id).dormant),"both_supplies_pristine":_all_supplies_pristine(),"two_fields_installed":(game.active_level.get("_fields") as Dictionary).size()==2}
++	receipts.append({"label":"actual pre-final commit observations","menu_visible":game.menu.is_visible_in_tree(),"menu_page":game.menu.page_name(),"save_generation":_save_generation(),"durable":_durable(),"conjuncts":conjuncts,"exact_current_snapshot":Exact.stringify(unit),"exact_retained_checkpoint":Exact.stringify(prefinal),"supplies":_supplies()})
++	for condition: String in conjuncts:
++		if not _expect(conjuncts[condition],"genuine API2 pre-final checkpoint: "+condition): return false
+ 	return _record_unit("actual API2 conserving pre-final checkpoint")
++
++func _prefinal_commit_ready() -> bool:
++	if not checkpoint_seen or not paused or not game.menu.is_visible_in_tree() or game.menu.page_name()!="pause": return false
++	var checkpoint: Dictionary=game.attempts.state().side_attempt.checkpoint
++	var local: Dictionary=checkpoint.get("level",{}).get("local",{})
++	return local.get("beat_index")==2 and local.get("room_stage")=="approach" and game.active_level.call("bloom_state").room_stage=="approach" and _durable()
+ 
+ func _prefix_checkpoint(id: String, checkpoint: String, kind: String) -> void:
+ 	if id==Bloom.LEVEL_ID and checkpoint==Bloom.CHECKPOINT_ID and kind=="encounter":
+@@ -367,6 +386,7 @@
+ 	if not _expect(input_snapshot.level.local.room_stage=="active" and input_snapshot.level.local.final_arrangement.profile=="challenge" and input_receipt.get("first_admission",{}).get("source_id")=="bloom-final-guard" and input_receipt.first_admission.get("both_eligible_same_tick")==true,"finite case consumes genuine new Challenge guard-first final admission"): return false
+ 	if not await _load_original("standard") or not await _resume("genuine final finite supplies"): return false
+ 	if not await _finite_final_case(): return false
++	if not await _wait_live(func()->bool:return game.camera_framing_error(game.active_level.camera_framing_points()).is_empty(),"actual current optical union after final ordinary strike",8.0): return false
+ 	if not await _pause("actual both-fields-spent ordinary opportunity Save"): return false
+ 	return _record_unit("actual Challenge final both fields exhausted ordinary opportunity")
+ 
