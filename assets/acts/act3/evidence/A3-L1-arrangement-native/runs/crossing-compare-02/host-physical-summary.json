@@ -1,0 +1,153 @@
+{
+  "schema_version": 1,
+  "kind": "host-derived-summary-not-new-native-execution",
+  "native_log_sha256": "966231129c7acec24f3782d3ceb031c005d3a6d9b56181fa82aa0855e2192e8a",
+  "native_head": "abf5b3d8afabeb0adb2d5ed60df6ebc39e0c2ea5",
+  "native_assertion_checks": 12,
+  "native_assertion_failures": 0,
+  "scope": "Derived from exact native stdout after clean closure. Vector coordinates in native Variant print are rounded; these are approximate summaries, not exact snapshots/save packets. Original log and actual assertions govern.",
+  "cases": [
+    {
+      "case": "canonical-baseline",
+      "initial": [
+        0.0,
+        0.1,
+        -10.0
+      ],
+      "kit": {
+        "jacket": "CLOTH-J0",
+        "pants": "CLOTH-P0",
+        "shoes": "CLOTH-S0",
+        "weapon": "WEAPON-01"
+      },
+      "source": "l1-crossing-west",
+      "native_ticks": 202,
+      "executed_landings_approx": [
+        [
+          2.365787,
+          -0.004844,
+          -11.30118
+        ]
+      ],
+      "primary_world_origin_approx": [
+        2.365787,
+        -0.004844,
+        -11.30118
+      ],
+      "proof_segment_kinds": [
+        "recognition_and_ready",
+        "escape_dash",
+        "recovery_wait",
+        "ordinary_primary"
+      ],
+      "hits": 1,
+      "damage": 20.0,
+      "hp_after": {
+        "l1-flank-stalker": 36.0,
+        "l1-approach-stalker": 36.0,
+        "l1-crossing-west": 16.0,
+        "l1-crossing-east": 36.0,
+        "l1-departure-stalker": 36.0
+      },
+      "hero_hp": 100.0,
+      "unleased_declines": {}
+    },
+    {
+      "case": "challenge-baseline",
+      "initial": [
+        0.0,
+        0.1,
+        -10.0
+      ],
+      "kit": {
+        "jacket": "CLOTH-J0",
+        "pants": "CLOTH-P0",
+        "shoes": "CLOTH-S0",
+        "weapon": "WEAPON-01"
+      },
+      "source": "l1-crossing-east",
+      "native_ticks": 202,
+      "executed_landings_approx": [
+        [
+          2.365787,
+          -0.004844,
+          -8.698821
+        ]
+      ],
+      "primary_world_origin_approx": [
+        2.365787,
+        -0.004844,
+        -8.698821
+      ],
+      "proof_segment_kinds": [
+        "recognition_and_ready",
+        "escape_dash",
+        "recovery_wait",
+        "ordinary_primary"
+      ],
+      "hits": 2,
+      "damage": 20.0,
+      "hp_after": {
+        "l1-flank-stalker": 36.0,
+        "l1-approach-stalker": 36.0,
+        "l1-crossing-west": 16.0,
+        "l1-crossing-east": 16.0,
+        "l1-departure-stalker": 36.0
+      },
+      "hero_hp": 100.0,
+      "unleased_declines": {}
+    },
+    {
+      "case": "challenge-short-slow",
+      "initial": [
+        0.0,
+        0.1,
+        -10.0
+      ],
+      "kit": {
+        "jacket": "CLOTH-J0",
+        "pants": "CLOTH-P2",
+        "shoes": "CLOTH-S2",
+        "weapon": "WEAPON-03"
+      },
+      "source": "l1-crossing-east",
+      "native_ticks": 215,
+      "executed_landings_approx": [
+        [
+          2.602365,
+          -0.004844,
+          -8.568712
+        ],
+        [
+          -0.0,
+          -0.004844,
+          -10.0
+        ]
+      ],
+      "primary_world_origin_approx": [
+        -0.0,
+        -0.004844,
+        -10.0
+      ],
+      "proof_segment_kinds": [
+        "recognition_and_ready",
+        "escape_dash",
+        "recovery_wait",
+        "positioning_dash",
+        "primary_ready",
+        "ordinary_primary"
+      ],
+      "hits": 2,
+      "damage": 24.0,
+      "hp_after": {
+        "l1-flank-stalker": 36.0,
+        "l1-approach-stalker": 36.0,
+        "l1-crossing-west": 12.0,
+        "l1-crossing-east": 12.0,
+        "l1-departure-stalker": 36.0
+      },
+      "hero_hp": 110.0,
+      "unleased_declines": {}
+    }
+  ]
+}
