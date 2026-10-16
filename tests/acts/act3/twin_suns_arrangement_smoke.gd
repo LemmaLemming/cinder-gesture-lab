@@ -208,7 +208,7 @@ func _producer_warning_receipt() -> Dictionary:
 	var control: Dictionary = _scheduler.source_control_state(source)
 	if state.phase != "warning" or String(state.reservation_id).is_empty() or control.get("reservations",[]).size() != 1: return {}
 	var lease: Dictionary = control.reservations[0]
-	if lease.id != state.reservation_id or lease.source_id != SourceIds[0] or lease.state != "warning" or lease.profile_id != "challenge" or lease.adapter.kind != "lunge" or state.clock_s != _scheduler.get_clock() or _scheduler.get_clock() >= float(lease.lock_from_s): return {}
+	if lease.id != state.reservation_id or state.stable_id != SourceIds[0] or control.source_instance_id != source.get_instance_id() or lease.source_instance_id != source.get_instance_id() or not lease.armed or lease.state != "warning" or lease.profile_id != "challenge" or lease.adapter.kind != "lunge" or state.clock_s != _scheduler.get_clock() or _scheduler.get_clock() >= float(lease.lock_from_s): return {}
 	var deadlines: Dictionary = {}
 	for key: String in FixedDeadlines: deadlines[key] = lease[key]
 	return {"source_id":SourceIds[0],"phase":"warning","reservation_id":lease.id,"cycle":state.cycle,"clock_s":_scheduler.get_clock(),"current_source_position":Codec.vector3(source.global_position),"deadlines":deadlines,"actual_source_instance_id_decimal_text":str(source.get_instance_id())}
