@@ -1,0 +1,27 @@
+# Private minimal O2 verification capsule
+
+Frozen source-only preparation against exact Root28-path promotion6ff2f507 on Shared66 e227d5. No runner invocation, seal, parser, import or engine execution occurred during preparation. No GDScript/test/public source was added or changed by this capsule.
+
+Use five independently selected phases, each preserving a new unique output:
+
+```text
+python3 .cinder/act1-o2-difficulty-integration-20261016/verification-prepare/run.py seal
+python3 .cinder/act1-o2-difficulty-integration-20261016/verification-prepare/run.py parse --target default --seal /absolute/actual/run-seal-.../seal.json
+python3 .cinder/act1-o2-difficulty-integration-20261016/verification-prepare/run.py parse --target registration --seal /absolute/actual/run-seal-.../seal.json
+python3 .cinder/act1-o2-difficulty-integration-20261016/verification-prepare/run.py default --seal /absolute/actual/run-seal-.../seal.json
+python3 .cinder/act1-o2-difficulty-integration-20261016/verification-prepare/run.py registration --seal /absolute/actual/run-seal-.../seal.json
+```
+
+A referenced seal must join its actual CLOSED0/passed result and post-raw-close index. No automatic successor/default suite/import exists. Root selects only necessary parses and these changed-boundary natives. Do not run dev.py check/all, prefix/finite/ordinary/legacy/fullroute tests or another portrait.
+
+Default reuses the existing `a1_o2_difficulty.gd --case=source-default`, including the original component and nonzero guard membership comparison plus recipe validation. It does not construct/complete O2 or simulate combat. BASE_SOURCE_INVARIANT independently retains the original prepromotion Base bytes; current_source_ids is exact and physics is byte-exact after reverting the single reviewed admission-loop call. Thus unchanged original ordering/membership/preparing behavior is source-backed, not inferred from a new mirror test. Native rows/counts remain whatever the existing case actually emits (including its setup, cleanup and source-pin rows); the wrapper invents no assertion.
+
+Registration resolves the existing `act1_o2_registration` dev alias and uses exactly its headless script path through the same canonical ProjectContext/godot_lock/run_validation as `python3 scripts/dev/dev.py test act1_o2_registration`. It calls the kernel directly to preserve at-lock source custody without nesting a second lock/CLI. No suite alias or native fixture body changes. Native watchdogs remain30s default and120s registration; host bounds are90/180s after lock acquisition, parsers120s. Queue wait is unbounded; canonical owned-child cleanup can add time. No process search, foreign kill, lock deletion or self-escalation.
+
+Root's existing canonical report provides actual rows and opaque Exact receipt strings. The wrapper preserves those report bytes, checks actual counts/ordinals/failures/complete/success/header/footer/path/SHA and native source maps. It additionally HOST-inspects original tagged JSON strings: whole raw format2 disk payload checksum/Attempts, installed native snapshot and complete protected Story must match by original tag trees; the actual saved AND installed local packet must be15-key act1-spore-bloom-2/integer schema2/world1/entrance0/empty final_arrangement. Float64 bits and integer/string tag types remain unchanged. This reads native-produced evidence; it never constructs, rewrites or submits a packet or claims native validator authority.
+
+The default case has no ENV report override and writes its own unique process/time report. Under the acquired canonical lock the wrapper records only existing `a1-o2-difficulty-*-*.json` names, preserves newly generated files, and requires the printed fixed-prefix report to be new. It keeps the original plus an exact retained native-report copy; no stale report or host-produced row is accepted. Registration receives a fresh absolute report path through child-only CINDER_A1_O2_SHORT_REGISTRATION_REPORT.
+
+There are164 fixed named observations (including the five-file capsule, with one overlap), not an exhaustive resource graph or global UID census. Promotion28 members, direct existing short/native paths, Main/player/lab dependencies, exact existing UIDs/config and original Base bytes are retained before comparison at preflight, before queue, at lock, after child and on runner close. No UID drift is allowed. All named UIDs, including genuine70decf25 new-leaf UID, are already present; the new leaf declares no global class and existing CinderEncounterArrangement appears in the current class cache. No one-time import is presently needed. If an actual parser demonstrates an import-only dependency, Root must arrange one separate canonical queued import and retain it; this capsule never imports automatically or invents a UID.
+
+Every phase retains command/queue/result/raw/engine logs, source maps/actual blobs, native reports/partial generated files, receipt inspection and an output-only index after raw closes. Strict failures close passed=false; CLOSED describes the wrapper, not a child whose canonical return is unavailable. Canonical returns can be synthetic timeout/script-error codes. Unexpected OS/output/filesystem failures need actual handle investigation. Source drift is refused. General host/audio/editor ERROR/WARNING lines remain recorded and require Root's actual diagnostic review; zero return is not an automatic clean-host claim.

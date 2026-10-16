@@ -1,0 +1,98 @@
+{
+  "status": "PRE_ENGINE_OLD_API1_FIXTURE_POSE_CORRECTED",
+  "at": "2026-10-15T09:09:10.209410+00:00",
+  "head": "78f3205c77e341cf263ae58f46964242df0ec8ea",
+  "api_revision": "campaign-shared-64",
+  "files": [
+    {
+      "path": "scripts/acts/act1/spore_bloom.gd",
+      "sha256": "1976638017db8722e26d6db24008ac01062ad04ee00363f31603cbb8fe909a6a",
+      "bytes": 100514
+    },
+    {
+      "path": "scripts/acts/act1/spore_bloom_layout.gd",
+      "sha256": "8ab4c6d15be162eab164c3135a1c8bd6fadd78e53e7ce5e1241252f0624205e4",
+      "bytes": 10987
+    },
+    {
+      "path": "scripts/acts/act1/spore_bloom_codec.gd",
+      "sha256": "6e1833c2f31bbe59e6106d48a2851907a8000a1d96820bf3e1f9375c895f741f",
+      "bytes": 8091
+    },
+    {
+      "path": "scripts/acts/act1/mushroom_caverns.gd",
+      "sha256": "55b30d6d639bf4a468e27189ef4703039b630e4c96fcc88564b1f7e5d912ecd4",
+      "bytes": 45159
+    },
+    {
+      "path": "scripts/acts/act1/mushroom_selenite.gd",
+      "sha256": "a351ad0d46441887043ac24e31ec2e69a8279092b4bf3d8b839c7a99fb158932",
+      "bytes": 104912
+    },
+    {
+      "path": "scripts/combat/threat_scheduler.gd",
+      "sha256": "c28ea9f4cd6c1ff9aedbc9cfc45a28826c589c095b9193b565f45d23c3df903d",
+      "bytes": 266033
+    },
+    {
+      "path": "scripts/environment/spore_field.gd",
+      "sha256": "b109f9872e810ec6d2b30a9d017f47e83f70fa3d086cb83f7e6717f757e51cd7",
+      "bytes": 16331
+    },
+    {
+      "path": "scripts/environment/spore_repulsion.gd",
+      "sha256": "74a9ce841f73b1550a2137f3404092f0ebd6f727126dffc487b11af739025db6",
+      "bytes": 59311
+    },
+    {
+      "path": "scripts/campaign/shell.gd",
+      "sha256": "f8df3b798544b79d66985f5e468f13ade5485bccc6050b54c9d9d242b3211a0f",
+      "bytes": 70657
+    },
+    {
+      "path": "scripts/campaign/level.gd",
+      "sha256": "27fdab6686d8ba4b8282c48af84c0c3f63d8c8fa7620ae462a4642ec225100c1",
+      "bytes": 23949
+    },
+    {
+      "path": "scripts/campaign/attempts.gd",
+      "sha256": "6701abec6181beb3934490e468b00868c14e69eb229f708d562b98efe32a43a0",
+      "bytes": 18347
+    },
+    {
+      "path": "scripts/campaign/save_store.gd",
+      "sha256": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0",
+      "bytes": 7310
+    },
+    {
+      "path": "tests/acts/act1/a1_o2_campaign.gd",
+      "sha256": "ef687e4e54bb99115b128f99ec199bd98aa2d49aac8c48a7c911f2f84be0cb71",
+      "bytes": 45516
+    },
+    {
+      "path": "tests/acts/act1/a1_o2_terminal.gd",
+      "sha256": "8dc148dd19f9a4fb0c02ba07e6d1075df524efb1b57183bb6bd2883a9d72e76d",
+      "bytes": 34413
+    },
+    {
+      "path": "tests/acts/act1/a1_o2_difficulty.gd",
+      "sha256": "74f51063d244e8ee8d08acf8596c174008d65b530eba16210ab3df10bc7a25cb",
+      "bytes": 16409
+    }
+  ],
+  "command": [
+    "python3",
+    "scripts/dev/dev.py",
+    "engine",
+    "--headless",
+    "--path",
+    ".",
+    "--script",
+    "tests/acts/act1/a1_o2_difficulty.gd",
+    "--",
+    "--case=legacy-producer",
+    "--groups-report=res://docs/acts/act1/evidence/O2-native-focused/groups01/native.json",
+    "--retry-report=res://docs/acts/act1/evidence/O2-native-focused/terminal-retry01/native.json"
+  ],
+  "prior_failure": "producer01 retained41/1; source-only alignment diagnosis; only Hero setup changed."
+}

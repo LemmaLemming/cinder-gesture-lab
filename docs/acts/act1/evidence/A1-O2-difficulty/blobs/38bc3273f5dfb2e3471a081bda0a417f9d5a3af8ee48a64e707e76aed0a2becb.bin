@@ -1,0 +1,83 @@
+--- a/tests/acts/act1/a1_o2_difficulty.gd
++++ b/tests/acts/act1/a1_o2_difficulty.gd
+@@ -424,6 +424,14 @@
+ 		else:
+ 			if not await _finite_release_one(field_id,cluster_id): return false
+ 			label="actual finite far second release Save" if field_id=="bloom-far" else ("actual finite near first release Save" if cluster_id=="cluster-left" else "actual finite near second release Save")
++	# A TEST Hero relocation during a retained warning changes the paired Player.
++	# Let actual actor physics refresh its exact native sample before paused Save.
++	var sample_field: CinderSporeField=null
++	var sample_deadline: Dictionary={}
++	if difficulty_case!="finite-ordinary":
++		sample_field=(game.active_level.get("_fields") as Dictionary)["bloom-far" if difficulty_case=="finite" else field_id]
++		sample_deadline=sample_field.state()
++	if not await _finite_native_wait(_finite_native_samples_current,"actual leased actor samples match current Scheduler and Player before Save",sample_field,sample_deadline): return false
+ 	if not await _wait_live(func()->bool:return game.camera_framing_error(game.active_level.camera_framing_points()).is_empty(),"actual current optical union before finite slice Save",8.0): return false
+ 	if not await _pause(label): return false
+ 	if difficulty_case!="finite-ordinary":
+@@ -470,7 +478,7 @@
+ 	var fields: Dictionary={}
+ 	for id: String in game.active_level.get("_fields"):
+ 		fields[id]=(game.active_level.get("_fields") as Dictionary)[id].state()
+-	return {"wall_ms":Time.get_ticks_msec()-started_ms,"physics_frame":Engine.get_physics_frames(),"player":game.player.get_threat_response_state(),"fields":fields}
++	return {"wall_ms":Time.get_ticks_msec()-started_ms,"physics_frame":Engine.get_physics_frames(),"player":game.player.get_threat_response_state(),"fields":fields,"native_samples":_finite_native_samples()}
+ 
+ func _finite_native_wait(predicate: Callable, label: String, field: CinderSporeField=null, original: Dictionary={}) -> bool:
+ 	# The finite case's unchanged 180s wall watchdog bounds resource use. Mechanical
+@@ -550,6 +558,56 @@
+ 	for id: String in Bloom.SOURCE_IDS: actor_states[id]={"body":_source(id).pure_presentation_state(),"cue":_source(id).get_cue().state(),"environment":_source(id).get_spore_response_state()}
+ 	var objective: Label=game.hud.find_child("ObjectiveLabel",true,false) as Label
+ 	return Exact.stringify(_encode({"snapshot":game.capture_campaign_snapshot(),"attempts":game.attempts.state(),"native":actor_states,"camera":game.camera.global_transform,"camera_size":game.camera.size,"framing":game.get_camera_framing_state(),"input":game.get_input_observation_state(),"hud":objective.text if objective!=null else ""}))
++
++func _finite_native_samples() -> Dictionary:
++	var rows: Dictionary={}
++	var clock_s: float=_scheduler().get_clock()
++	for id: String in Bloom.SOURCE_IDS:
++		var actor: Act1MushroomSelenite=_source(id)
++		var control: Dictionary=_scheduler().source_control_state(actor)
++		if control.get("reservations",[]).is_empty(): continue
++		rows[id]={"sample":(actor.get("_sample") as Dictionary).duplicate(true),"source_position":actor.global_position,"control":control}
++	return {"scheduler_clock_s":clock_s,"hero_position":game.player.global_position,"leased_sources":rows}
++
++func _finite_native_samples_current() -> bool:
++	var actual: Dictionary=_finite_native_samples()
++	for row: Dictionary in actual.leased_sources.values():
++		var sample: Dictionary=row.sample
++		if not row.control.get("outside_transaction",false) or row.control.clock_s!=actual.scheduler_clock_s or sample.get("clock_s")!=actual.scheduler_clock_s or sample.get("source_position")!=row.source_position or sample.get("hero_position")!=actual.hero_position: return false
++	return true
++
++func _diagnostic() -> Dictionary:
++	# Latch existing error strings and samples before inherited readback invokes
++	# other native observation. Do not call capture, validate, prune or restore.
++	var passive: Dictionary={}
++	if is_instance_valid(game):
++		passive["campaign_error"]=game.campaign_error
++		if is_instance_valid(game.player): passive["player_snapshot_error"]=game.player.last_snapshot_error
++		if is_instance_valid(game.active_level) and game.active_level.level_id==Bloom.LEVEL_ID:
++			var host: CinderLevel=game.active_level
++			passive["level_snapshot_error"]=host.last_snapshot_error
++			passive["capture_error"]=host.get("_capture_error")
++			passive["scheduler"]={"last_error":_scheduler().last_error,"last_snapshot_error":_scheduler().last_snapshot_error,"clock_s":_scheduler().get("_clock")}
++			var actors: Dictionary={}
++			for id: String in Bloom.SOURCE_IDS:
++				var actor: Act1MushroomSelenite=_source(id)
++				if is_instance_valid(actor): actors[id]={"last_error":actor.last_error,"last_snapshot_error":actor.last_snapshot_error,"sample":(actor.get("_sample") as Dictionary).duplicate(true),"source_position":actor.global_position,"reservation_id":actor.get("_reservation_id"),"transaction_depth":actor.get("_transaction_depth"),"snapshot_busy":actor.get("_snapshot_busy")}
++			passive["actors"]=actors
++			var protocols: Dictionary={}
++			for consumer_id: String in host.get("_protocols"):
++				protocols[consumer_id]={}
++				for id: String in host.get("_protocols")[consumer_id]:
++					var protocol: Object=host.get("_protocols")[consumer_id][id]
++					if is_instance_valid(protocol): protocols[consumer_id][id]=protocol.get("last_error")
++			passive["protocol_errors"]=protocols
++			var consumers: Dictionary={}
++			for id: String in host.get("_consumers"):
++				var consumer: Object=host.get("_consumers")[id]
++				if is_instance_valid(consumer): consumers[id]=consumer.get("last_error")
++			passive["consumer_errors"]=consumers
++	var result: Dictionary=super._diagnostic()
++	result["passive_native_errors_before_inherited_readback"]=_encode(passive)
++	return result
+ 
+ func _expect(ok: bool, label: String) -> bool:
+ 	var result: bool=super._expect(ok,label)

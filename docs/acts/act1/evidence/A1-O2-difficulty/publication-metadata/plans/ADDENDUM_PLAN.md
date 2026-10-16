@@ -1,0 +1,9 @@
+# Verified portrait addendum to the private27-path plan
+
+The original27-path cohort still comes from3daad, except its one live O2 difficulty fixture now comes from immutable622f1833, SHA6774fde7. COPY_PLAN preserves the old fixture source receipt and uses the corrected source only for the live path. All26 other base live paths and original284-blob/5205-path archive mapping stay unchanged. One additive owner document and the explicit267-member+manifestself portrait03 evidence set are separately selected. No private L3proposal or later Memory/Progress is selected.
+
+Actual75/0 closes the empty-witness finding; ADDENDUM_REVIEW records actual8-category/9-actor/nonempty780967-byte exact witness, pictured Save/Attempts join and separately inspected96bf PNG. Original73/0/1963PNG/cd58Save remain with their draw-proof limitation. Current measured Rect2-only rejection is not a reconstruction of the missing old aggregate.
+
+ADDENDUM_ARCHIVE_PLAN lists141 selected unique blobs and an explicit268-entry map. Reuse digests already in the original284-blob archive; extract only additional immutable Git blobs and verify SHA/size/mode. Keep original absolute owner attribution and all raw/native/source/receipt bytes. Sparse exact friendly views keep the additive document links live; its direct original portrait02/native.json and personal-review.json links are explicitly added as exact sparse views from the original284-blob archive. No flat bank copy or packet/metadata rewrite.
+
+Root27 preconditions were reread and any drift is recorded in COPY_PLAN. Apply still waits for Root's currently active frozen job to close. The minimal source-default + existing canonical short O2 registration recommendation is unchanged. No repeated finite/prefix/route/other native suite is needed for this test-only addendum. No Root/worker source or captured input changed here.
