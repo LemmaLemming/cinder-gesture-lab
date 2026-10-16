@@ -1,0 +1,21 @@
+# Current A2-O3 original-producer readiness
+
+All 37 original source bytes and every existing explicit 72 seal observation match current Root. The only mismatch is intentionally absent `producer.gd`; its draft remains exact 92f2c28e5bb235f1f1e7f47f3c31584db3fd6ba86ddeb7f81530f8fc110aa200, and the runner remains 4bf3631bcf59a4fdebf851ef83125d6f85ee3e07196fd3ba78bd3febe44ef83f. Of 72 observations, 70 files exist and match, producerUID absence matches, and selected .gd absence is the one mismatch. All 12 capsule-manifest members are unchanged. Original capsule/seal bytes were preserved.
+
+No fresh seal is currently needed. Root's smallest next step is an **exclusive byte-exact copy** of `producer.gd.txt` to ignored `producer.gd`, only while destination remains absent, then recheck the same 72 observations. Preserve the original draft, proposal, runner and seal; do not create or repin a UID. After Root selection, the supported queued command is:
+
+```sh
+python3 .cinder/a2-o3-difficulty-20261015/run_producer.py
+```
+
+Launching it before that copy would intentionally close preflight2 with no engine; this reviewer did not do so. The wrapper uses the canonical Godot lock and owns one direct child, 180 seconds after acquisition; native watchdog 150 seconds, each native wait 20 seconds/2400 barriers. Queue wait is excluded. No new broad import, route or repeated suites are proposed.
+
+`data/campaign/registry.json` and Shell/Registry are outside this producer's named set and execution path. It runs its own SceneTree and explicitly instantiates actual `scenes/main.tscn`/Game/Canal. A3-O3 acceptance therefore caused no producer source drift and does not change this original Canal mechanics cohort. This is a named subset, not complete dependency/resource/global-UID closure; historical capsule notes about A2-L2 wrappers are preparation context, not a current global freeze.
+
+The producer correctly requires original Canal root 72beb07a and original outer API campaign-level-1/localversion1/world1 with exactly 17 local keys and no inner arrangement metadata. It captures genuine paused constructor entrance, then publicly resumes, waits for actual floor/stability and requests exactly one forward dash. Original spawn is beyond 3.8m admission; the included real neutral dash is necessary. Actual completed record/origin/full landing/stats, unarmed owner-bound first Scout warning, all four original actor roots/HP 30, no progression history, full native Player+Level validation and exact Store reread/recapture are checked. No pose/HP/ammo/clock/phase/lease/history or packet rewriting is performed.
+
+Root must supply scoped filesystem permission for its own unique `user://test-a2-o3-new-old17-producer-<PID>-<ticks_usec>/` Store writes. With current project name Cinder, the existing macOS directory is `/Users/howardchen/Library/Application Support/Godot/app_userdata/Cinder/`; its existence was observed, but no new engine path query ran. Only four unique fixture save files and Store atomic siblings are needed there; final native cleanup removes its own test directory. Raw wire/Store copies and runner evidence stay in a fresh project `.cinder` output. The wrapper never escalates itself and does not need existing campaign saves/preferences changed.
+
+Host Python AST passes, with zero removable assertions. No concrete GDScript compile defect was found by inspection: Variant-returning states are typed, and the only inferred declarations use existing preloaded Store or native FileAccess/DirAccess factories. No canonical profile integer-budget assumption is introduced. Actual Godot parsing, first-warning timing and native packet validity remain unexecuted and must be honestly recorded. Any actual failure or UID/source drift must remain failed; no acceptance, final-pair feasibility, save/Continue/Retry, portrait, route, all-kit or performance credit follows from this readiness review.
+
+Only `CURRENT_READINESS_REVIEW.json` and this note were written. No producer selection, engine, preflight, source reseal, runtime/candidate edit, Agent02 activity, Git or mailbox mutation occurred.

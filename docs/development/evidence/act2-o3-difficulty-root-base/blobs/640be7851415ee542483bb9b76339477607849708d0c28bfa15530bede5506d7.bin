@@ -1,0 +1,142 @@
+extends SceneTree
+## PRIVATE / UNEXECUTED. Pure construction metadata, not native safety/clear.
+## Literal old17 inputs and genuine named original clear are never rewritten.
+## Synthetic new20/refusal copies exercise only constructor dispatch.
+const Parent = preload("res://scripts/acts/act2/bleached_canal.gd")
+const Arrangement = preload("res://scripts/combat/encounter_arrangement.gd")
+const Difficulty = preload("res://scripts/combat/difficulty.gd")
+const Exact = preload("res://scripts/campaign/exact_json.gd")
+const DATA: String = "res://data/campaign/act2/a2_o3_difficulty_arrangements.json"
+const FIXTURES: String = "res://tests/acts/act2/fixtures/a2_o3_difficulty_legacy/"
+const OLD_CLEAR: String = "res://docs/acts/act2/evidence/A2-O3/completed-review-input-20261013/completed-order-1.exact.json"
+const OLD_CLEAR_SHA: String = "b2e14450660ff557327fd343508156d2fc7d721c1b212453ef12966276daa519"
+var rows: Array[Dictionary] = []
+var failures: int = 0
+var first_failure: Dictionary = {}
+var complete: bool = false
+var report_path: String
+var source_before: Dictionary = {}
+
+func _initialize() -> void:
+	report_path = OS.get_environment("CINDER_A2_O3_ARRANGEMENT_PURE_REPORT")
+	source_before = _sources()
+	_run.call_deferred()
+
+func _run() -> void:
+	var definition: Variant = JSON.parse_string(FileAccess.get_file_as_string(DATA))
+	if not _expect(not report_path.is_empty() and OS.get_cmdline_user_args().is_empty() and Parent.arrangement_definition_error(definition).is_empty(), "actual closed authored definition and explicit report destination"):
+		_finish(); return
+	var before: String = Exact.stringify(definition)
+	var selector = Arrangement.new(definition)
+	var standard: Dictionary = selector.select_fresh("standard")
+	var challenge: Dictionary = selector.select_fresh("challenge")
+	var normal: Dictionary = Parent.arrangement_layout(standard, definition)
+	var changed: Dictionary = Parent.arrangement_layout(challenge, definition)
+	if not _expect(normal.error.is_empty() and changed.error.is_empty(), "both actual fresh retained recipes resolve"):
+		_finish(); return
+	_expect(normal.positions == Parent.ACTOR_POSITIONS and normal.positions.size() == 4, "Standard keeps all four exact canonical roots and native heights")
+	_expect(changed.positions.first_scout == Parent.ACTOR_POSITIONS.first_scout and changed.positions.second_handler == Parent.ACTOR_POSITIONS.second_handler, "first two pockets remain exactly unchanged")
+	_expect(changed.positions.final_handler == Parent.ACTOR_POSITIONS.final_scout and changed.positions.final_scout == Parent.ACTOR_POSITIONS.final_handler, "fresh Challenge exchanges only living final unlike-role ground slots")
+	var remapped: Dictionary = definition.duplicate(true)
+	remapped.current.challenge = Parent.CANONICAL_RECIPES.challenge
+	var remap_selector = Arrangement.new(remapped)
+	var fresh_later: Dictionary = Parent.arrangement_layout(remap_selector.select_fresh("challenge"), remapped)
+	var retained: Dictionary = Parent.arrangement_layout(challenge, remapped)
+	_expect(fresh_later.error.is_empty() and fresh_later.positions == normal.positions and retained.error.is_empty() and retained.positions == changed.positions, "current mapping changes only later fresh selection, never retained saved recipe")
+	var json_descriptor: Variant = JSON.parse_string(JSON.stringify(challenge))
+	var json_selected: Dictionary = Parent.arrangement_layout(json_descriptor, definition)
+	_expect(json_selected.error.is_empty() and Exact.stringify(json_selected.descriptor) == Exact.stringify(json_descriptor) and json_selected.positions == changed.positions, "shared integral JSON descriptor schema is retained without tag coercion")
+	for profile: String in ["standard", "challenge"]:
+		for stage: String in ["entrance", "first-warning"]:
+			var wire: String = FileAccess.get_file_as_string(FIXTURES + profile + "-" + stage + ".exact.json")
+			var parsed: Dictionary = Exact.parse(wire)
+			if not _expect(parsed.get("accepted") == true, "actual original17 literal available for pure constructor: " + profile + "/" + stage):
+				_finish(); return
+			var original: Dictionary = parsed.value.level.local
+			var original_bits: String = Exact.stringify(original)
+			var old: Dictionary = Parent.arrangement_constructor(original, remapped)
+			_expect(old.error.is_empty() and old.legacy == true and old.profile_id == profile and old.positions == normal.positions and original.size() == 17, "legacy absence retains original layout for SAVED profile independently of current mapping: " + profile + "/" + stage)
+			var native_profile: Dictionary = Difficulty.new().profile(profile)
+			_expect(Exact.stringify(original.scheduler.profile) == Exact.stringify(native_profile) and native_profile.reserved_threat_budget is float, "original exact full canonical native profile retains float64 budget without normalization")
+			var metadata: Dictionary = original.duplicate(true)
+			metadata["api_revision"] = Parent.ARRANGEMENT_API
+			metadata["schema_version"] = 2
+			metadata["arrangement"] = selector.select_fresh(profile)
+			var current: Dictionary = Parent.arrangement_constructor(metadata, definition)
+			_expect(metadata.size() == 20 and current.error.is_empty() and current.legacy == false and current.positions == (changed.positions if profile == "challenge" else normal.positions), "closed20 metadata selects trusted recipe only; no full native packet claim")
+			for field: String in ["api_revision", "schema_version", "arrangement"]:
+				var partial: Dictionary = metadata.duplicate(true)
+				partial.erase(field)
+				_expect(not Parent.arrangement_constructor(partial, definition).error.is_empty(), "partial mixed17/20 shape refuses: " + field)
+			var bad: Dictionary = metadata.duplicate(true)
+			bad["unknown"] = true
+			_expect(not Parent.arrangement_constructor(bad, definition).error.is_empty(), "extra closed shape key refuses")
+			bad = metadata.duplicate(true); bad.profile_id = "assisted"
+			_expect(not Parent.arrangement_constructor(bad, definition).error.is_empty(), "saved local profile cannot disagree with actual canonical Scheduler profile")
+			bad = metadata.duplicate(true); bad.scheduler.profile.raw_damage_multiplier += 0.000000000001
+			_expect(not Parent.arrangement_constructor(bad, definition).error.is_empty(), "full canonical saved profile tampering refuses before configure")
+			bad = metadata.duplicate(true); bad.scheduler.encounter_id = "foreign-epoch"
+			_expect(not Parent.arrangement_constructor(bad, definition).error.is_empty(), "foreign saved epoch refuses before configure")
+			_expect(Exact.stringify(original) == original_bits and Exact.stringify(parsed.value) == wire, "original whole literal retains exact bits/types after pure calls")
+	# Use the actual retained original clear, rather than manufacturing an empty
+	# Scheduler by editing an entrance. This is metadata-only source reuse; the
+	# historical native producer/provenance is not independently revalidated here.
+	if not _expect(FileAccess.get_sha256(OLD_CLEAR) == OLD_CLEAR_SHA, "named genuine original completed tuple exact bytes"):
+		_finish(); return
+	var clear_wire: String = FileAccess.get_file_as_string(OLD_CLEAR)
+	var clear_packet: Dictionary = Exact.parse(clear_wire)
+	if not _expect(clear_packet.get("accepted") == true, "named original clear Exact envelope opens without reencoding"):
+		_finish(); return
+	var clear_local: Dictionary = clear_packet.value.level.local
+	var clear: Dictionary = Parent.arrangement_constructor(clear_local, definition)
+	_expect(clear_local.stage_index == 4 and clear_local.scheduler.profile.is_empty() and clear_local.scheduler.encounter_id == "" and clear_local.scheduler.reservations.is_empty() and clear.error.is_empty() and clear.legacy and clear.profile_id == "challenge" and clear.positions == normal.positions, "genuine old stage4 empty Scheduler dispatch uses saved local/Ray profile and canonical layout")
+	var bad_clear: Dictionary = clear_local.duplicate(true)
+	bad_clear.scheduler.profile = Difficulty.new().profile("challenge")
+	_expect(not Parent.arrangement_constructor(bad_clear, definition).error.is_empty(), "clear construction cannot retain a live Scheduler profile")
+	bad_clear = clear_local.duplicate(true); bad_clear.stage_index = 3
+	_expect(not Parent.arrangement_constructor(bad_clear, definition).error.is_empty(), "nonclear stage cannot reuse original ended Scheduler")
+	_expect(Exact.stringify(clear_packet.value) == clear_wire, "named genuine original clear input remains exact")
+	var bad_descriptor: Dictionary = challenge.duplicate(true)
+	bad_descriptor.order[0] = bad_descriptor.order[1]
+	_expect(not Parent.arrangement_layout(bad_descriptor, definition).error.is_empty(), "duplicate/missing source refuses")
+	bad_descriptor = challenge.duplicate(true); bad_descriptor.order[0] = "foreign-source"
+	_expect(not Parent.arrangement_layout(bad_descriptor, definition).error.is_empty(), "foreign source refuses")
+	var bad_definition: Dictionary = definition.duplicate(true)
+	bad_definition.recipes[3].order = Parent.ACTOR_IDS.duplicate()
+	_expect(not Parent.arrangement_definition_error(bad_definition).is_empty(), "retained recipe ID cannot be repurposed")
+	bad_definition = definition.duplicate(true); bad_definition.current.standard = Parent.CHALLENGE_RECIPE
+	_expect(not Parent.arrangement_definition_error(bad_definition).is_empty(), "current mapping cannot cross profile ownership")
+	var copy: Dictionary = Parent.arrangement_layout(challenge, definition)
+	copy.positions.final_handler = Vector3(90, 90, 90); copy.descriptor.order[0] = "foreign-source"
+	_expect(Parent.arrangement_layout(challenge, definition).positions == changed.positions and Exact.stringify(definition) == before, "returned nested data cannot alias immutable source/descriptor/caller input")
+	complete = true
+	_finish()
+
+func _sources() -> Dictionary:
+	var result: Dictionary = {}
+	for path: String in [get_script().resource_path, DATA, FIXTURES + "PROVENANCE.json", OLD_CLEAR, "res://scripts/acts/act2/bleached_canal.gd", "res://scripts/combat/encounter_arrangement.gd", "res://scripts/combat/difficulty.gd", "res://scripts/campaign/exact_json.gd", "res://scripts/campaign/snapshot_codec.gd"]:
+		result[path] = FileAccess.get_sha256(path)
+	for profile: String in ["standard", "challenge"]:
+		for stage: String in ["entrance", "first-warning"]:
+			var path: String = FIXTURES + profile + "-" + stage + ".exact.json"
+			result[path] = FileAccess.get_sha256(path)
+	return result
+
+func _expect(ok: bool, label: String) -> bool:
+	var row: Dictionary = {"check": rows.size() + 1, "ok": ok, "label": label}
+	rows.append(row)
+	if not ok:
+		failures += 1
+		if first_failure.is_empty(): first_failure = row.duplicate(true)
+	return ok
+
+func _finish() -> void:
+	var source_after: Dictionary = _sources()
+	_expect(source_after == source_before, "all explicitly named pure sources/literal inputs remain unchanged")
+	var report: Dictionary = {"schema_version": 1, "kind": "a2-o3-arrangement-pure", "checks": rows.size(), "failures": failures, "rows": rows, "first_failure": first_failure, "complete": complete, "success": complete and failures == 0, "source_before": source_before, "source_after": source_after, "scope": "Pure immutable constructor/closed shape/profile/retained metadata only. Four actual new-old17 wire inputs and one named historical clear plus disclosed synthetic new20/refusal copies. No native packet acceptance, source admission, gameplay, Shell, visual or performance credit."}
+	var file = FileAccess.open(report_path, FileAccess.WRITE)
+	if file == null: print("Canal pure report destination failed"); quit(2); return
+	file.store_string(JSON.stringify(report, "\t") + "\n"); file.close()
+	print("CINDER_A2_O3_ARRANGEMENT_PURE_REPORT path=" + report_path + " sha256=" + FileAccess.get_sha256(report_path))
+	print("Canal arrangement pure: %d checks/%d failures; complete=%s" % [rows.size(), failures, str(complete)])
+	quit(0 if complete and failures == 0 else 1)

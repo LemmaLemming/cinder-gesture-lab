@@ -1,0 +1,291 @@
+"""One frozen old-Canal producer, queued only after Root selects its .gd copy.
+
+No self escalation or import. Store access is a Root-owned execution decision.
+Preflight failures close a unique evidence directory without launching Godot.
+"""
+from pathlib import Path
+import contextlib
+import datetime
+import hashlib
+import importlib.util
+import json
+import os
+import re
+import sys
+import time
+import uuid
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[1]
+RUNNER = str(Path(__file__).resolve().relative_to(ROOT))
+SCRIPT = str((HERE / "producer.gd").relative_to(ROOT))
+DRAFT = str((HERE / "producer.gd.txt").relative_to(ROOT))
+PROPOSAL = str((HERE / "PRODUCER_INPUT_PROPOSAL.json").relative_to(ROOT))
+PRODUCER_SHA = "92f2c28e5bb235f1f1e7f47f3c31584db3fd6ba86ddeb7f81530f8fc110aa200"
+ORIGINAL_ROOT_SHA = "72beb07a1aa9f8e0de25266de783eb195ee278596fe4506ae4176abfbd0d7f4c"
+PROPOSAL_SHA = "e3fa2a91a2d45086b2698c043c6b29a73a7d98962a31baa2bf92a8dfc7d0331c"
+SOURCE_FILES = (
+    "scenes/main.tscn", "scenes/player.tscn", "scenes/acts/act2/a2_o3.tscn", "project.godot", "scripts/dev/dev.py",
+    "scripts/game.gd", "scripts/player.gd", "scripts/effects.gd", "scripts/equipment.gd", "scripts/hud.gd",
+    "scripts/pixel_sprite.gd", "scripts/character/player_presentations.gd", "scripts/presentation/camera_framing.gd",
+    "scripts/campaign/level.gd", "scripts/campaign/save_store.gd", "scripts/campaign/exact_json.gd", "scripts/campaign/snapshot_codec.gd",
+    "scripts/acts/act2/bleached_canal.gd", "scripts/acts/act2/bleached_canal_kit.gd", "scripts/acts/act2/london_approaches_kit.gd",
+    "scripts/acts/act2/heath_kit.gd", "scripts/acts/act2/ruined_house_kit.gd", "scripts/acts/act2/weybridge_scout_actor.gd",
+    "scripts/acts/act2/ray_scout_actor.gd", "scripts/acts/act2/ray_scout_visual.gd", "scripts/acts/act2/ray_scout_exchange.gd",
+    "scripts/acts/act2/salvage_handler_actor.gd", "scripts/acts/act2/salvage_handler_visual.gd",
+    "scripts/combat/threat_scheduler.gd", "scripts/combat/difficulty.gd", "scripts/combat/lane_mechanism.gd",
+    "scripts/combat/threat_geometry.gd", "scripts/combat/body_sweep.gd", "scripts/cues/interaction_cue.gd",
+    "scripts/cues/threat_cue.gd", "data/design/difficulty_profiles.json", "data/design/player_equipment.json",
+)
+NAMES = tuple(sorted(set(SOURCE_FILES) | {p + ".uid" for p in SOURCE_FILES if p.endswith(".gd")} | {RUNNER, SCRIPT, SCRIPT + ".uid", DRAFT, PROPOSAL}))
+LOCAL_KEYS = {
+    "scenic_clock", "profile_id", "world_revision", "stage_index", "defeated_ids", "defeat_times", "pending_defeats",
+    "checkpoint_contact_seen", "checkpoint_requested", "pending_checkpoint", "completion_pending", "exit_requested",
+    "scheduler", "actors", "exchange", "tools", "views",
+}
+ACTORS = {"first_scout", "second_handler", "final_scout", "final_handler"}
+TIMEOUT = 180
+SCOPE = "New execution of exact original Canal17 root at the frozen37 named current mixed shared source baseline, plus explicit named UID/script/wrapper states. Not historical payload recovery, whole historical repository or complete dependency/resource/global UID/bank closure. No route, defeats, earned checkpoint, Shell/Continue/Retry, portrait, balance, performance or acceptance credit."
+
+
+def now():
+    return datetime.datetime.now(datetime.timezone.utc).isoformat()
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def require(condition, message):
+    if not condition:
+        raise ValueError(message)
+
+
+def save(path, value):
+    temporary = path.with_name("." + path.name + "." + uuid.uuid4().hex)
+    with temporary.open("x") as stream:
+        json.dump(value, stream, indent=2, allow_nan=False)
+        stream.write("\n")
+        stream.flush()
+        os.fsync(stream.fileno())
+    os.replace(temporary, path)
+
+
+def observe():
+    return {p: sha(ROOT / p) if (ROOT / p).is_file() else None for p in NAMES}
+
+
+class Tee:
+    def __init__(self, original, log):
+        self.original, self.log = original, log
+
+    def write(self, value):
+        self.log.write(value)
+        return self.original.write(value)
+
+    def flush(self):
+        self.log.flush()
+        self.original.flush()
+
+
+def tagged_dictionary(node):
+    require(type(node) is list and len(node) == 2 and node[0] == "dictionary" and type(node[1]) is list, "Expected Exact dictionary node")
+    result = {}
+    for entry in node[1]:
+        require(type(entry) is list and len(entry) == 2 and type(entry[0]) is str and entry[0] not in result, "Exact dictionary keys must be unique strings")
+        result[entry[0]] = entry[1]
+    return result
+
+
+def tagged_array(node):
+    require(type(node) is list and len(node) == 2 and node[0] == "array" and type(node[1]) is list, "Expected Exact array node")
+    return node[1]
+
+
+def exact_root(wire):
+    # Extract known control paths only. Original wire/tags remain untouched;
+    # this does not replace the complete native Player/Level/Exact validators.
+    envelope = json.loads(wire)
+    require(type(envelope) is dict and set(envelope) == {"api_revision", "schema_version", "value"} and envelope["api_revision"] == "exact-json-1" and type(envelope["schema_version"]) is int and envelope["schema_version"] == 1, "Exact wire envelope differs")
+    return tagged_dictionary(envelope["value"])
+
+
+def inspect_packet(out, packet):
+    require(type(packet) is dict and packet.get("profile") in ("standard", "challenge") and packet.get("stage") in ("entrance", "first-warning"), "Unknown completed producer packet")
+    stem = packet["profile"] + "-" + packet["stage"]
+    require(packet["exact_file"] == stem + ".exact.json" and packet["store_file"] == stem + ".store.json", "Packet files must use the exact closed output names")
+    exact, raw = out / packet["exact_file"], out / packet["store_file"]
+    require(exact.parent == raw.parent == out and exact.is_file() and raw.is_file(), "Completed packet files are missing or foreign")
+    require(sha(exact) == packet["exact_sha256"] and exact.stat().st_size == packet["exact_bytes"] and sha(raw) == packet["store_sha256"] and raw.stat().st_size == packet["store_bytes"], "Completed original wire/raw byte/hash join failed")
+    wire = exact.read_text()
+    store = json.loads(raw.read_text())
+    require(type(store) is dict and set(store) == {"format_version", "generation", "payload_json", "sha256"} and type(store["format_version"]) is int and store["format_version"] == 2 and type(store["generation"]) is int and store["generation"] == 1 and store["payload_json"] == wire and store["sha256"] == hashlib.sha256(wire.encode()).hexdigest(), "Original raw format2/generation1/payload/checksum join failed")
+    pair = exact_root(wire)
+    require(set(pair) == {"player", "level"}, "Wire must retain the complete original Player+Level pair")
+    level = tagged_dictionary(pair["level"])
+    local = tagged_dictionary(level["local"])
+    require(level["api_revision"] == ["string", "campaign-level-1"] and level["schema_version"] == ["integer", "1"] and level["level_id"] == ["string", "A2-O3"] and level["scene_path"] == ["string", "res://scenes/acts/act2/a2_o3.tscn"] and level["local_snapshot_version"] == ["integer", "1"] and set(local) == LOCAL_KEYS and local["profile_id"] == ["string", packet["profile"]] and local["world_revision"] == ["integer", "1"] and local["stage_index"] == ["integer", "0"], "Actual original17/profile/world/stage control tags differ")
+    require(not tagged_array(local["defeated_ids"]) and not tagged_array(local["pending_defeats"]) and not tagged_dictionary(local["defeat_times"]), "Early original packet cannot contain defeat history")
+    scheduler = tagged_dictionary(local["scheduler"])
+    require(tagged_dictionary(scheduler["profile"])["id"] == ["string", packet["profile"]] and scheduler["encounter_id"] == ["string", "A2-O3-bleached-canal"] and scheduler["world_revision"] == ["integer", "1"], "Actual saved original Scheduler profile/epoch differs")
+    source = tagged_dictionary(tagged_dictionary(tagged_dictionary(local["exchange"])["records"])["first_scout"])
+    leases = tagged_array(scheduler["reservations"])
+    history = tagged_array(tagged_dictionary(tagged_dictionary(pair["player"])["world_actions"])["history"])
+    expected_dashes = 0 if packet["stage"] == "entrance" else 1
+    require(type(packet["actual_public_dash_count"]) is int and packet["actual_public_dash_count"] == expected_dashes and len(history) == expected_dashes, "Actual complete Player action history differs from minimal real dash scope")
+    if packet["stage"] == "entrance":
+        require(not leases and source["status"] == ["string", "idle"], "Original constructor entrance must precede leases/actions")
+    else:
+        require(tagged_dictionary(history[0])["kind"] == ["string", "dash"] and len(leases) == 1 and source["status"] == ["string", "running"] and source["phase"] == ["string", "warning"], "Early partial must retain actual completed dash and first Scout warning")
+        locked = tagged_dictionary(tagged_dictionary(leases[0])["adapter"])["locked"]
+        require(type(locked) is list and len(locked) == 2 and locked[0] == "boolean" and type(locked[1]) is bool and locked[1] is False, "Actual warning must remain original unarmed tracking lease")
+    actors = tagged_dictionary(local["actors"])
+    roots = exact_root(packet["configured_roots_exact"])
+    require(set(actors) == set(roots) == ACTORS and type(packet["original_local_key_count"]) is int and packet["original_local_key_count"] == 17 and set(packet["original_local_keys"]) == LOCAL_KEYS and type(packet["outer_local_version"]) is int and type(packet["world_revision"]) is int and packet["outer_local_version"] == packet["world_revision"] == 1, "Original complete native inventory/shape metadata differs")
+    require(all(tagged_dictionary(actors[name])["root_position"] == roots[name] for name in ACTORS), "Configured original roots do not join exact saved scalar tags/bits")
+    return {"name": stem, "exact_sha256": sha(exact), "store_sha256": sha(raw), "original17_tag_and_wire_raw_generation_joins": True}
+
+
+def inspect_report(out, expected, raw):
+    path = out / "native-report.json"
+    report = json.loads(path.read_text())
+    require(type(report) is dict and type(report.get("schema_version")) is int and report["schema_version"] == 1, "Closed native report schema1 required")
+    rows = report["rows"]
+    require(type(rows) is list and rows and all(type(row) is dict and set(row) == {"check", "ok", "label", "detail"} and type(row.get("ok")) is bool and type(row.get("check")) is int and type(row.get("label")) is str and type(row.get("detail")) is str for row in rows), "Native report requires actual closed boolean assertion rows")
+    require([row["check"] for row in rows] == list(range(1, len(rows) + 1)), "Native assertion rows must remain consecutive")
+    failed = [row for row in rows if row["ok"] is False]
+    require(type(report["checks"]) is int and report["checks"] == len(rows) and type(report["failures"]) is int and report["failures"] == len(failed) and report["first_failure"] == (failed[0] if failed else {}), "Native count/first-failure joins failed")
+    require(type(report["complete"]) is bool and type(report["success"]) is bool and report["success"] == (report["complete"] and not failed), "Native completion/success flags differ")
+    require(report["source_before"] == report["source_after"] == expected, "Native exact fixed named source/UID observations differ")
+    require(re.findall(r"(?m)^CINDER_A2_O3_LEGACY_REPORT path=(.+) sha256=([0-9a-f]{64})$", raw) == [(str(path), sha(path))], "Native original report path/hash footer differs")
+    require(type(report["packets"]) is list, "Producer packet list malformed")
+    footer = (str(len(rows)), str(len(failed)), str(report["complete"]).lower(), str(len(report["packets"])))
+    require(re.findall(r"(?m)^A2-O3 original17-key producer: (\d+) checks/(\d+) failures; complete=(true|false); packets=(\d+)$", raw) == [footer], "Native actual counter/completion/packet footer differs")
+    packets = [inspect_packet(out, packet) for packet in report["packets"]]
+    require(len({p["name"] for p in packets}) == len(packets), "Duplicate completed producer packet")
+    if report["complete"]:
+        require({p["name"] for p in packets} == {p + "-" + s for p in ("standard", "challenge") for s in ("entrance", "first-warning")}, "Complete producer requires exactly four original profile/stage pairs")
+    return {"path": str(path), "sha256": sha(path), "checks": len(rows), "failures": len(failed), "first_failure": report["first_failure"], "complete": report["complete"], "success": report["success"], "completed_packet_joins": packets, "scope": "Original raw report and all exact wires retained; known tagged control paths only, no host replacement for complete native validators."}
+
+
+def main():
+    stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%S.%fZ")
+    out = HERE / ("native-" + stamp + "-" + uuid.uuid4().hex[:8])
+    out.mkdir(exist_ok=False)
+    print("CANAL_ORIGINAL_PRODUCER_EVIDENCE", out, flush=True)
+    start = time.monotonic()
+    result = {"started": now(), "closed": False, "engine_started": False, "validation_returned": False, "passed": False, "scope": SCOPE}
+    queue = {"queued": False, "acquired": False, "timeout_seconds_after_acquisition": TIMEOUT}
+    code = 2
+    save(out / "result.json", result)
+    save(out / "queue.json", queue)
+    with (out / "raw.log").open("x") as log, contextlib.redirect_stdout(Tee(sys.stdout, log)), contextlib.redirect_stderr(Tee(sys.stderr, log)):
+        try:
+            require(len(sys.argv) == 1, "Frozen original producer accepts no caller scenario arguments")
+            seal_path = HERE / "runner-seal.json"
+            seal_bytes = seal_path.read_bytes()
+            (out / "seal-original.json").write_bytes(seal_bytes)
+            seal = json.loads(seal_bytes)
+            require(seal["root"] == str(ROOT) and set(seal["files"]) == set(NAMES), "Exact fixed named producer seal required")
+            expected = seal["files"]
+            require({p for p, h in expected.items() if h is None} == {SCRIPT + ".uid"}, "Only explicitly absent ignored producer UID is permitted")
+            require(expected[SCRIPT] == expected[DRAFT] == PRODUCER_SHA and expected[PROPOSAL] == PROPOSAL_SHA and expected["scripts/acts/act2/bleached_canal.gd"] == ORIGINAL_ROOT_SHA, "Exact original72 root/92f2 producer/proposal required")
+            proposal = json.loads((ROOT / PROPOSAL).read_text())
+            require(set(proposal["current_named_source_inputs"]) == set(SOURCE_FILES) and len(SOURCE_FILES) == 37, "Exact original37 named source inputs required")
+            require(all(expected[p] == proposal["current_named_source_inputs"][p]["sha256"] for p in SOURCE_FILES), "Frozen named source baseline differs from prepared proposal")
+            before = observe()
+            save(out / "sources-before-queue.json", before)
+            require(before == expected, "Preflight source drift/missing selected script: " + repr([p for p in NAMES if before[p] != expected[p]]))
+            blobs = out / "source-blobs"
+            blobs.mkdir()
+            retained = {}
+            for name, digest in expected.items():
+                if digest is None:
+                    continue
+                data = (ROOT / name).read_bytes()
+                require(hashlib.sha256(data).hexdigest() == digest, "Named source changed during byte retention: " + name)
+                target = blobs / (digest + ".txt")
+                if not target.exists(): target.write_bytes(data)
+                retained[name] = {"sha256": digest, "blob": str(target.relative_to(out)), "origin": "captured-before-queue; exact at-lock/after-child/close joins required"}
+            save(out / "source-retention.json", {"files": retained, "scope": SCOPE})
+            spec = importlib.util.spec_from_file_location("cinder_original_canal_dev", ROOT / "scripts/dev/dev.py")
+            dev = importlib.util.module_from_spec(spec)
+            sys.modules[spec.name] = dev
+            previous = sys.dont_write_bytecode
+            try:
+                sys.dont_write_bytecode = True
+                spec.loader.exec_module(dev)
+            finally:
+                sys.dont_write_bytecode = previous
+            env = dict(os.environ)
+            additions = {"CINDER_A2_O3_LEGACY_OUTPUT": str(out), "CINDER_A2_O3_LEGACY_SOURCES": json.dumps(list(NAMES))}
+            env.update(additions)
+            context = dev.ProjectContext(root=ROOT, environ=env)
+            command = [str(dev.resolve_godot(context)), "--path", str(ROOT), "--headless", "--log-file", str(out / "engine.log"), "--script", "res://" + SCRIPT]
+            save(out / "command.json", {"argv": command, "cwd": str(ROOT), "owned_child_environment_additions": additions, "environment_scope": "Inherited context copied; only owned output and exact relative source list changed. No machine configuration changed/dumped; no self escalation.", "timeout_seconds_after_acquisition": TIMEOUT, "Store_access": "Root must supply scoped user Store permission externally when launching; runner never escalates itself."})
+            queue.update(queued=True, queued_at=now(), lock=str(dev.shared_lock_path(ROOT)))
+            save(out / "queue.json", queue)
+            try:
+                with dev.godot_lock(ROOT) as lock_fd:
+                    queue.update(acquired=True, acquired_at=now())
+                    save(out / "queue.json", queue)
+                    at_lock = observe()
+                    save(out / "sources-at-lock.json", at_lock)
+                    require(at_lock == expected, "Queued fixed named source/UID drift")
+                    result.update(engine_started=True, engine_started_at=now())
+                    save(out / "result.json", result)
+                    save(out / "lifecycle.json", {"state": "RUNNING", "at": now(), "custody": "Canonical dev owns/waits only its direct child; no foreign kill/lock operation."})
+                    returned = dev.run_validation(command, context, lock_fd, TIMEOUT, detect_godot_errors=True)
+                    result.update(validation_returned=True, dev_return_code=returned, returned_at=now())
+                    save(out / "result.json", result)
+                    after = observe()
+                    save(out / "sources-after-child.json", after)
+                    result["source_delta"] = [p for p in NAMES if after[p] != expected[p]]
+                    report = out / "native-report.json"
+                    log.flush()
+                    if report.is_file():
+                        result["retained_native_report"] = {"path": str(report), "sha256": sha(report), "bytes": report.stat().st_size}
+                        try:
+                            actual = json.loads(report.read_text())
+                            result["native_observations"] = {k: actual[k] for k in ("checks", "failures", "first_failure", "complete", "success", "packets") if k in actual}
+                        except Exception as exc:
+                            result["native_report_decode_error"] = repr(exc)
+                        result["native"] = inspect_report(out, expected, (out / "raw.log").read_text())
+                    require(after == expected, "Named source/UID drift after owned child")
+                    require(returned == 0, "Canonical owned validation returned " + str(returned))
+                    require("native" in result and result["native"]["complete"] and result["native"]["success"] and result["native"]["failures"] == 0, "Native0 plus complete actual passing rows/four original packets required")
+                    result["passed"] = True
+                    code = 0
+            finally:
+                queue.update(lock_context_closed_at=now(), acquired_context_returned=queue["acquired"])
+                save(out / "queue.json", queue)
+        except KeyboardInterrupt:
+            result["error"] = "Interrupted; canonical dev owns only its direct-child cleanup."
+            code = 130
+        except Exception as exc:
+            result["error"] = repr(exc)
+            print("Canal original producer wrapper failure:", repr(exc), flush=True)
+        finally:
+            try:
+                closed_sources = observe()
+                save(out / "sources-at-runner-close.json", closed_sources)
+                if result["passed"] and closed_sources != after:
+                    result.update(passed=False, error="Named source drift after owned child returned")
+                    code = 2
+            except Exception as exc:
+                result.update(passed=False, source_close_error=repr(exc))
+                code = 2
+            log.flush()
+            raw = (out / "raw.log").read_text()
+            errors = re.findall(r"(?m)^(?:ERROR:|SCRIPT ERROR:).*", raw)
+            warnings = re.findall(r"(?m)^WARNING:.*", raw)
+            result.update(closed=True, closed_at=now(), runner_return_code=code, wall_s_including_queue=time.monotonic() - start, raw_error_lines=errors, raw_warning_lines=warnings, raw_error_warning_free=not errors and not warnings)
+            save(out / "result.json", result)
+            save(out / "lifecycle.json", {"state": "CLOSED", "at": now(), "engine_started": result["engine_started"], "validation_returned": result["validation_returned"], "runner_code": code, "custody": "Canonical dev return0 confirms owned direct-child wait0; nonzero may be synthetic script/resource/timeout error. No process-group/foreign cleanup claim. Preflight refusal starts no child."})
+            print("CANAL_ORIGINAL_PRODUCER_CLOSED", code, flush=True)
+    save(out / "index.json", {"created_after_raw_log_close": True, "scope": SCOPE, "files": {str(p.relative_to(out)): {"sha256": sha(p), "bytes": p.stat().st_size} for p in sorted(out.rglob("*")) if p.is_file()}})
+    return code
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

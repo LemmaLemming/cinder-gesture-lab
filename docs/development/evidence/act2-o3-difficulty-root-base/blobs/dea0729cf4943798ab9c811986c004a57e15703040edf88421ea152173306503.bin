@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-10-16T01:15:33.862916+00:00",
+  "status": "ROOT_ACTUAL_ORIGINAL_PRODUCER_REVIEW_PASS",
+  "original_phase": ".cinder/a2-o3-difficulty-20261015/native-20261015T100020.639449Z-8784ab69",
+  "original_report_sha256": "08b1f8cbdf8e8f56ae3504ec8ebda7b6fea920e9118d484d3ba2f512b2b3c8b9",
+  "terminal_result_sha256": "4bba580522699271d3aa08ac2debe45c5b0a2401462812705165da74ad2ab0fc",
+  "actual_rows": 74,
+  "failures": 0,
+  "complete": true,
+  "success": true,
+  "source_before_after_named_count": 72,
+  "original_source_delta": [],
+  "original_raw_error_warning_free": true,
+  "actual_pairs": [
+    {
+      "profile": "standard",
+      "stage": "entrance",
+      "exact_file": "standard-entrance.exact.json",
+      "exact_sha256": "cee8bd8e3b8018169e5980f8cd310973cefba88858ca36de68d5a48b41ef86cb",
+      "store_file": "standard-entrance.store.json",
+      "store_sha256": "2b2d338501b7a200039f4aa7ce819739b420600bcb4d12cda4a33cdca5e95913",
+      "actual_public_dash_count": 0,
+      "original_local_key_count": 17
+    },
+    {
+      "profile": "standard",
+      "stage": "first-warning",
+      "exact_file": "standard-first-warning.exact.json",
+      "exact_sha256": "d045f3acc75bb9b0b84a1c8fe6b26032ad14e9905039d0b056601870350e3295",
+      "store_file": "standard-first-warning.store.json",
+      "store_sha256": "5e9d2420b93711650e3f48afcafb9aae05c29bb7c147ab639bb620f222433161",
+      "actual_public_dash_count": 1,
+      "original_local_key_count": 17
+    },
+    {
+      "profile": "challenge",
+      "stage": "entrance",
+      "exact_file": "challenge-entrance.exact.json",
+      "exact_sha256": "d80e170b2fbb370c2f89736f6ed45deb8a76983cf7a1048421cfa53c6ec7c2c1",
+      "store_file": "challenge-entrance.store.json",
+      "store_sha256": "c12777007505b11022dfde67140fbf4d94a4b7d2125a2f9bc5d83d0dbf38f02d",
+      "actual_public_dash_count": 0,
+      "original_local_key_count": 17
+    },
+    {
+      "profile": "challenge",
+      "stage": "first-warning",
+      "exact_file": "challenge-first-warning.exact.json",
+      "exact_sha256": "b776f4a7c2c7b1a3bf74ccc5efe9358f09443b147e3235bc236bbf4054cde7bc",
+      "store_file": "challenge-first-warning.store.json",
+      "store_sha256": "a6581d6d8ee9cdf04a998adb65ee7fa61882e7c589bbd34e22de2dabdd583719",
+      "actual_public_dash_count": 1,
+      "original_local_key_count": 17
+    }
+  ],
+  "scope": "Root reread actual native rows, original terminal result and all eight original literal raw files. Original raw-Store checksum/gen1 semantics additionally tested by actual producer/wrapper rows; no host Exact reinterpretation or new native check. Four actual old-writer Player+Level+Store pairs only; no Shell/lateclear/route/allkill/exit/portrait credit. Production Canal source remains original. Existing candidate independent review remains separate.",
+  "host_review_correction": "Initial review command expected empty object for source_delta; actual original schema uses empty array. Corrected host observation only; native evidence unchanged/no rerun."
+}

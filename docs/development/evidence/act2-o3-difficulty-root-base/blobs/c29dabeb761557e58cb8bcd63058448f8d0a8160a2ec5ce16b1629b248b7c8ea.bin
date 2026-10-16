@@ -1,0 +1,677 @@
+{
+  "schema_version": 1,
+  "kind": "current-private-A2-O3-original-producer-readiness-review",
+  "reviewed_at_utc": "2026-10-15T09:57:00.748624+00:00",
+  "status": "READY_FOR_ROOT_EXACT_IGNORED_SCRIPT_SELECTION_THEN_ONE_CANONICAL_QUEUED_PRODUCER; NO_CURRENT_SOURCE_DRIFT",
+  "scope": "Read-only named37 source plus explicit72 script/UID/runner selection comparison and source readiness review. No broad recensus, engine, preflight, import, parse, promotion, worker02, Git, mailbox or production mutation.",
+  "capsule": {
+    "manifest_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-o3-difficulty-20261015/manifest.json",
+    "manifest_sha256": "cf65f760ed0f30430db0d3f4f5abfcaeb8c31d388b8e49806d6ae58f0cfc31e5",
+    "all12_manifest_members_hash_and_size_exact": true,
+    "producer_draft": {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-o3-difficulty-20261015/producer.gd.txt",
+      "sha256": "92f2c28e5bb235f1f1e7f47f3c31584db3fd6ba86ddeb7f81530f8fc110aa200",
+      "bytes": 16444
+    },
+    "runner": {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-o3-difficulty-20261015/run_producer.py",
+      "sha256": "4bf3631bcf59a4fdebf851ef83125d6f85ee3e07196fd3ba78bd3febe44ef83f",
+      "host_AST_valid": true,
+      "removable_assert_nodes": 0
+    },
+    "original_seal": {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-o3-difficulty-20261015/runner-seal.json",
+      "sha256": "34eee7b8b4e07be3df04d76d693f83b75f810e60fc72b7544cf6696adb4264b6",
+      "explicit_names": 72,
+      "source_names": 37,
+      "present_expected": 71,
+      "intentionally_absent_UID": ".cinder/a2-o3-difficulty-20261015/producer.gd.uid"
+    },
+    "original_capsule_and_seal_untouched": true
+  },
+  "current_comparison": {
+    "all37_original_source_bytes_match": true,
+    "matches": 71,
+    "actual_present_files": 70,
+    "matching_absent_UID": 1,
+    "mismatches": [
+      {
+        "path": ".cinder/a2-o3-difficulty-20261015/producer.gd",
+        "expected_sha256": "92f2c28e5bb235f1f1e7f47f3c31584db3fd6ba86ddeb7f81530f8fc110aa200",
+        "current_sha256": null,
+        "match": false,
+        "present": false
+      }
+    ],
+    "full_named_observations": [
+      {
+        "path": ".cinder/a2-o3-difficulty-20261015/PRODUCER_INPUT_PROPOSAL.json",
+        "expected_sha256": "e3fa2a91a2d45086b2698c043c6b29a73a7d98962a31baa2bf92a8dfc7d0331c",
+        "current_sha256": "e3fa2a91a2d45086b2698c043c6b29a73a7d98962a31baa2bf92a8dfc7d0331c",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": ".cinder/a2-o3-difficulty-20261015/producer.gd",
+        "expected_sha256": "92f2c28e5bb235f1f1e7f47f3c31584db3fd6ba86ddeb7f81530f8fc110aa200",
+        "current_sha256": null,
+        "match": false,
+        "present": false
+      },
+      {
+        "path": ".cinder/a2-o3-difficulty-20261015/producer.gd.txt",
+        "expected_sha256": "92f2c28e5bb235f1f1e7f47f3c31584db3fd6ba86ddeb7f81530f8fc110aa200",
+        "current_sha256": "92f2c28e5bb235f1f1e7f47f3c31584db3fd6ba86ddeb7f81530f8fc110aa200",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": ".cinder/a2-o3-difficulty-20261015/producer.gd.uid",
+        "expected_sha256": null,
+        "current_sha256": null,
+        "match": true,
+        "present": false
+      },
+      {
+        "path": ".cinder/a2-o3-difficulty-20261015/run_producer.py",
+        "expected_sha256": "4bf3631bcf59a4fdebf851ef83125d6f85ee3e07196fd3ba78bd3febe44ef83f",
+        "current_sha256": "4bf3631bcf59a4fdebf851ef83125d6f85ee3e07196fd3ba78bd3febe44ef83f",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "data/design/difficulty_profiles.json",
+        "expected_sha256": "891baa4d087a1f35da0581c5dc6b888274296686144b3c8f5609249245def41c",
+        "current_sha256": "891baa4d087a1f35da0581c5dc6b888274296686144b3c8f5609249245def41c",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "data/design/player_equipment.json",
+        "expected_sha256": "737cf534df88fa965ab568f750515eb17098688d268e5b6b699de5cd519b98d1",
+        "current_sha256": "737cf534df88fa965ab568f750515eb17098688d268e5b6b699de5cd519b98d1",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "project.godot",
+        "expected_sha256": "cc0fcb840085aaf7e59ca231df3cf1b21f67dd17a5e87f9f4c46729a5f7bbb1f",
+        "current_sha256": "cc0fcb840085aaf7e59ca231df3cf1b21f67dd17a5e87f9f4c46729a5f7bbb1f",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scenes/acts/act2/a2_o3.tscn",
+        "expected_sha256": "487091adb72bbcd551b27083d16c26213b02e19538606558ac92da4befb24291",
+        "current_sha256": "487091adb72bbcd551b27083d16c26213b02e19538606558ac92da4befb24291",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scenes/main.tscn",
+        "expected_sha256": "c0c169890eed0afb26b1a09a017d45c90a64aa8ba874a683deb141c4190ee06b",
+        "current_sha256": "c0c169890eed0afb26b1a09a017d45c90a64aa8ba874a683deb141c4190ee06b",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scenes/player.tscn",
+        "expected_sha256": "68cf79442eb217cb0e2afcc4099080ba79c3f3b2c548655195d0864f4fc8bfac",
+        "current_sha256": "68cf79442eb217cb0e2afcc4099080ba79c3f3b2c548655195d0864f4fc8bfac",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/acts/act2/bleached_canal.gd",
+        "expected_sha256": "72beb07a1aa9f8e0de25266de783eb195ee278596fe4506ae4176abfbd0d7f4c",
+        "current_sha256": "72beb07a1aa9f8e0de25266de783eb195ee278596fe4506ae4176abfbd0d7f4c",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/acts/act2/bleached_canal.gd.uid",
+        "expected_sha256": "d14455ef718f3fea8ac02da0f028e56f0ae153047e58de1f853371cbba451f6a",
+        "current_sha256": "d14455ef718f3fea8ac02da0f028e56f0ae153047e58de1f853371cbba451f6a",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/acts/act2/bleached_canal_kit.gd",
+        "expected_sha256": "432b8d059ee7541ebae86119939a9c6fe959a7311fce26d1e19c2c61a6aea56e",
+        "current_sha256": "432b8d059ee7541ebae86119939a9c6fe959a7311fce26d1e19c2c61a6aea56e",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/acts/act2/bleached_canal_kit.gd.uid",
+        "expected_sha256": "43337618f8d9a7bf79e0c750030fd9ab5081db08f3b9208837aba6f3d30d32be",
+        "current_sha256": "43337618f8d9a7bf79e0c750030fd9ab5081db08f3b9208837aba6f3d30d32be",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/acts/act2/heath_kit.gd",
+        "expected_sha256": "77768bc24573be2ce25f2255bf8ffa3adbcd363e00bdaf6125692c1cbf0bd4ac",
+        "current_sha256": "77768bc24573be2ce25f2255bf8ffa3adbcd363e00bdaf6125692c1cbf0bd4ac",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/acts/act2/heath_kit.gd.uid",
+        "expected_sha256": "d0db1c03dc92d953cba5d5e137acd7abbf217632e7b8c1fb089f4cf28782376a",
+        "current_sha256": "d0db1c03dc92d953cba5d5e137acd7abbf217632e7b8c1fb089f4cf28782376a",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/acts/act2/london_approaches_kit.gd",
+        "expected_sha256": "9aa9c32e5d2c5804df5dffe7b1fef1098e7c9626e4f349951d0e060680121437",
+        "current_sha256": "9aa9c32e5d2c5804df5dffe7b1fef1098e7c9626e4f349951d0e060680121437",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/acts/act2/london_approaches_kit.gd.uid",
+        "expected_sha256": "a9b157b97aab2e26037f5af4559ccf7b437de74ddd4b00a8f242f99e1f41d0f2",
+        "current_sha256": "a9b157b97aab2e26037f5af4559ccf7b437de74ddd4b00a8f242f99e1f41d0f2",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/acts/act2/ray_scout_actor.gd",
+        "expected_sha256": "dee72b851cb20b234a05552d07eae9cebd7490ee0fad12b3970da51eae132bb7",
+        "current_sha256": "dee72b851cb20b234a05552d07eae9cebd7490ee0fad12b3970da51eae132bb7",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/acts/act2/ray_scout_actor.gd.uid",
+        "expected_sha256": "bf1ca88edd2734508e088b870e58aee6607041d15a187df545363f3aa31a3147",
+        "current_sha256": "bf1ca88edd2734508e088b870e58aee6607041d15a187df545363f3aa31a3147",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/acts/act2/ray_scout_exchange.gd",
+        "expected_sha256": "6d8e11a29254cad18947655d8e7470d7892b18e856e534859ae6211a897ae7e2",
+        "current_sha256": "6d8e11a29254cad18947655d8e7470d7892b18e856e534859ae6211a897ae7e2",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/acts/act2/ray_scout_exchange.gd.uid",
+        "expected_sha256": "109bb1249494d294554492120b9bc6e3a56623ac93bb45f78273ad05eb56964d",
+        "current_sha256": "109bb1249494d294554492120b9bc6e3a56623ac93bb45f78273ad05eb56964d",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/acts/act2/ray_scout_visual.gd",
+        "expected_sha256": "dda58dd611044a434d25206a03ac1b2b5f73270373d613e3a2fcc7bb5539879a",
+        "current_sha256": "dda58dd611044a434d25206a03ac1b2b5f73270373d613e3a2fcc7bb5539879a",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/acts/act2/ray_scout_visual.gd.uid",
+        "expected_sha256": "2c342d9add57fe98eea2c9557a971affdfed580ded30bda1edc59a5a9e4c8217",
+        "current_sha256": "2c342d9add57fe98eea2c9557a971affdfed580ded30bda1edc59a5a9e4c8217",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/acts/act2/ruined_house_kit.gd",
+        "expected_sha256": "19c694d6257856605f3b175a288ce611a3da2a9d916a1151ce4600512a7f3505",
+        "current_sha256": "19c694d6257856605f3b175a288ce611a3da2a9d916a1151ce4600512a7f3505",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/acts/act2/ruined_house_kit.gd.uid",
+        "expected_sha256": "cb5bc95e9659d9566daa53edb7d5cbab44fb65afa0fa3d0387b65220466c43b0",
+        "current_sha256": "cb5bc95e9659d9566daa53edb7d5cbab44fb65afa0fa3d0387b65220466c43b0",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/acts/act2/salvage_handler_actor.gd",
+        "expected_sha256": "42457249e8a30e2d28ad0d03017d16e2f5158092ad3531e528ccf6beb3f70d96",
+        "current_sha256": "42457249e8a30e2d28ad0d03017d16e2f5158092ad3531e528ccf6beb3f70d96",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/acts/act2/salvage_handler_actor.gd.uid",
+        "expected_sha256": "5113c91bd8fc2b39c66747b85bb636a306e91af322760edd9dd9f08a082a4bd9",
+        "current_sha256": "5113c91bd8fc2b39c66747b85bb636a306e91af322760edd9dd9f08a082a4bd9",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/acts/act2/salvage_handler_visual.gd",
+        "expected_sha256": "601b6713e01d7883d729729eb30c16ca80f23b22359e32ae6bc2ee4ff1ff08d2",
+        "current_sha256": "601b6713e01d7883d729729eb30c16ca80f23b22359e32ae6bc2ee4ff1ff08d2",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/acts/act2/salvage_handler_visual.gd.uid",
+        "expected_sha256": "1691399738950ffe35ec2dc47c25c3a68cfdbe9cf3cb7c9f569e3aa57cf5be60",
+        "current_sha256": "1691399738950ffe35ec2dc47c25c3a68cfdbe9cf3cb7c9f569e3aa57cf5be60",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/acts/act2/weybridge_scout_actor.gd",
+        "expected_sha256": "7e90bfc541c467162a5a0b0afd6891e8aa6dda9835a4da05362e9301eed78916",
+        "current_sha256": "7e90bfc541c467162a5a0b0afd6891e8aa6dda9835a4da05362e9301eed78916",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/acts/act2/weybridge_scout_actor.gd.uid",
+        "expected_sha256": "5989b7441d9204072dc29781966826bd710f010803cbab20d3779c67a424ea1a",
+        "current_sha256": "5989b7441d9204072dc29781966826bd710f010803cbab20d3779c67a424ea1a",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/campaign/exact_json.gd",
+        "expected_sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+        "current_sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/campaign/exact_json.gd.uid",
+        "expected_sha256": "17b8db6b593b5d323901d318d07cf82a9562731d8254bfe418e70a7544f883e0",
+        "current_sha256": "17b8db6b593b5d323901d318d07cf82a9562731d8254bfe418e70a7544f883e0",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/campaign/level.gd",
+        "expected_sha256": "27fdab6686d8ba4b8282c48af84c0c3f63d8c8fa7620ae462a4642ec225100c1",
+        "current_sha256": "27fdab6686d8ba4b8282c48af84c0c3f63d8c8fa7620ae462a4642ec225100c1",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/campaign/level.gd.uid",
+        "expected_sha256": "3f1289a9ee3e3586e0e5b16600517f7af18a79ae7bdc01b1a440ec7f9155b812",
+        "current_sha256": "3f1289a9ee3e3586e0e5b16600517f7af18a79ae7bdc01b1a440ec7f9155b812",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/campaign/save_store.gd",
+        "expected_sha256": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0",
+        "current_sha256": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/campaign/save_store.gd.uid",
+        "expected_sha256": "9d900a8ada96ac304fb1df06c8b93a6dc5e4d5ce0569158d0c3f00e362ac39d1",
+        "current_sha256": "9d900a8ada96ac304fb1df06c8b93a6dc5e4d5ce0569158d0c3f00e362ac39d1",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/campaign/snapshot_codec.gd",
+        "expected_sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+        "current_sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/campaign/snapshot_codec.gd.uid",
+        "expected_sha256": "3d1e2bebc4e99f59d00b208037bef7e66119959d08b935c2b2b4fc72d7df5e82",
+        "current_sha256": "3d1e2bebc4e99f59d00b208037bef7e66119959d08b935c2b2b4fc72d7df5e82",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/character/player_presentations.gd",
+        "expected_sha256": "046b716e4030926ac89788bc4fb33ca893c9cf4ba20cdbd8284954d15dfc3f01",
+        "current_sha256": "046b716e4030926ac89788bc4fb33ca893c9cf4ba20cdbd8284954d15dfc3f01",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/character/player_presentations.gd.uid",
+        "expected_sha256": "c355fe1b339f0cd9f9ce696caa5c1856cc16b482d97db52481e1d07c6ac92651",
+        "current_sha256": "c355fe1b339f0cd9f9ce696caa5c1856cc16b482d97db52481e1d07c6ac92651",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/combat/body_sweep.gd",
+        "expected_sha256": "bddf3956d85c656fedea6bbce952ceb494c76867cdba895ff089abeb4c31eab9",
+        "current_sha256": "bddf3956d85c656fedea6bbce952ceb494c76867cdba895ff089abeb4c31eab9",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/combat/body_sweep.gd.uid",
+        "expected_sha256": "ef81e08a544e454636c523ea797029954359eead30c94e225c7de6893dcdcc74",
+        "current_sha256": "ef81e08a544e454636c523ea797029954359eead30c94e225c7de6893dcdcc74",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/combat/difficulty.gd",
+        "expected_sha256": "e6a0aba9b39697cf59837165ebec858b0dd15c7573f66d79eadc58595ed2e7ae",
+        "current_sha256": "e6a0aba9b39697cf59837165ebec858b0dd15c7573f66d79eadc58595ed2e7ae",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/combat/difficulty.gd.uid",
+        "expected_sha256": "67649a881ed65fed80580798646a09b1916ad8ca03a7442dca805f234087685b",
+        "current_sha256": "67649a881ed65fed80580798646a09b1916ad8ca03a7442dca805f234087685b",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/combat/lane_mechanism.gd",
+        "expected_sha256": "bcf6558d4ae57c4bf8714ae6fe6b1896b3c7c0be3b6a8a9f3178451653bd031d",
+        "current_sha256": "bcf6558d4ae57c4bf8714ae6fe6b1896b3c7c0be3b6a8a9f3178451653bd031d",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/combat/lane_mechanism.gd.uid",
+        "expected_sha256": "458facdf13d863350dc2ebe082dbf77f6ef5bdaf2f1ceba7ebeba34055c20a6f",
+        "current_sha256": "458facdf13d863350dc2ebe082dbf77f6ef5bdaf2f1ceba7ebeba34055c20a6f",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/combat/threat_geometry.gd",
+        "expected_sha256": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+        "current_sha256": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/combat/threat_geometry.gd.uid",
+        "expected_sha256": "dbffe6e46566832c1126d98a643d508a68219fec591d4662f7bccfe297ddccdd",
+        "current_sha256": "dbffe6e46566832c1126d98a643d508a68219fec591d4662f7bccfe297ddccdd",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/combat/threat_scheduler.gd",
+        "expected_sha256": "c28ea9f4cd6c1ff9aedbc9cfc45a28826c589c095b9193b565f45d23c3df903d",
+        "current_sha256": "c28ea9f4cd6c1ff9aedbc9cfc45a28826c589c095b9193b565f45d23c3df903d",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/combat/threat_scheduler.gd.uid",
+        "expected_sha256": "54a051d030eef72dfce3f58a9073b3bce0f469720124e948c251f22a064e974d",
+        "current_sha256": "54a051d030eef72dfce3f58a9073b3bce0f469720124e948c251f22a064e974d",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/cues/interaction_cue.gd",
+        "expected_sha256": "2dcd082ea187250e227829957a04f1eb56e255b648aaabcf977b95a28cf2ffc2",
+        "current_sha256": "2dcd082ea187250e227829957a04f1eb56e255b648aaabcf977b95a28cf2ffc2",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/cues/interaction_cue.gd.uid",
+        "expected_sha256": "e60bea9dccf00e376e4869c338851a7162dfd547a1327297b28910ccc4cb1ac2",
+        "current_sha256": "e60bea9dccf00e376e4869c338851a7162dfd547a1327297b28910ccc4cb1ac2",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/cues/threat_cue.gd",
+        "expected_sha256": "c8a7abbbd4c021ec92c45e1e57fc966873110231b781dba00bd1ff3d63f5cc5a",
+        "current_sha256": "c8a7abbbd4c021ec92c45e1e57fc966873110231b781dba00bd1ff3d63f5cc5a",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/cues/threat_cue.gd.uid",
+        "expected_sha256": "147d2f591ebb3ad3af17a4111b3118811c23bc2e83f3fc6f7574c38c860d4425",
+        "current_sha256": "147d2f591ebb3ad3af17a4111b3118811c23bc2e83f3fc6f7574c38c860d4425",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/dev/dev.py",
+        "expected_sha256": "585febb8214f0be367c0525295953faad80a5ab644bde757346ea41feac0571d",
+        "current_sha256": "585febb8214f0be367c0525295953faad80a5ab644bde757346ea41feac0571d",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/effects.gd",
+        "expected_sha256": "c5b8294b88e999d913a9043fd9f588a2b1f7f942280c71945a92d91d1be5b6d7",
+        "current_sha256": "c5b8294b88e999d913a9043fd9f588a2b1f7f942280c71945a92d91d1be5b6d7",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/effects.gd.uid",
+        "expected_sha256": "d0042236bbd05c3b01e337610154c0b00d3e38970ee381441832b2a7f9fcc831",
+        "current_sha256": "d0042236bbd05c3b01e337610154c0b00d3e38970ee381441832b2a7f9fcc831",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/equipment.gd",
+        "expected_sha256": "2f721f0e7af0d1034ae9f92c37b4af3c3223171d0e5d2c120e42c00ae9155ab0",
+        "current_sha256": "2f721f0e7af0d1034ae9f92c37b4af3c3223171d0e5d2c120e42c00ae9155ab0",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/equipment.gd.uid",
+        "expected_sha256": "25917e75633ca2b0c2133142882fc15ab97373c69a71fc1377bed7ff1d096b4a",
+        "current_sha256": "25917e75633ca2b0c2133142882fc15ab97373c69a71fc1377bed7ff1d096b4a",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/game.gd",
+        "expected_sha256": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26",
+        "current_sha256": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/game.gd.uid",
+        "expected_sha256": "ef1b176ec4e92535f63b4913fd257364b2e2e20250bb21ab152d44a55f083129",
+        "current_sha256": "ef1b176ec4e92535f63b4913fd257364b2e2e20250bb21ab152d44a55f083129",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/hud.gd",
+        "expected_sha256": "3a76c06a97da117b2fbd43824d88f3ef5150e6ad0045b5e27766b8d70542897b",
+        "current_sha256": "3a76c06a97da117b2fbd43824d88f3ef5150e6ad0045b5e27766b8d70542897b",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/hud.gd.uid",
+        "expected_sha256": "70a9ef089b6201cdd4e82f8c617ac548e11145f62e7fcd1aaa36f82f425a85c5",
+        "current_sha256": "70a9ef089b6201cdd4e82f8c617ac548e11145f62e7fcd1aaa36f82f425a85c5",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/pixel_sprite.gd",
+        "expected_sha256": "69a1846a55d251b1e8b44764b429546b814f97aba18379c7ee06b3267938747a",
+        "current_sha256": "69a1846a55d251b1e8b44764b429546b814f97aba18379c7ee06b3267938747a",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/pixel_sprite.gd.uid",
+        "expected_sha256": "e122d2f88538ac29e667e57008aacc678de4ed9d92a1be0493f37687b0a0b9d3",
+        "current_sha256": "e122d2f88538ac29e667e57008aacc678de4ed9d92a1be0493f37687b0a0b9d3",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/player.gd",
+        "expected_sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+        "current_sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/player.gd.uid",
+        "expected_sha256": "064e4b400f36f2e612baa7a0ec47fd22ac2de3dac6646e02b9921f3675784d70",
+        "current_sha256": "064e4b400f36f2e612baa7a0ec47fd22ac2de3dac6646e02b9921f3675784d70",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/presentation/camera_framing.gd",
+        "expected_sha256": "daf839d1e35497c88a59d4c1c2af7bb02194418e2c667aceb677242bd642c39b",
+        "current_sha256": "daf839d1e35497c88a59d4c1c2af7bb02194418e2c667aceb677242bd642c39b",
+        "match": true,
+        "present": true
+      },
+      {
+        "path": "scripts/presentation/camera_framing.gd.uid",
+        "expected_sha256": "64b72a728eb61dfdd37069ff53b7259483bef7d3c238660617af463b1b50778a",
+        "current_sha256": "64b72a728eb61dfdd37069ff53b7259483bef7d3c238660617af463b1b50778a",
+        "match": true,
+        "present": true
+      }
+    ],
+    "registry_qualification": "data/campaign/registry.json and Shell/Registry scripts are not in this producer37/72 scope. This script explicitly instantiates scenes/main.tscn under its own SceneTree; Game and Canal selected source paths do not read canonical Registry. Current A3-O3 acceptance therefore produces no named source mismatch and does not change these original Canal mechanics. Do not claim this narrow set is whole-project/dependency/global-UID closure.",
+    "historical_capsule_context": "manifest.current_frozen_L2_files_not_edited records preparation-time context, not a current all-L2 freeze; those extra wrapper states are not this producer seal. No drift outside the named37/72 set was recounted."
+  },
+  "need_fresh_seal": false,
+  "smallest_next_selection": {
+    "owner": "Root only; not performed by reviewer",
+    "source": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-o3-difficulty-20261015/producer.gd.txt",
+    "destination": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-o3-difficulty-20261015/producer.gd",
+    "required_exact_sha256": "92f2c28e5bb235f1f1e7f47f3c31584db3fd6ba86ddeb7f81530f8fc110aa200",
+    "operation": "Exclusive byte-for-byte copy only while destination remains absent; if it appears, inspect rather than overwrite. Preserve existing .txt, runner, original seal/proposal/manifest. Do not create/change producer.gd.uid. Recheck all72 after copy; it should match original seal exactly.",
+    "why_no_reseal": "The original seal already expects the exact selected producer.gd bytes; every other named observation including absent UID matches now. Do not silently repin."
+  },
+  "supported_next_command": {
+    "cwd": "/Users/howardchen/Documents/ChatGPT/video game idea",
+    "argv": [
+      "python3",
+      ".cinder/a2-o3-difficulty-20261015/run_producer.py"
+    ],
+    "prerequisites": [
+      "Root exclusive exact .txt-to-.gd selection; no candidate constructor/data promotion first.",
+      "Recheck unchanged named seal and no conflicting active frozen-input ownership; canonical queue will wait normally.",
+      "Root supplies scoped Store permission for the unique test directory below."
+    ],
+    "actual_native_command": "<dev.resolve_godot(context)> --path /Users/howardchen/Documents/ChatGPT/video game idea --headless --log-file <new unique capsule output>/engine.log --script res://.cinder/a2-o3-difficulty-20261015/producer.gd",
+    "timeouts": {
+      "native_watchdog_s": 150,
+      "owned_direct_child_s_after_queue_acquisition": 180,
+      "per_wait_wall_s": 20,
+      "per_wait_barriers": 2400,
+      "queue_wait_excluded": true
+    },
+    "scope": "One original-source producer with four literal original Player+Level pairs; no route or changed candidate runtime. Native parse happens as part of this bounded queued call; no mandatory broad import or duplicate route is proposed.",
+    "do_not_run_before_copy": "Current direct runner would make a unique CLOSED2 preflight artifact with engine_started=false because the script is absent; that is expected preparation state, not a Godot failure. Reviewer did not trigger it."
+  },
+  "Store_access": {
+    "project_config_name": "Cinder",
+    "existing_expected_mac_userdata_directory": "/Users/howardchen/Library/Application Support/Godot/app_userdata/Cinder",
+    "directory_exists_on_read": true,
+    "unique_native_prefix": "user://test-a2-o3-new-old17-producer-<PID>-<ticks_usec>/",
+    "expected_absolute_prefix": "/Users/howardchen/Library/Application Support/Godot/app_userdata/Cinder/test-a2-o3-new-old17-producer-<PID>-<ticks_usec>/",
+    "files": [
+      "standard-entrance.json",
+      "standard-first-warning.json",
+      "challenge-entrance.json",
+      "challenge-first-warning.json",
+      "Store-owned temporary sibling files during atomic write/rename"
+    ],
+    "sandbox_requirement": "These own unique user:// fixture Store writes are outside workspace writable roots. Root should launch the exact queued runner with scoped filesystem escalation for its isolated Store directory, as prior authorized native producers required. No new broad user campaign save/settings write is needed. The wrapper never self-escalates.",
+    "output_inside_workspace": "Runner allocates a new capsule native-<UTC>-<UUID> directory with raw/report/source/index evidence; native wire/raw Store copies are retained there before own temp Store directory cleanup.",
+    "cleanup": "Native finish removes only files inside its own unique test_root, then that directory; normal public level exit releases leases and entire Main/source/cue tree.",
+    "resolution_limit": "The existing standard macOS Cinder directory was observed on disk; this read-only review did not call a new engine ProjectSettings.get_user_data_dir."
+  },
+  "producer_semantics": [
+    {
+      "path": "producer.gd.txt",
+      "lines": [
+        52,
+        86
+      ],
+      "fact": "Original root SHA72beb07a is required. Standard and oldChallenge are selected before Main tree entry, not modified saved packets. Paused entrance precedes simulation. Exactly one real forward request_dash is issued after actual native floor/stability; complete native action/origin/landing/stats and <3.8m admission are checked."
+    },
+    {
+      "path": "producer.gd.txt",
+      "lines": [
+        89,
+        124
+      ],
+      "fact": "Actual original Main/Canal/shared Player/Scheduler and neutral kit are constructed. Post-physics-priority300 deferred barrier is observation-only. First Scout must be running warning, unarmed and paired to actual source owner/profile/lease; no direct native clock/phase or lease edit."
+    },
+    {
+      "path": "producer.gd.txt",
+      "lines": [
+        126,
+        179
+      ],
+      "fact": "Independent full native Player+Level prevalidation requires original outer campaign-level-1/localversion1/world1 and closed17 local keys with no arrangement metadata. No defeated/contact/checkpoint/completion history; all four configured actor roots and HP30 remain original. Exact full wire and format2 generation1 raw Store reread/recapture are checked."
+    },
+    {
+      "path": "producer.gd.txt",
+      "lines": [
+        182,
+        220
+      ],
+      "fact": "Whole owned Main/native source/cue references and lease release are checked at normal cleanup; actual closed assertion rows/first failure/complete/partial packets are retained. This is new execution of original source, not historical recovery."
+    },
+    {
+      "path": "scripts/acts/act2/bleached_canal.gd",
+      "lines": [
+        140,
+        181,
+        192,
+        239
+      ],
+      "fact": "Original once-configure positions and tools use unchanged literal map. Original stage0 permits first_scout only, checks distance<=3.8 and native exchange activation. Spawn z2.6 is outside range; ordinary forward dash is necessary and correctly included."
+    }
+  ],
+  "compile_and_type_readiness": {
+    "native_Godot_parse_executed": false,
+    "concrete_compile_defect_identified": false,
+    "checks": [
+      "Python runner AST parses and contains no removable assert nodes; runtime require checks stay active under Python-O.",
+      "Producer variables consuming Variant-returning native state are explicitly typed. The only := sites are preloaded Store.new and typed native FileAccess/DirAccess factories; no new arbitrary Script.new inference was identified.",
+      "Inner ProfileMain extends exact Game and changes only disclosed pre-tree preference. All actual Player/controller/native geometry types and source scripts stay original.",
+      "No reserved_threat_budget-is-int trap exists in this producer. Profile joins use saved id/native profile without normalizing canonical numeric scalar types.",
+      "Host packet reader requires original native Exact control tags for level/local version/world/stage and accepts actual raw format2 integer serializer tags. It observes known paths; complete native validators remain the authority."
+    ],
+    "remaining_real_risks": [
+      "Godot may still reveal a parser/resource or actual native validation failure; retain that original result and fix only a demonstrated targeted issue.",
+      "First-warning scheduling under real engine timing is unexecuted; missing a real warning, invalid native pair or unexpected UID/source drift must fail and remain evidence.",
+      "No actual old native packets have been produced here. Changed final-pair candidate feasibility, saves/Continue/Retry and visuals remain later independent focused work."
+    ]
+  },
+  "not_required": [
+    "No Agent02 wake, checkout reassignment or worker message.",
+    "No full route, enemy defeat, exit, earned checkpoint, clear export or broad suite.",
+    "No new source seal merely because unrelated Registry/A2-L2 publication advanced outside the selected producer set."
+  ],
+  "execution": {
+    "engine_or_preflight": false,
+    "producer_gd_promoted": false,
+    "production_or_candidate_edits": false,
+    "source_or_UID_reseal": false,
+    "Git_or_mailbox_or_worker_mutation": false,
+    "private_review_outputs_only": true
+  }
+}

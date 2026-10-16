@@ -1,5 +1,5 @@
 extends CinderLevel
-## TMP source draft: three familiar arrangements over unchanged public consumers.
+## PRIVATE retained-arrangement candidate: exact Standard plus final Challenge slot exchange.
 ## One shared Player/Scheduler; no resource grant, copied kernel or new controls.
 ## Shell owns durable checkpoint/optional return. Geometry and mixed framing are
 ## provisional until focused native loading/mechanics/transport/portraits run.
@@ -16,6 +16,13 @@ const Codec: Script = preload("res://scripts/campaign/snapshot_codec.gd")
 const AdmissionEquipment: Script = preload("res://scripts/equipment.gd")
 const SharedGame: Script = preload("res://scripts/game.gd")
 const SceneryMaterials: Script = preload("res://scripts/acts/act2/ruined_house_kit.gd")
+const Arrangement: Script = preload("res://scripts/combat/encounter_arrangement.gd")
+const Difficulty: Script = preload("res://scripts/combat/difficulty.gd")
+const Exact: Script = preload("res://scripts/campaign/exact_json.gd")
+const ARRANGEMENT_PATH: String = "res://data/campaign/act2/a2_o3_difficulty_arrangements.json"
+const ARRANGEMENT_API: String = "act2-bleached-canal-level-2"
+const CANONICAL_RECIPES: Dictionary = {"assisted":"A2-O3/assisted-canonical@v1", "standard":"A2-O3/standard-canonical@v1", "challenge":"A2-O3/challenge-canonical-legacy@v1"}
+const CHALLENGE_RECIPE: String = "A2-O3/challenge-near-handler@v2"
 const ENCOUNTER_ID: String = "A2-O3-bleached-canal"
 const WORLD_REVISION: int = 1
 const FLOOR_RECT: Rect2 = Rect2(-3.4, -27.0, 6.8, 30.6)
@@ -72,6 +79,102 @@ var _checkpoint_requested: bool = false
 var _pending_checkpoint: bool = false
 var _completion_pending: bool = false
 var _exit_requested: bool = false
+
+# Immutable per-construction receipt; never progress or native safety authority.
+var _arrangement_definition: Dictionary = {}
+var _arrangement_descriptor: Dictionary = {}
+var _selected_positions: Dictionary = {}
+var _legacy_capture: bool = false
+var _construction_started: bool = false
+
+static func arrangement_definition_error(definition: Variant) -> String:
+	var error: String = Arrangement.definition_error(definition)
+	if not error.is_empty(): return error
+	if definition.unit_ids != ACTOR_IDS or definition.recipes.size() != 4:
+		return "Canal requires its four original units and four retained recipes"
+	var expected: Dictionary = {}
+	for profile: String in CANONICAL_RECIPES:
+		expected[CANONICAL_RECIPES[profile]] = {"recipe_id":CANONICAL_RECIPES[profile], "profile":profile, "order":ACTOR_IDS.duplicate()}
+	var challenge: Array = ACTOR_IDS.duplicate()
+	challenge[2] = "final_handler"
+	challenge[3] = "final_scout"
+	expected[CHALLENGE_RECIPE] = {"recipe_id":CHALLENGE_RECIPE, "profile":"challenge", "order":challenge}
+	for recipe: Dictionary in definition.recipes:
+		if not expected.has(recipe.recipe_id) or not Codec.same_values(recipe, expected[recipe.recipe_id]):
+			return "Canal retained recipe contents cannot be repurposed"
+	return ""
+
+static func arrangement_layout(descriptor: Variant, definition: Variant) -> Dictionary:
+	var error: String = arrangement_definition_error(definition)
+	if not error.is_empty(): return {"error":error}
+	var selector = Arrangement.new(definition)
+	error = selector.saved_error(descriptor)
+	if not error.is_empty(): return {"error":error}
+	var positions: Dictionary = {}
+	for index: int in range(ACTOR_IDS.size()):
+		var id: String = descriptor.order[index]
+		var slot: Vector3 = ACTOR_POSITIONS[ACTOR_IDS[index]]
+		slot.y = (ACTOR_POSITIONS[id] as Vector3).y
+		positions[id] = slot
+	return {"error":"", "descriptor":selector.restore(descriptor), "positions":positions, "profile_id":descriptor.profile}
+
+static func _arrangement_envelope_error(local: Variant) -> String:
+	if not local is Dictionary: return "Canal local state requires a dictionary"
+	var current: bool = local.has("api_revision") or local.has("schema_version") or local.has("arrangement")
+	var keys: Array = LOCAL_KEYS.duplicate()
+	if current: keys.append_array(["api_revision", "schema_version", "arrangement"])
+	var error: String = Codec.keys_error(local, keys)
+	if not error.is_empty(): return error
+	if current and (local.api_revision != ARRANGEMENT_API or not Codec.is_integer(local.schema_version, 2, 2)):
+		return "Unsupported Canal inner arrangement API/schema"
+	return ""
+
+# Pure constructor selection only. Complete original native/history validators
+# still decide packet validity before any quiet commit or completion credit.
+static func arrangement_constructor(local: Variant, definition: Variant) -> Dictionary:
+	var error: String = Codec.value_error(local)
+	if error.is_empty(): error = _arrangement_envelope_error(local)
+	if not error.is_empty(): return {"error":error}
+	if not local.profile_id is String or not CANONICAL_RECIPES.has(local.profile_id) or not Codec.is_integer(local.world_revision, WORLD_REVISION, WORLD_REVISION) or not Codec.is_integer(local.stage_index, 0, 4) or not local.scheduler is Dictionary:
+		return {"error":"Canal construction requires saved canonical local profile/world/stage/Scheduler"}
+	var saved: Dictionary = local.scheduler
+	if not saved.get("profile") is Dictionary or not Codec.is_integer(saved.get("world_revision"), WORLD_REVISION, WORLD_REVISION):
+		return {"error":"Canal construction requires the original saved Scheduler profile/world"}
+	var resolver = Difficulty.new()
+	var canonical: Dictionary = resolver.profile(local.profile_id)
+	if canonical.is_empty(): return {"error":"Unknown saved Canal difficulty profile"}
+	if int(local.stage_index) == 4:
+		if not saved.profile.is_empty() or saved.get("encounter_id") != "" or not saved.get("reservations") is Array or not saved.reservations.is_empty():
+			return {"error":"Cleared Canal constructor requires its original empty Scheduler epoch"}
+	elif saved.get("encounter_id") != ENCOUNTER_ID or Exact.stringify(saved.profile) != Exact.stringify(canonical):
+		return {"error":"Canal live saved Scheduler profile/epoch differs from canonical local profile"}
+	var legacy: bool = not local.has("arrangement")
+	var descriptor: Variant = local.get("arrangement")
+	if legacy:
+		descriptor = {"schema_version":1, "profile":local.profile_id, "recipe_id":CANONICAL_RECIPES[local.profile_id], "order":ACTOR_IDS.duplicate()}
+	var selected: Dictionary = arrangement_layout(descriptor, definition)
+	if not String(selected.error).is_empty(): return selected
+	if selected.profile_id != local.profile_id: return {"error":"Canal retained arrangement and local saved profile differ"}
+	selected["legacy"] = legacy
+	return selected
+
+func restore_candidate_construction_required() -> bool:
+	return true
+
+func _on_enter_restore_candidate(local: Dictionary, _saved_player: Dictionary) -> String:
+	var definition: Variant = JSON.parse_string(FileAccess.get_file_as_string(ARRANGEMENT_PATH))
+	var selected: Dictionary = arrangement_constructor(local, definition)
+	if not String(selected.error).is_empty(): return selected.error
+	_construct_arrangement(selected, definition)
+	return runtime_error
+
+func _arrangement_binding_error(local: Dictionary) -> String:
+	if not _construction_started or _arrangement_definition.is_empty(): return "Canal native selected construction is absent"
+	var selected: Dictionary = arrangement_constructor(local, _arrangement_definition)
+	if not String(selected.error).is_empty(): return selected.error
+	if selected.legacy != _legacy_capture or selected.profile_id != _profile_id or selected.positions != _selected_positions or Exact.stringify(selected.descriptor) != Exact.stringify(_arrangement_descriptor):
+		return "Canal saved arrangement differs from immutable native construction"
+	return ""
 
 func _ready() -> void:
 	process_physics_priority = 110
@@ -140,6 +243,27 @@ func _build_blocker(id: String, at: Vector3, dimensions: Vector3, visible_match:
 func _on_enter_level() -> void:
 	if is_instance_valid(shared_shell) and shared_shell.has_method("get_difficulty_preference"):
 		_profile_id = String(shared_shell.call("get_difficulty_preference"))
+	var definition: Variant = JSON.parse_string(FileAccess.get_file_as_string(ARRANGEMENT_PATH))
+	var error: String = arrangement_definition_error(definition)
+	if not error.is_empty(): runtime_error = error; return
+	var selector = Arrangement.new(definition)
+	var descriptor: Dictionary = selector.select_fresh(_profile_id)
+	if descriptor.is_empty(): runtime_error = selector.last_error; return
+	var selected: Dictionary = arrangement_layout(descriptor, definition)
+	if not String(selected.error).is_empty(): runtime_error = selected.error; return
+	selected["legacy"] = false
+	_construct_arrangement(selected, definition)
+
+func _construct_arrangement(selected: Dictionary, definition: Dictionary) -> void:
+	if _construction_started or is_instance_valid(_scheduler) or not _actors.is_empty() or not _tools.is_empty():
+		runtime_error = "Canal native recipients can only be configured once"
+		return
+	_construction_started = true
+	_arrangement_definition = definition.duplicate(true)
+	_arrangement_descriptor = selected.descriptor.duplicate(true)
+	_selected_positions = selected.positions.duplicate(true)
+	_legacy_capture = selected.legacy
+	_profile_id = selected.profile_id
 	_scheduler = Scheduler.new() as CinderThreatScheduler
 	_scheduler.name = "CanalThreatScheduler"
 	add_child(_scheduler)
@@ -147,7 +271,7 @@ func _on_enter_level() -> void:
 	for id: String in ACTOR_IDS:
 		var actor: Node3D = (ScoutActor.new() if SCOUT_IDS.has(id) else HandlerActor.new()) as Node3D
 		actor.name = id
-		actor.position = ACTOR_POSITIONS[id]
+		actor.position = _selected_positions[id]
 		add_child(actor)
 		if not actor.call("configure",hero,effects,id): runtime_error = "Cannot bind original Canal actor " + id; return
 		_actors[id] = actor
@@ -164,13 +288,13 @@ func _on_enter_level() -> void:
 		_actors[id].connect("defeated",_on_actor_defeated)
 		var cue: Node3D = InteractionCue.new() as Node3D
 		cue.name = "LowToolOpening_" + id
-		cue.position = ACTOR_POSITIONS[id]
+		cue.position = _selected_positions[id]
 		add_child(cue)
 		_opening_cues[id] = cue
 		if not _actors[id].call("bind_damage_window",Callable(self,"_handler_window").bind(id)): runtime_error = "Cannot bind original Handler recovery gate " + id; return
 		var tool: Node3D = Lane.new() as Node3D
 		tool.name = TOOL_IDS[id]
-		tool.position = ACTOR_POSITIONS[id]
+		tool.position = _selected_positions[id]
 		add_child(tool)
 		_tools[id] = tool
 		if not tool.call("configure",TOOL_IDS[id],_tool_geometry(id),_actors[id].global_position,TOOL_ROLE,TOOL_FLOORS) or not tool.call("bind",_scheduler,{"hero":hero}) or not tool.call("set_presentation_guard",_tool_presentation_guard): runtime_error = "Cannot bind original Handler Lane " + id; return
@@ -325,7 +449,7 @@ func _source_state(id: String) -> Dictionary:
 	return _tools[id].call("state") if _node_live(_tools.get(id)) else {}
 
 func _tool_geometry(id: String) -> Dictionary:
-	var at: Vector3 = ACTOR_POSITIONS[id]
+	var at: Vector3 = _selected_positions[id]
 	return Geometry.lane(at,at + Vector3.BACK * 3.8,0.31)
 
 func _handler_for_tool(id: String) -> String:
@@ -840,6 +964,10 @@ func encounter_state() -> Dictionary:
 
 func _runtime_content_error() -> String:
 	if not is_inside_tree() or is_queued_for_deletion() or global_transform != Transform3D.IDENTITY or _actors.size() != 4 or _tools.size() != 2 or _opening_cues.size() != 2 or not _node_live(hero) or not _node_live(_scheduler) or not _node_live(_exchange) or not _node_live(_exit_cue): return "Canal requires its original native runtime unit"
+	if not _construction_started or _arrangement_definition.is_empty(): return "Canal immutable native construction is absent"
+	var selected: Dictionary = arrangement_layout(_arrangement_descriptor, _arrangement_definition)
+	if not String(selected.error).is_empty() or selected.positions != _selected_positions or selected.profile_id != _profile_id:
+		return "Canal native selected positions no longer match retained authored recipe"
 	var spawn: Variant = get_node_or_null(spawn_path)
 	if not _node_live(spawn) or not spawn is Marker3D or spawn.get_parent() != self or spawn.position != SPAWN or spawn.basis != Basis.IDENTITY: return "Canal original reachable feet spawn differs"
 	var body: Variant = _floor.get("body")
@@ -862,13 +990,13 @@ func _runtime_content_error() -> String:
 	for id: String in ACTOR_IDS:
 		var actor: Variant = _actors.get(id)
 		var expected: Script = ScoutActor if SCOUT_IDS.has(id) else HandlerActor
-		if not _node_live(actor) or actor.get_script() != expected or actor.get_parent() != self or actor.global_position != ACTOR_POSITIONS[id] or actor.global_basis != Basis.IDENTITY or String(actor.get("actor_id")) != id or not actor.call("is_armed"): return "Canal fixed native actor custody differs: " + id
+		if not _node_live(actor) or actor.get_script() != expected or actor.get_parent() != self or actor.global_position != _selected_positions[id] or actor.global_basis != Basis.IDENTITY or String(actor.get("actor_id")) != id or not actor.call("is_armed"): return "Canal fixed native actor custody differs: " + id
 		if HANDLER_IDS.has(id):
 			var tool: Variant = _tools.get(id)
 			var cue: Variant = _opening_cues.get(id)
 			if not String(actor.call("damage_window_gate_error",Callable(self,"_handler_window").bind(id))).is_empty(): return "Canal fixed original recovery gate differs: " + id
-			if not _node_live(tool) or tool.get_script() != Lane or tool.get_parent() != self or tool.global_position != ACTOR_POSITIONS[id] or tool.global_basis != Basis.IDENTITY: return "Canal fixed original Lane custody differs: " + id
-			if not _node_live(cue) or cue.get_script() != InteractionCue or cue.get_parent() != self or cue.position != ACTOR_POSITIONS[id] or cue.basis != Basis.IDENTITY: return "Canal actual low tool opening differs: " + id
+			if not _node_live(tool) or tool.get_script() != Lane or tool.get_parent() != self or tool.global_position != _selected_positions[id] or tool.global_basis != Basis.IDENTITY: return "Canal fixed original Lane custody differs: " + id
+			if not _node_live(cue) or cue.get_script() != InteractionCue or cue.get_parent() != self or cue.position != _selected_positions[id] or cue.basis != Basis.IDENTITY: return "Canal actual low tool opening differs: " + id
 	if not _node_live(_kit.get("root")) or _kit.root.get_parent() != self or not _kit.get("signs") is Dictionary or not Codec.keys_error(_kit.signs,["first","second","third"]).is_empty() or not _node_live(_kit.get("canal_prop")) or not is_ancestor_of(_kit.canal_prop): return "Canal actual three quiet signs/scenic prop are missing"
 	return ""
 
@@ -881,7 +1009,12 @@ func _capture_local_state() -> Dictionary:
 	var tools: Dictionary = {}
 	for id: String in ACTOR_IDS: actors[id] = _actors[id].call("snapshot_state")
 	for id: String in HANDLER_IDS: tools[id] = _tools[id].call("snapshot_state",bindings)
-	return {"scenic_clock":_scenic_clock,"profile_id":_profile_id,"world_revision":WORLD_REVISION,"stage_index":_stage_index,"defeated_ids":_defeated_ids.duplicate(),"defeat_times":_defeat_times.duplicate(),"pending_defeats":_pending_defeats.duplicate(true),"checkpoint_contact_seen":_checkpoint_contact_seen,"checkpoint_requested":_checkpoint_requested,"pending_checkpoint":_pending_checkpoint,"completion_pending":_completion_pending,"exit_requested":_exit_requested,"scheduler":_scheduler.snapshot_state(bindings),"actors":actors,"exchange":_exchange.call("snapshot_state",bindings),"tools":tools,"views":_views.duplicate(true)}
+	var local: Dictionary = {"scenic_clock":_scenic_clock,"profile_id":_profile_id,"world_revision":WORLD_REVISION,"stage_index":_stage_index,"defeated_ids":_defeated_ids.duplicate(),"defeat_times":_defeat_times.duplicate(),"pending_defeats":_pending_defeats.duplicate(true),"checkpoint_contact_seen":_checkpoint_contact_seen,"checkpoint_requested":_checkpoint_requested,"pending_checkpoint":_pending_checkpoint,"completion_pending":_completion_pending,"exit_requested":_exit_requested,"scheduler":_scheduler.snapshot_state(bindings),"actors":actors,"exchange":_exchange.call("snapshot_state",bindings),"tools":tools,"views":_views.duplicate(true)}
+	if not _legacy_capture:
+		local["api_revision"] = ARRANGEMENT_API
+		local["schema_version"] = 2
+		local["arrangement"] = _arrangement_descriptor.duplicate(true)
+	return local
 
 func _local_snapshot_error(state: Dictionary) -> String:
 	var player: Dictionary = hero.snapshot_state() if _node_live(hero) else {}
@@ -894,7 +1027,7 @@ func _whole_snapshot_error(state: Dictionary,player: Dictionary) -> String:
 	if not get_tree().paused or not runtime_error.is_empty() or not _forecasts.is_empty(): return "Canal transport requires the paused native commit barrier"
 	var error: String = _runtime_content_error()
 	if error.is_empty(): error = Codec.value_error(state)
-	if error.is_empty(): error = Codec.keys_error(state,LOCAL_KEYS)
+	if error.is_empty(): error = _arrangement_envelope_error(state)
 	if not error.is_empty(): return error
 	if player.is_empty(): return "Canal requires the complete staged native Player"
 	error = hero.snapshot_error(player)
@@ -905,6 +1038,8 @@ func _whole_snapshot_error(state: Dictionary,player: Dictionary) -> String:
 	for key: String in ["defeat_times","scheduler","actors","exchange","tools","views"]:
 		if not state[key] is Dictionary: return "Canal missing exact local dictionary: " + key
 	if not state.defeated_ids is Array or not state.pending_defeats is Array or not Codec.keys_error(state.actors,ACTOR_IDS).is_empty() or not Codec.keys_error(state.tools,HANDLER_IDS).is_empty(): return "Canal requires exact four actors/two tools/history maps"
+	error = _arrangement_binding_error(state)
+	if not error.is_empty(): return error
 	var earned: Array[String] = []
 	var previous_time: float = 0.0
 	for id: Variant in state.defeated_ids:
@@ -944,7 +1079,7 @@ func _whole_snapshot_error(state: Dictionary,player: Dictionary) -> String:
 		error = _actors[id].call("snapshot_error",state.actors[id])
 		if not error.is_empty(): return id + ": " + error
 		var actor: Dictionary = state.actors[id]
-		if actor.root_position != Codec.vector3(ACTOR_POSITIONS[id]) or float(actor.max_hp) != 30.0 or (float(actor.hp) <= 0.0) != earned.has(id): return "Canal actual fixed actor root/HP/history differs: " + id
+		if actor.root_position != Codec.vector3(_selected_positions[id]) or float(actor.max_hp) != 30.0 or (float(actor.hp) <= 0.0) != earned.has(id): return "Canal actual fixed actor root/HP/history differs: " + id
 	error = _exchange.call("snapshot_error",state.exchange,bindings,state.scheduler)
 	if not error.is_empty(): return error
 	# The ended Scheduler has no encounter/profile; retain the authored Ray epoch.
@@ -980,7 +1115,7 @@ func _saved_tool_error(id: String,saved: Dictionary,state: Dictionary) -> String
 	if saved.configuration.raw_role != TOOL_ROLE or saved.configuration.timing_floors != TOOL_FLOORS or saved.configuration.geometry != _encode_geometry(_tool_geometry(id)) or saved.configuration.opening_position != actor.root_position: return "Canal unchanged original Handler shape/opening/role/floors differ"
 	if int(saved.cycle) > 0:
 		var lease: Dictionary = saved.exchange
-		if lease.source_position != Codec.vector3(ACTOR_POSITIONS[id]) or lease.opening_position != actor.root_position or lease.geometry != _encode_geometry(_tool_geometry(id)) or lease.profile_id != state.profile_id or int(lease.world_revision) != WORLD_REVISION or saved.exchange_encounter_id != ENCOUNTER_ID: return "Canal original Lane source/profile/epoch differs"
+		if lease.source_position != Codec.vector3(_selected_positions[id]) or lease.opening_position != actor.root_position or lease.geometry != _encode_geometry(_tool_geometry(id)) or lease.profile_id != state.profile_id or int(lease.world_revision) != WORLD_REVISION or saved.exchange_encounter_id != ENCOUNTER_ID: return "Canal original Lane source/profile/epoch differs"
 	if saved.status == "running" and not state.views.has(id): return "Canal running Handler needs its original accepted view"
 	if saved.status != "running" and state.views.has(id): return "Canal view cannot outlive its original running Handler"
 	if float(actor.hp) <= 0.0 and saved.status == "running": return "Canal defeated Handler must cancel its original Lane"

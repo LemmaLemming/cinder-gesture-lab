@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "status": "PREPARATION_ONLY_AWAITING_ROOT_EXACT_PROMOTION_RECEIPT",
+  "promoted_paths": [
+    "scripts/acts/act2/bleached_canal.gd",
+    "data/campaign/act2/a2_o3_difficulty_arrangements.json",
+    "tests/act2_o3_arrangement_pure.gd",
+    "tests/act2_o3_arrangement_legacy.gd",
+    "tests/acts/act2/fixtures/a2_o3_difficulty_legacy/PROVENANCE.json",
+    "tests/acts/act2/fixtures/a2_o3_difficulty_legacy/challenge-entrance.exact.json",
+    "tests/acts/act2/fixtures/a2_o3_difficulty_legacy/challenge-entrance.store.json",
+    "tests/acts/act2/fixtures/a2_o3_difficulty_legacy/challenge-first-warning.exact.json",
+    "tests/acts/act2/fixtures/a2_o3_difficulty_legacy/challenge-first-warning.store.json",
+    "tests/acts/act2/fixtures/a2_o3_difficulty_legacy/standard-entrance.exact.json",
+    "tests/acts/act2/fixtures/a2_o3_difficulty_legacy/standard-entrance.store.json",
+    "tests/acts/act2/fixtures/a2_o3_difficulty_legacy/standard-first-warning.exact.json",
+    "tests/acts/act2/fixtures/a2_o3_difficulty_legacy/standard-first-warning.store.json",
+    "tests/act2_o3_arrangement_shell.gd"
+  ],
+  "allowed_initially_absent_uids": [
+    "tests/act2_o3_arrangement_pure.gd.uid",
+    "tests/act2_o3_arrangement_legacy.gd.uid",
+    "tests/act2_o3_arrangement_shell.gd.uid"
+  ],
+  "required_existing_main": "tests/fixtures/captured_policy_profile_main.gd",
+  "required_existing_main_uid": "tests/fixtures/captured_policy_profile_main.gd.uid",
+  "required_receipt": "Root must supply exact coherent14-path promotion receipt path/SHA before current config/readiness freeze.",
+  "execution_plan": [
+    "seal",
+    "single canonical queued import",
+    "use retained post-import-seal for native pure",
+    "native legacy",
+    "native shell"
+  ],
+  "scope": "Draft source-only wrapper. No parser/native/engine/promotion performed. Original candidate wrapper/config/readiness remain unchanged."
+}
