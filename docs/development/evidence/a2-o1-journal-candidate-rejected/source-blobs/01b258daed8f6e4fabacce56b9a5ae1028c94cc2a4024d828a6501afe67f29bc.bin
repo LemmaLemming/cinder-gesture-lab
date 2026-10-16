@@ -1,0 +1,70 @@
+extends SceneTree
+## INERT metadata-only probe for the selected future owned runtime.
+## Clones below are synthetic constructor metadata, never native Save authority.
+const Parent = preload("res://scripts/acts/act2/cylinder_perimeter.gd")
+const Exact = preload("res://scripts/campaign/exact_json.gd")
+const StorePath: String = "res://.cinder/a2-o1-genuine-old-checkpoint-custody-20261016/campaign.json"
+const StoreSha: String = "7837f021913f3741fdd2048054ff628b5b5a5e990eddc29fc6560bcbb50c5238"
+var rows: Array[Dictionary] = []
+var failures: int = 0
+var first_failure: Dictionary = {}
+var complete: bool = false
+var report: String = ""
+func _initialize() -> void: _run.call_deferred()
+func _run() -> void:
+	report = OS.get_environment("CINDER_A2_O1_JOURNAL_PURE_REPORT")
+	if not _expect(OS.get_cmdline_user_args().is_empty() and report.is_absolute_path() and not FileAccess.file_exists(report),"closed pure scope/fresh report"): _finish(); return
+	if not _expect(FileAccess.get_sha256(StorePath) == StoreSha,"original CP raw input unchanged"): _finish(); return
+	var envelope: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(StorePath))
+	var decoded: Dictionary = Exact.parse(envelope.payload_json)
+	if not _expect(envelope.format_version == 2 and envelope.payload_json.sha256_text() == envelope.sha256 and decoded.accepted,"actual original format2/typed CP input"): _finish(); return
+	var original: Dictionary = decoded.value.side_attempt.checkpoint.level.local
+	var wire: String = Exact.stringify(original)
+	var selected: Dictionary = Parent._journal_constructor(original)
+	if not _expect(original.size() == 12 and selected.error.is_empty() and selected.legacy and selected.profile_id == "challenge" and selected.positions.north == Vector3(-1.4,0,-8.9),"actual old12 Challenge selects north baseline"): _finish(); return
+	for profile: String in ["assisted","standard","challenge"]:
+		var descriptor: Dictionary = Parent._journal_fresh_descriptor(profile)
+		var fresh: Dictionary = Parent._journal_layout(descriptor,false)
+		var expected: Vector3 = Vector3(1.4,0,-8.9) if profile == "challenge" else Vector3(-1.4,0,-8.9)
+		if not _expect(fresh.error.is_empty() and not fresh.legacy and fresh.positions.north == expected and fresh.positions.west == Parent.FRAGMENT_POSITIONS.west and fresh.positions.east == Parent.FRAGMENT_POSITIONS.east,"finite fresh profile/only north choice: "+profile): _finish(); return
+		var metadata: Dictionary = original.duplicate(true)
+		metadata.profile_id = profile
+		metadata[Parent.JOURNAL_DESCRIPTOR_KEY] = descriptor.duplicate(true)
+		var choice: Dictionary = Parent._journal_constructor(metadata)
+		if not _expect(metadata.size() == 13 and choice.error.is_empty() and choice.positions == fresh.positions,"synthetic13 metadata selector only; no paired native packet claim"): _finish(); return
+		choice.positions.north = Vector3.ZERO
+		choice.descriptor.recipe_id = "TEST mutation"
+		if not _expect(Parent._journal_constructor(metadata).positions.north == expected and metadata[Parent.JOURNAL_DESCRIPTOR_KEY] == descriptor,"deep-copy return does not mutate caller/definition"): _finish(); return
+	var good: Dictionary = original.duplicate(true)
+	good[Parent.JOURNAL_DESCRIPTOR_KEY] = Parent._journal_fresh_descriptor("challenge")
+	var invalid: Array[Dictionary] = []
+	var bad: Dictionary = good.duplicate(true); bad.journal_arrangement.recipe_id = "unknown"; invalid.append(bad)
+	bad = good.duplicate(true); bad.journal_arrangement.profile_id = "standard"; invalid.append(bad)
+	bad = good.duplicate(true); bad.journal_arrangement.schema_version = 1.0; invalid.append(bad)
+	bad = good.duplicate(true); bad.journal_arrangement.extra = true; invalid.append(bad)
+	bad = good.duplicate(true); bad.extra = true; invalid.append(bad)
+	bad = good.duplicate(true); bad.erase("scheduler"); invalid.append(bad)
+	bad = good.duplicate(true); bad.journal_arrangement = null; invalid.append(bad)
+	bad = original.duplicate(true); bad.extra = true; invalid.append(bad)
+	for value: Dictionary in invalid:
+		var before: String = Exact.stringify(value)
+		if not _expect(not Parent._journal_constructor(value).error.is_empty() and Exact.stringify(value) == before,"closed malformed metadata refused without mutation"): _finish(); return
+	if not _expect(Exact.stringify(original) == wire and FileAccess.get_sha256(StorePath) == StoreSha,"genuine old12/raw CP input immutable"): _finish(); return
+	complete = true
+	_finish()
+func _expect(ok: bool,label: String) -> bool:
+	var row: Dictionary = {"check":rows.size()+1,"ok":ok,"label":label}
+	rows.append(row)
+	if not ok:
+		failures += 1
+		if first_failure.is_empty(): first_failure = row.duplicate(true)
+	return ok
+func _finish() -> void:
+	var file: FileAccess = null
+	if report.is_absolute_path() and not FileAccess.file_exists(report): file = FileAccess.open(report,FileAccess.WRITE)
+	if not _expect(file != null,"fresh pure report opens"): complete = false
+	if file != null:
+		file.store_string(JSON.stringify({"kind":"a2-o1-journal-layout-pure-1","checks":rows.size(),"failures":failures,"rows":rows,"first_failure":first_failure,"complete":complete,"success":complete and failures == 0,"scope":"Pure finite metadata/copy/refusal only. Synthetic13 is not valid native Save; no construction/transport/gameplay credit."})+"\n"); file.close()
+	print("CINDER_A2_O1_JOURNAL_PURE_REPORT=",report," sha256=",FileAccess.get_sha256(report) if FileAccess.file_exists(report) else "")
+	print("A2-O1 JOURNAL PURE: %d checks, %d failures; complete=%s" % [rows.size(),failures,str(complete)])
+	quit(0 if complete and failures == 0 else 2)

@@ -1,0 +1,1 @@
+One explicit old-checkpoint diagnostic only. Same whole aggregate equality, quiet events and original raw/source guards. Add observations of original failure conjunct/components before unchanged assertion. No source, packet, camera or acceptance change; no passed-suite repetition.

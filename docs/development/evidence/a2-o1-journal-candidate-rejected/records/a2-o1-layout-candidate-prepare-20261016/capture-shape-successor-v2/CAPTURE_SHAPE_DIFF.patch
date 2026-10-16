@@ -1,0 +1,27 @@
+--- immutable-c8bf
++++ additive-capture-shape-v2
+@@ -60,7 +60,6 @@
+ var _journal_construction_started: bool = false
+ var _journal_layout_bound: bool = false
+ var _journal_legacy_construction: bool = false
+-var _journal_legacy_capture: bool = false
+ var _journal_descriptor: Dictionary = {}
+ var _journal_positions: Dictionary = FRAGMENT_POSITIONS.duplicate(true)
+ 
+@@ -686,7 +685,7 @@
+ 	var bindings: Dictionary = _scheduler_bindings()
+ 	var result: Dictionary = {"scenic_clock": _scenic_clock, "profile_id": _profile_id, "world_revision": WORLD_REVISION, "collected_ids": _collected_ids.duplicate(), "fragment_collected_at": _fragment_collected_at.duplicate(), "checkpoint_contact_seen": _checkpoint_contact_seen, "checkpoint_requested": _checkpoint_requested, "pending_checkpoint": _pending_checkpoint, "completion_pending": _completion_pending, "exit_requested": _exit_requested, "scheduler": _scheduler.call("snapshot_state", bindings), "exchange": _exchange.call("snapshot_state", bindings)}
+ 
+-	if not _journal_legacy_capture: result[JOURNAL_DESCRIPTOR_KEY] = _journal_descriptor.duplicate(true)
++	if not _journal_legacy_construction: result[JOURNAL_DESCRIPTOR_KEY] = _journal_descriptor.duplicate(true)
+ 	return result
+ 
+ func _local_snapshot_error(state: Dictionary) -> String:
+@@ -828,7 +827,6 @@
+ 	_exit_cue.set_block_signals(exit_blocking)
+ 	_update_objective()
+ 
+-	_journal_legacy_capture = _journal_legacy_construction # Install writer shape only after complete quiet native commit.
+ 
+ func _restore_candidate_presentation_error(camera: Camera3D, framing_hud: GameHUD) -> String:
+ 	if not is_instance_valid(shared_shell) or not shared_shell.has_method("camera_framing_error_for_context"): return "Perimeter recipient requires actual shared camera/HUD framing"

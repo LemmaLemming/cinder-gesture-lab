@@ -1,0 +1,201 @@
+{
+  "schema_version": 1,
+  "status": "READ_ONLY_FOCUSED_FAILURE_AUDIT_DURABLE_CP_FOUND_FINAL_PREFLIGHT_REFUSED",
+  "phase": ".cinder/a2-o1-focused-original-writer-20261016/run-native-20261016T075858.957638Z-a402c709",
+  "phase_pins": {
+    "native-report.json": "bfc7a7246c3fd013ea9968c4cc6851c928c30865d16ca724fd73a0898a1ec918",
+    "native-precleanup-report.json": "4d570cf3043593291f80d0d47496042a2df13c1c2b3e708e323ed724c2cc7b52",
+    "raw.log": "f5a51ca1fa4526bd52c03b8156fcb06bb2ae4c202beed4c57bce72275bef03c5",
+    "engine.log": "ee9dea030114edcc704fa29ea0999ee6b477bd75f9c95c38521c39fb9acea9ce",
+    "evidence-index.json": "e4e40c2a7d5055b951fedeeb7eac34134f9589e0f5a5161b21106297518faadc",
+    "result.json": "c1b324c5de91a1e9784ce3877b20d4e63a3154d51619befc8e651fcbe5879c8b"
+  },
+  "actual_native_controls": {
+    "checks": 38,
+    "failures": 1,
+    "complete": false,
+    "success": false,
+    "first_failure_label": "first actual Final admission refusal: required_source_footprint_or_landing_offscreen",
+    "first_final_exchange_cancellation": {}
+  },
+  "raw_native_Store": [
+    {
+      "original_absolute_path": "/Users/howardchen/Library/Application Support/Godot/app_userdata/Cinder/root-a2-o1-focused-original-writer-14562-828867/campaign.json",
+      "bytes": 141985,
+      "sha256": "7837f021913f3741fdd2048054ff628b5b5a5e990eddc29fc6560bcbb50c5238",
+      "generation": 4,
+      "format_version": 2,
+      "payload_wire_sha256": "50d71142d334e75ce0064a0d041502b42dab6deec06b5548ad9f1a2579c9c834"
+    },
+    {
+      "original_absolute_path": "/Users/howardchen/Library/Application Support/Godot/app_userdata/Cinder/root-a2-o1-focused-original-writer-14562-828867/campaign.json.bak",
+      "bytes": 141787,
+      "sha256": "f49c93b06d091c4af714e74ab6c8a6407a47f1762e405ba040eb576f78c8fe73",
+      "generation": 3,
+      "format_version": 2,
+      "payload_wire_sha256": "df0005c5c5b931d2b2353169997c49d0087c04077b28a5ecdb4fded3c59a91c0"
+    },
+    {
+      "original_absolute_path": "/Users/howardchen/Library/Application Support/Godot/app_userdata/Cinder/root-a2-o1-focused-original-writer-14562-828867/preferences.json",
+      "bytes": 299,
+      "sha256": "edd537ce9745ca27cedd5cd96d7aa180286314101e7887890ea843467cbf0666",
+      "generation": 1,
+      "format_version": 2,
+      "payload_wire_sha256": "4b108af4849431ac18655b6a9908d5c644a7b3706d5bff7f0f030804ffce3038"
+    }
+  ],
+  "bounded_read_only_tagged_packet_inspection": {
+    "campaign.json": {
+      "generation": 4,
+      "current_and_checkpoint_typed_nodes_equal": true,
+      "checkpoint_id_native_tag": [
+        "string",
+        "cylinder-before-final-exchange"
+      ],
+      "profile_id_native_tag": [
+        "string",
+        "challenge"
+      ],
+      "local_key_count": 12,
+      "outer_local_version_native_tag": [
+        "integer",
+        "1"
+      ],
+      "checkpoint_requested_native_tag": [
+        "boolean",
+        true
+      ],
+      "pending_checkpoint_native_tag": [
+        "boolean",
+        false
+      ],
+      "Finalstatus_native_tag": [
+        "string",
+        "idle"
+      ],
+      "Finalcycle_native_tag": [
+        "integer",
+        "0"
+      ],
+      "Schedulerclock_native_tag": [
+        "float64",
+        "111111111111913f"
+      ],
+      "Schedulerclock_scalar_seconds": 0.016666666666666666
+    },
+    "campaign.json.bak": {
+      "generation": 3,
+      "current_and_checkpoint_typed_nodes_equal": true,
+      "checkpoint_id_native_tag": [
+        "string",
+        ""
+      ],
+      "profile_id_native_tag": [
+        "string",
+        "challenge"
+      ],
+      "local_key_count": 12,
+      "outer_local_version_native_tag": [
+        "integer",
+        "1"
+      ],
+      "checkpoint_requested_native_tag": [
+        "boolean",
+        false
+      ],
+      "pending_checkpoint_native_tag": [
+        "boolean",
+        false
+      ],
+      "Finalstatus_native_tag": [
+        "string",
+        "idle"
+      ],
+      "Finalcycle_native_tag": [
+        "integer",
+        "0"
+      ],
+      "Schedulerclock_native_tag": [
+        "float64",
+        "0000000000000000"
+      ],
+      "Schedulerclock_scalar_seconds": 0.0
+    }
+  },
+  "checkpoint_conclusion": "YES: existing original nativeuserStore primarygen4 durably records actual contactCP before later Finalpresentationpreflight refusal. CPclock1/60s precedes failure2/60s; Finalidlecycle0 and old12Challenge local/localversion1. CurrentandCP nodes equal in primary. Backupgen3 remainsentrance. Whole currentrawbytes/checksum preserved; no packet rewritten or reserialized. No claim of old13: actual unchanged source declares12localkeys (futuredescriptor13 is not installed).",
+  "custody_limit": "Only entrance copied in original phaseunits; checkpointgen4raw remains at exact retained nativeuserpath with observedSHA/size. This review reads and pins it, doesnotretroactively add a CPunit/report row/nativevar to oldphase. Report-only output, no original Store copy/mutation.",
+  "precise_predicate": {
+    "source": "Cylinder._physics_process153-164\u2192_exchange_framed400-425\u2192_framing_failure505-518",
+    "actual_parent_diagnostic": {
+      "point": [
+        0.05749997869133949,
+        0.4650000333786011,
+        -8.390000343322754
+      ],
+      "reason": "required_source_footprint_or_landing_offscreen",
+      "safe_rect": {
+        "native_type": "Rect2",
+        "position": [
+          12.0,
+          108.0
+        ],
+        "size": [
+          246.0,
+          414.0
+        ]
+      },
+      "screen": [
+        137.15625,
+        -9.757556915283203
+      ]
+    },
+    "proven": "Currentrequired source/footprint/landing point screenY-9.7575569 is outside nativesafeRectY108..522; guard recordsreason andreturnsfalse. The source guard executes before Exchange.activate, so actualFinal remainsidlecycle0. first_final_refusal{} is consistent with no Rayexchange cancellation/start.",
+    "source_point_identity_limit": "_required_source_points includes native RivetedCameraCase/TrackingMirrorSwivel/FixedLowMirrorHousing worldAABBcorners and ownerlanding before lane/proof points. Exact diagnosticpoint retained, no reconstruction identifies a particularmeshcorner beyond source-backed union.",
+    "not_proven": "No unique underlyingcamera cause or general geometrybug inferred. Actual camera position is observed, and Game.update_camera has normalfollow .16s; this doesnot alone prove settling/snap would admit thefull requiredunion or guaranteeFinalproof. No guard/timing/optics relaxation."
+  },
+  "setup_observation": {
+    "fresh_TEST_setups": [
+      {
+        "TEST_only": true,
+        "kind": "fresh TEST contact checkpoint pose",
+        "limits": "Fresh representative contact/Save setup only, not earned dash/route. No HP/resources/clock/progress/CP/collection/source/visibility/lease edits.",
+        "original_position": [
+          0.0,
+          0.10000000149011612,
+          2.5999999046325684
+        ],
+        "position": [
+          0.0,
+          0.0,
+          -5.25
+        ],
+        "velocity": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    ],
+    "second_pose_happened": false,
+    "Hero_stable_at_failure": true,
+    "Finalwarning_reached": false
+  },
+  "smallest_next_action": [
+    "Read-only custody first: Root may preserve exact already-existing primarygen4/backupgen3/preferences bytes with current hashes as newly selectedoriginal CP evidence; keep this failed38/1 report unchanged. No engine required to establish existing durableCP.",
+    "If a heldFinalwarning producer is still required, propose a separate fresh representative-state fixture review at the SAMEapprovedpose, with supported productioncamera initialization beforepublicResume, and explicit actualview/fullnativeaggregate checks. Treat it as a hypothesis about complete TEST state setup, not a provenrepair or permission to change optics/guards/searchposes. No execution/source implementation by this audit.",
+    "Do not alter oldfailedpacket, transplantCPinto otherattempt/current, synthesize missingvar/checkpointrow, ignore actualFinalguard, or infer nativewarning/response/route/allkitcredit."
+  ],
+  "policy_basis": "LEVEL_ACCEPTANCE allows legitimate representative state through realproductioninterfaces without earnedroute claim. It doesnot permit bypassing currentview/nativevalidity guards or historicalstate rewriting. ExactcurrentnativeCP is useful narrower evidence even though Finalwriter incomplete.",
+  "source_pins": {
+    "scripts/acts/act2/cylinder_perimeter.gd": "2c9768f851dc14e1bc433251c13a29154db6213085dda644742fbc366e243fc7",
+    "scripts/acts/act2/ray_scout_exchange.gd": "6d8e11a29254cad18947655d8e7470d7892b18e856e534859ae6211a897ae7e2",
+    "scripts/combat/threat_scheduler.gd": "c28ea9f4cd6c1ff9aedbc9cfc45a28826c589c095b9193b565f45d23c3df903d",
+    "scripts/game.gd": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26",
+    "scripts/campaign/shell.gd": "f8df3b798544b79d66985f5e468f13ade5485bccc6050b54c9d9d242b3211a0f",
+    "scripts/campaign/attempts.gd": "6701abec6181beb3934490e468b00868c14e69eb229f708d562b98efe32a43a0",
+    "scripts/campaign/save_store.gd": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0",
+    "tests/act2_o1_registration_smoke.gd": "0717c03fb9bd18703feec226402cc753a864aedb535d7ae1f38951379a4cca85",
+    "docs/development/LEVEL_ACCEPTANCE.md": "218951fb93f5afc182350f1ba3ad4b80a1e03f42ab42e2e0daf90519602daa09"
+  },
+  "no_engine_live_capsule_Git_or_worker_mutation": true
+}

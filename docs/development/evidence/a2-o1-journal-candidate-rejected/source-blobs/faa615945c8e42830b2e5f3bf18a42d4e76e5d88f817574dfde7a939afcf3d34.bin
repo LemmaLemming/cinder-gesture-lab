@@ -1,0 +1,270 @@
+"""Private A2-O1 host seal and one canonical queued short registration child."""
+from pathlib import Path
+import argparse
+import contextlib
+import datetime
+import hashlib
+import importlib.util
+import json
+import os
+import re
+import sys
+import uuid
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[1]
+
+
+def require(ok, reason):
+    if not ok:
+        raise ValueError(reason)
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def read(path):
+    return json.loads(path.read_text(), parse_constant=lambda value: (_ for _ in ()).throw(ValueError(value)))
+
+
+def save(path, value):
+    temporary = path.with_name(path.name + ".tmp")
+    with temporary.open("xb") as stream:
+        stream.write((json.dumps(value, indent=2, allow_nan=False) + "\n").encode())
+        stream.flush()
+        os.fsync(stream.fileno())
+    os.replace(temporary, path)
+
+
+class Tee:
+    def __init__(self, first, second):
+        self.first, self.second = first, second
+    def write(self, value):
+        self.second.write(value)
+        return self.first.write(value)
+    def flush(self):
+        self.first.flush()
+        self.second.flush()
+
+
+def snapshot(spec, out, label):
+    observations, retained = {}, {}
+    blobs = out / "source-blobs"
+    blobs.mkdir(exist_ok=True)
+    for name in sorted(set(spec["expected"]) | set(spec["self_files"])):
+        source = ROOT / name
+        data = source.read_bytes() if source.is_file() else None
+        digest = hashlib.sha256(data).hexdigest() if data is not None else None
+        observations[name] = digest
+        if data is not None:
+            target = blobs / (digest + ".bin")
+            if not target.exists():
+                with target.open("xb") as stream:
+                    stream.write(data)
+            require(sha(target) == digest, "Retained source differs: " + name)
+            retained[name] = {"sha256": digest, "bytes": len(data), "blob": str(target.relative_to(out))}
+    save(out / (label + ".json"), observations)
+    save(out / (label + "-retention.json"), retained)
+    return observations
+
+
+def prepared(spec, names):
+    require(all(names.get(name) == digest for name, digest in spec["expected"].items()), "Fixed promoted source/config/UID differs")
+    require(all(names.get(name) is not None for name in spec["self_files"]), "Runner capsule incomplete")
+    for name, digest in read(HERE / "READINESS_v2.json")["frozen_files"].items():
+        require(names.get(name) == digest, "Frozen runner capsule differs: " + name)
+
+
+def previous_seal(path):
+    require(path.name == "seal.json" and path.parent.parent == HERE, "Explicit original seal from this capsule required")
+    result, index = read(path.parent / "result.json"), read(path.parent / "evidence-index.json")
+    require(result.get("closed") is True and result.get("passed") is True and type(result.get("runner_return_code")) is int and result["runner_return_code"] == 0, "Seal phase must close successfully")
+    require(index.get("created_after_raw_close") is True and index["files"]["seal.json"]["sha256"] == sha(path) and index["files"]["result.json"]["sha256"] == sha(path.parent / "result.json"), "Seal/result must join original closed index")
+    seal = read(path)
+    require(seal.get("sealed") is True and seal.get("source_phase") == str(path.parent), "Actual seal identity required")
+    return seal["names"]
+
+
+def observe(out, raw, spec, names):
+    native = out / "native-report.json"
+    require(native.is_file(), "Actual native report required; absent/partial is not success")
+    report = read(native)
+    partial_path = out / "native-precleanup-report.json"
+    require(partial_path.is_file(), "Actual precleanup partial must be retained")
+    partial = read(partial_path)
+    require(partial.get("kind") == "a2-o1-focused-original-challenge-writer-precleanup-1" and partial.get("complete") is False and partial.get("success") is False and partial.get("cleanup_complete") is False, "Actual precleanup partial scope differs")
+    partial_rows = partial.get("rows")
+    require(type(partial_rows) is list and partial.get("checks") == len(partial_rows) and report.get("rows",[])[:len(partial_rows)] == partial_rows and partial.get("failures") == sum(not row["ok"] for row in partial_rows), "Actual precleanup/final row prefix differs")
+    require(partial.get("first_native_refusal") == report.get("first_native_refusal") and partial.get("first_failure") == report.get("first_failure"), "Original precleanup refusal/failure changed during cleanup")
+    printed_partial = re.findall(r"^CINDER_A2_O1_FOCUSED_ORIGINAL_WRITER_PRECLEANUP_REPORT=(.+) sha256=([0-9a-f]{64})$",raw,re.M)
+    require(printed_partial == [(str(partial_path),sha(partial_path))], "Actual precleanup physical path/SHA differs")
+    save(out / "native-precleanup-joins.json",{"sha256":sha(partial_path),"actual_checks":len(partial_rows),"scope":"Original precleanup partial explicitly incomplete; no substitute final pass or retrospective report reconstruction"})
+    require(report.get("kind") == "a2-o1-focused-original-challenge-writer-1", "Actual writer report kind differs")
+    rows = report.get("rows")
+    require(type(rows) is list and bool(rows) and type(report.get("checks")) is int and report["checks"] == len(rows), "Actual report rows/check count differs")
+    require(all(type(row) is dict and type(row.get("check")) is int and row["check"] == number and type(row.get("ok")) is bool for number,row in enumerate(rows,1)), "Actual consecutive native rows required")
+    false = [row for row in rows if not row["ok"]]
+    require(type(report.get("failures")) is int and report["failures"] == len(false) and type(report.get("first_failure")) is dict and bool(report["first_failure"]) == bool(false), "Actual failure controls/context differ")
+    footer = "A2-O1 FOCUSED ORIGINAL WRITER: %d checks, %d failures; complete=%s" % (len(rows),len(false),str(report.get("complete")).lower())
+    require([line for line in raw.splitlines() if line.startswith("A2-O1 FOCUSED ORIGINAL WRITER:")] == [footer], "Actual footer/control join differs")
+    printed = re.findall(r"^CINDER_A2_O1_FOCUSED_ORIGINAL_WRITER_REPORT=(.+) sha256=([0-9a-f]{64})$",raw,re.M)
+    require(printed == [(str(native),sha(native))], "Actual report physical path/SHA differs")
+    observation = {"checks":len(rows),"failures":len(false),"complete":report.get("complete"),"success":report.get("success"),"first_failure":report["first_failure"],"first_native_refusal":report.get("first_native_refusal"),"native_report_sha256":sha(native)}
+    save(out / "native-control-joins.json",observation)
+    require(not false and report.get("complete") is True and report.get("success") is True and report.get("first_final_refusal") == {}, "Actual native focused writer incomplete/failed/Final-refused")
+    require(report.get("original_sources") == spec["native_original_sources"], "Actual native original source cohort differs")
+    boundary = report.get("sampling_boundary",{})
+    require(boundary.get("observer_was_connected") is True and boundary.get("observer_disconnected_before_disposal") is True and boundary.get("pre_boundary_first_cancellation") == report.get("first_native_refusal") and boundary.get("requested_boundary") == "completed sampling", "Actual sampling observer boundary differs; pre-cleanup refusal cannot pass")
+    actions = report.get("actual_actions")
+    require(type(actions) is list and not actions, "Focused TEST positions cannot claim actual world dashes or combat")
+    require(partial.get("first_final_refusal") == report.get("first_final_refusal") == {}, "Actual first Final refusal cannot be erased")
+    setups = report.get("fresh_TEST_setups")
+    require(type(setups) is list and len(setups) in (2,3) and partial.get("fresh_TEST_setups") == setups, "Actual fresh TEST setup branch must be retained before cleanup")
+    require(setups[0].get("kind") == "fresh TEST contact checkpoint pose" and setups[0].get("TEST_only") is True and setups[0].get("position") == [0,0,-5.25] and setups[0].get("velocity") == [0,0,0], "One exact fresh checkpoint contact placement required")
+    cp_observation = setups[1]
+    require(cp_observation.get("kind") == "actual CP-drain current observation", "Actual CP-drain observation required")
+    observed = cp_observation.get("final_state",{})
+    if cp_observation.get("second_placement_omitted") is True:
+        require(len(setups) == 2 and observed.get("status") == "running" and observed.get("phase") == "warning" and observed.get("cycle") == 1, "Already-running first Final warning must omit second TEST placement")
+    else:
+        require(cp_observation.get("second_placement_omitted") is False and len(setups) == 3 and observed.get("status") == "idle" and observed.get("cycle") == 0, "Second placement only before Final ever starts")
+        require(setups[2].get("kind") == "fresh TEST Final observation pose" and setups[2].get("TEST_only") is True and setups[2].get("position") == [0,0,-7.25] and setups[2].get("velocity") == [0,0,0], "One exact fresh Final observation placement required")
+    units = report.get("units")
+    require(type(units) is list and [unit.get("label") for unit in units] == ["entrance","checkpoint-observation","held-final-warning"], "Actual three original reached units required")
+    opaque, joined = {}, []
+    for unit in units:
+        label = unit["label"]
+        directory = out / "units" / label
+        retained = unit.get("typed_units")
+        require(type(retained) is list and len(retained) == 5, "Actual four Exact files plus native var required")
+        names = set()
+        opaque[label] = {}
+        for row in retained:
+            path = Path(row.get("path",""))
+            require(path.parent == directory and path.name in {"whole.exact.json","checkpoint.exact.json","story.exact.json","attempts.exact.json","whole-native.var"} and path.name not in names and path.is_file(), "Actual fresh original unit path differs")
+            require(path.stat().st_size > 0 and row.get("bytes") == path.stat().st_size and row.get("sha256") == sha(path), "Actual original typed unit size/SHA differs")
+            names.add(path.name)
+            if path.suffix == ".json": opaque[label][path.name] = path.read_text()
+        disks = unit.get("original_raw_files")
+        require(type(disks) is list and len(disks) == 6, "Actual native primary/backup/preferences/settings presence map required")
+        disk_names = set()
+        for row in disks:
+            original = row.get("original_path", "")
+            require(original.startswith(report.get("native_store_path", "user://INVALID/")) and type(row.get("present")) is bool, "Actual unique user Store path/presence required")
+            name = original.rsplit("/",1)[-1]
+            require(name in {"campaign.json","campaign.json.bak","preferences.json","preferences.json.bak","settings.json","settings.json.bak"} and name not in disk_names, "Actual bounded Store file name differs")
+            disk_names.add(name)
+            copied = directory / ("raw-" + name)
+            if row["present"]:
+                require(row.get("path") == str(copied) and copied.is_file() and copied.stat().st_size > 0 and row.get("bytes") == copied.stat().st_size and row.get("sha256") == sha(copied), "Actual original raw Store bytes/SHA differs")
+                envelope = read(copied)
+                require(envelope.get("format_version") == 2 and type(envelope.get("payload_json")) is str and hashlib.sha256(envelope["payload_json"].encode()).hexdigest() == envelope.get("sha256"), "Actual raw format2 payload checksum differs")
+                if name == "campaign.json": require(envelope["payload_json"] == opaque[label]["attempts.exact.json"], "Actual raw primary/full original Attempts wire differs")
+                names.add(copied.name)
+            else: require(not copied.exists() and "path" not in row and "sha256" not in row, "Genuine raw absence cannot be manufactured")
+        require(all(next(row for row in disks if row["original_path"].endswith("/"+name))["present"] for name in ["campaign.json","campaign.json.bak","preferences.json"]), "Actual original primary/backup/Challenge preferences required")
+        require({path.name for path in directory.iterdir() if path.is_file()} == names, "Actual unit physical/report whitelist differs")
+        joined.append({"label":label,"typed":retained,"original_raw_files":disks})
+    require(opaque["entrance"]["whole.exact.json"] == opaque["entrance"]["checkpoint.exact.json"] and opaque["checkpoint-observation"]["checkpoint.exact.json"] == opaque["held-final-warning"]["checkpoint.exact.json"] and len({opaque[label]["story.exact.json"] for label in opaque}) == 1, "Actual entrance/earlier checkpoint/protected Story wire joins differ")
+    require(report.get("native_store_path", "").startswith("user://root-a2-o1-focused-original-writer-"), "Actual retained native user Store required")
+    save(out / "native-original-unit-joins.json",{"units":joined,"scope":"Original opaque Exact wires/nonempty typed var/raw format2 joins only; no host native decoder. User Store intentionally retained, not directory-cleanup claimed."})
+    require(not re.search(r"^\s*(?:ERROR|WARNING|SCRIPT ERROR):|ObjectDB.*leak|Orphan.*StringName",raw,re.M|re.I), "Actual raw diagnostics require independent review; NOT CLEAN even with native success")
+    return observation
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("phase", choices=("seal", "native"))
+    parser.add_argument("--seal", type=Path)
+    args = parser.parse_args()
+    stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%S.%fZ")
+    out = HERE / ("run-" + args.phase + "-" + stamp + "-" + uuid.uuid4().hex[:8])
+    out.mkdir(exist_ok=False)
+    result = {"phase": args.phase, "closed": False, "passed": False, "engine_launch_attempted": False, "owned_validation_returned": False, "canonical_validation_return_code": None}
+    queue = {"queued": False, "acquired": False}
+    code, spec, sealed = 2, None, None
+    save(out / "result.json", result)
+    print("A2-O1 verification output:", out, flush=True)
+    with (out / "raw.log").open("w") as log, contextlib.redirect_stdout(Tee(sys.stdout, log)), contextlib.redirect_stderr(Tee(sys.stderr, log)):
+        try:
+            require((args.phase == "seal") == (args.seal is None), "Native requires explicit successful seal; seal takes none")
+            spec = read(HERE / "INPUT_SPEC_v2.json")
+            current = snapshot(spec, out, "preflight-observed")
+            prepared(spec, current)
+            if args.phase == "seal":
+                sealed = current
+                save(out / "seal.json", {"sealed": True, "source_phase": str(out), "names": sealed, "scope": spec["scope"]})
+            else:
+                selected = args.seal.resolve()
+                sealed = previous_seal(selected)
+                require(current == sealed, "Current sources differ from explicit successful seal")
+                save(out / "selected-seal.json", {"path": str(selected), "sha256": sha(selected)})
+                module_spec = importlib.util.spec_from_file_location("cinder_a2_o1_original_verification_dev", ROOT / "scripts/dev/dev.py")
+                require(module_spec is not None and module_spec.loader is not None, "Canonical dev module required")
+                dev = importlib.util.module_from_spec(module_spec)
+                sys.modules[module_spec.name] = dev
+                old_bytecode = sys.dont_write_bytecode
+                try:
+                    sys.dont_write_bytecode = True
+                    module_spec.loader.exec_module(dev)
+                finally:
+                    sys.dont_write_bytecode = old_bytecode
+                environ = dict(os.environ)
+                environ["CINDER_A2_O1_FOCUSED_ORIGINAL_WRITER_REPORT"] = str(out / "native-report.json")
+                require(not (out / "native-report.json").exists(), "Fresh owned report destination required")
+                context = dev.ProjectContext(root=ROOT, environ=environ)
+                require(context.canonical_root == ROOT, "Canonical context must remain this integration checkout")
+                require(spec["fixture"] == ".cinder/a2-o1-focused-original-writer-20261016/a2_o1_focused_original_writer.gd", "One fixed fresh focused writer only")
+                command = [str(dev.resolve_godot(context)), "--path", str(ROOT), "--headless", "--log-file", str(out / "engine.log"), "--script", "res://" + spec["fixture"], "--", "--focused-original-challenge-writer"]
+                save(out / "command.json", {"argv": command, "timeout_seconds_after_lock": spec["timeout_after_lock_seconds"], "environment_override": {"CINDER_A2_O1_FOCUSED_ORIGINAL_WRITER_REPORT": environ["CINDER_A2_O1_FOCUSED_ORIGINAL_WRITER_REPORT"]}, "canonical_api": "dev.godot_lock/run_validation", "user_arguments": ["--focused-original-challenge-writer"]})
+                require(snapshot(spec, out, "sources-before-queue") == sealed, "Sources changed before queue")
+                queue.update({"queued": True, "lock_path": str(dev.shared_lock_path(ROOT))})
+                save(out / "queue.json", queue)
+                try:
+                    with dev.godot_lock(ROOT) as lock_fd:
+                        queue["acquired"] = True
+                        save(out / "queue.json", queue)
+                        require(snapshot(spec, out, "sources-at-lock") == sealed, "Sources changed at lock")
+                        result["engine_launch_attempted"] = True
+                        save(out / "result.json", result)
+                        returned = dev.run_validation(command, context, lock_fd, spec["timeout_after_lock_seconds"], detect_godot_errors=True)
+                        result.update({"owned_validation_returned": True, "canonical_validation_return_code": returned, "terminal_scope": "Canonical API return, potentially synthetic timeout/script failure; not an independently exposed OS child status. Canonical dev owns its one direct child and cleanup."})
+                        save(out / "result.json", result)
+                        log.flush()
+                        after = snapshot(spec, out, "sources-after-child")
+                        result["native_observation"] = observe(out, (out / "raw.log").read_text(), spec, sealed)
+                        save(out / "native-observation.json", result["native_observation"])
+                        require(after == sealed, "Sources changed after owned child")
+                        require(returned == 0, "Canonical owned validation must return zero")
+                finally:
+                    if queue["acquired"]:
+                        queue["lock_context_released"] = True
+                        save(out / "queue.json", queue)
+            result["passed"], code = True, 0
+        except KeyboardInterrupt:
+            result["error"], code = "Interrupted; canonical dev owns its direct child cleanup", 130
+        except Exception as error:
+            result["error"] = str(error)
+            print("A2-O1 verification failure:", error, flush=True)
+        finally:
+            if spec is not None:
+                try:
+                    closed = snapshot(spec, out, "sources-at-runner-close")
+                    require(sealed is None or closed == sealed, "Source drift at runner close")
+                except Exception as error:
+                    result["close_custody_error"] = str(error)
+                    result["passed"], code = False, 2
+            native = out / "native-report.json"
+            if native.is_file(): save(out / "native-report-retention.json", {"path":str(native),"sha256":sha(native),"bytes":native.stat().st_size,"scope":"Original native partial/complete report retained even after refusal"})
+            log.flush()
+            result.update({"closed": True, "runner_return_code": code, "raw_diagnostic_lines": [line for line in (out / "raw.log").read_text().splitlines() if re.search(r"^\s*(?:ERROR|WARNING|SCRIPT ERROR):|ObjectDB.*leak|Orphan.*StringName", line, re.I)], "diagnostic_scope": "Actual raw diagnostics preserved, not automatically classified clean by a zero return; Root must review them."})
+            save(out / "result.json", result)
+            save(out / "queue.json", queue)
+            print("A2-O1 verification CLOSED code=" + str(code), flush=True)
+    save(out / "evidence-index.json", {"created_after_raw_close": True, "files": {str(path.relative_to(out)): {"sha256": sha(path), "bytes": path.stat().st_size} for path in sorted(out.rglob("*")) if path.is_file()}})
+    return code
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

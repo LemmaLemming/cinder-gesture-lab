@@ -1,0 +1,17 @@
+--- before
++++ after
+@@ -139,7 +139,13 @@
+ 		if not _expect(prop.global_position == literal_positions[id] and cue.global_position == literal_positions[id] and level.get("_journal_positions")[id] == literal_positions[id],"actual prop/cue/contact map agree with literal expected placement: "+id): return false
+ 	return true
+ func _installed(expected: Dictionary) -> bool:
+-	return _expect(_live_o1() and paused and _events.is_empty() and _same(_shell.capture_campaign_snapshot(),expected),"public installed full saved Optional exact/quiet") and _selected_nodes(_shell.active_level,expected.level.local)
++	var live: bool = _live_o1()
++	var actual: Dictionary = _shell.capture_campaign_snapshot() if live and paused else {}
++	var components: Dictionary = {}
++	for key: String in expected:
++		components[key] = actual.has(key) and _same(actual[key],expected[key])
++	observations.append({"kind":"public-installed-diagnostic","live":live,"paused":paused,"events":_events.duplicate(),"campaign_error":_shell.campaign_error,"page":_shell.menu.page_name(),"component_equal":components,"expected_exact":Exact.stringify(expected),"actual_exact":Exact.stringify(actual),"limits":"Read-only observation; no packet, camera, world or guard change."})
++	return _expect(live and paused and _events.is_empty() and _same(actual,expected),"public installed full saved Optional exact/quiet") and _selected_nodes(_shell.active_level,expected.level.local)
+ func _durable() -> bool:
+ 	var store = Store.new(_test_root+"campaign.json")
+ 	var payload: Dictionary = store.read_payload()

@@ -1,0 +1,865 @@
+extends CinderLevel
+## Optional compact heath loop. Collection and exits use actual Hero contact;
+## ordinary parent Scouts share the original driver, scheduler and Player.
+
+const PerimeterKit: Script = preload("res://scripts/acts/act2/cylinder_perimeter_kit.gd")
+const ScoutActor: Script = preload("res://scripts/acts/act2/ray_scout_actor.gd")
+const Exchange: Script = preload("res://scripts/acts/act2/ray_scout_exchange.gd")
+const Scheduler: Script = preload("res://scripts/combat/threat_scheduler.gd")
+const InteractionCue: Script = preload("res://scripts/cues/interaction_cue.gd")
+const Geometry: Script = preload("res://scripts/combat/threat_geometry.gd")
+const Codec: Script = preload("res://scripts/campaign/snapshot_codec.gd")
+const SharedGame: Script = preload("res://scripts/game.gd")
+const ENCOUNTER_ID: String = "A2-O1-cylinder-perimeter"
+const WORLD_REVISION: int = 1
+const FLOOR_RECT: Rect2 = Rect2(-3.4, -10.8, 6.8, 14.4)
+const FLOOR_SPECS: Array[Dictionary] = [{"id": "perimeter", "rect": FLOOR_RECT}]
+const FLOOR_PROOF_INSET: float = 0.002
+const SCOUT_POSITIONS: Dictionary = {"west": Vector3(-0.65, 0, -2.0), "final": Vector3(0.65, 0, -7.8)}
+const FRAGMENT_POSITIONS: Dictionary = {"west": Vector3(-2.05, 0, -0.6), "east": Vector3(2.05, 0, -0.6), "north": Vector3(-1.4, 0, -8.9)}
+const CHECKPOINT_REGION: Rect2 = Rect2(-3.1, -6.8, 6.2, 3.1)
+const CHECKPOINT_ID: String = "cylinder-before-final-exchange"
+const EXIT_REGION: Rect2 = Rect2(-0.65, -10.45, 1.3, 1.1)
+const COMPLETION_ID: String = "cylinder-journal-complete"
+const EXIT_ID: String = "cylinder-perimeter-return"
+const COLLECTION_FLASH_S: float = 0.16
+const LOCAL_KEYS: Array[String] = ["scenic_clock", "profile_id", "world_revision", "collected_ids", "fragment_collected_at", "checkpoint_contact_seen", "checkpoint_requested", "pending_checkpoint", "completion_pending", "exit_requested", "scheduler", "exchange"]
+const JOURNAL_DESCRIPTOR_KEY: String = "journal_arrangement"
+const JOURNAL_BASELINE_RECIPES: Dictionary = {"assisted":"A2-O1/assisted-canonical@v1","standard":"A2-O1/standard-canonical@v1","challenge":"A2-O1/challenge-canonical-legacy@v1"}
+const JOURNAL_CHALLENGE_RECIPE: String = "A2-O1/challenge-north-east@v1"
+const RESPONSE_DIRECTIONS: Array[Vector3] = [
+	Vector3(0.707106781187, 0, -0.707106781187), Vector3(-0.707106781187, 0, -0.707106781187),
+	Vector3(0.707106781187, 0, 0.707106781187), Vector3(-0.707106781187, 0, 0.707106781187),
+	Vector3.FORWARD, Vector3.BACK, Vector3.RIGHT, Vector3.LEFT,
+	Vector3(0.3826834324, 0, -0.9238795325), Vector3(-0.3826834324, 0, -0.9238795325),
+	Vector3(0.9238795325, 0, -0.3826834324), Vector3(-0.9238795325, 0, -0.3826834324),
+	Vector3(0.3826834324, 0, 0.9238795325), Vector3(-0.3826834324, 0, 0.9238795325),
+	Vector3(0.9238795325, 0, 0.3826834324), Vector3(-0.9238795325, 0, 0.3826834324),
+]
+
+var runtime_error: String = ""
+var _floors: Array[Dictionary] = []
+var _bank_visuals: Array[MeshInstance3D] = []
+var _kit: Dictionary = {}
+var _actors: Dictionary = {}
+var _scheduler: Node
+var _exchange: Node3D
+var _fragment_cues: Dictionary = {}
+var _exit_cue: Node3D
+var _scenic_clock: float = 0.0
+var _profile_id: String = "standard"
+var _collected_ids: Array[String] = []
+var _fragment_collected_at: Dictionary = {}
+var _checkpoint_contact_seen: bool = false
+var _checkpoint_requested: bool = false
+var _pending_checkpoint: bool = false
+var _completion_pending: bool = false
+var _exit_requested: bool = false
+var _admission_errors: Dictionary = {}
+
+var _journal_construction_started: bool = false
+var _journal_layout_bound: bool = false
+var _journal_legacy_construction: bool = false
+var _journal_legacy_capture: bool = false
+var _journal_descriptor: Dictionary = {}
+var _journal_positions: Dictionary = FRAGMENT_POSITIONS.duplicate(true)
+
+
+static func _journal_fresh_descriptor(profile_id: String) -> Dictionary:
+	if not JOURNAL_BASELINE_RECIPES.has(profile_id): return {}
+	return {"schema_version":1,"profile_id":profile_id,"recipe_id":JOURNAL_CHALLENGE_RECIPE if profile_id == "challenge" else JOURNAL_BASELINE_RECIPES[profile_id]}
+
+
+static func _journal_layout(descriptor: Variant, legacy: bool) -> Dictionary:
+	if not descriptor is Dictionary or not Codec.keys_error(descriptor,["schema_version","profile_id","recipe_id"]).is_empty():
+		return {"error":"Closed Perimeter journal descriptor required"}
+	if not descriptor.schema_version is int or descriptor.schema_version != 1 or not descriptor.profile_id is String or not JOURNAL_BASELINE_RECIPES.has(descriptor.profile_id) or not descriptor.recipe_id is String:
+		return {"error":"Unsupported Perimeter journal descriptor"}
+	var expected: String = JOURNAL_BASELINE_RECIPES[descriptor.profile_id]
+	if not legacy and descriptor.profile_id == "challenge": expected = JOURNAL_CHALLENGE_RECIPE
+	if descriptor.recipe_id != expected: return {"error":"Perimeter journal profile/recipe mismatch"}
+	var positions: Dictionary = FRAGMENT_POSITIONS.duplicate(true)
+	if not legacy and descriptor.profile_id == "challenge": positions.north = Vector3(1.4,0,-8.9)
+	return {"error":"","legacy":legacy,"profile_id":descriptor.profile_id,"descriptor":descriptor.duplicate(true),"positions":positions}
+
+
+static func _journal_constructor(local: Variant) -> Dictionary:
+	if not local is Dictionary: return {"error":"Perimeter saved local dictionary required"}
+	var legacy: bool = not local.has(JOURNAL_DESCRIPTOR_KEY)
+	var keys: Array[String] = LOCAL_KEYS.duplicate()
+	if not legacy: keys.append(JOURNAL_DESCRIPTOR_KEY)
+	var error: String = Codec.keys_error(local,keys)
+	if not error.is_empty(): return {"error":error}
+	if not local.profile_id is String or not JOURNAL_BASELINE_RECIPES.has(local.profile_id): return {"error":"Perimeter saved profile required"}
+	var descriptor: Variant = local.get(JOURNAL_DESCRIPTOR_KEY)
+	if legacy: descriptor = {"schema_version":1,"profile_id":local.profile_id,"recipe_id":JOURNAL_BASELINE_RECIPES[local.profile_id]}
+	var selected: Dictionary = _journal_layout(descriptor,legacy)
+	if not String(selected.error).is_empty(): return selected
+	if selected.profile_id != local.profile_id: return {"error":"Perimeter saved layout and local profile differ"}
+	return selected
+
+
+func restore_candidate_construction_required() -> bool:
+	return true
+
+
+func _on_enter_restore_candidate(local: Dictionary, _saved_player: Dictionary) -> String:
+	var selected: Dictionary = _journal_constructor(local)
+	if not String(selected.error).is_empty(): return selected.error
+	_construct_perimeter(selected)
+	return runtime_error
+
+
+func _journal_binding_error(local: Dictionary) -> String:
+	var selected: Dictionary = _journal_constructor(local)
+	if not String(selected.error).is_empty(): return selected.error
+	if not _journal_layout_bound or selected.legacy != _journal_legacy_construction or selected.profile_id != _profile_id or selected.positions != _journal_positions or not Codec.same_values(selected.descriptor,_journal_descriptor):
+		return "Perimeter saved layout differs from immutable native construction"
+	return ""
+
+
+func _ready() -> void:
+	process_physics_priority = 110
+	_build_ground()
+	_kit = PerimeterKit.build(self)
+	var kit_root: Node3D = _kit["root"]
+	for path: Variant in kit_root.get_meta("optional_cutaway_paths", []):
+		var mesh: MeshInstance3D = kit_root.get_node_or_null(NodePath(String(path))) as MeshInstance3D
+		if is_instance_valid(mesh): _bank_visuals.append(mesh)
+	for id: String in FRAGMENT_POSITIONS:
+		var cue: Node3D = InteractionCue.new() as Node3D
+		cue.name = "JournalContact_" + id
+		cue.position = FRAGMENT_POSITIONS[id]
+		add_child(cue)
+		_fragment_cues[id] = cue
+	_exit_cue = InteractionCue.new() as Node3D
+	_exit_cue.name = "PerimeterContactExit"
+	_exit_cue.position = Vector3(0, 0, -9.9)
+	add_child(_exit_cue)
+	_apply_collection_presentation()
+	set_physics_process(false)
+
+
+func _on_enter_level() -> void:
+	var profile_id: String = "standard"
+	if is_instance_valid(shared_shell) and shared_shell.has_method("get_difficulty_preference"):
+		profile_id = shared_shell.call("get_difficulty_preference")
+	var selected: Dictionary = _journal_layout(_journal_fresh_descriptor(profile_id),false)
+	if not String(selected.error).is_empty(): runtime_error = selected.error; return
+	_construct_perimeter(selected)
+
+
+func _construct_perimeter(selected: Dictionary) -> void:
+	if _journal_construction_started or is_instance_valid(_scheduler) or not _actors.is_empty() or is_instance_valid(_exchange):
+		runtime_error = "Perimeter native recipients can only be configured once"
+		return
+	_journal_construction_started = true
+	_profile_id = selected.profile_id
+	_journal_legacy_construction = selected.legacy
+	_journal_descriptor = selected.descriptor.duplicate(true)
+	_journal_positions = selected.positions.duplicate(true)
+	for id: String in FRAGMENT_POSITIONS:
+		var prop: Variant = _kit.get("journals",{}).get(id)
+		var cue: Variant = _fragment_cues.get(id)
+		if not is_instance_valid(prop) or not prop is Node3D or not is_instance_valid(cue) or not cue is Node3D:
+			runtime_error = "Perimeter selected journal native nodes are missing"
+			return
+	for id: String in FRAGMENT_POSITIONS:
+		(_kit["journals"][id] as Node3D).global_position = _journal_positions[id]
+		(_fragment_cues[id] as Node3D).global_position = _journal_positions[id]
+	_journal_layout_bound = true
+	_scheduler = Scheduler.new()
+	_scheduler.name = "PerimeterThreatScheduler"
+	add_child(_scheduler)
+	if not _scheduler.call("begin_encounter", _profile_id, ENCOUNTER_ID, WORLD_REVISION):
+		runtime_error = String(_scheduler.get("last_error"))
+		return
+	for id: String in SCOUT_POSITIONS:
+		var actor: Node3D = ScoutActor.new() as Node3D
+		actor.name = "PerimeterScout_" + id
+		actor.position = SCOUT_POSITIONS[id]
+		add_child(actor)
+		if not actor.call("configure", hero, effects, id):
+			runtime_error = "Could not bind reused Perimeter Scout " + id
+			return
+		_actors[id] = actor
+	_exchange = Exchange.new() as Node3D
+	_exchange.name = "PerimeterRayExchanges"
+	add_child(_exchange)
+	if not _exchange.call("configure", hero, effects, _scheduler, _actors, _profile_id, _response_context()):
+		runtime_error = String(_exchange.get("last_error"))
+		return
+	if not _exchange.call("set_response_context_provider", _response_context) or not _exchange.call("set_presentation_guard", _presentation_guard):
+		runtime_error = "Could not bind Perimeter portrait preflight"
+		return
+	_update_actor_visibility()
+	_apply_collection_presentation()
+	_update_objective()
+	set_physics_process(true)
+
+
+func _physics_process(delta: float) -> void:
+	if not _entered or get_tree().paused or not is_instance_valid(hero) or hero.dead or not runtime_error.is_empty(): return
+	_scenic_clock += delta
+	_flush_progress_requests()
+	if get_tree().paused: return
+	_update_actor_visibility()
+	_apply_readability()
+	_apply_collection_presentation()
+	var response: Dictionary = hero.get_threat_response_state()
+	var stable: bool = response.get("stable", false) and float(response.get("commitment_remaining_s", 1.0)) <= 0.00001
+	if not _checkpoint_requested:
+		_checkpoint_contact_seen = _checkpoint_contact_seen or _hero_contacts(CHECKPOINT_REGION)
+		if _checkpoint_contact_seen and stable:
+			_checkpoint_requested = true
+			_pending_checkpoint = true
+			_flush_progress_requests()
+			return
+	if _collected_ids.size() == FRAGMENT_POSITIONS.size():
+		if is_completed() and not _exit_requested and stable and _hero_contacts(EXIT_REGION):
+			_exit_requested = true
+			_apply_collection_presentation()
+			if not request_contact_exit(EXIT_ID, hero): runtime_error = "Could not request Perimeter return"
+		return
+	if stable:
+		for id: String in FRAGMENT_POSITIONS:
+			if _collected_ids.has(id) or (id == "north" and not _checkpoint_requested): continue
+			var point: Vector3 = _journal_positions[id]
+			if not _hero_contacts(Rect2(point.x - 0.55, point.z - 0.55, 1.1, 1.1)): continue
+			_collected_ids.append(id)
+			_fragment_collected_at[id] = _scenic_clock
+			_update_objective()
+			if _collected_ids.size() == FRAGMENT_POSITIONS.size():
+				_exchange.call("cancel_all", "journal_complete")
+				_scheduler.call("end_encounter", "journal_complete")
+				_completion_pending = true
+				_update_actor_visibility()
+				_apply_collection_presentation()
+				_flush_progress_requests()
+				return
+	for id: String in _active_actor_ids():
+		if id == "final" and not _checkpoint_is_committed(): continue
+		var actor: Node3D = _actors[id]
+		var state: Dictionary = _exchange.call("state", id)
+		if state.get("status") == "running":
+			if not _exchange_framed(actor, state): _exchange.call("cancel", id, "required_source_footprint_or_landing_offscreen")
+			continue
+		if float(actor.get("hp")) <= 0.0 or hero.global_position.distance_to(actor.global_position) > Exchange.REACH: continue
+		var direction: Vector3 = Vector3(hero.global_position.x - actor.global_position.x, 0, hero.global_position.z - actor.global_position.z)
+		if direction.length_squared() <= 0.000001: direction = Vector3.BACK
+		if not _exchange_framed(actor, {"geometry": Geometry.lane(actor.global_position, actor.global_position + direction.normalized() * Exchange.REACH, Exchange.RADIUS)}): continue
+		var answer: Dictionary = _exchange.call("activate", id)
+		_admission_errors[id] = {} if answer.get("accepted", false) else {"reason": answer.get("reason", "rejected")}
+
+
+func _active_actor_ids() -> Array[String]:
+	var ids: Array[String] = []
+	if _collected_ids.size() == FRAGMENT_POSITIONS.size(): return ids
+	ids.append("west")
+	if _checkpoint_requested and not _pending_checkpoint: ids.append("final")
+	return ids
+
+
+func _checkpoint_is_committed() -> bool:
+	if not _checkpoint_requested or _pending_checkpoint or current_checkpoint().get("id") != CHECKPOINT_ID: return false
+	# Actual campaign admission waits for the shared consumer's durable CP drain.
+	# A standalone Main preview has only CinderLevel's local event consumer.
+	if not is_instance_valid(shared_shell) or not shared_shell.has_method("capture_campaign_snapshot"): return true
+	var attempts: Variant = shared_shell.get("attempts")
+	if not is_instance_valid(attempts): return false
+	var model: Dictionary = attempts.call("state")
+	var attempt: Variant = model.get("side_attempt")
+	if attempt == null: attempt = model.get("story")
+	if not attempt is Dictionary: return false
+	return attempt.get("level_id") == "A2-O1" and attempt.get("checkpoint", {}).get("level", {}).get("progress", {}).get("checkpoint_id") == CHECKPOINT_ID
+
+
+func _flush_progress_requests() -> void:
+	if hero.dead or not _entered or _restoring or _validating or _snapshotting: return
+	if _pending_checkpoint:
+		_pending_checkpoint = false
+		if not request_checkpoint(CHECKPOINT_ID):
+			runtime_error = "Could not request Perimeter contact checkpoint"
+			return
+	if _completion_pending:
+		_completion_pending = false
+		if not request_completion(COMPLETION_ID): runtime_error = "Could not request Perimeter journal completion"
+
+
+func _hero_contacts(region: Rect2) -> bool:
+	return not hero.dead and hero.global_position.y > -0.05 and hero.global_position.y < 0.2 and region.has_point(Vector2(hero.global_position.x, hero.global_position.z))
+
+
+func _update_actor_visibility() -> void:
+	var active: Array[String] = _active_actor_ids()
+	for id: String in _actors:
+		var actor: Node3D = _actors[id]
+		actor.visible = float(actor.get("hp")) <= 0.0 or (active.has(id) and hero.global_position.distance_to(actor.global_position) <= 5.1)
+
+
+func _apply_collection_presentation() -> void:
+	for id: String in FRAGMENT_POSITIONS:
+		var state: String = "available"
+		if _collected_ids.has(id): state = "active" if _scenic_clock - float(_fragment_collected_at[id]) < COLLECTION_FLASH_S else "spent"
+		PerimeterKit.set_journal(_kit, id, state)
+		if _fragment_cues.has(id): _fragment_cues[id].call("present", state, "contact")
+	var exit_state: String = "hidden" if _collected_ids.size() < FRAGMENT_POSITIONS.size() else ("active" if _exit_requested else "available")
+	PerimeterKit.set_exit(_kit, exit_state)
+	if is_instance_valid(_exit_cue):
+		if exit_state == "hidden": _exit_cue.call("clear")
+		else: _exit_cue.call("present", exit_state, "contact")
+
+
+func _update_objective() -> void:
+	objective_text = "CYLINDER PERIMETER / JOURNAL %d OF 3\nCOLLECT THE PALE PAGES BY CONTACT." % _collected_ids.size() if _collected_ids.size() < 3 else "THE JOURNAL IS COMPLETE\nRETURN THROUGH THE PALE EXIT MARKER."
+
+
+func encounter_state() -> Dictionary:
+	var scouts: Dictionary = {}
+	for id: String in _actors:
+		scouts[id] = {"hp": _actors[id].get("hp"), "visible": _actors[id].visible, "exchange": _exchange.call("state", id)}
+	return {"collected_ids": _collected_ids.duplicate(), "checkpoint_requested": _checkpoint_requested, "exit_open": _collected_ids.size() == 3, "sources": scouts, "clock_s": _scheduler.call("get_clock") if is_instance_valid(_scheduler) else 0.0, "runtime_error": runtime_error, "admission_errors": _admission_errors.duplicate(true)}
+
+
+func _response_context(actor_id: String = "", geometry: Dictionary = {}) -> Dictionary:
+	var escapes: Array[Vector3] = RESPONSE_DIRECTIONS.duplicate()
+	var returns: Array[Vector3] = RESPONSE_DIRECTIONS.duplicate()
+	if not actor_id.is_empty() and _actors.has(actor_id) and is_instance_valid(hero):
+		var actor: Node3D = _actors[actor_id]
+		var camera: Camera3D = get_viewport().get_camera_3d()
+		escapes.clear()
+		returns.clear()
+		if is_instance_valid(camera):
+			var points: Array[Vector3] = _required_source_points(actor)
+			points.append_array(_lane_points(geometry))
+			# Existing live sources remain legible when a second mirror commits.
+			for other_id: String in _active_actor_ids():
+				if other_id == actor_id:
+					continue
+				var other_state: Dictionary = _exchange.call("state", other_id)
+				if other_state.get("status") == "running":
+					points.append_array(_required_source_points(_actors[other_id]))
+					if other_state.get("phase") != "recovery":
+						points.append_array(_lane_points(_state_geometry(other_state)))
+			var distance: float = float(hero.equipment.resolved_stats()["dash_distance"])
+			for direction: Vector3 in RESPONSE_DIRECTIONS:
+				var landing: Vector3 = hero.global_position + direction * distance
+				var witness: Array[Vector3] = points.duplicate()
+				witness.append_array(_landing_points(landing))
+				if _points_framed(camera, witness) and _points_framed(camera, witness, _settled_follow_delta(camera, landing)):
+					escapes.append(direction)
+			var reach: float = float(hero.equipment.resolved_stats()["primary_range"])
+			for direction: Vector3 in RESPONSE_DIRECTIONS:
+				var has_opening: bool = false
+				var all_openings_framed: bool = true
+				for escape: Vector3 in escapes:
+					var returning: Vector3 = hero.global_position + (escape + direction) * distance
+					# The shared prover cross-products these arrays. Every pairing
+					# that could reach the ordinary opening must be framed, rather
+					# than admitting this return for one different escape only.
+					if Vector2(returning.x - actor.global_position.x, returning.z - actor.global_position.z).length() > reach + 0.00001:
+						continue
+					has_opening = true
+					var witness: Array[Vector3] = _required_source_points(actor)
+					witness.append_array(_landing_points(returning))
+					if not _points_framed(camera, witness) or not _points_framed(camera, witness, _settled_follow_delta(camera, returning)):
+						all_openings_framed = false
+						break
+				if has_opening and all_openings_framed:
+					returns.append(direction)
+
+	return {"encounter_id": ENCOUNTER_ID, "world_revision": WORLD_REVISION, "recognition_s": 0.30, "attack_input_margin_s": 0.10, "escape_directions": escapes, "return_directions": returns, "floor_regions": floor_regions()}
+
+
+func _presentation_guard(actor_id: String, state: Dictionary) -> bool:
+	# The driver calls this immediately before damage and fresh commitment.
+	_apply_readability(actor_id, state)
+	return _actors.has(actor_id) and _exchange_framed(_actors[actor_id], state)
+
+
+func _hero_readability_points(camera: Camera3D) -> Array[Vector3]:
+	var points: Array[Vector3] = []
+	if not is_instance_valid(hero) or not is_instance_valid(shared_shell) or not shared_shell.has_method("player_camera_framing_points_for"):
+		return points
+	var native: Variant = shared_shell.call("player_camera_framing_points_for", hero, camera)
+	if not native is Array or native.is_empty(): return points
+	# Conservative eight corners enclose every actual shared Hero point and feet.
+	# The accepted Scout cosmetic API retains its original sixteen-point bound.
+	var bounds := AABB(hero.global_position, Vector3.ZERO)
+	for value: Variant in native:
+		if not value is Vector3 or not value.is_finite(): return []
+		bounds = bounds.expand(value)
+	for index: int in range(8): points.append(bounds.get_endpoint(index))
+	return points
+
+
+func _apply_readability(guard_actor_id: String = "", guard_state: Dictionary = {}) -> void:
+	var camera: Camera3D = get_viewport().get_camera_3d()
+	if not is_instance_valid(camera) or not is_instance_valid(hero):
+		return
+	var hero_points: Array[Vector3] = _hero_readability_points(camera)
+	var protected: Array[Vector3] = hero_points.duplicate()
+	for actor_id: String in _actors:
+		var actor: Node3D = _actors[actor_id]
+		var rig: Node3D = actor.get_node_or_null("ScoutRig") as Node3D
+		if is_instance_valid(rig) and rig.has_method("apply_readability"):
+			if actor.is_visible_in_tree():
+				rig.call("apply_readability", camera, hero_points)
+			else:
+				rig.call("clear_readability")
+		if not actor.is_visible_in_tree():
+			continue
+		protected.append_array(_required_source_points(actor))
+		var state: Dictionary = guard_state if actor_id == guard_actor_id else (_exchange.call("state", actor_id) if is_instance_valid(_exchange) else {})
+		if state.get("status") != "running" and actor_id != guard_actor_id:
+			continue
+		if state.get("phase") != "recovery":
+			protected.append_array(_lane_readability_points(_state_geometry(state)))
+			var proof: Dictionary = state.get("proof", {})
+			if not proof.get("landing") is Vector3:
+				proof = state.get("presentation_witness", {})
+			for key: String in ["landing", "attack_position"]:
+				if proof.get(key) is Vector3:
+					protected.append_array(_landing_points(proof[key]))
+	for bank: MeshInstance3D in _bank_visuals:
+		if not is_instance_valid(bank):
+			continue
+		var obscures: bool = false
+		for point: Vector3 in protected:
+			if camera.is_position_behind(point):
+				continue
+			var origin: Vector3 = camera.project_ray_origin(camera.unproject_position(point))
+			if _bank_blocks_point(bank, origin, point):
+				obscures = true
+				break
+		var material: StandardMaterial3D = bank.material_override as StandardMaterial3D
+		var alpha: float = 0.12 if obscures else 1.0
+		if material.albedo_color.a != alpha:
+			var color: Color = material.albedo_color
+			color.a = alpha
+			material.albedo_color = color
+			material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA if obscures else BaseMaterial3D.TRANSPARENCY_DISABLED
+
+
+func _lane_readability_points(geometry: Dictionary) -> Array[Vector3]:
+	var points: Array[Vector3] = []
+	if not geometry.get("from") is Vector3 or not geometry.get("to") is Vector3:
+		return points
+	var start: Vector3 = geometry["from"]
+	var finish: Vector3 = geometry["to"]
+	var radius: float = float(geometry.get("radius", 0.31))
+	var side: Vector3 = (finish - start).cross(Vector3.UP).normalized() * radius
+	for center: Vector3 in [start, finish]:
+		for index: int in range(16):
+			var angle: float = TAU * float(index) / 16.0
+			points.append(center + Vector3(cos(angle) * radius, 0.03, sin(angle) * radius))
+	for index: int in range(11):
+		var center: Vector3 = start.lerp(finish, float(index) / 10.0) + Vector3.UP * 0.03
+		points.append(center)
+		points.append(center + side)
+		points.append(center - side)
+	return points
+
+
+func _bank_blocks_point(bank: MeshInstance3D, origin: Vector3, point: Vector3) -> bool:
+	# Segment/slab intersection uses actual transformed BoxMesh bounds. A bank
+	# beyond the protected point cannot fade, nor can a mere screen rectangle.
+	var inverse: Transform3D = bank.global_transform.affine_inverse()
+	var start: Vector3 = inverse * origin
+	var end: Vector3 = inverse * point
+	var ray: Vector3 = end - start
+	var bounds: AABB = bank.mesh.get_aabb()
+	var near: float = 0.0
+	var far: float = 1.0
+	for axis: int in range(3):
+		if absf(ray[axis]) <= 0.000000001:
+			if start[axis] < bounds.position[axis] or start[axis] > bounds.end[axis]:
+				return false
+			continue
+		var first: float = (bounds.position[axis] - start[axis]) / ray[axis]
+		var second: float = (bounds.end[axis] - start[axis]) / ray[axis]
+		near = maxf(near, minf(first, second))
+		far = minf(far, maxf(first, second))
+		if near > far:
+			return false
+	return near < 1.0 and far > 0.0
+
+
+func _exchange_framed(actor: Node3D, state: Dictionary) -> bool:
+	if not is_instance_valid(actor) or not actor.is_visible_in_tree():
+		return false
+	var camera: Camera3D = get_viewport().get_camera_3d()
+	if not is_instance_valid(camera):
+		return false
+	var points: Array[Vector3] = _required_source_points(actor)
+	if points.is_empty():
+		return false
+	# The active footprint remains mandatory through release. In recovery its
+	# spent lane cannot damage; source and exposed ordinary-primary housing do.
+	if state.get("phase") != "recovery":
+		points.append_array(_lane_points(_state_geometry(state)))
+	var proof: Dictionary = state.get("proof", {})
+	if not proof.get("landing") is Vector3:
+		proof = state.get("presentation_witness", {})
+	if state.get("phase") != "recovery":
+		for key: String in ["landing", "attack_position"]:
+			if proof.get(key) is Vector3:
+				points.append_array(_landing_points(proof[key]))
+	var failure: Dictionary = _framing_failure(camera, points)
+	if not failure.is_empty():
+		_admission_errors[String(actor.get("actor_id"))] = failure
+		return false
+	return true
+
+
+func _state_geometry(state: Dictionary) -> Dictionary:
+	var geometry: Dictionary = state.get("geometry", {})
+	for key: String in ["reservation", "exchange"]:
+		if geometry.is_empty() and state.get(key) is Dictionary:
+			geometry = state[key].get("geometry", {})
+	return geometry
+
+
+func _required_source_points(actor: Node3D) -> Array[Vector3]:
+	# Actual camera case, moving mirror and low housing mesh bounds establish
+	# readable source/opening, rather than an imaginary 1.9m upper-body cube.
+	# Peripheral support toes may reach the scenic margin; native views review
+	# the whole three-legged silhouette separately.
+	var points: Array[Vector3] = []
+	for path: String in ["ScoutRig/ThreeLegChassis/RivetedCameraCase", "ScoutRig/ThreeLegChassis/TrackingMirrorSwivel", "ScoutRig/ThreeLegChassis/FixedLowMirrorHousing"]:
+		var part: Node = actor.get_node_or_null(path)
+		if not is_instance_valid(part):
+			return []
+		var bounds: Array[Vector3] = _bounded_mesh_points(part)
+		points.append_array(bounds)
+		if bounds.is_empty():
+			return []
+	points.append_array(_landing_points(actor.global_position))
+	return points
+
+
+func _bounded_mesh_points(node: Node) -> Array[Vector3]:
+	var native: Array[Vector3] = []
+	_append_mesh_points(node, native)
+	if native.is_empty(): return []
+	# Eight actual world AABB corners conservatively enclose ALL visible part
+	# corners. This keeps the shared 256-point limit without dropping any mesh.
+	var bounds := AABB(native[0], Vector3.ZERO)
+	for point: Vector3 in native: bounds = bounds.expand(point)
+	var points: Array[Vector3] = []
+	for index: int in range(8): points.append(bounds.get_endpoint(index))
+	return points
+
+
+func _append_mesh_points(node: Node, points: Array[Vector3]) -> void:
+	if node is MeshInstance3D and is_instance_valid(node.mesh) and node.is_visible_in_tree():
+		var bounds: AABB = node.mesh.get_aabb()
+		for index: int in range(8):
+			points.append(node.global_transform * bounds.get_endpoint(index))
+	for child: Node in node.get_children():
+		_append_mesh_points(child, points)
+
+
+func _lane_points(geometry: Dictionary) -> Array[Vector3]:
+	var points: Array[Vector3] = []
+	if geometry.is_empty():
+		return points
+	for key: String in ["from", "to"]:
+		if not geometry.get(key) is Vector3:
+			return []
+		for x: float in [-0.31, 0.31]:
+			for z: float in [-0.31, 0.31]:
+				points.append(geometry[key] + Vector3(x, 0.03, z))
+	return points
+
+
+func _landing_points(landing: Vector3) -> Array[Vector3]:
+	var points: Array[Vector3] = []
+	for x: float in [-0.32, 0.32]:
+		for z: float in [-0.32, 0.32]:
+			points.append(landing + Vector3(x, 0.03, z))
+			points.append(landing + Vector3(x, 1.46, z))
+	return points
+
+
+func _settled_follow_delta(camera: Camera3D, landing: Vector3) -> Vector3:
+	# Fixed-angle shared camera approaches this public actor-follow endpoint;
+	# testing both projections bounds its continuous translation during a dash.
+	return landing + Vector3.UP * 0.75 + SharedGame.CAMERA_OFFSET - camera.global_position
+
+
+func _points_framed(camera: Camera3D, points: Array[Vector3], follow_delta: Vector3 = Vector3.ZERO) -> bool:
+	return not points.is_empty() and _framing_failure(camera, points, follow_delta).is_empty()
+
+
+func _framing_failure(camera: Camera3D, points: Array[Vector3], follow_delta: Vector3 = Vector3.ZERO) -> Dictionary:
+	var dimensions: Vector2 = get_viewport().get_visible_rect().size
+	var safe := Rect2(dimensions * Vector2(12.0 / 270.0, 108.0 / 585.0), dimensions * Vector2(246.0 / 270.0, 414.0 / 585.0))
+	if points.is_empty():
+		return {"reason": "missing_readable_source_points"}
+	for point: Vector3 in points:
+		var projected: Vector3 = point - follow_delta
+		var screen: Vector2 = camera.unproject_position(projected)
+		if camera.is_position_behind(projected) or not safe.has_point(screen):
+			return {"reason": "required_source_footprint_or_landing_offscreen", "point": point, "screen": screen, "safe_rect": safe}
+	return {}
+
+
+func floor_regions() -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for floor: Dictionary in _floors:
+		result.append({"id": floor["id"], "body": floor["body"], "rect": floor["rect"], "collision": floor["collision"], "safe_rect": floor["safe_rect"]})
+	return result
+
+
+func floor_bindings() -> Dictionary:
+	var result: Dictionary = {}
+	for floor: Dictionary in _floors:
+		result[floor["id"]] = {"collision": floor["collision"], "safe_rect": floor["safe_rect"]}
+	return result
+
+
+func _scheduler_bindings() -> Dictionary:
+	return {"world_root": self, "owners": _actors.duplicate(), "floors": floor_bindings()}
+
+
+func _build_ground() -> void:
+	var floor_root := Node3D.new()
+	floor_root.name = "DryGround"
+	add_child(floor_root)
+	for specification: Dictionary in FLOOR_SPECS:
+		var rect: Rect2 = specification["rect"]
+		var body := StaticBody3D.new()
+		body.name = specification["id"]
+		body.collision_layer = 1
+		body.collision_mask = 0
+		body.position = Vector3(rect.get_center().x, -0.25, rect.get_center().y)
+		floor_root.add_child(body)
+		var shape := BoxShape3D.new()
+		shape.size = Vector3(rect.size.x, 0.5, rect.size.y)
+		var collision := CollisionShape3D.new()
+		collision.name = "DrySupport"
+		collision.shape = shape
+		body.add_child(collision)
+		_floors.append({"id": specification["id"], "rect": rect, "body": body, "collision": collision, "safe_rect": rect.grow(-FLOOR_PROOF_INSET)})
+		# Reused heath kit supplies the ground texture above this hidden collision.
+	_build_bank("PerimeterNearBank", Vector3(0, 0.45, 3.9), Vector3(7.8, 1.0, 0.6), floor_root)
+	_build_bank("PerimeterFarBank", Vector3(0, 0.45, -11.1), Vector3(7.8, 1.0, 0.6), floor_root)
+	for side: float in [-1.0, 1.0]:
+		_build_bank("PerimeterWestBank" if side < 0 else "PerimeterEastBank", Vector3(side * 3.65, 0.45, -3.6), Vector3(0.5, 1.0, 14.4), floor_root)
+	# One grounded trunk creates the short inside flank within the broad loop. It is
+	# stationary layer-1 scenery, and does not impersonate an interaction cue.
+	var trunk := StaticBody3D.new()
+	trunk.name = "PerimeterGroundedTrunk"
+	trunk.position = Vector3(0, 0.6, -3.6)
+	trunk.collision_layer = 1
+	trunk.collision_mask = 0
+	floor_root.add_child(trunk)
+	var trunk_shape := CylinderShape3D.new()
+	trunk_shape.radius = 0.35
+	trunk_shape.height = 1.2
+	var trunk_collision := CollisionShape3D.new()
+	trunk_collision.name = "GroundedSolid"
+	trunk_collision.shape = trunk_shape
+	trunk.add_child(trunk_collision)
+	# The kit draws the exact grounded stump and persistent opaque footprint.
+
+
+func _build_bank(stable_name: String, position_value: Vector3, dimensions: Vector3, parent: Node3D) -> void:
+	var body := StaticBody3D.new()
+	body.name = stable_name
+	body.position = position_value
+	body.collision_layer = 1
+	body.collision_mask = 0
+	parent.add_child(body)
+	var shape := BoxShape3D.new()
+	shape.size = dimensions
+	var collision := CollisionShape3D.new()
+	collision.name = "BankSolid"
+	collision.shape = shape
+	body.add_child(collision)
+	# The kit draws this exact native bank; its isolated cosmetic panels fade.
+
+
+func _capture_local_state() -> Dictionary:
+	if not get_tree().paused or not runtime_error.is_empty(): return {"error": "Perimeter capture requires the paused committed aggregate"}
+	var bindings: Dictionary = _scheduler_bindings()
+	var result: Dictionary = {"scenic_clock": _scenic_clock, "profile_id": _profile_id, "world_revision": WORLD_REVISION, "collected_ids": _collected_ids.duplicate(), "fragment_collected_at": _fragment_collected_at.duplicate(), "checkpoint_contact_seen": _checkpoint_contact_seen, "checkpoint_requested": _checkpoint_requested, "pending_checkpoint": _pending_checkpoint, "completion_pending": _completion_pending, "exit_requested": _exit_requested, "scheduler": _scheduler.call("snapshot_state", bindings), "exchange": _exchange.call("snapshot_state", bindings)}
+
+	if not _journal_legacy_capture: result[JOURNAL_DESCRIPTOR_KEY] = _journal_descriptor.duplicate(true)
+	return result
+
+func _local_snapshot_error(state: Dictionary) -> String:
+	return _local_snapshot_error_for_bindings(state, _scheduler_bindings())
+
+
+func _local_snapshot_error_with_player(state: Dictionary, saved_player: Dictionary) -> String:
+	var bindings: Dictionary = _scheduler_bindings()
+	bindings["hero_positions"] = {"hero": Codec.read_vector3(saved_player["motion"]["position"])}
+	return _local_snapshot_error_for_bindings(state, bindings)
+
+
+func _local_snapshot_error_for_bindings(state: Dictionary, bindings: Dictionary) -> String:
+	if not get_tree().paused or not runtime_error.is_empty(): return "Perimeter transport requires the paused aggregate"
+	var error: String = _journal_binding_error(state)
+	if not error.is_empty(): return error
+	if not Codec.in_range(state["scenic_clock"], 0.0, 1000000000.0) or state["profile_id"] not in ["assisted", "standard", "challenge"] or not Codec.is_integer(state["world_revision"], WORLD_REVISION, WORLD_REVISION): return "Invalid Perimeter clock/profile/revision"
+	for key: String in ["checkpoint_contact_seen", "checkpoint_requested", "pending_checkpoint", "completion_pending", "exit_requested"]:
+		if not state[key] is bool: return "Invalid Perimeter progress latch"
+	if not state["collected_ids"] is Array or state["collected_ids"].size() > 3 or not state["fragment_collected_at"] is Dictionary: return "Invalid Perimeter fragment history"
+	var seen: Dictionary = {}
+	var prior_time: float = 0.0
+	for id: Variant in state["collected_ids"]:
+		if not id is String or not FRAGMENT_POSITIONS.has(id) or seen.has(id) or not Codec.in_range(state["fragment_collected_at"].get(id), 0.0, float(state["scenic_clock"])): return "Invalid unique Perimeter contact collection"
+		if float(state["fragment_collected_at"][id]) < prior_time: return "Perimeter collection order has decreasing contact time"
+		prior_time = float(state["fragment_collected_at"][id])
+		seen[id] = true
+	if not Codec.keys_error(state["fragment_collected_at"], state["collected_ids"]).is_empty(): return "Perimeter fragment ages differ from contacts"
+	if state["checkpoint_requested"] and not state["checkpoint_contact_seen"]: return "Perimeter checkpoint requires prior actual contact"
+	if state["pending_checkpoint"] and not state["checkpoint_requested"]: return "Perimeter pending checkpoint lacks contact boundary"
+	var complete: bool = state["collected_ids"].size() == 3
+	if state["collected_ids"].has("north") and (not state["checkpoint_requested"] or state["pending_checkpoint"]): return "North fragment requires the recorded before-final checkpoint"
+	if (state["completion_pending"] or state["exit_requested"]) and not complete: return "Perimeter completion/exit precedes three fragments"
+	if not state["scheduler"] is Dictionary or not state["exchange"] is Dictionary: return "Missing Perimeter paired threat state"
+	error = _runtime_content_error()
+	if not error.is_empty(): return error
+	error = _scheduler.call("snapshot_error", state["scheduler"], bindings)
+	if not error.is_empty(): return error
+	var paired: Dictionary = state["scheduler"]
+	if paired.get("world_revision") != WORLD_REVISION: return "Perimeter paired epoch differs"
+	if complete:
+		if not String(paired.get("encounter_id", "")).is_empty() or not paired.get("reservations", []).is_empty(): return "Complete journal must cancel and end its threat encounter"
+	elif paired.get("encounter_id") != ENCOUNTER_ID or paired.get("profile", {}).get("id") != state["profile_id"]: return "Perimeter paired fixed profile differs"
+	error = _exchange.call("snapshot_error", state["exchange"], bindings, paired)
+	if not error.is_empty(): return error
+	var final_record: Dictionary = state["exchange"]["records"]["final"]
+	if (not state["checkpoint_requested"] or state["pending_checkpoint"]) and int(final_record["cycle"]) != 0: return "Final Scout cannot precede its committed checkpoint"
+	return ""
+
+
+func _runtime_content_error() -> String:
+	var selected: Dictionary = _journal_layout(_journal_descriptor,_journal_legacy_construction)
+	if not _journal_layout_bound or not String(selected.error).is_empty() or selected.positions != _journal_positions or selected.profile_id != _profile_id: return "Perimeter selected journal construction differs"
+	if _floors.size() != 1 or _actors.size() != 2 or not is_instance_valid(_scheduler) or not is_instance_valid(_exchange) or not is_instance_valid(_exit_cue): return "Missing Perimeter native runtime"
+	var floor: Dictionary = _floors[0]
+	var collision: CollisionShape3D = floor.get("collision") as CollisionShape3D
+	if not is_instance_valid(collision) or not is_instance_valid(floor.get("body")) or floor["body"].is_queued_for_deletion() or not is_ancestor_of(floor["body"]) or collision.get_parent() != floor["body"] or collision.disabled or not collision.shape is BoxShape3D or not collision.shape.size.is_equal_approx(Vector3(FLOOR_RECT.size.x, 0.5, FLOOR_RECT.size.y)) or not floor["body"].position.is_equal_approx(Vector3(FLOOR_RECT.get_center().x, -0.25, FLOOR_RECT.get_center().y)): return "Perimeter actual dry support differs"
+	for key: String in ["root", "exit_marker"]:
+		var node: Variant = _kit.get(key)
+		if not is_instance_valid(node) or node.is_queued_for_deletion() or not is_ancestor_of(node): return "Missing Perimeter kit node"
+	if not _kit.get("journals") is Dictionary or not Codec.keys_error(_kit["journals"], FRAGMENT_POSITIONS.keys()).is_empty(): return "Missing three Perimeter journal props"
+	for id: String in FRAGMENT_POSITIONS:
+		var prop: Variant = _kit["journals"][id]
+		if not is_instance_valid(prop) or prop.is_queued_for_deletion() or not is_ancestor_of(prop) or not prop.global_position.is_equal_approx(_journal_positions[id]) or not is_instance_valid(_fragment_cues.get(id)) or not (_fragment_cues[id] as Node3D).global_position.is_equal_approx(_journal_positions[id]): return "Missing or moved Perimeter contact prop"
+	return ""
+
+
+func snapshot_state() -> Dictionary:
+	var state: Dictionary = super.snapshot_state()
+	if not state.is_empty():
+		last_snapshot_error = _progress_snapshot_error(state)
+		if not last_snapshot_error.is_empty(): return {}
+	return state
+
+
+func snapshot_error(state: Dictionary) -> String:
+	var error: String = super.snapshot_error(state)
+	return error if not error.is_empty() else _progress_snapshot_error(state)
+
+
+func snapshot_error_with_player(state: Dictionary, saved_player: Dictionary) -> String:
+	var error: String = super.snapshot_error_with_player(state, saved_player)
+	return error if not error.is_empty() else _progress_snapshot_error(state)
+
+
+func restore_state(state: Dictionary) -> bool:
+	var saved_player: Dictionary = hero.snapshot_state() if is_instance_valid(hero) else {}
+	last_snapshot_error = "Perimeter restore requires a valid paused shared Player" if saved_player.is_empty() else snapshot_error_with_player(state, saved_player)
+	if not last_snapshot_error.is_empty(): return false
+	var accepted: bool = super.restore_state(state)
+	if accepted and not runtime_error.is_empty():
+		last_snapshot_error = runtime_error
+		return false
+	return accepted
+
+
+func _progress_snapshot_error(state: Dictionary) -> String:
+	var local: Dictionary = state["local"]
+	var progress: Dictionary = state["progress"]
+	var complete: bool = local["collected_ids"].size() == 3
+	if progress["completed"] != (complete and not local["completion_pending"]) or progress["completion_id"] != (COMPLETION_ID if progress["completed"] else "") or progress["contact_exit_id"] != (EXIT_ID if local["exit_requested"] else ""): return "Perimeter completion/contact exit differs from its actual objective"
+	var expected: Dictionary = {}
+	if local["checkpoint_requested"] and not local["pending_checkpoint"]: expected[CHECKPOINT_ID] = "encounter"
+	if not Codec.same_values(progress["checkpoint_ids"], expected) or progress["checkpoint_id"] != (CHECKPOINT_ID if not expected.is_empty() else "") or progress["checkpoint_kind"] != ("encounter" if not expected.is_empty() else ""): return "Perimeter checkpoint history differs from the before-final contact"
+	return ""
+
+
+func _restore_local_state(state: Dictionary) -> void:
+	_scenic_clock = float(state["scenic_clock"])
+	_profile_id = state["profile_id"]
+	_collected_ids.assign(state["collected_ids"])
+	_fragment_collected_at = state["fragment_collected_at"].duplicate()
+	_checkpoint_contact_seen = state["checkpoint_contact_seen"]
+	_checkpoint_requested = state["checkpoint_requested"]
+	_pending_checkpoint = state["pending_checkpoint"]
+	_completion_pending = state["completion_pending"]
+	_exit_requested = state["exit_requested"]
+	var bindings: Dictionary = _scheduler_bindings()
+	for id: String in _actors:
+		if not _actors[id].call("restore_state", state["exchange"]["actors"][id]):
+			runtime_error = "Unexpected Perimeter actor restore failure " + id
+			return
+	if not _scheduler.call("restore_state", state["scheduler"], bindings):
+		runtime_error = "Unexpected Perimeter scheduler restore failure"
+		return
+	if not _exchange.call("restore_state", state["exchange"], bindings):
+		runtime_error = "Unexpected Perimeter exchange restore failure"
+		return
+	_update_actor_visibility()
+	_apply_readability()
+	var blocking: Dictionary = {}
+	for id: String in _fragment_cues:
+		blocking[id] = _fragment_cues[id].is_blocking_signals()
+		_fragment_cues[id].set_block_signals(true)
+	var exit_blocking: bool = _exit_cue.is_blocking_signals()
+	_exit_cue.set_block_signals(true)
+	_apply_collection_presentation()
+	for id: String in _fragment_cues: _fragment_cues[id].set_block_signals(blocking[id])
+	_exit_cue.set_block_signals(exit_blocking)
+	_update_objective()
+
+	_journal_legacy_capture = _journal_legacy_construction # Install writer shape only after complete quiet native commit.
+
+func _restore_candidate_presentation_error(camera: Camera3D, framing_hud: GameHUD) -> String:
+	if not is_instance_valid(shared_shell) or not shared_shell.has_method("camera_framing_error_for_context"): return "Perimeter recipient requires actual shared camera/HUD framing"
+	var points: Array[Vector3] = _hero_readability_points(camera)
+	if points.is_empty(): return "Perimeter actual shared Hero bounds are unavailable"
+	for id: String in _actors:
+		var state: Dictionary = _exchange.call("state", id)
+		if state.get("status") != "running": continue
+		points.append_array(_required_source_points(_actors[id]))
+		if state.get("phase") != "recovery":
+			points.append_array(_lane_points(_state_geometry(state)))
+			var view: Dictionary = state.get("presentation_witness", {})
+			for key: String in ["landing", "attack_position"]:
+				if view.get(key) is Vector3: points.append_array(_landing_points(view[key]))
+	for id: String in FRAGMENT_POSITIONS:
+		var prop: Node3D = _kit["journals"][id]
+		if prop.is_visible_in_tree() and hero.global_position.distance_to(prop.global_position) <= 3.1:
+			points.append_array(_bounded_mesh_points(prop))
+			points.append_array(_bounded_mesh_points(_fragment_cues[id]))
+	if _collected_ids.size() == 3 and hero.global_position.distance_to(_exit_cue.global_position) <= 3.1:
+		points.append_array(_bounded_mesh_points(_kit["exit_marker"]))
+		points.append_array(_bounded_mesh_points(_exit_cue))
+	return String(shared_shell.call("camera_framing_error_for_context", points, hero, camera, framing_hud))
+
+
+func _on_exit_level() -> void:
+	set_physics_process(false)
+	if is_instance_valid(_exchange): _exchange.call("cleanup")
+	if is_instance_valid(_scheduler): _scheduler.call("end_encounter", "level_exit")
+	for actor: Node3D in _actors.values():
+		if is_instance_valid(actor): actor.call("disarm")
+	for cue: Node3D in _fragment_cues.values():
+		if is_instance_valid(cue): cue.call("clear")
+	if is_instance_valid(_exit_cue): _exit_cue.call("clear")

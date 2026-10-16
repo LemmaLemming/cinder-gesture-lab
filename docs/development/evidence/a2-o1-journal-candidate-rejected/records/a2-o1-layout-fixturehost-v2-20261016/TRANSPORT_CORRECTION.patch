@@ -1,0 +1,63 @@
+--- original7454103d
++++ correctedRootfixture
+@@ -27,7 +27,7 @@
+ 	_registry_bytes = FileAccess.get_file_as_string(Registry.DATA_PATH)
+ 	_raw = JSON.parse_string(_registry_bytes)
+ 	node_added.connect(_observe_added)
+-	var registry := Registry.new()
++	var registry = Registry.new()
+ 	if not _expect(registry.last_error.is_empty(),"unchanged canonical Registry"): await _finish(); return
+ 	var expected: Dictionary = {}
+ 	if mode.begins_with("--old"):
+@@ -49,6 +49,7 @@
+ 		if mode == "--new-checkpoint" and not await _fresh_contact_checkpoint(): await _finish(); return
+ 		expected = _shell.capture_campaign_snapshot()
+ 	if not _expect(not expected.is_empty(),"actual supported expected whole tuple"): await _finish(); return
++	if not _mode_layout(expected.level.local): await _finish(); return
+ 	if not await _precommit_boundary(expected): await _finish(); return
+ 	if _shell.active_level == null:
+ 		_shell.menu.difficulty_preference_requested.emit("assisted"); await _settle()
+@@ -103,6 +104,7 @@
+ 	var before: Dictionary = level.snapshot_state() # Public API outside hook busy boundary.
+ 	var legacy: bool = not expected.level.local.has(O1.JOURNAL_DESCRIPTOR_KEY)
+ 	if not _expect(level.is_restore_candidate() and not before.is_empty() and before.local.size() == (12 if legacy else 13) and before.local.has(O1.JOURNAL_DESCRIPTOR_KEY) == (not legacy),"public precommit constructor snapshot keeps old12/new13 shape; not restored saved history"): return false
++	if not _mode_layout(before.local): return false
+ 	if not _expect(prepared_candidate.player.snapshot_error(expected.player).is_empty() and level.snapshot_error_with_player(expected.level,expected.player).is_empty(),"full unchanged native prevalidation with saved Hero"): return false
+ 	if not _expect(prepared_candidate.player.restore_state(expected.player) and level.restore_state(expected.level) and _same(level.snapshot_state(),expected.level),"actual Hero-first quiet commit recaptures original whole level exactly"): return false
+ 	if not _selected_nodes(level,expected.level.local): return false
+@@ -113,20 +115,33 @@
+ 	observations.append({"kind":"constructor/public-precommit/quietcommit","legacy":legacy,"precommit_shape":before.local.size(),"precommit_is_saved_history":false,"restored_level_exact":Exact.stringify(level.snapshot_state())})
+ 	_shell._dispose(prepared_candidate); prepared_candidate = {}
+ 	return true
++func _mode_layout(local: Dictionary) -> bool:
++	var old: bool = mode in ["--old-entrance","--old-checkpoint"]
++	var valid: bool = local.size() == (12 if old else 13) and local.get("profile_id") == "challenge"
++	if old:
++		valid = valid and not local.has("journal_arrangement")
++	else:
++		var descriptor: Variant = local.get("journal_arrangement")
++		valid = valid and descriptor is Dictionary and typeof(descriptor.get("schema_version")) == TYPE_INT and descriptor == {"schema_version":1,"profile_id":"challenge","recipe_id":"A2-O1/challenge-north-east@v1"}
++	return _expect(valid,"explicit mode independently requires literal old12 or fresh13 Challenge recipe")
+ func _selected_nodes(level: CinderLevel,local: Dictionary) -> bool:
++	if not _mode_layout(local): return false
+ 	var selected: Dictionary = O1._journal_constructor(local)
+ 	if not _expect(selected.error.is_empty(),"trusted selected metadata"): return false
++	var north: Vector3 = Vector3(-1.4,0,-8.9) if mode in ["--old-entrance","--old-checkpoint"] else Vector3(1.4,0,-8.9)
++	var literal_positions: Dictionary = {"west":Vector3(-2.05,0,-0.6),"east":Vector3(2.05,0,-0.6),"north":north}
++	if not _expect(selected.positions == literal_positions,"mode-specific literal positions independent of production selector"): return false
+ 	for id: String in O1.FRAGMENT_POSITIONS:
+ 		var kit: Dictionary = level.get("_kit")
+ 		var journals: Dictionary = kit.get("journals")
+ 		var prop: Node3D = journals[id]
+ 		var cue: Node3D = level.get("_fragment_cues")[id]
+-		if not _expect(prop.global_position == selected.positions[id] and cue.global_position == selected.positions[id] and level.get("_journal_positions")[id] == selected.positions[id],"actual prop/cue/contact map agree: "+id): return false
++		if not _expect(prop.global_position == literal_positions[id] and cue.global_position == literal_positions[id] and level.get("_journal_positions")[id] == literal_positions[id],"actual prop/cue/contact map agree with literal expected placement: "+id): return false
+ 	return true
+ func _installed(expected: Dictionary) -> bool:
+ 	return _expect(_live_o1() and paused and _events.is_empty() and _same(_shell.capture_campaign_snapshot(),expected),"public installed full saved Optional exact/quiet") and _selected_nodes(_shell.active_level,expected.level.local)
+ func _durable() -> bool:
+-	var store := Store.new(_test_root+"campaign.json")
++	var store = Store.new(_test_root+"campaign.json")
+ 	var payload: Dictionary = store.read_payload()
+ 	return _expect(store.last_error.is_empty() and not store.loaded_backup and _same(payload,_shell.attempts.state()),"independent primary raw Store whole Attempts reread")
+ func _copy_raw(source: String,destination: String) -> bool:

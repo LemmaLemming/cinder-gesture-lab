@@ -1,0 +1,189 @@
+--- unchanged-failed-route-v3
++++ new-fresh-focused-writer
+@@ -1,14 +1,14 @@
+ extends "res://tests/act2_o1_registration_smoke.gd"
+ ## INERT ORIGINAL-WRITER ADAPTER. Root alone freezes/runs before promotion.
+ ## Uses unchanged canonical old12/Scout2/Exchange1 and a real Optional attempt.
+-## Only initial TEST arrangement: inherited prior-main prefix and genuinely
+-## captured pristine A2-L2 Story. No O1 pose/clock/HP/collection/CP assignment.
+-## Four declared public Player dashes, no direction search, kills or full route.
++## Fresh TEST setup: inherited prior-main prefix/genuine pristine A2-L2 Story,
++## plus explicitly recorded Hero contact poses. No clock/HP/collection/CP assignment.
++## NEW FRESH TEST Hero placements only: CP(0,0,-5.25), then final(0,0,-7.25)
++## only if Final never started at CP drain. No earned route/response credit.
+ const OriginalHostSha: String = "2c9768f851dc14e1bc433251c13a29154db6213085dda644742fbc366e243fc7"
+ const OriginalKitSha: String = "0676ebcb302b0e037c5c9f426c518d87b714edf5d536868259e7a23e7bd8478d"
+ const OriginalRaySha: String = "6d8e11a29254cad18947655d8e7470d7892b18e856e534859ae6211a897ae7e2"
+ const OriginalActorSha: String = "dee72b851cb20b234a05552d07eae9cebd7490ee0fad12b3970da51eae132bb7"
+-const Route: Array[Vector3] = [Vector3(-1,0,-1),Vector3.FORWARD,Vector3.FORWARD,Vector3(1,0,-1)]
+ const TickLimit: int = 600
+ var producer_report: String = ""
+ var producer_rows: Array[Dictionary] = []
+@@ -24,6 +24,8 @@
+ var producer_exchange_observer: Node3D
+ var producer_observer_closed: bool = false
+ var producer_sampling_boundary: Dictionary = {}
++var focused_test_setups: Array[Dictionary] = []
++var focused_first_final_refusal: Dictionary = {}
+ 
+ func _run() -> void:
+ 	producer_started_ms = Time.get_ticks_msec()
+@@ -31,10 +33,10 @@
+ 	root.size = Vector2i(540,1170)
+ 	root.content_scale_size = root.size
+ 	root.content_scale_mode = Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
+-	producer_report = OS.get_environment("CINDER_A2_O1_ORIGINAL_WRITER_REPORT")
+-	if not _expect(OS.get_cmdline_user_args() == PackedStringArray(["--original-challenge-writer"]),"one bounded original Challenge writer selector"): await _finish(); return
++	producer_report = OS.get_environment("CINDER_A2_O1_FOCUSED_ORIGINAL_WRITER_REPORT")
++	if not _expect(OS.get_cmdline_user_args() == PackedStringArray(["--focused-original-challenge-writer"]),"one bounded original Challenge writer selector"): await _finish(); return
+ 	if not _expect(producer_report.is_absolute_path() and not FileAccess.file_exists(producer_report),"fresh absolute phase report; native Store stays user://"): await _finish(); return
+-	_test_root = "user://root-a2-o1-original-writer-%d-%d/" % [OS.get_process_id(),Time.get_ticks_usec()]
++	_test_root = "user://root-a2-o1-focused-original-writer-%d-%d/" % [OS.get_process_id(),Time.get_ticks_usec()]
+ 	if not _expect(not DirAccess.dir_exists_absolute(ProjectSettings.globalize_path(_test_root)),"fresh isolated genuine user:// native Store path"): await _finish(); return
+ 	if not _expect(FileAccess.get_sha256("res://scripts/acts/act2/cylinder_perimeter.gd") == OriginalHostSha and FileAccess.get_sha256("res://scripts/acts/act2/cylinder_perimeter_kit.gd") == OriginalKitSha and FileAccess.get_sha256("res://scripts/acts/act2/ray_scout_exchange.gd") == OriginalRaySha and FileAccess.get_sha256("res://scripts/acts/act2/ray_scout_actor.gd") == OriginalActorSha,"exact canonical ORIGINAL host/kit/Scout2/Exchange1 before any reader promotion"): await _finish(); return
+ 	_registry_bytes = FileAccess.get_file_as_string(Registry.DATA_PATH)
+@@ -62,22 +64,26 @@
+ 	if not _retain_unit("entrance"): await _finish(); return
+ 	var entrance: Dictionary = _shell.capture_campaign_snapshot()
+ 	if not _expect(entrance.level.local.collected_ids.is_empty() and entrance.level.local.exchange.records.final.cycle == 0 and _same(_shell.attempts.state().side_attempt.checkpoint,entrance),"literal pristine old Challenge entrance is its actual Optional checkpoint"): await _finish(); return
++	if not _focused_place(Vector3(0,0,-5.25),"fresh TEST contact checkpoint pose"): await _finish(); return
+ 	_shell.menu.resume_requested.emit()
+-	for index: int in range(3):
+-		if not await _producer_dash(Route[index],index): await _finish(); return
+ 	if not await _wait_checkpoint(): await _finish(); return
+-	if not await _pause_producer("before-final") or not _retain_unit("before-final"): await _finish(); return
+-	var cp: Dictionary = _shell.attempts.state().side_attempt.checkpoint
+-	if not _expect(cp.level.progress.checkpoint_id == O1.CHECKPOINT_ID and int(cp.level.local.exchange.records.final.cycle) == 0 and _shell.active_level.call("_checkpoint_is_committed"),"genuine latest checkpoint durably precedes final admission; no assigned CP or collection history"): await _finish(); return
+-	_shell.menu.resume_requested.emit()
+-	if not await _producer_dash(Route[3],3): await _finish(); return
+-	if not await _wait_final_warning(): await _finish(); return
+-	if not await _pause_producer("held-final-warning") or not _retain_unit("held-final-warning"): await _finish(); return
++	if not await _pause_producer("checkpoint-observation") or not _retain_unit("checkpoint-observation"): await _finish(); return
++	var cp: Dictionary = _shell.attempts.state().side_attempt.checkpoint.duplicate(true)
++	if not _expect(cp.level.progress.checkpoint_id == O1.CHECKPOINT_ID and int(cp.level.local.exchange.records.final.cycle) == 0 and cp.level.local.exchange.records.final.status == "idle" and _shell.active_level.call("_checkpoint_is_committed"),"actual untouched Attempts checkpoint field is durable and pre-admission independently of current observation"): await _finish(); return
++	var at_cp: Dictionary = _shell.active_level.get("_exchange").call("state","final")
++	focused_test_setups.append({"kind":"actual CP-drain current observation","final_state":_closed_observation(at_cp),"checkpoint_field":"Original actual Attempts.side_attempt.checkpoint; no transplantation/current rewrite","second_placement_omitted":at_cp.status == "running"})
++	if at_cp.status == "running":
++		if not _expect(at_cp.phase == "warning" and at_cp.cycle == 1,"first already-running Final at CP drain is held only in its original warning; no reposition/rescue"): await _finish(); return
++	else:
++		if not _expect(at_cp.status == "idle" and at_cp.cycle == 0,"second TEST placement allowed only before Final ever naturally starts"): await _finish(); return
++		if not _focused_place(Vector3(0,0,-7.25),"fresh TEST Final observation pose"): await _finish(); return
++		_shell.menu.resume_requested.emit()
++		if not await _wait_final_warning(): await _finish(); return
++		if not await _pause_producer("held-final-warning"): await _finish(); return
++	if not _retain_unit("held-final-warning"): await _finish(); return
+ 	var held: Dictionary = _shell.capture_campaign_snapshot()
+ 	var record: Dictionary = held.level.local.exchange.records.final
+-	if not _expect(record.status == "running" and record.phase == "warning" and record.cycle > 0 and held.level.progress.checkpoint_id == O1.CHECKPOINT_ID and _same(_shell.attempts.state().side_attempt.checkpoint,cp),"held final warning whole Optional retains genuine earlier latest checkpoint and untouched protected Story"): await _finish(); return
+-	# Check every captured live refusal through this final paused boundary.
+-	# Then disconnect only this TEST observer before ordinary native disposal.
++	if not _expect(record.status == "running" and record.phase == "warning" and record.cycle == 1 and held.level.progress.checkpoint_id == O1.CHECKPOINT_ID and _same(_shell.attempts.state().side_attempt.checkpoint,cp),"actual first natural held Final warning preserves original genuine earlier CP field and protected Story"): await _finish(); return
+ 	if not _producer_alive() or not _close_producer_sampling(true): await _finish(); return
+ 	producer_complete = true
+ 	await _finish()
+@@ -92,6 +98,7 @@
+ 		producer_seen_transitions[key] = true
+ 		producer_events.append({"kind":"native_exchange_transition","actor_id":actor_id,"state":_closed_observation(state)})
+ 	if producer_first_refusal.is_empty() and not String(state.get("last_cancel_reason","")).is_empty(): producer_first_refusal = {"actor_id":actor_id,"state":_closed_observation(state)}
++	if actor_id == "final" and focused_first_final_refusal.is_empty() and not String(state.get("last_cancel_reason","")).is_empty(): focused_first_final_refusal = {"actor_id":actor_id,"state":_closed_observation(state)}
+ 
+ func _close_producer_sampling(completed_sample: bool) -> bool:
+ 	if producer_observer_closed: return true
+@@ -104,39 +111,30 @@
+ 	return _expect(closed and (connected or not completed_sample),"close only producer observer before unchanged native disposal; retain all earlier refusals")
+ 
+ func _producer_alive() -> bool:
+-	if not producer_first_refusal.is_empty(): return _expect(false,"first passively retained native exchange cancellation; no retry/search")
+-	if not _live_o1() or not is_instance_valid(_shell.player) or _shell.player.dead: return _expect(false,"writer retains genuine living native Optional world; no repair after failure")
++	# West cancellation remains actual history; it is not itself invalid Save.
++	if not _live_o1() or not is_instance_valid(_shell.player) or _shell.player.dead: return _expect(false,"fresh focused writer retains living actual Optional world")
+ 	var state: Dictionary = _shell.active_level.call("encounter_state")
+ 	if not String(state.runtime_error).is_empty(): return _expect(false,"first native runtime refusal: "+String(state.runtime_error))
+-	for id: String in state.admission_errors:
+-		if not state.admission_errors[id].is_empty(): return _expect(false,"first native admission refusal "+id+": "+String(state.admission_errors[id].get("reason","unreported")))
+-	for id: String in state.sources:
+-		var source: Dictionary = state.sources[id].exchange
+-		if not String(source.get("last_cancel_reason","")).is_empty(): return _expect(false,"first native exchange cancellation "+id+": "+String(source.last_cancel_reason))
++	if not focused_first_final_refusal.is_empty(): return _expect(false,"first actual Final cancellation retained; no reposition/retry/search")
++	if not state.admission_errors.get("final",{}).is_empty(): return _expect(false,"first actual Final admission refusal: "+String(state.admission_errors.final.get("reason","unreported")))
++	var final_state: Dictionary = state.sources.final.exchange
++	if not String(final_state.get("last_cancel_reason","")).is_empty(): return _expect(false,"actual Final cancellation: "+String(final_state.last_cancel_reason))
+ 	return true
++
++func _focused_place(position_value: Vector3,label: String) -> bool:
++	if not _expect(_live_o1() and paused and not _shell.player.dead,"fresh TEST placement requires paused actual living world"): return false
++	var before: Dictionary = _shell.active_level.get("_exchange").call("state","final")
++	if not _expect(before.status == "idle" and before.cycle == 0,"never reposition an already-started Final for TEST setup"): return false
++	var original_position: Vector3 = _shell.player.global_position
++	_shell.player.global_position = position_value
++	_shell.player.velocity = Vector3.ZERO
++	focused_test_setups.append({"kind":label,"TEST_only":true,"original_position":Codec.vector3(original_position),"position":Codec.vector3(position_value),"velocity":Codec.vector3(Vector3.ZERO),"limits":"Fresh representative contact/Save setup only, not earned dash/route. No HP/resources/clock/progress/CP/collection/source/visibility/lease edits."})
++	return _expect(_shell.player.global_position == position_value,"exact disclosed fresh representative TEST Hero contact placement")
+ 
+ func _producer_step() -> bool:
+ 	if _finished: return false
+ 	await _probe.tick_finished
+ 	return not _finished and _producer_alive()
+-
+-func _producer_dash(direction: Vector3,index: int) -> bool:
+-	var ready: bool = false
+-	for tick: int in range(TickLimit):
+-		if not _producer_alive(): return false
+-		var response: Dictionary = _shell.player.get_threat_response_state()
+-		if not paused and response.stable and float(response.dash_cooldown_left_s) == 0.0 and float(response.commitment_remaining_s) == 0.0 and not _shell.player.action_in_progress(): ready = true; break
+-		if not await _producer_step(): return false
+-	if not _expect(ready,"finite native readiness for declared public dash "+str(index)): return false
+-	var before: int = _shell.player.get_world_action_records().size()
+-	if not _expect(_shell.player.request_dash(direction.normalized()),"unchanged public Player accepts declared dash "+str(index)): return false
+-	for tick: int in range(TickLimit):
+-		if not await _producer_step(): return false
+-		var actions: Array[Dictionary] = _shell.player.get_world_action_records()
+-		if actions.size() > before:
+-			var actual: Dictionary = actions.back()
+-			return _expect(actual.kind == "dash" and actual.landing == _shell.player.global_position and not _shell.player.action_in_progress(),"native completed stop/actual world-action landing for declared dash "+str(index))
+-	return _expect(false,"finite completion refused for declared dash "+str(index))
+ 
+ func _wait_checkpoint() -> bool:
+ 	for tick: int in range(TickLimit):
+@@ -149,7 +147,7 @@
+ 	for tick: int in range(TickLimit):
+ 		if not _producer_alive(): return false
+ 		var state: Dictionary = _shell.active_level.get("_exchange").call("state","final")
+-		if state.status == "running": return _expect(state.phase == "warning","first actual final admission is held only in warning; no phase search")
++		if state.status == "running": return _expect(state.phase == "warning" and state.cycle == 1,"first actual Final admission is held only in warning; no phase search")
+ 		if not await _producer_step(): return false
+ 	return _expect(false,"finite autonomous final warning not admitted; no forced activation")
+ 
+@@ -191,7 +189,7 @@
+ 	if not _expect(FileAccess.file_exists(_test_root+"campaign.json.bak") and FileAccess.file_exists(_test_root+"preferences.json"),"genuine original primary backup and public Challenge preference bytes exist "+label): return false
+ 	var disk: Variant = JSON.parse_string(FileAccess.get_file_as_string(_test_root+"campaign.json"))
+ 	if not _expect(disk is Dictionary and disk.get("format_version") == 2 and disk.get("payload_json") == Exact.stringify(payload) and String(disk.get("sha256","")) == String(disk.payload_json).sha256_text(),"actual raw primary format2 carries the exact current Optional/Story/checkpoint payload "+label): return false
+-	producer_units.append({"label":label,"typed_units":retained,"original_raw_files":disks,"diagnostics":_producer_diagnostics(),"scope":"Actual original writer, four finite public dashes only; no O1 state/pose/resources/collected/CP repair, attack/exit/full-route/GUI/earned Story credit."})
++	producer_units.append({"label":label,"typed_units":retained,"original_raw_files":disks,"diagnostics":_producer_diagnostics(),"scope":"Actual fresh focused original writer with disclosed Hero contact placements, actual native CP/first Final warning; no earned route/response/GUI credit. No packet/HP/resources/clock/progress/collection/CP/source/visibility edits."})
+ 	return true
+ 
+ func _write_original(path: String,bytes: PackedByteArray) -> bool:
+@@ -240,9 +238,9 @@
+ 	var file: FileAccess = null
+ 	if not FileAccess.file_exists(path): file = FileAccess.open(path,FileAccess.WRITE)
+ 	if not _expect(file != null,"fresh actual precleanup partial report opens before destructive disposal"): return
+-	var packet: Dictionary = {"kind":"a2-o1-original-challenge-writer-precleanup-1","checks":_checks,"failures":_failures,"complete":false,"success":false,"sampling_complete":producer_complete,"cleanup_complete":false,"rows":producer_rows,"first_failure":producer_first_failure,"first_native_refusal":producer_first_refusal,"sampling_boundary":producer_sampling_boundary,"units":producer_units,"actual_actions":producer_actions,"native_events":producer_events,"native_store_path":_test_root,"at_finish_diagnostics":_producer_diagnostics(),"scope":"Actual current precleanup partial only. Normal cleanup has not completed; no native pass inferred. Original refusal/events/rows and reached units retained before freeing callbacks; user Store remains original custody."}
++	var packet: Dictionary = {"kind":"a2-o1-focused-original-challenge-writer-precleanup-1","checks":_checks,"failures":_failures,"complete":false,"success":false,"sampling_complete":producer_complete,"cleanup_complete":false,"rows":producer_rows,"first_failure":producer_first_failure,"first_native_refusal":producer_first_refusal,"first_final_refusal":focused_first_final_refusal,"fresh_TEST_setups":focused_test_setups,"sampling_boundary":producer_sampling_boundary,"units":producer_units,"actual_actions":producer_actions,"native_events":producer_events,"native_store_path":_test_root,"at_finish_diagnostics":_producer_diagnostics(),"scope":"Actual current precleanup partial only. Normal cleanup has not completed; no native pass inferred. Original refusal/events/rows and reached units retained before freeing callbacks; user Store remains original custody."}
+ 	file.store_string(JSON.stringify(_closed_observation(packet),"",true,true)+"\n"); file.close()
+-	print("CINDER_A2_O1_ORIGINAL_WRITER_PRECLEANUP_REPORT=",path," sha256=",FileAccess.get_sha256(path))
++	print("CINDER_A2_O1_FOCUSED_ORIGINAL_WRITER_PRECLEANUP_REPORT=",path," sha256=",FileAccess.get_sha256(path))
+ 
+ func _finish() -> void:
+ 	if _finished: return
+@@ -270,8 +268,8 @@
+ 	var file: FileAccess = null
+ 	if producer_report.is_absolute_path() and not FileAccess.file_exists(producer_report): file = FileAccess.open(producer_report,FileAccess.WRITE)
+ 	if not _expect(file != null,"fresh actual original-writer report opens without overwrite"): producer_complete = false
+-	var packet: Dictionary = {"kind":"a2-o1-original-challenge-writer-1","checks":_checks,"failures":_failures,"complete":producer_complete,"success":producer_complete and _failures == 0,"rows":producer_rows,"first_failure":producer_first_failure,"first_native_refusal":producer_first_refusal,"sampling_boundary":producer_sampling_boundary,"units":producer_units,"actual_actions":producer_actions,"native_events":producer_events,"original_sources":{"host":OriginalHostSha,"kit":OriginalKitSha,"exchange":OriginalRaySha,"actor":OriginalActorSha},"native_store_path":_test_root,"scope":"Actual unchanged old12 Challenge Optional entrance/durable pre-final checkpoint/held final warning and raw primary/backup/preferences. TEST prefix only; genuine A2-L2 protected Story. Public Player direct dash API, no screen-input/GUI/earned-prefix/full-route/defeat-all/response/exit/art/balance credit. No historical pose/clock/HP/collection/CP repair. Original native user:// Store files and original copied bytes retained."}
++	var packet: Dictionary = {"kind":"a2-o1-focused-original-challenge-writer-1","checks":_checks,"failures":_failures,"complete":producer_complete,"success":producer_complete and _failures == 0,"rows":producer_rows,"first_failure":producer_first_failure,"first_native_refusal":producer_first_refusal,"first_final_refusal":focused_first_final_refusal,"fresh_TEST_setups":focused_test_setups,"sampling_boundary":producer_sampling_boundary,"units":producer_units,"actual_actions":producer_actions,"native_events":producer_events,"original_sources":{"host":OriginalHostSha,"kit":OriginalKitSha,"exchange":OriginalRaySha,"actor":OriginalActorSha},"native_store_path":_test_root,"scope":"Actual unchanged old12 Challenge fresh Optional entrance, real stable TEST contact CP and first natural Final warning with actual raw Store. TEST prefix plus at most two explicit fresh Hero poses; second omitted if Final already naturally warns at CP drain. West cancellations remain untouched validatable native history. No historical packet conversion, assigned CP/collection/progress/HP/clock/source/visibility/order. No earned route/response/GUI/exit/art/balance credit. Original userStore and copied bytes retained."}
+ 	if file != null: file.store_string(JSON.stringify(_closed_observation(packet),"",true,true)+"\n"); file.close()
+-	print("CINDER_A2_O1_ORIGINAL_WRITER_REPORT=",producer_report," sha256=",FileAccess.get_sha256(producer_report) if FileAccess.file_exists(producer_report) else "")
+-	print("A2-O1 ORIGINAL WRITER: %d checks, %d failures; complete=%s" % [_checks,_failures,str(producer_complete)])
++	print("CINDER_A2_O1_FOCUSED_ORIGINAL_WRITER_REPORT=",producer_report," sha256=",FileAccess.get_sha256(producer_report) if FileAccess.file_exists(producer_report) else "")
++	print("A2-O1 FOCUSED ORIGINAL WRITER: %d checks, %d failures; complete=%s" % [_checks,_failures,str(producer_complete)])
+ 	quit(0 if producer_complete and _failures == 0 else 2)

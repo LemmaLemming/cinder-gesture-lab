@@ -1,0 +1,5 @@
+Durable native checkpoint exists in retained original userStore primary generation4 (SHA7837f021913f3741fdd2048054ff628b5b5a5e990eddc29fc6560bcbb50c5238,141985bytes). ActualCP clock1/60s precedes failure2/60s; current/checkpoint typednodes agree, Challengeold12/localversion1, Finalidlecycle0. Backupgen3 retains entrance. No old13 packet is installed; source LOCAL_KEYS has12. No checkpointunit is retroactively added to failedphase.
+
+The proven refusal is current Cylinder presentation preflight BEFORE RayExchange.activate. Actual point screenY-9.75756 lies outside native safeY108..522. Finalneverstarts, first_final_refusal remains{}. This proves exact predicate, not underlying camera cause or that camera settling/snap would admit the union. Only firstTESTpose occurred.
+
+Smallest nextaction is read-only custody of existing rawgen4CP/backup/preferences under their exacthashes. A later heldwarning need could justify a separatelyreviewed freshrepresentative setup using supported camera initialization at samepose, as a hypothesis; no guard/optics/pose search or execution is authorized here. Failed38/1 and all originals remain unchanged.

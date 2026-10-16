@@ -1,0 +1,20 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ERROR: Condition "ret != noErr" is true. Returning: ""
+   at: get_system_ca_certificates (platform/macos/os_macos.mm:1035)
+ERROR: Could not create directory: '/Users/howardchen/Library/Application Support/Godot/app_userdata/Cinder/a2-o1-journal-transport-73242-920631'.
+   at: make_dir_recursive (core/io/dir_access.cpp:179)
+   GDScript backtrace (most recent call first):
+       [0] _copy_raw (res://tests/act2_o1_journal_optional_transport.gd:149)
+       [1] _run (res://tests/act2_o1_journal_optional_transport.gd:37)
+ERROR: FAIL A2-O1 loading side: raw destination opens
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/act2_o1_registration_smoke.gd:315)
+       [1] _expect (res://tests/act2_o1_journal_optional_transport.gd:156)
+       [2] _copy_raw (res://tests/act2_o1_journal_optional_transport.gd:152)
+       [3] _run (res://tests/act2_o1_journal_optional_transport.gd:37)
+CINDER_A2_O1_JOURNAL_TRANSPORT_REPORT=/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-o1-layout-fixturehost-v2-20261016/run-native-20261016T084943.956411Z-98a0be33/native-report.json sha256=7ecd9d9e4644e8632a6186ea308f00f77afd2f15794534a8c622ca4cb7bbd28a
+A2-O1 JOURNAL TRANSPORT: 8 checks, 1 failures; complete=false
+A2-O1 verification failure: Actual native incomplete/failed; preserve and stop, never repair old camera/raw
+A2-O1 verification CLOSED code=2

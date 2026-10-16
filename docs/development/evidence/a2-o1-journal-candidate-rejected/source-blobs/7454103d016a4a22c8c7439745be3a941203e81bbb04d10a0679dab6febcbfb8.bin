@@ -1,0 +1,173 @@
+extends "res://tests/act2_o1_registration_smoke.gd"
+## INERT targeted candidate transport. Old raw tuples are copied unchanged.
+## New CP mode explicitly arranges fresh Hero contact+production camera snap;
+## no historical packet, source, clock, HP, collection or CP field is edited.
+const RawRoot: String = "res://.cinder/a2-o1-genuine-old-checkpoint-custody-20261016/"
+const RawCP: String = "7837f021913f3741fdd2048054ff628b5b5a5e990eddc29fc6560bcbb50c5238"
+const RawEntrance: String = "f49c93b06d091c4af714e74ab6c8a6407a47f1762e405ba040eb576f78c8fe73"
+const RawPrefs: String = "edd537ce9745ca27cedd5cd96d7aa180286314101e7887890ea843467cbf0666"
+var report_path: String = ""
+var rows: Array[Dictionary] = []
+var first_failure: Dictionary = {}
+var observations: Array[Dictionary] = []
+var complete: bool = false
+var prepared_candidate: Dictionary = {}
+var mode: String = ""
+func _run() -> void:
+	create_timer(120.0,true).timeout.connect(func() -> void:
+		if not _finished: _expect(false,"finite Optional transport watchdog"); _finish.call_deferred())
+	root.size = Vector2i(540,1170)
+	root.content_scale_size = root.size
+	root.content_scale_mode = Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
+	report_path = OS.get_environment("CINDER_A2_O1_JOURNAL_TRANSPORT_REPORT")
+	var args := OS.get_cmdline_user_args()
+	if not _expect(args.size() == 1 and args[0] in ["--old-entrance","--old-checkpoint","--new-entrance","--new-checkpoint"] and report_path.is_absolute_path() and not FileAccess.file_exists(report_path),"one explicit transport case/fresh report"): await _finish(); return
+	mode = args[0]
+	_test_root = "user://a2-o1-journal-transport-%d-%d/" % [OS.get_process_id(),Time.get_ticks_usec()]
+	_registry_bytes = FileAccess.get_file_as_string(Registry.DATA_PATH)
+	_raw = JSON.parse_string(_registry_bytes)
+	node_added.connect(_observe_added)
+	var registry := Registry.new()
+	if not _expect(registry.last_error.is_empty(),"unchanged canonical Registry"): await _finish(); return
+	var expected: Dictionary = {}
+	if mode.begins_with("--old"):
+		var name: String = "campaign.json.bak" if mode == "--old-entrance" else "campaign.json"
+		var digest: String = RawEntrance if mode == "--old-entrance" else RawCP
+		if not _expect(FileAccess.get_sha256(RawRoot+name) == digest and FileAccess.get_sha256(RawRoot+"preferences.json") == RawPrefs,"original genuine raw input pins"): await _finish(); return
+		if not _copy_raw(RawRoot+name,_test_root+"campaign.json") or not _copy_raw(RawRoot+"preferences.json",_test_root+"preferences.json"): await _finish(); return
+		var envelope: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(RawRoot+name))
+		var decoded: Dictionary = Exact.parse(envelope.payload_json)
+		if not _expect(decoded.accepted and envelope.payload_json.sha256_text() == envelope.sha256,"unmodified original raw full Attempts input"): await _finish(); return
+		expected = decoded.value.side_attempt.snapshot
+		if not await _new_shell(): await _finish(); return
+	else:
+		if not await _seed_story(registry) or not await _new_shell(): await _finish(); return
+		_shell.menu.continue_story_requested.emit(); await _settle()
+		_shell.menu.difficulty_preference_requested.emit("challenge"); await _settle()
+		_shell.menu.optional_requested.emit("A2-O1"); await _settle()
+		if not _expect(_live_o1() and paused,"public fresh Challenge Optional"): await _finish(); return
+		if mode == "--new-checkpoint" and not await _fresh_contact_checkpoint(): await _finish(); return
+		expected = _shell.capture_campaign_snapshot()
+	if not _expect(not expected.is_empty(),"actual supported expected whole tuple"): await _finish(); return
+	if not await _precommit_boundary(expected): await _finish(); return
+	if _shell.active_level == null:
+		_shell.menu.difficulty_preference_requested.emit("assisted"); await _settle()
+		_events.clear(); _watch = true
+		_shell.menu.resume_requested.emit() # Actual Title Resume Side.
+		await _settle(); _watch = false
+	if not _installed(expected) or not _durable(): await _finish(); return
+	var protected: String = Exact.stringify(_shell.attempts.state())
+	_shell.menu.difficulty_preference_requested.emit("standard"); await _settle()
+	if not _expect(Exact.stringify(_shell.attempts.state()) == protected and _same(_shell.capture_campaign_snapshot(),expected),"future preference does not remap/save-upgrade existing tuple"): await _finish(); return
+	var refs: Array = _refs(_shell)
+	_shell.free(); _shell = null
+	await process_frame
+	if not _expect(_refs_freed(refs),"first whole native recipient retired"): await _finish(); return
+	if not await _new_shell(): await _finish(); return
+	_events.clear(); _watch = true
+	_shell.menu.resume_requested.emit(); await _settle(); _watch = false
+	if not _installed(expected) or not _expect(Exact.stringify(_shell.attempts.state()) == protected,"fresh Title Resume Side retains entire saved Attempts/Story/CP"): await _finish(); return
+	var checkpoint: Dictionary = _shell.attempts.state().side_attempt.checkpoint.duplicate(true)
+	var old_id: int = _shell.active_level.get_instance_id()
+	_events.clear(); _watch = true
+	_shell.menu.retry_requested.emit(); await _settle(); _watch = false
+	if not _expect(_live_o1() and paused and _events.is_empty() and _shell.active_level.get_instance_id() != old_id and _same(_shell.capture_campaign_snapshot(),checkpoint) and _same(_shell.attempts.state().side_attempt.checkpoint,checkpoint),"public latest Retry uses actual original checkpoint field in distinct native recipient"): await _finish(); return
+	var story: Dictionary = _shell.attempts.state().story.duplicate(true)
+	_shell.menu.leave_side_requested.emit(); await _settle()
+	if not _expect(_shell.attempts.state().side_attempt == null and _same(_shell.attempts.state().story,story),"early Leave restores unchanged protected Story"): await _finish(); return
+	complete = true
+	await _finish()
+func _fresh_contact_checkpoint() -> bool:
+	# New fresh representative setup only; no packet/CP/progress/clock edits.
+	_shell.player.global_position = Vector3(0,0,-5.25)
+	_shell.player.velocity = Vector3.ZERO
+	_shell.call("_update_camera",0.0,true) # Actual canonical initialization, fixed optics.
+	observations.append({"TEST":"fresh Hero contact pose and supported production camera initialization","position":[0,0,-5.25],"camera_method":"_update_camera(0,true)","limits":"No earned travel/autonomous follow/response credit; no source/visibility/guard mutation."})
+	_shell.menu.resume_requested.emit()
+	for tick: int in range(120):
+		await process_frame
+		if _finished: return false
+		if not _live_o1() or _shell.player.dead: return _expect(false,"native representative CP world remains valid")
+		var state: Dictionary = _shell.active_level.call("encounter_state")
+		if not String(state.runtime_error).is_empty() or not state.admission_errors.get("final",{}).is_empty(): return _expect(false,"actual Final/runtime preflight refusal, no guard bypass/search")
+		if _shell.active_level.call("_checkpoint_is_committed"):
+			_shell.request_pause(); await _settle()
+			var settled: Dictionary = _shell.active_level.call("encounter_state")
+			if not _expect(String(settled.runtime_error).is_empty() and settled.admission_errors.get("final",{}).is_empty(),"actual post-drain native refusal remains terminal"): return false
+			return _expect(paused and not _shell.capture_campaign_snapshot().is_empty() and _shell.attempts.state().side_attempt.checkpoint.level.progress.checkpoint_id == O1.CHECKPOINT_ID,"actual real contact/durable CP aggregate; current may already contain naturally running Final")
+	return _expect(false,"finite actual native CP not reached")
+func _precommit_boundary(expected: Dictionary) -> bool:
+	prepared_candidate = _shell._prepare("A2-O1",expected.equipment_ids,{},expected)
+	if not _expect(not prepared_candidate.is_empty(),"real saved-construction hook creates exact selected recipient"): return false
+	var level: CinderLevel = prepared_candidate.level
+	var before: Dictionary = level.snapshot_state() # Public API outside hook busy boundary.
+	var legacy: bool = not expected.level.local.has(O1.JOURNAL_DESCRIPTOR_KEY)
+	if not _expect(level.is_restore_candidate() and not before.is_empty() and before.local.size() == (12 if legacy else 13) and before.local.has(O1.JOURNAL_DESCRIPTOR_KEY) == (not legacy),"public precommit constructor snapshot keeps old12/new13 shape; not restored saved history"): return false
+	if not _expect(prepared_candidate.player.snapshot_error(expected.player).is_empty() and level.snapshot_error_with_player(expected.level,expected.player).is_empty(),"full unchanged native prevalidation with saved Hero"): return false
+	if not _expect(prepared_candidate.player.restore_state(expected.player) and level.restore_state(expected.level) and _same(level.snapshot_state(),expected.level),"actual Hero-first quiet commit recaptures original whole level exactly"): return false
+	if not _selected_nodes(level,expected.level.local): return false
+	var native_before: String = Exact.stringify(level.snapshot_state())
+	var bad: Dictionary = expected.level.duplicate(true)
+	bad.local.exchange.records.final.cycle = -1
+	if not _expect(not level.restore_state(bad) and Exact.stringify(level.snapshot_state()) == native_before,"late native-incoherent refusal leaves committed recipient unchanged"): return false
+	observations.append({"kind":"constructor/public-precommit/quietcommit","legacy":legacy,"precommit_shape":before.local.size(),"precommit_is_saved_history":false,"restored_level_exact":Exact.stringify(level.snapshot_state())})
+	_shell._dispose(prepared_candidate); prepared_candidate = {}
+	return true
+func _selected_nodes(level: CinderLevel,local: Dictionary) -> bool:
+	var selected: Dictionary = O1._journal_constructor(local)
+	if not _expect(selected.error.is_empty(),"trusted selected metadata"): return false
+	for id: String in O1.FRAGMENT_POSITIONS:
+		var kit: Dictionary = level.get("_kit")
+		var journals: Dictionary = kit.get("journals")
+		var prop: Node3D = journals[id]
+		var cue: Node3D = level.get("_fragment_cues")[id]
+		if not _expect(prop.global_position == selected.positions[id] and cue.global_position == selected.positions[id] and level.get("_journal_positions")[id] == selected.positions[id],"actual prop/cue/contact map agree: "+id): return false
+	return true
+func _installed(expected: Dictionary) -> bool:
+	return _expect(_live_o1() and paused and _events.is_empty() and _same(_shell.capture_campaign_snapshot(),expected),"public installed full saved Optional exact/quiet") and _selected_nodes(_shell.active_level,expected.level.local)
+func _durable() -> bool:
+	var store := Store.new(_test_root+"campaign.json")
+	var payload: Dictionary = store.read_payload()
+	return _expect(store.last_error.is_empty() and not store.loaded_backup and _same(payload,_shell.attempts.state()),"independent primary raw Store whole Attempts reread")
+func _copy_raw(source: String,destination: String) -> bool:
+	var directory: String = ProjectSettings.globalize_path(_test_root)
+	if not DirAccess.dir_exists_absolute(directory): DirAccess.make_dir_recursive_absolute(directory)
+	if FileAccess.file_exists(destination): return _expect(false,"fresh isolated raw destination")
+	var file := FileAccess.open(destination,FileAccess.WRITE)
+	if file == null: return _expect(false,"raw destination opens")
+	file.store_buffer(FileAccess.get_file_as_bytes(source)); file.close()
+	return _expect(FileAccess.get_file_as_bytes(source) == FileAccess.get_file_as_bytes(destination),"original raw bytes copied unchanged; no packet conversion")
+func _expect(ok: bool,note: String) -> bool:
+	var ok_result: bool = super._expect(ok,note)
+	var row: Dictionary = {"check":_checks,"ok":ok,"label":note}
+	rows.append(row)
+	if not ok and first_failure.is_empty(): first_failure = row.duplicate(true)
+	return ok_result
+func _finish() -> void:
+	if _finished: return
+	_finished = true; _watch = false; paused = true
+	await process_frame # Never free an emitting native callback owner.
+	if is_instance_valid(_shell) and not prepared_candidate.is_empty(): _shell._dispose(prepared_candidate); prepared_candidate = {}
+	var refs: Array = []
+	if is_instance_valid(_preview):
+		refs.append_array(_refs(_preview))
+		var level: CinderLevel = _preview.get("active_level") as CinderLevel
+		if is_instance_valid(level): level.exit_level()
+		_preview.free(); _preview = null
+	if is_instance_valid(_probe): _probe.free(); _probe = null
+	if is_instance_valid(_shell): refs.append_array(_refs(_shell)); _shell.free()
+	_shell = null; paused = false
+	await process_frame
+	_expect(refs.is_empty() or _refs_freed(refs),"actual owned recipient cleanup or preconstruction refusal")
+	_expect(get_nodes_in_group("enemies").is_empty() and get_nodes_in_group("required_cues").is_empty(),"normal native actor/cue retirement")
+	_expect(FileAccess.get_file_as_string(Registry.DATA_PATH) == _registry_bytes,"canonical Registry unchanged")
+	AudioServer.set_bus_layout(_old_audio); Engine.max_fps = _old_fps
+	if node_added.is_connected(_observe_added): node_added.disconnect(_observe_added)
+	var file: FileAccess = null
+	if report_path.is_absolute_path() and not FileAccess.file_exists(report_path): file = FileAccess.open(report_path,FileAccess.WRITE)
+	if not _expect(file != null,"fresh transport report opens"): complete = false
+	if file != null:
+		file.store_string(JSON.stringify({"kind":"a2-o1-journal-optional-transport-1","mode":mode,"checks":_checks,"failures":_failures,"rows":rows,"first_failure":first_failure,"complete":complete,"success":complete and _failures == 0,"observations":observations,"native_store_path":_test_root,"scope":"Old raw12/freshnew13 representative transport only. Precommit constructor is not saved history; oldheldFinal not required/invented. NativeuserStore retained. No earned route/combat/decision/portrait/acceptance."})+"\n"); file.close()
+	print("CINDER_A2_O1_JOURNAL_TRANSPORT_REPORT=",report_path," sha256=",FileAccess.get_sha256(report_path) if FileAccess.file_exists(report_path) else "")
+	print("A2-O1 JOURNAL TRANSPORT: %d checks, %d failures; complete=%s" % [_checks,_failures,str(complete)])
+	quit(0 if complete and _failures == 0 else 2)

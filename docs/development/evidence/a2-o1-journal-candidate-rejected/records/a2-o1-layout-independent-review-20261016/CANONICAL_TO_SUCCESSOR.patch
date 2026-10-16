@@ -1,0 +1,162 @@
+--- immutable-canonical-2c9768
++++ proposed-fbdafb33
+@@ -24,6 +24,9 @@
+ const EXIT_ID: String = "cylinder-perimeter-return"
+ const COLLECTION_FLASH_S: float = 0.16
+ const LOCAL_KEYS: Array[String] = ["scenic_clock", "profile_id", "world_revision", "collected_ids", "fragment_collected_at", "checkpoint_contact_seen", "checkpoint_requested", "pending_checkpoint", "completion_pending", "exit_requested", "scheduler", "exchange"]
++const JOURNAL_DESCRIPTOR_KEY: String = "journal_arrangement"
++const JOURNAL_BASELINE_RECIPES: Dictionary = {"assisted":"A2-O1/assisted-canonical@v1","standard":"A2-O1/standard-canonical@v1","challenge":"A2-O1/challenge-canonical-legacy@v1"}
++const JOURNAL_CHALLENGE_RECIPE: String = "A2-O1/challenge-north-east@v1"
+ const RESPONSE_DIRECTIONS: Array[Vector3] = [
+ 	Vector3(0.707106781187, 0, -0.707106781187), Vector3(-0.707106781187, 0, -0.707106781187),
+ 	Vector3(0.707106781187, 0, 0.707106781187), Vector3(-0.707106781187, 0, 0.707106781187),
+@@ -53,6 +56,65 @@
+ var _completion_pending: bool = false
+ var _exit_requested: bool = false
+ var _admission_errors: Dictionary = {}
++
++var _journal_construction_started: bool = false
++var _journal_layout_bound: bool = false
++var _journal_legacy_construction: bool = false
++var _journal_descriptor: Dictionary = {}
++var _journal_positions: Dictionary = FRAGMENT_POSITIONS.duplicate(true)
++
++
++static func _journal_fresh_descriptor(profile_id: String) -> Dictionary:
++	if not JOURNAL_BASELINE_RECIPES.has(profile_id): return {}
++	return {"schema_version":1,"profile_id":profile_id,"recipe_id":JOURNAL_CHALLENGE_RECIPE if profile_id == "challenge" else JOURNAL_BASELINE_RECIPES[profile_id]}
++
++
++static func _journal_layout(descriptor: Variant, legacy: bool) -> Dictionary:
++	if not descriptor is Dictionary or not Codec.keys_error(descriptor,["schema_version","profile_id","recipe_id"]).is_empty():
++		return {"error":"Closed Perimeter journal descriptor required"}
++	if not descriptor.schema_version is int or descriptor.schema_version != 1 or not descriptor.profile_id is String or not JOURNAL_BASELINE_RECIPES.has(descriptor.profile_id) or not descriptor.recipe_id is String:
++		return {"error":"Unsupported Perimeter journal descriptor"}
++	var expected: String = JOURNAL_BASELINE_RECIPES[descriptor.profile_id]
++	if not legacy and descriptor.profile_id == "challenge": expected = JOURNAL_CHALLENGE_RECIPE
++	if descriptor.recipe_id != expected: return {"error":"Perimeter journal profile/recipe mismatch"}
++	var positions: Dictionary = FRAGMENT_POSITIONS.duplicate(true)
++	if not legacy and descriptor.profile_id == "challenge": positions.north = Vector3(1.4,0,-8.9)
++	return {"error":"","legacy":legacy,"profile_id":descriptor.profile_id,"descriptor":descriptor.duplicate(true),"positions":positions}
++
++
++static func _journal_constructor(local: Variant) -> Dictionary:
++	if not local is Dictionary: return {"error":"Perimeter saved local dictionary required"}
++	var legacy: bool = not local.has(JOURNAL_DESCRIPTOR_KEY)
++	var keys: Array[String] = LOCAL_KEYS.duplicate()
++	if not legacy: keys.append(JOURNAL_DESCRIPTOR_KEY)
++	var error: String = Codec.keys_error(local,keys)
++	if not error.is_empty(): return {"error":error}
++	if not local.profile_id is String or not JOURNAL_BASELINE_RECIPES.has(local.profile_id): return {"error":"Perimeter saved profile required"}
++	var descriptor: Variant = local.get(JOURNAL_DESCRIPTOR_KEY)
++	if legacy: descriptor = {"schema_version":1,"profile_id":local.profile_id,"recipe_id":JOURNAL_BASELINE_RECIPES[local.profile_id]}
++	var selected: Dictionary = _journal_layout(descriptor,legacy)
++	if not String(selected.error).is_empty(): return selected
++	if selected.profile_id != local.profile_id: return {"error":"Perimeter saved layout and local profile differ"}
++	return selected
++
++
++func restore_candidate_construction_required() -> bool:
++	return true
++
++
++func _on_enter_restore_candidate(local: Dictionary, _saved_player: Dictionary) -> String:
++	var selected: Dictionary = _journal_constructor(local)
++	if not String(selected.error).is_empty(): return selected.error
++	_construct_perimeter(selected)
++	return runtime_error
++
++
++func _journal_binding_error(local: Dictionary) -> String:
++	var selected: Dictionary = _journal_constructor(local)
++	if not String(selected.error).is_empty(): return selected.error
++	if not _journal_layout_bound or selected.legacy != _journal_legacy_construction or selected.profile_id != _profile_id or selected.positions != _journal_positions or not Codec.same_values(selected.descriptor,_journal_descriptor):
++		return "Perimeter saved layout differs from immutable native construction"
++	return ""
+ 
+ 
+ func _ready() -> void:
+@@ -78,8 +140,33 @@
+ 
+ 
+ func _on_enter_level() -> void:
++	var profile_id: String = "standard"
+ 	if is_instance_valid(shared_shell) and shared_shell.has_method("get_difficulty_preference"):
+-		_profile_id = shared_shell.call("get_difficulty_preference")
++		profile_id = shared_shell.call("get_difficulty_preference")
++	var selected: Dictionary = _journal_layout(_journal_fresh_descriptor(profile_id),false)
++	if not String(selected.error).is_empty(): runtime_error = selected.error; return
++	_construct_perimeter(selected)
++
++
++func _construct_perimeter(selected: Dictionary) -> void:
++	if _journal_construction_started or is_instance_valid(_scheduler) or not _actors.is_empty() or is_instance_valid(_exchange):
++		runtime_error = "Perimeter native recipients can only be configured once"
++		return
++	_journal_construction_started = true
++	_profile_id = selected.profile_id
++	_journal_legacy_construction = selected.legacy
++	_journal_descriptor = selected.descriptor.duplicate(true)
++	_journal_positions = selected.positions.duplicate(true)
++	for id: String in FRAGMENT_POSITIONS:
++		var prop: Variant = _kit.get("journals",{}).get(id)
++		var cue: Variant = _fragment_cues.get(id)
++		if not is_instance_valid(prop) or not prop is Node3D or not is_instance_valid(cue) or not cue is Node3D:
++			runtime_error = "Perimeter selected journal native nodes are missing"
++			return
++	for id: String in FRAGMENT_POSITIONS:
++		(_kit["journals"][id] as Node3D).global_position = _journal_positions[id]
++		(_fragment_cues[id] as Node3D).global_position = _journal_positions[id]
++	_journal_layout_bound = true
+ 	_scheduler = Scheduler.new()
+ 	_scheduler.name = "PerimeterThreatScheduler"
+ 	add_child(_scheduler)
+@@ -136,7 +223,7 @@
+ 	if stable:
+ 		for id: String in FRAGMENT_POSITIONS:
+ 			if _collected_ids.has(id) or (id == "north" and not _checkpoint_requested): continue
+-			var point: Vector3 = FRAGMENT_POSITIONS[id]
++			var point: Vector3 = _journal_positions[id]
+ 			if not _hero_contacts(Rect2(point.x - 0.55, point.z - 0.55, 1.1, 1.1)): continue
+ 			_collected_ids.append(id)
+ 			_fragment_collected_at[id] = _scenic_clock
+@@ -596,8 +683,10 @@
+ func _capture_local_state() -> Dictionary:
+ 	if not get_tree().paused or not runtime_error.is_empty(): return {"error": "Perimeter capture requires the paused committed aggregate"}
+ 	var bindings: Dictionary = _scheduler_bindings()
+-	return {"scenic_clock": _scenic_clock, "profile_id": _profile_id, "world_revision": WORLD_REVISION, "collected_ids": _collected_ids.duplicate(), "fragment_collected_at": _fragment_collected_at.duplicate(), "checkpoint_contact_seen": _checkpoint_contact_seen, "checkpoint_requested": _checkpoint_requested, "pending_checkpoint": _pending_checkpoint, "completion_pending": _completion_pending, "exit_requested": _exit_requested, "scheduler": _scheduler.call("snapshot_state", bindings), "exchange": _exchange.call("snapshot_state", bindings)}
+-
++	var result: Dictionary = {"scenic_clock": _scenic_clock, "profile_id": _profile_id, "world_revision": WORLD_REVISION, "collected_ids": _collected_ids.duplicate(), "fragment_collected_at": _fragment_collected_at.duplicate(), "checkpoint_contact_seen": _checkpoint_contact_seen, "checkpoint_requested": _checkpoint_requested, "pending_checkpoint": _pending_checkpoint, "completion_pending": _completion_pending, "exit_requested": _exit_requested, "scheduler": _scheduler.call("snapshot_state", bindings), "exchange": _exchange.call("snapshot_state", bindings)}
++
++	if not _journal_legacy_construction: result[JOURNAL_DESCRIPTOR_KEY] = _journal_descriptor.duplicate(true)
++	return result
+ 
+ func _local_snapshot_error(state: Dictionary) -> String:
+ 	return _local_snapshot_error_for_bindings(state, _scheduler_bindings())
+@@ -611,7 +700,7 @@
+ 
+ func _local_snapshot_error_for_bindings(state: Dictionary, bindings: Dictionary) -> String:
+ 	if not get_tree().paused or not runtime_error.is_empty(): return "Perimeter transport requires the paused aggregate"
+-	var error: String = Codec.keys_error(state, LOCAL_KEYS)
++	var error: String = _journal_binding_error(state)
+ 	if not error.is_empty(): return error
+ 	if not Codec.in_range(state["scenic_clock"], 0.0, 1000000000.0) or state["profile_id"] not in ["assisted", "standard", "challenge"] or not Codec.is_integer(state["world_revision"], WORLD_REVISION, WORLD_REVISION): return "Invalid Perimeter clock/profile/revision"
+ 	for key: String in ["checkpoint_contact_seen", "checkpoint_requested", "pending_checkpoint", "completion_pending", "exit_requested"]:
+@@ -648,6 +737,8 @@
+ 
+ 
+ func _runtime_content_error() -> String:
++	var selected: Dictionary = _journal_layout(_journal_descriptor,_journal_legacy_construction)
++	if not _journal_layout_bound or not String(selected.error).is_empty() or selected.positions != _journal_positions or selected.profile_id != _profile_id: return "Perimeter selected journal construction differs"
+ 	if _floors.size() != 1 or _actors.size() != 2 or not is_instance_valid(_scheduler) or not is_instance_valid(_exchange) or not is_instance_valid(_exit_cue): return "Missing Perimeter native runtime"
+ 	var floor: Dictionary = _floors[0]
+ 	var collision: CollisionShape3D = floor.get("collision") as CollisionShape3D
+@@ -658,7 +749,7 @@
+ 	if not _kit.get("journals") is Dictionary or not Codec.keys_error(_kit["journals"], FRAGMENT_POSITIONS.keys()).is_empty(): return "Missing three Perimeter journal props"
+ 	for id: String in FRAGMENT_POSITIONS:
+ 		var prop: Variant = _kit["journals"][id]
+-		if not is_instance_valid(prop) or prop.is_queued_for_deletion() or not is_ancestor_of(prop) or not prop.global_position.is_equal_approx(FRAGMENT_POSITIONS[id]) or not is_instance_valid(_fragment_cues.get(id)): return "Missing or moved Perimeter contact prop"
++		if not is_instance_valid(prop) or prop.is_queued_for_deletion() or not is_ancestor_of(prop) or not prop.global_position.is_equal_approx(_journal_positions[id]) or not is_instance_valid(_fragment_cues.get(id)) or not (_fragment_cues[id] as Node3D).global_position.is_equal_approx(_journal_positions[id]): return "Missing or moved Perimeter contact prop"
+ 	return ""
+ 
+ 
