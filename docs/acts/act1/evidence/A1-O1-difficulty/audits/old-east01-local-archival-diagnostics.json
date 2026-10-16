@@ -1,0 +1,23 @@
+{
+  "scope": "Local read-only producer-archiver invocation/inspection failures after native closure; not a Godot result and original run untouched.",
+  "attempts": [
+    {
+      "arguments": [
+        "--run",
+        ".cinder/o1-difficulty/old-east01"
+      ],
+      "exit_code": 1,
+      "message": "expected one literal run/branch/file name: .cinder/o1-difficulty/old-east01"
+    },
+    {
+      "arguments": [
+        "--run",
+        "old-east01"
+      ],
+      "exit_code": 1,
+      "message": "branch companion path differs from literal branch_root/label/name"
+    }
+  ],
+  "resolution": "Keep frozen producer archiver and native report unchanged; exact closed-consumer copy retains banked input branches as inputs and preserves separate producer archive.",
+  "local_metadata_note": "A private record-script construction postprocess printed an undefined outer helper variable after saving/compiling the script; NameError preserved here. No owner or native file was changed by that failed postprocess. Corrected print reads the intended helper path."
+}

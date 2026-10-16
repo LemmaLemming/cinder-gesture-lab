@@ -1,5 +1,11 @@
 # Act 1 — current progress
 
+## Bounded O1 trial stopped; Integration decision next — 16 October 2026
+
+The single old-east01 case at `30e4911d` / Shared73 closes **60/1, incomplete, exit1**. The unchanged native presentation guard cancels both original threats at3.35 during second RIGHT. Rivet-band contact at3.4166667 follows cancellation and earns no useful live-danger baseline. First full dash/hold exist; second dash remains pending at report, no LEFT/primary. HP100/ammo2, C30 HP20, no source-hit opportunities; normal cleanup and126 selected source/input entries exact. [Exact failed scope and audit](../../../docs/acts/act1/A1_O1_DIFFICULTY.md) preserves the original report/source/whole inputs and qualifies passive observations; unique guard predicate remains unproved.
+
+The explicit75edb83d stop rule applies. O1 host/Codec remain original66f8/0e7e and recipe absent; no runtime promotion/new counterpart/counterfactual/transport/kit/portrait or alternate trial. Genuine original102/0 producer remains sealed. Original eight/all24 and shared14/24 difficulty coverage stay accepted; no O1 amendment credit. Return the exact failure to Integration; no human permission/unlock/full-route gate or new original goal. Root-only L5 repair remains separate.
+
 ## Genuine old Challenge writer sealed — 16 October 2026
 
 The one unchanged-old-writer producer passes **102/0, complete/success, clean exit0**,25.431s, at `40993bc9` / actual Shared73 plus accepted L5 documentation checkpoint. Native SHA `2a410fe2ca7265c6cc372f15296bd807f3021c77b8fda6665e195c764d2f1146`; [exact original run/source/branches](../../../docs/acts/act1/evidence/A1-O1-difficulty/legacy-producer01/archive-manifest.json), [independent Act1 typed/raw seal audit](../../../docs/acts/act1/evidence/A1-O1-difficulty/audits/legacy-producer01-seal-audit.md). All122 selected pre/post entries remain exact (121 present, future recipe absent), including host66f8/Codec0e7e and producer fixtured03/UIDdovv. Source/structured102 assertion/footer/raw/exit joins agree. This establishes original-writer custody, not route/novelty/changed-policy credit.

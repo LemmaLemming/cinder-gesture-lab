@@ -1,0 +1,121 @@
+{
+  "result": "FAILED/incomplete",
+  "checks": 60,
+  "failures": 1,
+  "first_failure_label": "old route stopped: second-right-east-contact native deliberate stop; native reservation cancellation: { \"id\": \"threat-1\", \"reason\": \"Actual complete salvage source/footprint/response is not visible\" }",
+  "native_original": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-difficulty-36893-911204.json",
+  "native_sha256": "82e4bd368364d006d8eafd045f718a47f511250b497dca9757dc123261f69424",
+  "native_bytes": 3607878,
+  "wall_seconds": 12.623296958998253,
+  "native_elapsed_ms": 11369,
+  "tested_commit": "30e4911d9b745930974aaed81d4723c75e53c786",
+  "source_count": 126,
+  "source_pre_sha256": "5a6c12a5ded3f10c6bf4f9ff285e269545f665c566f7f162b627079869c8d668",
+  "source_post_sha256": "5a6c12a5ded3f10c6bf4f9ff285e269545f665c566f7f162b627079869c8d668",
+  "source_changed": [],
+  "first_dash": {
+    "started_at_s": 1.0666666666666678,
+    "completed_at_s": 1.2500000000000004,
+    "distance": 2.700000047683716,
+    "landing": [
+      0.7000000476837158,
+      -0.004921875894069672,
+      0.0
+    ],
+    "collision_shortened": false,
+    "blocked": false
+  },
+  "first_dash_coroutine_stopped_s": 1.33333333333333,
+  "observed_hold": {
+    "end_s": 3.3333333333333264,
+    "from": [
+      0.7000000476837158,
+      -0.004921875894069672,
+      0.0
+    ],
+    "start_s": 1.3333333333333335,
+    "to": [
+      0.7000000476837158,
+      -0.004921875894069672,
+      0.0
+    ]
+  },
+  "pending_second_dash": {
+    "kind": "dash",
+    "started_at_s": 3.3333333333333264,
+    "world_origin": [
+      0.7000000476837158,
+      -0.004921875894069672,
+      0.0
+    ],
+    "direction": [
+      1.0,
+      0.0,
+      0.0
+    ],
+    "committed_nominal_distance": 2.7,
+    "distance_source": "actual cancellation/contact committed_dash diagnostic, not a completed second action"
+  },
+  "pending_second_path_samples": 9,
+  "cancellations": [
+    {
+      "id": "threat-1",
+      "reason": "Actual complete salvage source/footprint/response is not visible",
+      "clock_s": 3.34999999999999,
+      "hero_position": [
+        0.950000047683716,
+        -0.00492187589406967,
+        0.0
+      ]
+    },
+    {
+      "id": "threat-2",
+      "reason": "required_parent_presentation_unavailable",
+      "clock_s": 3.34999999999999,
+      "hero_position": [
+        0.950000047683716,
+        -0.00492187589406967,
+        0.0
+      ]
+    }
+  ],
+  "contacts": [
+    {
+      "id": "rivet-band",
+      "order": [
+        "nose-cap",
+        "rivet-band"
+      ],
+      "clock_s": 3.41666666666666,
+      "hero_position": [
+        1.95000004768372,
+        -0.00492187589406967,
+        0.0
+      ]
+    }
+  ],
+  "source_hit_count": 0,
+  "final": {
+    "clock_s": 3.46666666666666,
+    "action_clock_s": 3.46666666666666,
+    "hero_position": [
+      2.70000004768372,
+      -0.00492187589406967,
+      0.0
+    ],
+    "hp": 100.0,
+    "shells": 2,
+    "circuit_hp": 20.0,
+    "collected": [
+      "nose-cap",
+      "rivet-band"
+    ],
+    "stage": "circuit"
+  },
+  "remaining_dash_s": 0.0466666666666667,
+  "boundaries_retained": 24,
+  "boundaries_omitted": 26,
+  "trace_count": 144,
+  "trace_omitted": 0,
+  "late_closure": "Normal cleanup/Registry/all named inputs and four original explicit source input hashes pass. No second completed dash, LEFT, primary, final Save, new runtime, counterpart, new transport/kit or portrait executed."
+}
