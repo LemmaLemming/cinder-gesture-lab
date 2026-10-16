@@ -1,0 +1,12 @@
+{
+  "created_at": "2026-10-16T05:14:54.144653+00:00",
+  "classification": "Local evidence-verifier field assumption; no engine or gameplay failure.",
+  "command": [
+    "python3",
+    "/private/tmp/a1-l5-difficulty-implementation/verify_legacy_seal.py"
+  ],
+  "source_sha256": "ae28dc0204b5cdc3c701558e559fbe09dfa1efb3e03f08dd47684d35d2202654",
+  "first_error": "KeyError: 'terminal_observers'",
+  "cause": "The native report preserves a passed final assertion about terminal_observers but does not serialize that internal array as a top-level report field. Earlier verification clauses passed; remaining clauses had not executed.",
+  "correction": "Check the retained final assertion and actual final snapshot stage/HP/progress instead. Keep original native168/0 and raw/source attribution unchanged; no native rerun."
+}
