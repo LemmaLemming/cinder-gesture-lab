@@ -1,5 +1,5 @@
 extends "res://tests/acts/act3/twin_suns_production_transition_smoke.gd"
-## Original-only MAIN Story producer. SOURCE-ONLY until Root imports/runs it.
+## Focused original MAIN Story producer, retained-map transport and crossing trial.
 ## TEST prefix10 and a disclosed existing predecessor floor enable public fresh
 ## Challenge entry; no L1 route/HP/pose/clock/resource/source history is seeded.
 ## Output is immutable old API1/schema1/local5/native-source3 data, not new-reader
@@ -44,6 +44,12 @@ func _initialize() -> void:
 
 func _run() -> void:
 	var args: PackedStringArray = OS.get_cmdline_user_args()
+	if args.size() == 1 and args[0] in ["--crossing-compare", "--crossing-portrait"]:
+		_lt_defaults()
+		var writer: Callable = _lp_portrait if args[0] == "--crossing-portrait" else Callable()
+		_producer_complete = await _lc_run(args[0],writer)
+		await _producer_finish()
+		return
 	if args.size() == 1 and args[0] in ["--legacy", "--current-persistence", "--pure"]:
 		var ok: bool = false
 		if args[0] == "--legacy": ok = await _lt_run_legacy()
@@ -191,6 +197,7 @@ func _producer_settle(page: String, installed: bool, id: String = "") -> bool:
 	return _expect(false,"public producer operation exceeds bounded120 process observations",str({"page":page,"actual":_shell.menu.page_name(),"paused":paused,"campaign_error":_shell.campaign_error}))
 
 func _tick_safe() -> String:
+	if _lc_running: return await _lc_tick_safe()
 	_producer_ticks += 1
 	if _producer_ticks > 2400: return "first-warning producer exceeded bounded2400 observations"
 	return await super._tick_safe()
@@ -289,6 +296,9 @@ func _producer_watchdog() -> void:
 func _producer_finish() -> void:
 	if _producer_done: return
 	_producer_done = true
+	if _lc_running or is_instance_valid(_game) and _game != _shell and _lc_scene != null:
+		var component_cleanup: String = await _lc_dispose()
+		_expect(component_cleanup.is_empty(),"common final/watchdog component retirement",component_cleanup)
 	# Public exit runs before any source leaves its tree; no silent cancel or
 	# fabricated history cleanup. Archive bytes remain even for partial failure.
 	if is_instance_valid(_level) and _level.is_inside_tree(): _level.exit_level()
@@ -699,3 +709,612 @@ func _lt_run_pure() -> bool:
 		var before: PackedByteArray = var_to_bytes(malformed)
 		if not _expect(not String(LT_Runtime.arrangement_layout(malformed).get("error","")).is_empty() and var_to_bytes(malformed) == before,"pure closed recipe/profile/permutation rejects with no native mutation"): return false
 	return true
+
+
+## PRIVATE SOURCE FRAGMENT — NOT INSTALLED, PARSED OR EXECUTED.
+## Append to the ONE twin_suns_arrangement_smoke.gd extending
+## twin_suns_production_transition_smoke.gd. No extends/_run/_finish override.
+##
+## Required dispatcher edits by composer:
+## 1. FIRST branch of existing producer _tick_safe():
+##       if _lc_running: return await _lc_tick_safe()
+##    Keep its producer body unchanged for all other selectors.
+## 2. Selector: await _lc_run("--crossing-compare").
+##    Runs canonical baseline, changed baseline, then ONE changed combined
+##    WEAPON-03/CLOTH-P2/CLOTH-S2 opportunity sample. No weak/all-kit matrix.
+## 3. Common fatal/watchdog/final cleanup: await _lc_dispose() if _lc_running;
+##    never quit while its Main/observer/cache remains live.
+## 4. --crossing-portrait is a later integration point, deliberately refuses
+##    execution unless a reviewed paused portrait_writer Callable is supplied.
+##
+## Reuses inherited actual native _pending/_proof_error/_at_time/_dash/_hold/
+## _primary_opening_error/_fixed_record/_floor_hit/_world_topology helpers.
+## Does NOT call _clear_pocket, _primary (which depletes shells), _prepare,
+## _bind_runtime, _next_warning (which may route-rejoin), or any save helper.
+## Every new declared constant/member/helper has LC or _lc prefix.
+
+const LC_Runtime = preload("res://scripts/acts/act3/twin_suns_level.gd")
+const LC_CROSS_IDS: Array[String] = ["l1-crossing-west", "l1-crossing-east"]
+const LC_START: Vector3 = Vector3(0, 0.1, -10)
+const LC_NATIVE_LIMIT: int = 1800
+const LC_CASE_SECONDS: float = 30.0
+const LC_SAVE_LIMIT: String = "TEST crossing component has no canonical route/save authority"
+
+class LC_AfterMain extends Node:
+	signal observed(boundary: String)
+	var waiting: bool = false
+	func _ready() -> void:
+		process_mode = Node.PROCESS_MODE_ALWAYS
+		process_priority = 1000
+	func _process(_delta: float) -> void:
+		if waiting:
+			waiting = false
+			observed.emit("post_main_process")
+
+class LC_CrossingLab extends LC_Runtime:
+	## These authored TEST constructor choices are set BEFORE packing/entry.
+	## They are not a production progress prefix or a saved-world seed.
+	@export var lc_changed: bool = true
+	var lc_native_deaths: Array[String] = []
+
+	func _on_enter_level() -> void:
+		_active = true
+		var descriptor: Dictionary
+		var selector := Arrangement.new(arrangement_definition())
+		if lc_changed:
+			descriptor = selector.select_fresh("challenge")
+		else:
+			descriptor = {
+				"schema_version": 1, "profile": "challenge",
+				"recipe_id": LEGACY_RECIPE_IDS.challenge,
+				"order": SOURCE_IDS.duplicate()
+			}
+		_configuration_error = selector.last_error if descriptor.is_empty() else _configure_sources(descriptor, false)
+		scenery.call("follow_landmarks", hero.global_position)
+		_update_presentation()
+
+	func _advance_entry() -> bool:
+		return false
+
+	func _all_cleared() -> bool:
+		return false
+
+	func _on_source_died(_where: Vector3, id: String) -> void:
+		# Genuine native observation only, outside the canonical route dictionaries.
+		if sources.has(id) and sources[id].dead and sources[id].hp == 0.0:
+			lc_native_deaths.append(id)
+
+	func _update_presentation(silent: bool = false) -> void:
+		super._update_presentation(silent)
+		for id: String in SOURCE_IDS:
+			if is_instance_valid(sources.get(id)):
+				sources[id].set_physics_process(int(SOURCE_POCKETS[id]) == 2 and not sources[id].dead)
+		objective_text = "TEST CROSSING DEPTH COMPARISON\nREAL STALKER LANDING; ONE ORDINARY PRIMARY"
+
+	func snapshot_state() -> Dictionary:
+		last_snapshot_error = LC_SAVE_LIMIT
+		return {}
+	func snapshot_state_for_presentation(_camera: Camera3D, _hud: GameHUD) -> Dictionary:
+		last_snapshot_error = LC_SAVE_LIMIT
+		return {}
+	func snapshot_error(_snapshot: Dictionary) -> String:
+		return LC_SAVE_LIMIT
+	func snapshot_error_with_player(_snapshot: Dictionary, _player: Dictionary) -> String:
+		return LC_SAVE_LIMIT
+	func restore_state(_snapshot: Dictionary) -> bool:
+		last_snapshot_error = LC_SAVE_LIMIT
+		return false
+	func _local_snapshot_error(_local: Dictionary) -> String:
+		return LC_SAVE_LIMIT
+	func _local_snapshot_error_with_player(_local: Dictionary, _player: Dictionary) -> String:
+		return LC_SAVE_LIMIT
+	func _on_enter_restore_candidate(_local: Dictionary, _player: Dictionary) -> String:
+		return LC_SAVE_LIMIT
+
+var _lc_running: bool = false
+var _lc_stopping: bool = false
+var _lc_ticks: int = 0
+var _lc_scene: PackedScene
+var _lc_scene_path: String = ""
+var _lc_after_main: LC_AfterMain
+var _lc_connections: Array[Array] = []
+var _lc_refs: Array[WeakRef] = []
+var _lc_seen: Dictionary = {}
+var _lc_start_hp: float = 0.0
+var _lc_origins: Dictionary = {}
+var _lc_hit: Dictionary = {}
+var _lc_results: Array[Dictionary] = []
+var _lc_declines: Dictionary = {}
+
+func _lc_run(selector: String, portrait_writer: Callable = Callable()) -> bool:
+	if not _expect(selector in ["--crossing-compare", "--crossing-portrait"], "one bounded TEST crossing selector", selector): return false
+	if not _expect(LC_Runtime.ROUTE_API == "act3-twin-suns-level-2", "component waits for separately approved reader promotion"): return false
+	if not _expect(not is_instance_valid(_game) and not is_instance_valid(_shell), "component starts without a producer or prior Main/Shell"): return false
+	_lc_running = true
+	_lc_results.clear()
+	var cases: Array[Dictionary] = [
+		{"label":"canonical-baseline", "changed":false, "combined":false},
+		{"label":"challenge-baseline", "changed":true, "combined":false},
+		{"label":"challenge-short-slow", "changed":true, "combined":true}
+	] if selector == "--crossing-compare" else [{"label":"challenge-portrait", "changed":true, "combined":false}]
+	for choice: Dictionary in cases:
+		var result: Dictionary = await _lc_case(choice, portrait_writer if selector == "--crossing-portrait" else Callable())
+		var retired: String = await _lc_dispose()
+		if not _expect(String(result.get("error", "Missing actual case result")).is_empty(), "actual crossing opportunity: " + choice.label, str(result)): _lc_running = false; return false
+		if not _expect(retired.is_empty(), "normal crossing component retirement: " + choice.label, retired): _lc_running = false; return false
+		_lc_results.append(result)
+	if selector == "--crossing-compare":
+		var original: Dictionary = _lc_results[0]
+		var changed: Dictionary = _lc_results[1]
+		# Compare PHYSICAL executed positions only, not source IDs, clocks,
+		# metadata, warning order, serials, or the two authored home constants.
+		var different: bool = original.executed_landings.size() != changed.executed_landings.size()
+		if not different:
+			for index: int in range(original.executed_landings.size()):
+				if (original.executed_landings[index] as Vector3).distance_to(changed.executed_landings[index]) > PointTolerance: different = true
+		different = different or (original.primary_world_origin as Vector3).distance_to(changed.primary_world_origin) > PointTolerance
+		if not _expect(original.initial_position == LC_START and changed.initial_position == LC_START and original.kit == changed.kit and original.profile == changed.profile and original.initial_sun == changed.initial_sun and different,
+			"same declared start/kit/profile/sun yields an observed useful executed landing/ordinary-return difference",
+			str({"canonical":original, "challenge":changed, "observed_physical_difference":different})):
+			_lc_running = false
+			return false # Retain no-observed-difference; do not tune guards/stats.
+	print("L1 CROSSING COMPONENT: ", _lc_results, "; TEST initial eligibility; no parent prefix/save/clear/contact/full-route or human-balance credit")
+	_lc_running = false
+	return true
+
+func _lc_case(choice: Dictionary, portrait_writer: Callable) -> Dictionary:
+	_lc_stopping = false
+	_lc_ticks = 0
+	_lc_hit.clear(); _lc_declines.clear()
+	_lc_refs.clear(); _lc_seen.clear(); _lc_connections.clear()
+	_warnings.clear(); _used_warnings.clear(); _records.clear(); _phases.clear(); _active_travel.clear()
+	_actions.clear(); _events.clear(); _expected_hp.clear(); _checkpoints.clear(); _death_events.clear()
+	_current.clear(); _source_id = ""; _group_ids.assign(LC_CROSS_IDS)
+	_capture_portrait = false; _roundtrip_done = true; _fresh_partial_done = true
+	_crossing_primary_deferred = false; _union_seen = false
+	_route_deadline = LC_CASE_SECONDS; _group_deadline = LC_CASE_SECONDS
+	_kit = {"jacket":"CLOTH-J0", "pants":"CLOTH-P0", "shoes":"CLOTH-S0", "weapon":"WEAPON-01"}
+	if choice.combined:
+		_kit.pants = "CLOTH-P2"; _kit.shoes = "CLOTH-S2"; _kit.weapon = "WEAPON-03"
+	root.size = Vector2i(340,736); root.content_scale_size = root.size
+	root.content_scale_mode = Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
+	paused = false
+	_game = MainScene.instantiate()
+	node_added.connect(_lc_watch_node)
+	root.add_child(_game)
+	_game.call("open_bench") # Synchronous enemy-free native lab; no physics seed.
+	var lab_hero: CinderPlayer = _game.get("player") as CinderPlayer
+	if lab_hero == null or not paused or not get_nodes_in_group("enemies").is_empty(): return {"error":"Actual paused enemy-free Main unavailable"}
+	for slot: String in Slots:
+		if not lab_hero.equip_item(String(_kit[slot])): return {"error":"Public initial equipment selection declined: "+slot}
+	var packed: Dictionary = _lc_make_scene(choice.changed)
+	if not String(packed.error).is_empty(): return packed
+	_lc_scene = packed.scene; _lc_scene_path = packed.path
+	if not _game.call("load_level_scene", _lc_scene_path): return {"error":"Actual public Main load declined: "+String(_game.get("level_load_error"))}
+	_game.call("open_bench")
+	_level = _game.get("active_level") as CinderLevel
+	_hero = _game.get("player") as CinderPlayer
+	if not _level is LC_CrossingLab or _hero == null or _hero == lab_hero: return {"error":"Fresh native component/Hero unavailable"}
+	_scheduler = _level.get("threat_scheduler") as CinderThreatScheduler
+	_sources = (_level.get("sources") as Dictionary).duplicate()
+	_floor = _level.get("scenery").get("floor_body") as StaticBody3D
+	_motifs = _level.find_child("ScenicSuns",true,false) as Node3D
+	_exit_cue = _level.get("exit_cue") as CinderInteractionCue
+	_stats = _hero.equipment.resolved_stats()
+	_lc_start_hp = _hero.hp; _hp_before = _hero.hp
+	_lc_origins = _level.call("selected_source_positions")
+	var actual: Dictionary = _level.call("state")
+	if not paused or not _level.contract_error().is_empty() or _hero.global_position != LC_START or _hero.hp != _hero.max_hp or _hero.get_world_action_clock() != 0.0 or _scheduler.get_clock() != 0.0 or int(_level.get("sun_state")) != 0 or not Codec.keys_error(_sources,SourceIds).is_empty():
+		return {"error":"Actual declared constructor start/profile/clock/source contract differs"}
+	var bindings: Dictionary = _level.call("scheduler_bindings")
+	var solid: CollisionShape3D = _floor.get_node("Solid") as CollisionShape3D
+	if not solid.shape is BoxShape3D or (solid.shape as BoxShape3D).size != Vector3(14,1,108) or bindings.owners != _sources or bindings.world_root != _level or bindings.floors["shelf-floor"].collision != solid or _level.hero != _hero or _level.shared_shell != _game or _scheduler.encounter_profile().id != "challenge":
+		return {"error":"Actual native floor/owner/Hero/Challenge binding differs"}
+	for id: String in SourceIds:
+		var source: CinderAct3SunboundStalker = _sources[id] as CinderAct3SunboundStalker
+		var origin: Vector3 = LC_Runtime.SOURCE_POSITIONS[id]
+		if choice.changed and id == LC_CROSS_IDS[0]: origin.z = -17
+		if choice.changed and id == LC_CROSS_IDS[1]: origin.z = -14
+		if source == null or source.global_position != origin or _lc_origins[id] != origin or source.hp != 36.0 or source.dead or source.get_world_3d() != _hero.get_world_3d() or not source.is_in_group("enemies") or source.is_physics_processing() != LC_CROSS_IDS.has(id):
+			return {"error":"Actual configured native source/home/eligibility differs: "+id}
+		_expected_hp[id] = source.hp
+		_lc_connect(source,"state_changed",_on_source_state.bind(id))
+		_lc_connect(source,"hit_resolved",_on_contact.bind(id))
+		_lc_connect(source,"died",_on_death.bind(id))
+	_lc_connect(_hero,"world_action_executed",_on_action)
+	_lc_connect(_hero,"fired",_lc_fired)
+	_lc_connect(_level,"checkpoint_requested",_on_checkpoint)
+	_lc_connect(_level,"completion_requested",_lc_completion)
+	_lc_connect(_level,"contact_exit_requested",_lc_contact)
+	if not _level.snapshot_state().is_empty() or _level.last_snapshot_error != LC_SAVE_LIMIT or not actual.entered.is_empty() or not actual.deaths.is_empty() or actual.completed:
+		return {"error":"TEST component must refuse snapshots and retain no parent progress prefix"}
+	_free_tick_barrier() # Producer initialization may already own an observer.
+	_tick_barrier = PostActorPhysicsBarrier.new()
+	_tick_barrier.name = "TEST_L1_CrossingPostActor"
+	_tick_barrier.process_mode = Node.PROCESS_MODE_PAUSABLE
+	_tick_barrier.process_physics_priority = 1000
+	root.add_child(_tick_barrier)
+	_lc_after_main = LC_AfterMain.new()
+	_lc_after_main.name = "TEST_L1_CrossingAfterMain"
+	root.add_child(_lc_after_main)
+	_topology = _world_topology()
+	_game.call("resume_lab")
+	var error: String = ""
+	for _ground_tick: int in range(8):
+		if _hero.is_on_floor(): break
+		error = await _lc_tick_safe()
+		if not error.is_empty(): return {"error":error}
+	if not _hero.is_on_floor(): return {"error":"Declared native Hero did not ground within the bounded actual entry ticks"}
+	var first: Dictionary = await _lc_wait_warning()
+	if first.is_empty(): return {"error":"No bounded usable actual crossing warning", "states":_lc_source_states()}
+	if portrait_writer.is_valid():
+		error = await _lc_post_main()
+		if not error.is_empty(): return {"error":error}
+		_game.call("open_bench")
+		# Composer supplies a reviewed actual paused native draw/unchanged-state
+		# reader; returning an empty/error result never earns visual credit.
+		var visual: Dictionary = await portrait_writer.call(_game,_level,_hero,_scheduler,first)
+		return {"error":String(visual.get("error","Missing actual portrait result")), "portrait":visual, "parent_route_or_save_credit":false}
+	if choice.label == "challenge-portrait": return {"error":"Portrait selector UNEXECUTED until a reviewed paused draw adapter is supplied"}
+	error = await _lc_follow_one(first)
+	if not error.is_empty(): return {"error":error,"states":_lc_source_states()}
+	error = await _lc_post_main()
+	if not error.is_empty(): return {"error":error}
+	var landings: Array[Vector3] = []
+	for action: Dictionary in _actions:
+		if action.kind == "dash": landings.append(action.landing)
+	return {
+		"error":"", "label":choice.label, "initial_position":LC_START,
+		"initial_sun":0, "profile":_scheduler.encounter_profile().id,
+		"kit":_kit.duplicate(true), "selected_origins":_lc_origins.duplicate(),
+		"actual_warning_source":_lc_hit.source_id,
+		"accepted_geometry":_lc_hit.geometry, "accepted_landing":_lc_hit.proof.landing,
+		"accepted_attack_position":_lc_hit.proof.attack_position,
+		"executed_landings":landings, "primary_world_origin":_lc_hit.action.world_origin,
+		"actual_primary":_lc_hit.duplicate(true), "hero_hp":_hero.hp,
+		"native_ticks":_lc_ticks, "all_sources":_lc_source_states(), "unleased_prospective_view_declines":_lc_declines.duplicate(true),
+		"parent_route_or_save_credit":false
+	}
+
+func _lc_make_scene(changed: bool) -> Dictionary:
+	var template: Node3D = load(FullPath).instantiate()
+	var declared := LC_CrossingLab.new()
+	declared.name = "TEST_L1_CrossingDepth"
+	declared.level_id = "A3-L1"; declared.lc_changed = changed
+	for child: Node in template.get_children():
+		var copy: Node = child.duplicate()
+		declared.add_child(copy)
+		_lc_assign_owner(copy,declared)
+	template.free()
+	(declared.get_node(declared.spawn_path) as Marker3D).position = LC_START
+	var scene := PackedScene.new()
+	var error: Error = scene.pack(declared)
+	declared.free()
+	if error != OK: return {"error":"Declared native component packing failed"}
+	var cache_path: String = "res://tests/acts/act3/__TEST_l1_crossing_%d_%d.tscn" % [OS.get_process_id(),Time.get_ticks_usec()]
+	if FileAccess.file_exists(cache_path) or ResourceLoader.has_cached(cache_path): return {"error":"Unique TEST scene cache path already exists"}
+	scene.take_over_path(cache_path)
+	return {"error":"","scene":scene,"path":cache_path}
+
+func _lc_assign_owner(node: Node, owner_node: Node) -> void:
+	node.owner = owner_node
+	for child: Node in node.get_children(): _lc_assign_owner(child,owner_node)
+
+func _lc_wait_warning() -> Dictionary:
+	var stop: float = minf(_route_deadline,_scheduler.get_clock()+WarningBudgetS)
+	for _sample: int in range(_frame_limit(WarningBudgetS)):
+		var warning: Dictionary = _pending() # Genuine newest current native union proof.
+		if not warning.is_empty() and String(_proof_error(warning)).is_empty():
+			var ready_s: float = float(warning.proof.path[0].end_s)
+			if _scheduler.get_clock() < ready_s:
+				_used_warnings[warning.record.id] = true
+				return warning
+		if _scheduler.get_clock() > stop: break
+		var error: String = await _lc_tick_safe()
+		if not error.is_empty():
+			_expect(false,"bounded native crossing warning observation",error)
+			return {}
+	return {}
+
+func _lc_follow_one(initial: Dictionary) -> String:
+	var warning: Dictionary = initial
+	for _episode: int in range(20):
+		if warning.is_empty(): warning = await _lc_wait_warning()
+		if warning.is_empty(): return "No bounded actual native union proof"
+		_source_id = warning.id; _current = warning.record.duplicate(true)
+		var error: String = _proof_error(warning)
+		if not error.is_empty(): return error
+		for segment: Dictionary in warning.proof.path:
+			if segment.kind in ["escape_dash","positioning_dash"]:
+				error = await _at_time(float(segment.start_s))
+				if error.is_empty(): error = await _dash(segment)
+			elif segment.kind == "ordinary_primary":
+				error = await _lc_primary(segment,warning.proof)
+				if error.is_empty(): return "" # Exactly one actual primary opportunity.
+			else:
+				error = await _hold(segment)
+			if not error.is_empty(): break
+		if error == Replan:
+			warning = {}
+			continue # New real warning from actual current Hero, no pose/history seed.
+		if not error.is_empty(): return error
+		return "Actual accepted witness had no ordinary primary"
+	return "Bounded native crossing replans exhausted"
+
+func _lc_primary(segment: Dictionary, proof: Dictionary) -> String:
+	var error: String = await _at_time(float(proof.primary_time_s))
+	if not error.is_empty(): return error
+	error = _primary_opening_error(segment,proof)
+	if not error.is_empty(): return error
+	var source: CinderAct3SunboundStalker = _sources[_source_id]
+	var before: Dictionary = _expected_hp.duplicate(true)
+	var sequence: int = _last_sequence()
+	var toward: Vector3 = _planar(source.global_position-_hero.global_position)
+	if toward.length_squared() == 0.0: return "Nonzero actual ordinary-primary bearing required"
+	var held: Dictionary = _scheduler.reservation_state(_current.id)
+	if held.is_empty() or held.state != "recovery" or not _exact(_fixed_record(held),_fixed_record(_current)): return "Actual recovery lease no longer matches the accepted witness"
+	var hits: int = _hero.slash(toward.normalized()) # No resource/HP/pose writes.
+	var changed: int = 0
+	for id: String in SourceIds:
+		var actual: Dictionary = _sources[id].state()
+		if float(actual.hp) != float(before[id]):
+			if float(actual.hp) != maxf(float(before[id])-float(_stats.primary_damage),0.0) or actual.dead != (float(actual.hp)==0.0): return "Unexpected native primary damage/lifecycle: "+id
+			changed += 1
+		_expected_hp[id] = actual.hp
+	var actions: Array[Dictionary] = _hero.get_world_action_records(sequence)
+	if hits < 1 or changed != hits or float(_expected_hp[_source_id]) >= float(before[_source_id]) or actions.size() != 1 or actions[0].kind != "primary" or actions[0].hits != hits or not _exact(actions[0].equipment_ids,_kit):
+		return "One genuine public primary did not publish matching native hit(s)"
+	_lc_hit = {"source_id":_source_id,"clock_s":_scheduler.get_clock(),"geometry":_current.geometry.duplicate(true),"proof":proof.duplicate(true),"action":actions[0].duplicate(true),"hp_before":before,"hp_after":_expected_hp.duplicate(true)}
+	return await _lc_tick_safe() # No required kill or second attack.
+
+func _lc_tick_safe() -> String:
+	if _lc_stopping: return "Component is retiring"
+	var error: String = _tick_barrier_error()
+	if not error.is_empty(): return error
+	if paused: return "Unexpected component pause during an actual native response"
+	_tick_barrier.waiting = true
+	var boundary: String = await _tick_barrier.observed
+	if _lc_stopping: return "Component retired while awaiting physics"
+	_lc_ticks += 1
+	if boundary != "post_actor_physics" or paused or _lc_ticks > LC_NATIVE_LIMIT: return "Component post-actor native tick bound failed"
+	return _lc_live_error()
+
+func _lc_live_error() -> String:
+	if not is_instance_valid(_hero) or not is_instance_valid(_level) or not is_instance_valid(_scheduler) or _hero.dead or _hero.hp != _lc_start_hp or _scheduler.get_clock() > _route_deadline or not _exact(_hero.equipment.snapshot(),_kit): return "Actual component actors/full HP/kit/native budget changed"
+	if int(_events.get("contact",0)) != 0 or int(_events.get("fired_blast",0)) != 0 or int(_events.get("completion",0)) != 0 or int(_events.get("exit",0)) != 0 or not _checkpoints.is_empty(): return "Unexpected damage/blast/parent progression event"
+	var actual: Dictionary = _level.call("state")
+	if not String(actual.configuration_error).is_empty() or not actual.entered.is_empty() or not actual.deaths.is_empty() or actual.completed or actual.exit_state != "clear" or not actual.contact.is_empty(): return "TEST component acquired canonical route/progress state"
+	if not _floor_hit(_hero.global_position) or _world_topology() != _topology or absf(_hero.get_world_action_clock()-_scheduler.get_clock()) > TimeEpsilon: return "Actual component floor/topology/native clocks changed"
+	for id: String in SourceIds:
+		var source: CinderAct3SunboundStalker = _sources[id]
+		var state: Dictionary = source.state()
+		# A prospective view refusal returns before native lease/cycle admission
+		# (C50 lines268-290). Preserve it as diagnostic, without forcing overlap.
+		# An admitted source's current view/cancellation remains mandatory.
+		if state.hp != _expected_hp[id] or (not String(state.reservation_id).is_empty() and not state.framing_error.is_empty()) or String(state.last_cancel_reason).begins_with("required_view_unsafe"): return "Actual source resources or admitted native current view guard failed: "+id
+		if String(state.reservation_id).is_empty() and not String(state.framing_error).is_empty():
+			var key: String = id+"|"+String(state.framing_error)+"|"+String(state.last_rejection)
+			var row: Dictionary = _lc_declines.get(key,{"source":id,"first_clock_s":_scheduler.get_clock(),"cycle":state.cycle,"framing_error":state.framing_error,"last_rejection":state.last_rejection,"observed_ticks":0})
+			row["last_clock_s"] = _scheduler.get_clock()
+			row["observed_ticks"] = int(row.observed_ticks)+1
+			_lc_declines[key] = row
+		if source.is_physics_processing() != (LC_CROSS_IDS.has(id) and not source.dead): return "Declared actual native source eligibility changed: "+id
+		if not LC_CROSS_IDS.has(id) and (source.is_physics_processing() or source.global_position != _lc_origins[id] or state.cycle != 0 or not state.reservation_id.is_empty()): return "Unselected TEST source advanced or acquired a lease"
+	for record: Dictionary in _scheduler.reservations():
+		var id: String = _source_for_record(record)
+		if id.is_empty(): return "Actual lease lacks one of the five real owner bodies"
+		if not _records.has(record.id):
+			_records[record.id] = record.duplicate(true); _phases[record.id] = {}; _active_travel[record.id] = 0.0
+		if not _exact(_fixed_record(record),_fixed_record(_records[record.id])): return "Actual held lane/deadline/commit origin changed"
+		var source: CinderAct3SunboundStalker = _sources[id]
+		var state: Dictionary = source.state()
+		var cue: Dictionary = source.get_cue().state()
+		if state.reservation_id != record.id or state.phase != record.state or cue.phase != record.state or cue.geometry != record.geometry or cue.source_position != source.global_position or not cue.source_visible: return "Actual source/lane/cue/phase differs"
+		_phases[record.id][record.state] = true
+		if record.state == "active": _active_travel[record.id] = maxf(float(_active_travel[record.id]),source.global_position.distance_to(record.adapter.start))
+		if record.state == "recovery" and (source.global_position.distance_to(record.adapter.planned_endpoint) > PointTolerance or not source.velocity.is_zero_approx()): return "Actual mobile source failed to stop at its native endpoint"
+	return ""
+
+func _lc_post_main() -> String:
+	_lc_after_main.waiting = true
+	var boundary: String = await _lc_after_main.observed
+	if boundary != "post_main_process": return "Actual Main/Camera/HUD process boundary unavailable"
+	var error: String = _lc_live_error()
+	if not error.is_empty(): return error
+	var union: Dictionary = _level.call("camera_framing_union","",[],true)
+	if not String(union.error).is_empty(): return String(union.error)
+	var points: Array = union.points.duplicate()
+	points.append_array(_game.call("player_camera_framing_points_for",_hero,_game.get("camera")))
+	return String(_game.call("camera_framing_error",points))
+
+func _lc_source_states() -> Dictionary:
+	var result: Dictionary = {}
+	for id: String in SourceIds:
+		if is_instance_valid(_sources.get(id)): result[id] = _sources[id].state()
+	return result
+
+func _lc_fired(kind: String) -> void: _event("fired_"+kind)
+func _lc_completion(_id: String,_completion: String) -> void: _event("completion")
+func _lc_contact(_id: String,_exit: String) -> void: _event("exit")
+
+func _lc_connect(node: Node, signal_name: String, callback: Callable) -> void:
+	node.connect(signal_name,callback)
+	_lc_connections.append([node,signal_name,callback])
+
+func _lc_watch_node(node: Node) -> void:
+	if not is_instance_valid(_game) or node != _game and not _game.is_ancestor_of(node): return
+	var id: String = str(node.get_instance_id())
+	if not _lc_seen.has(id):
+		_lc_seen[id] = true
+		_lc_refs.append(weakref(node))
+
+func _lc_dispose() -> String:
+	_lc_stopping = true
+	if is_instance_valid(_tick_barrier):
+		_tick_barrier.call("_wake","component_retiring")
+	if is_instance_valid(_lc_after_main) and _lc_after_main.waiting:
+		_lc_after_main.waiting = false
+		_lc_after_main.observed.emit("component_retiring")
+	if node_added.is_connected(_lc_watch_node): node_added.disconnect(_lc_watch_node)
+	for connection: Array in _lc_connections:
+		var node: Node = connection[0] as Node
+		if is_instance_valid(node) and node.is_connected(connection[1],connection[2]): node.disconnect(connection[1],connection[2])
+	_lc_connections.clear()
+	var clear: bool = true
+	if is_instance_valid(_level) and _level.is_inside_tree():
+		_level.exit_level() # Actual public in-tree cancellation before child removal.
+		for owner: Node3D in (_level.call("scheduler_bindings").owners as Dictionary).values():
+			var control: Dictionary = _scheduler.source_control_state(owner)
+			clear = clear and not control.is_empty() and control.reservations.is_empty()
+	if is_instance_valid(_game):
+		var effects: PixelEffects = _game.get("fx") as PixelEffects
+		if effects != null: effects.clear()
+		_game.queue_free()
+	_game = null
+	if is_instance_valid(_lc_after_main):
+		_lc_refs.append(weakref(_lc_after_main)); _lc_after_main.queue_free()
+	_lc_after_main = null
+	if is_instance_valid(_tick_barrier): _lc_refs.append(weakref(_tick_barrier))
+	_free_tick_barrier()
+	var scene_ref: WeakRef = weakref(_lc_scene) if _lc_scene != null else null
+	_lc_scene = null
+	var released: bool = false
+	for _frame: int in range(120):
+		await process_frame
+		released = true
+		for reference: WeakRef in _lc_refs:
+			if reference.get_ref() != null: released = false
+		if released: break
+	await create_timer(0.15,true,false,true).timeout
+	var no_cache: bool = _lc_scene_path.is_empty() or not ResourceLoader.has_cached(_lc_scene_path)
+	var scene_gone: bool = scene_ref == null or scene_ref.get_ref() == null
+	_level = null; _hero = null; _scheduler = null; _sources.clear()
+	_floor = null; _motifs = null; _exit_cue = null
+	return "" if clear and released and no_cache and scene_gone and get_nodes_in_group("enemies").is_empty() and get_nodes_in_group("required_cues").is_empty() else "Public component cleanup left native owners/nodes/cues/cache"
+
+
+## Actual paused native portrait adapter. No canonical component-save authority.
+var _lp_draw_seen: bool = false
+var _lp_png_path: String = ""
+
+func _lp_view_error() -> String:
+	var camera: Camera3D = _game.get("camera") as Camera3D
+	var hud: GameHUD = _game.get("hud") as GameHUD
+	if camera == null or hud == null or camera != _hero.get_viewport().get_camera_3d() or camera.get_world_3d() != _hero.get_world_3d(): return "Actual native Camera/HUD/world required"
+	var union: Dictionary = _level.call("camera_framing_union","",[],true)
+	if not String(union.get("error","Missing complete current union")).is_empty(): return String(union.get("error"))
+	var points: Array = (union.points as Array).duplicate()
+	points.append_array(_game.call("player_camera_framing_points_for",_hero,camera))
+	return String(_game.call("camera_framing_error_for_context",points,_hero,camera,hud))
+
+func _lp_native() -> Dictionary:
+	var native: Dictionary = {}
+	for id: String in SourceIds:
+		var saved: Dictionary = (_sources[id] as CinderAct3SunboundStalker).snapshot_state()
+		if saved.is_empty(): return {}
+		native[id] = saved
+	var player: Dictionary = _hero.snapshot_state()
+	var scheduler: Dictionary = _scheduler.snapshot_state(_level.call("scheduler_bindings"))
+	if player.is_empty() or scheduler.is_empty(): return {}
+	var ids: Dictionary = {"main":str(_game.get_instance_id()),"hero":str(_hero.get_instance_id()),"level":str(_level.get_instance_id()),"scheduler":str(_scheduler.get_instance_id()),"camera":str((_game.get("camera") as Node).get_instance_id())}
+	for id: String in SourceIds: ids[id] = str((_sources[id] as Node).get_instance_id())
+	return {"player":player,"native_sources":native,"scheduler":scheduler,"component_observation":_level.call("state"),"actions":_actions.duplicate(true),"events":_events.duplicate(true),"deaths":_death_events.duplicate(true),"checkpoints":_checkpoints.duplicate(),"input":_game.call("get_input_observation_state"),"native_ids_decimal_text":ids}
+
+func _lp_labels(node: Node, rows: Array) -> void:
+	if node is Label:
+		var label: Label = node as Label
+		rows.append([String(_game.get_path_to(label)),label.text,label.is_visible_in_tree(),label.global_position,label.size,label.get_theme_font_size("font_size")])
+	for child: Node in node.get_children(): _lp_labels(child,rows)
+
+func _lp_optics() -> Dictionary:
+	var camera: Camera3D = _game.get("camera") as Camera3D
+	var hud: GameHUD = _game.get("hud") as GameHUD
+	var labels: Array = []
+	_lp_labels(hud,labels)
+	return {"camera":[camera.global_transform,camera.projection,camera.keep_aspect,camera.size,camera.near,camera.far,camera.h_offset,camera.v_offset,camera.frustum_offset,camera.cull_mask],"hud":[hud.visible,hud.combat_safe_rect(),labels]}
+
+func _lp_render(node: Node, rows: Array) -> void:
+	if node is Node3D:
+		var physical: Node3D = node as Node3D
+		var row: Array = [String(_level.get_path_to(node)),str(node.get_instance_id()),physical.transform,physical.global_transform,physical.visible,physical.is_visible_in_tree()]
+		if node is CollisionObject3D:
+			var body: CollisionObject3D = node as CollisionObject3D
+			row.append_array([body.collision_layer,body.collision_mask,node.is_in_group("enemies")])
+		if node is CollisionShape3D:
+			var collision: CollisionShape3D = node as CollisionShape3D
+			row.append_array([collision.disabled,str(collision.shape.get_instance_id()) if collision.shape != null else ""])
+		if node is MeshInstance3D:
+			var mesh: MeshInstance3D = node as MeshInstance3D
+			row.append_array([str(mesh.mesh.get_instance_id()) if mesh.mesh != null else "",str(mesh.material_override.get_instance_id()) if mesh.material_override != null else "",mesh.layers])
+		if node is Sprite3D:
+			var sprite: Sprite3D = node as Sprite3D
+			row.append_array([str(sprite.texture.get_instance_id()) if sprite.texture != null else "",sprite.pixel_size,sprite.offset,sprite.modulate,sprite.layers])
+		rows.append(row)
+	for child: Node in node.get_children(): _lp_render(child,rows)
+
+func _lp_sha(bytes: PackedByteArray) -> String:
+	if bytes.is_empty(): return ""
+	var hasher := HashingContext.new()
+	if hasher.start(HashingContext.HASH_SHA256) != OK or hasher.update(bytes) != OK: return ""
+	return hasher.finish().hex_encode()
+
+func _lp_portrait(main: Node, level: CinderLevel, hero: CinderPlayer, scheduler: CinderThreatScheduler, warning: Dictionary) -> Dictionary:
+	if not _expect(DisplayServer.get_name() != "headless" and paused and main == _game and level == _level and hero == _hero and scheduler == _scheduler,"portrait uses the actual graphical paused component/native context"): return {"error":"Actual graphical paused native context required"}
+	var hud: GameHUD = _game.get("hud") as GameHUD
+	var bench: CanvasLayer = _game.get("bench") as CanvasLayer
+	for _frame: int in range(2): await process_frame
+	var source: CinderAct3SunboundStalker = _sources[warning.id]
+	var state: Dictionary = source.state()
+	var lease: Dictionary = _scheduler.reservation_state(state.reservation_id)
+	var problem: String = _lp_view_error()
+	var before: Dictionary = _lp_native()
+	if not _expect(hud != null and hud.visible and bench != null and not before.is_empty() and problem.is_empty() and state.phase == "warning" and lease.get("armed",false) and lease.get("source_instance_id") == source.get_instance_id(),"actual changed crossing warning/source/full lane/Hero/landing union validates before draw",problem): return {"error":"Current native warning/view validation failed: "+problem}
+	var physical: PackedByteArray = var_to_bytes(before)
+	var input: PackedByteArray = var_to_bytes(_game.call("get_input_observation_state"))
+	var optics: PackedByteArray = var_to_bytes(_lp_optics())
+	var render_before: Array = []
+	_lp_render(_level,render_before)
+	var render_bytes: PackedByteArray = var_to_bytes(render_before)
+	var nonempty: bool = not physical.is_empty() and not input.is_empty() and not optics.is_empty() and not render_before.is_empty() and not render_bytes.is_empty()
+	if not _expect(nonempty,"complete typed native/input/Camera/HUD/render witnesses are nonempty before equality"): return {"error":"Empty native portrait witness"}
+	var bench_visible: bool = bench.visible
+	hud.hide_overlay()
+	bench.visible = false
+	_lp_draw_seen = false
+	RenderingServer.frame_post_draw.connect(_lp_on_draw)
+	for _frame: int in range(120):
+		await process_frame
+		if _lp_draw_seen: break
+	if RenderingServer.frame_post_draw.is_connected(_lp_on_draw): RenderingServer.frame_post_draw.disconnect(_lp_on_draw)
+	var picture: Image = root.get_texture().get_image() if _lp_draw_seen else null
+	hud.show_pause()
+	bench.visible = bench_visible
+	var after: Dictionary = _lp_native()
+	var render_after: Array = []
+	_lp_render(_level,render_after)
+	problem = _lp_view_error()
+	var unchanged: bool = not after.is_empty() and physical == var_to_bytes(after) and input == var_to_bytes(_game.call("get_input_observation_state")) and optics == var_to_bytes(_lp_optics()) and render_bytes == var_to_bytes(render_after)
+	if not _expect(_lp_draw_seen and picture != null and picture.get_size().x in [339,340] and picture.get_size().y == 736 and paused and unchanged and problem.is_empty() and bench.visible == bench_visible and hud.visible,"actual paused native draw preserves full states/input/Camera/HUD/render identities and restores overlay",str({"draw":_lp_draw_seen,"size":picture.get_size() if picture != null else Vector2i.ZERO,"unchanged":unchanged,"view":problem})): return {"error":"Native paused draw preservation failed"}
+	var folder: String = "res://captures/act3/twin-suns-arrangement/crossing-portrait-%d-%d" % [OS.get_process_id(),Time.get_ticks_usec()]
+	_lp_png_path = folder.path_join("01-declared-challenge-crossing-warning.png")
+	if not _expect(DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(folder)) == OK and picture.save_png(_lp_png_path) == OK,"actual graphical crossing PNG written after observed draw"): return {"error":"Native PNG write failed"}
+	var stamps: Dictionary = {"native":physical,"input":input,"optics":optics,"render":render_bytes}
+	var hashes: Dictionary = {}
+	for key: String in stamps:
+		var digest: String = _lp_sha(stamps[key])
+		var path: String = folder.path_join(key+".var.bin")
+		var file: FileAccess = FileAccess.open(path,FileAccess.WRITE)
+		if not _expect(digest.length() == 64 and file != null,"nonempty typed portrait witness persists: "+key): return {"error":"Typed portrait witness cannot be written"}
+		file.store_buffer(stamps[key]); file.flush(); file.close()
+		if not _expect(FileAccess.get_sha256(path) == digest,"native typed portrait witness hash joins actual bytes: "+key): return {"error":"Typed portrait hash mismatch"}
+		hashes[key] = {"sha256":digest,"bytes":(stamps[key] as PackedByteArray).size(),"path":key+".var.bin"}
+	var receipt: Dictionary = {"schema_version":1,"test_only":true,"kind":"a3-l1-declared-crossing-depth-portrait-1","runtime_sha256":FileAccess.get_sha256(RuntimePath),"fixture_sha256":FileAccess.get_sha256(PRODUCER_PATH),"png_sha256":FileAccess.get_sha256(_lp_png_path),"actual_dimensions":[picture.get_size().x,picture.get_size().y],"clock_s":_scheduler.get_clock(),"warning_source":warning.id,"phase":state.phase,"cycle":state.cycle,"reservation_id":state.reservation_id,"source_position":Codec.vector3(source.global_position),"hero_position":Codec.vector3(_hero.global_position),"recipe_id":LC_Runtime.CHALLENGE_RECIPE,"native_state_input_optics_render_unchanged":unchanged,"typed_witnesses":hashes,"parent_route_or_save_credit":false,"scope":"One actual paused declared Challenge crossing warning view. Public HUD overlay and bench hidden for capture and restored before exact comparison. No source hidden, parent earned arrival, canonical checkpoint/save, full route or human balance credit."}
+	var wire: String = ExactJson.stringify(receipt)
+	var file: FileAccess = FileAccess.open(_lp_png_path+".json",FileAccess.WRITE)
+	if not _expect(not wire.is_empty() and file != null,"finite exact actual crossing portrait receipt opens"): return {"error":"Portrait receipt unavailable"}
+	file.store_string(wire+"\n");file.flush();file.close()
+	print("L1 CROSSING PORTRAIT: ",ProjectSettings.globalize_path(_lp_png_path))
+	return {"error":"","path":ProjectSettings.globalize_path(_lp_png_path),"png_sha256":FileAccess.get_sha256(_lp_png_path),"scope":"actual declared changed crossing warning still; no parent route/save authority"}
+
+func _lp_on_draw() -> void:
+	_lp_draw_seen = true
