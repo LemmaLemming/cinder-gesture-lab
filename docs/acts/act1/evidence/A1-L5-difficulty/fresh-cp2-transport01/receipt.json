@@ -1,0 +1,829 @@
+{
+  "scope": "Explicit selected L5 E119 encounter-transition/Shell chain, native sources, fixed presentation, relevant shared files and supplied inputs. Paired GDScript UID and future local recipe presence/absence recorded. Not a global or recursive source/asset/resource census.",
+  "checkout": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea",
+  "run_directory": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/l5-difficulty/fresh-cp2-transport01",
+  "command": [
+    "python3",
+    "scripts/dev/dev.py",
+    "engine",
+    "--headless",
+    "--path",
+    ".",
+    "--script",
+    "tests/acts/act1/a1_l5_difficulty.gd",
+    "--",
+    "--case=transport",
+    "--source-report=res://.cinder/l5-difficulty/fresh-producer01/native.json",
+    "--source-sha256=4375d37e0bfa65571b3a43ff080ae8b7aa7d35ad26baebb50668f87442970b14",
+    "--branch=cp2",
+    "--future-profile=standard"
+  ],
+  "fixture_arguments": [
+    "--case=transport",
+    "--source-report=res://.cinder/l5-difficulty/fresh-producer01/native.json",
+    "--source-sha256=4375d37e0bfa65571b3a43ff080ae8b7aa7d35ad26baebb50668f87442970b14",
+    "--branch=cp2",
+    "--future-profile=standard"
+  ],
+  "report_arguments": [
+    {
+      "argument": "--source-report=res://.cinder/l5-difficulty/fresh-producer01/native.json",
+      "role": "source_input",
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/l5-difficulty/fresh-producer01/native.json",
+      "exists_before": true
+    }
+  ],
+  "input_arguments": [
+    {
+      "argument": "--source-report=res://.cinder/l5-difficulty/fresh-producer01/native.json",
+      "role": "source_input",
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/l5-difficulty/fresh-producer01/native.json",
+      "exists_before": true
+    }
+  ],
+  "requested_case": "transport",
+  "source_api_declarations": [
+    {
+      "source_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/scripts/acts/act1/living_moon.gd",
+      "source_sha256": "89dc49fe6e37c05679d1f4592c9873f01f1c4ea92720d2ec0209624985be7e7f",
+      "declarations": [
+        {
+          "line": 19,
+          "literal": "const WORLD_REVISION: int = 1"
+        }
+      ]
+    },
+    {
+      "source_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/scripts/acts/act1/living_moon_body.gd",
+      "source_sha256": "ee0ae2057bf6d57d17f14021adfd65687c099248fc9b63d74b86b930e4129cc5",
+      "declarations": [
+        {
+          "line": 23,
+          "literal": "const API_REVISION: String = \"act1-living-moon-body-1\""
+        },
+        {
+          "line": 24,
+          "literal": "const SNAPSHOT_SCHEMA_VERSION: int = 1"
+        },
+        {
+          "line": 25,
+          "literal": "const SAMPLED_SNAPSHOT_SCHEMA_VERSION: int = 2"
+        }
+      ]
+    },
+    {
+      "source_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/scripts/acts/act1/living_moon_codec.gd",
+      "source_sha256": "25bca033d4ce0e1f04abdeb08fb1645887e72246bb978ee7d1d5ae46a4ba73b9",
+      "declarations": [
+        {
+          "line": 13,
+          "literal": "const API_REVISION: String = \"act1-living-moon-level-2\""
+        },
+        {
+          "line": 14,
+          "literal": "const SCHEMA_VERSION: int = 2"
+        },
+        {
+          "line": 15,
+          "literal": "const LEGACY_API_REVISION: String = \"act1-living-moon-level-1\""
+        },
+        {
+          "line": 16,
+          "literal": "const LEGACY_SCHEMA_VERSION: int = 1"
+        },
+        {
+          "line": 17,
+          "literal": "const WORLD_REVISION: int = 1"
+        }
+      ]
+    },
+    {
+      "source_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/scripts/acts/act1/living_moon_layout.gd",
+      "source_sha256": "72810024dc58b80bbe0862088db302e1d107412de174327f497abdde21313809",
+      "declarations": [
+        {
+          "line": 8,
+          "literal": "const LAYOUT_REVISION: int = 1"
+        }
+      ]
+    },
+    {
+      "source_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/scripts/acts/act1/living_moon_nose.gd",
+      "source_sha256": "7aaa08ffc044998d3665f23ceaaa0b05b80736ff1dab286fef9e93d9233a55ac",
+      "declarations": [
+        {
+          "line": 17,
+          "literal": "const API_REVISION: String = \"act1-living-moon-nose-1\""
+        }
+      ]
+    },
+    {
+      "source_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/scripts/acts/act1/rush_selenite.gd",
+      "source_sha256": "5a46be35dd1dce4958bf235ced2c4e63cd442a412d340b0744c3922f479d4c92",
+      "declarations": [
+        {
+          "line": 18,
+          "literal": "const API_REVISION: String = \"act1-rush-selenite-1\""
+        },
+        {
+          "line": 19,
+          "literal": "const SNAPSHOT_SCHEMA_VERSION: int = 2"
+        },
+        {
+          "line": 20,
+          "literal": "const PENDING_SNAPSHOT_SCHEMA_VERSION: int = 3"
+        }
+      ]
+    },
+    {
+      "source_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/scripts/campaign/attempts.gd",
+      "source_sha256": "6701abec6181beb3934490e468b00868c14e69eb229f708d562b98efe32a43a0",
+      "declarations": [
+        {
+          "line": 7,
+          "literal": "const SCHEMA_VERSION: int = 1"
+        }
+      ]
+    },
+    {
+      "source_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/scripts/campaign/exact_json.gd",
+      "source_sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+      "declarations": [
+        {
+          "line": 6,
+          "literal": "const API_REVISION: String = \"exact-json-1\""
+        }
+      ]
+    },
+    {
+      "source_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/scripts/campaign/level.gd",
+      "source_sha256": "27fdab6686d8ba4b8282c48af84c0c3f63d8c8fa7620ae462a4642ec225100c1",
+      "declarations": [
+        {
+          "line": 13,
+          "literal": "const API_REVISION: String = \"campaign-level-1\""
+        },
+        {
+          "line": 14,
+          "literal": "const RESTORE_CANDIDATE_API_REVISION: String = \"level-restore-candidate-1\""
+        },
+        {
+          "line": 15,
+          "literal": "const RESTORE_PRESENTATION_API_REVISION: String = \"level-restore-presentation-1\""
+        },
+        {
+          "line": 16,
+          "literal": "const RESTORE_REGISTRATION_API_REVISION: String = \"level-restore-registration-1\""
+        },
+        {
+          "line": 18,
+          "literal": "const SNAPSHOT_SCHEMA_VERSION: int = 1"
+        }
+      ]
+    },
+    {
+      "source_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/scripts/campaign/registry.gd",
+      "source_sha256": "2b29babb103d121d8f4d185b0d56cb094e9693f099a10731ac6363ead9ee4fe2",
+      "declarations": [
+        {
+          "line": 7,
+          "literal": "const API_REVISION: String = \"campaign-level-1\""
+        }
+      ]
+    },
+    {
+      "source_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/scripts/combat/body_sweep.gd",
+      "source_sha256": "bddf3956d85c656fedea6bbce952ceb494c76867cdba895ff089abeb4c31eab9",
+      "declarations": [
+        {
+          "line": 7,
+          "literal": "const API_REVISION: String = \"body-sweep-1\""
+        }
+      ]
+    },
+    {
+      "source_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/scripts/combat/difficulty.gd",
+      "source_sha256": "e6a0aba9b39697cf59837165ebec858b0dd15c7573f66d79eadc58595ed2e7ae",
+      "declarations": [
+        {
+          "line": 8,
+          "literal": "const SCHEMA_VERSION: int = 1"
+        }
+      ]
+    },
+    {
+      "source_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/scripts/combat/lane_mechanism.gd",
+      "source_sha256": "bcf6558d4ae57c4bf8714ae6fe6b1896b3c7c0be3b6a8a9f3178451653bd031d",
+      "declarations": [
+        {
+          "line": 14,
+          "literal": "const API_REVISION: String = \"lane-mechanism-1\""
+        }
+      ]
+    },
+    {
+      "source_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/scripts/combat/native_sampled_circle.gd",
+      "source_sha256": "27e212c6ae3fce94e980a59617f22732bc69300958404712be55aa82be35aa6f",
+      "declarations": [
+        {
+          "line": 18,
+          "literal": "const API_REVISION: String = \"native-sampled-circle-consumer-1\""
+        }
+      ]
+    },
+    {
+      "source_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/scripts/combat/threat_scheduler.gd",
+      "source_sha256": "c28ea9f4cd6c1ff9aedbc9cfc45a28826c589c095b9193b565f45d23c3df903d",
+      "declarations": [
+        {
+          "line": 34,
+          "literal": "const API_REVISION: String = \"threat-scheduler-4\""
+        },
+        {
+          "line": 35,
+          "literal": "const LUNGE_PREVIEW_API_REVISION: String = \"lunge-preview-1\""
+        },
+        {
+          "line": 36,
+          "literal": "const STATIONARY_PREVIEW_API_REVISION: String = \"stationary-preview-1\""
+        },
+        {
+          "line": 37,
+          "literal": "const SNAPSHOT_API_REVISION: String = \"scheduler-snapshot-1\""
+        },
+        {
+          "line": 38,
+          "literal": "const SNAPSHOT_SCHEMA_VERSION: int = 1"
+        }
+      ]
+    },
+    {
+      "source_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/scripts/cues/interaction_cue.gd",
+      "source_sha256": "2dcd082ea187250e227829957a04f1eb56e255b648aaabcf977b95a28cf2ffc2",
+      "declarations": [
+        {
+          "line": 9,
+          "literal": "const API_REVISION: String = \"interaction-cue-1\""
+        }
+      ]
+    },
+    {
+      "source_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/scripts/cues/threat_cue.gd",
+      "source_sha256": "c8a7abbbd4c021ec92c45e1e57fc966873110231b781dba00bd1ff3d63f5cc5a",
+      "declarations": [
+        {
+          "line": 22,
+          "literal": "const API_REVISION: String = \"threat-cue-1\""
+        }
+      ]
+    },
+    {
+      "source_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/scripts/player.gd",
+      "source_sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+      "declarations": [
+        {
+          "line": 15,
+          "literal": "const SNAPSHOT_API_REVISION: String = \"player-snapshot-1\""
+        },
+        {
+          "line": 16,
+          "literal": "const SNAPSHOT_SCHEMA_VERSION: int = 1"
+        },
+        {
+          "line": 17,
+          "literal": "const DASH_FRAMING_API_REVISION: String = \"player-dash-framing-1\""
+        },
+        {
+          "line": 26,
+          "literal": "const WORLD_ACTION_SCHEMA_VERSION: int = 1"
+        }
+      ]
+    },
+    {
+      "source_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/scripts/presentation/camera_framing.gd",
+      "source_sha256": "daf839d1e35497c88a59d4c1c2af7bb02194418e2c667aceb677242bd642c39b",
+      "declarations": [
+        {
+          "line": 8,
+          "literal": "const API_REVISION: String = \"camera-framing-1\""
+        }
+      ]
+    },
+    {
+      "source_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/scripts/settings/game_settings.gd",
+      "source_sha256": "60d76e75d66f757d5601903ff92007b3da55a77d5c79e1ba7dbb3da2925bb162",
+      "declarations": [
+        {
+          "line": 8,
+          "literal": "const SCHEMA_VERSION: int = 1"
+        }
+      ]
+    }
+  ],
+  "git_before": {
+    "scope": "Read-only Git revision/branch and selected-path status; no Git mutations or repository-wide status claim.",
+    "revision": "301904c21e72db91bcc04c5d60da71ade2d7b8bd",
+    "branch": "codex/campaign-act1",
+    "selected_path_count": 112,
+    "selected_status": [],
+    "commands": [
+      {
+        "argv": [
+          "git",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exit_code": 0,
+        "stdout": "301904c21e72db91bcc04c5d60da71ade2d7b8bd\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "git",
+          "branch",
+          "--show-current"
+        ],
+        "exit_code": 0,
+        "stdout": "codex/campaign-act1\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "git",
+          "status",
+          "--short",
+          "--untracked-files=all",
+          "--",
+          ".cinder/a1-shared71-adoption.json",
+          ".cinder/l5-difficulty/fresh-producer01/native.json",
+          ".cinder/local.json",
+          "assets/acts/act1/launch/riveted_plate.png",
+          "assets/acts/act1/lunar/accents/human_star_performer.png",
+          "assets/acts/act1/lunar/environment/crescent_performer.png",
+          "assets/acts/act1/lunar/environment/floor_silver_tile.png",
+          "assets/acts/act1/lunar/environment/rock_flat_low_a.png",
+          "assets/acts/act1/lunar/environment/rock_flat_low_b.png",
+          "assets/acts/act1/lunar/rusher_back_crouch.png",
+          "assets/acts/act1/lunar/rusher_back_recovery.png",
+          "assets/acts/act1/lunar/rusher_back_rush.png",
+          "assets/acts/act1/lunar/rusher_back_standing.png",
+          "assets/acts/act1/lunar/rusher_front_crouch.png",
+          "assets/acts/act1/lunar/rusher_front_recovery.png",
+          "assets/acts/act1/lunar/rusher_front_rush.png",
+          "assets/acts/act1/lunar/rusher_front_standing.png",
+          "assets/acts/act1/lunar/rusher_side_crouch.png",
+          "assets/acts/act1/lunar/rusher_side_recovery.png",
+          "assets/acts/act1/lunar/rusher_side_rush.png",
+          "assets/acts/act1/lunar/rusher_side_standing.png",
+          "data/campaign/act1/a1_l5_difficulty_arrangements.json",
+          "data/campaign/registry.json",
+          "data/design/difficulty_profiles.json",
+          "data/design/player_equipment.json",
+          "project.godot",
+          "scenes/acts/act1/a1_l5.tscn",
+          "scenes/main.tscn",
+          "scenes/player.tscn",
+          "scripts/acts/act1/living_moon.gd",
+          "scripts/acts/act1/living_moon.gd.uid",
+          "scripts/acts/act1/living_moon_art.gd",
+          "scripts/acts/act1/living_moon_art.gd.uid",
+          "scripts/acts/act1/living_moon_body.gd",
+          "scripts/acts/act1/living_moon_body.gd.uid",
+          "scripts/acts/act1/living_moon_capsule.gd",
+          "scripts/acts/act1/living_moon_capsule.gd.uid",
+          "scripts/acts/act1/living_moon_codec.gd",
+          "scripts/acts/act1/living_moon_codec.gd.uid",
+          "scripts/acts/act1/living_moon_layout.gd",
+          "scripts/acts/act1/living_moon_layout.gd.uid",
+          "scripts/acts/act1/living_moon_nose.gd",
+          "scripts/acts/act1/living_moon_nose.gd.uid",
+          "scripts/acts/act1/living_moon_scenery.gd",
+          "scripts/acts/act1/living_moon_scenery.gd.uid",
+          "scripts/acts/act1/rush_selenite.gd",
+          "scripts/acts/act1/rush_selenite.gd.uid",
+          "scripts/acts/act1/rush_selenite_art.gd",
+          "scripts/acts/act1/rush_selenite_art.gd.uid",
+          "scripts/attack_footprint.gd",
+          "scripts/attack_footprint.gd.uid",
+          "scripts/campaign/attempts.gd",
+          "scripts/campaign/attempts.gd.uid",
+          "scripts/campaign/exact_json.gd",
+          "scripts/campaign/exact_json.gd.uid",
+          "scripts/campaign/level.gd",
+          "scripts/campaign/level.gd.uid",
+          "scripts/campaign/registry.gd",
+          "scripts/campaign/registry.gd.uid",
+          "scripts/campaign/save_store.gd",
+          "scripts/campaign/save_store.gd.uid",
+          "scripts/campaign/shell.gd",
+          "scripts/campaign/shell.gd.uid",
+          "scripts/campaign/snapshot_codec.gd",
+          "scripts/campaign/snapshot_codec.gd.uid",
+          "scripts/character/player_presentations.gd",
+          "scripts/character/player_presentations.gd.uid",
+          "scripts/combat/body_sweep.gd",
+          "scripts/combat/body_sweep.gd.uid",
+          "scripts/combat/difficulty.gd",
+          "scripts/combat/difficulty.gd.uid",
+          "scripts/combat/lane_mechanism.gd",
+          "scripts/combat/lane_mechanism.gd.uid",
+          "scripts/combat/lunge_motion.gd",
+          "scripts/combat/lunge_motion.gd.uid",
+          "scripts/combat/native_sampled_circle.gd",
+          "scripts/combat/native_sampled_circle.gd.uid",
+          "scripts/combat/threat_geometry.gd",
+          "scripts/combat/threat_geometry.gd.uid",
+          "scripts/combat/threat_scheduler.gd",
+          "scripts/combat/threat_scheduler.gd.uid",
+          "scripts/cues/cue_mesh.gd",
+          "scripts/cues/cue_mesh.gd.uid",
+          "scripts/cues/interaction_cue.gd",
+          "scripts/cues/interaction_cue.gd.uid",
+          "scripts/cues/threat_cue.gd",
+          "scripts/cues/threat_cue.gd.uid",
+          "scripts/dev/dev.py",
+          "scripts/effects.gd",
+          "scripts/effects.gd.uid",
+          "scripts/equipment.gd",
+          "scripts/equipment.gd.uid",
+          "scripts/game.gd",
+          "scripts/game.gd.uid",
+          "scripts/hud.gd",
+          "scripts/hud.gd.uid",
+          "scripts/pixel_sprite.gd",
+          "scripts/pixel_sprite.gd.uid",
+          "scripts/player.gd",
+          "scripts/player.gd.uid",
+          "scripts/presentation/camera_framing.gd",
+          "scripts/presentation/camera_framing.gd.uid",
+          "scripts/settings/game_settings.gd",
+          "scripts/settings/game_settings.gd.uid",
+          "scripts/ui/campaign_menu.gd",
+          "scripts/ui/campaign_menu.gd.uid",
+          "tests/acts/act1/a1_l5_difficulty.gd",
+          "tests/acts/act1/a1_l5_difficulty.gd.uid",
+          "tests/acts/act1/a1_l5_encounter_transition.gd",
+          "tests/acts/act1/a1_l5_encounter_transition.gd.uid",
+          "tests/acts/act1/a1_l5_shell_transport.gd",
+          "tests/acts/act1/a1_l5_shell_transport.gd.uid"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    ]
+  },
+  "state": "closed",
+  "subprocess_started": true,
+  "exit_code": 0,
+  "prepared_at": "2026-10-16T05:29:03.623847+00:00",
+  "source_pre_manifest_sha256": "129a0c65ea84e55f6bd78b409f81c82a462995d47170064a612c7edd99667695",
+  "source_count": 113,
+  "external_watchdog": "none; fixture owns its bounded watchdog",
+  "native_start_timing_scope": "Godot banner observation is not an exact process-start or lock-acquisition timestamp",
+  "queue_observations": [],
+  "interrupt_forwarded": false,
+  "started_at": "2026-10-16T05:29:03.624518+00:00",
+  "child_pid": 36965,
+  "native_banner_observed_at": "2026-10-16T05:29:03.843883+00:00",
+  "startup_to_banner_observed_s": 0.21935195800324436,
+  "selected_input_changes_at_banner": [],
+  "git_at_native_banner": {
+    "scope": "Read-only Git revision/branch and selected-path status; no Git mutations or repository-wide status claim.",
+    "revision": "301904c21e72db91bcc04c5d60da71ade2d7b8bd",
+    "branch": "codex/campaign-act1",
+    "selected_path_count": 112,
+    "selected_status": [],
+    "commands": [
+      {
+        "argv": [
+          "git",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exit_code": 0,
+        "stdout": "301904c21e72db91bcc04c5d60da71ade2d7b8bd\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "git",
+          "branch",
+          "--show-current"
+        ],
+        "exit_code": 0,
+        "stdout": "codex/campaign-act1\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "git",
+          "status",
+          "--short",
+          "--untracked-files=all",
+          "--",
+          ".cinder/a1-shared71-adoption.json",
+          ".cinder/l5-difficulty/fresh-producer01/native.json",
+          ".cinder/local.json",
+          "assets/acts/act1/launch/riveted_plate.png",
+          "assets/acts/act1/lunar/accents/human_star_performer.png",
+          "assets/acts/act1/lunar/environment/crescent_performer.png",
+          "assets/acts/act1/lunar/environment/floor_silver_tile.png",
+          "assets/acts/act1/lunar/environment/rock_flat_low_a.png",
+          "assets/acts/act1/lunar/environment/rock_flat_low_b.png",
+          "assets/acts/act1/lunar/rusher_back_crouch.png",
+          "assets/acts/act1/lunar/rusher_back_recovery.png",
+          "assets/acts/act1/lunar/rusher_back_rush.png",
+          "assets/acts/act1/lunar/rusher_back_standing.png",
+          "assets/acts/act1/lunar/rusher_front_crouch.png",
+          "assets/acts/act1/lunar/rusher_front_recovery.png",
+          "assets/acts/act1/lunar/rusher_front_rush.png",
+          "assets/acts/act1/lunar/rusher_front_standing.png",
+          "assets/acts/act1/lunar/rusher_side_crouch.png",
+          "assets/acts/act1/lunar/rusher_side_recovery.png",
+          "assets/acts/act1/lunar/rusher_side_rush.png",
+          "assets/acts/act1/lunar/rusher_side_standing.png",
+          "data/campaign/act1/a1_l5_difficulty_arrangements.json",
+          "data/campaign/registry.json",
+          "data/design/difficulty_profiles.json",
+          "data/design/player_equipment.json",
+          "project.godot",
+          "scenes/acts/act1/a1_l5.tscn",
+          "scenes/main.tscn",
+          "scenes/player.tscn",
+          "scripts/acts/act1/living_moon.gd",
+          "scripts/acts/act1/living_moon.gd.uid",
+          "scripts/acts/act1/living_moon_art.gd",
+          "scripts/acts/act1/living_moon_art.gd.uid",
+          "scripts/acts/act1/living_moon_body.gd",
+          "scripts/acts/act1/living_moon_body.gd.uid",
+          "scripts/acts/act1/living_moon_capsule.gd",
+          "scripts/acts/act1/living_moon_capsule.gd.uid",
+          "scripts/acts/act1/living_moon_codec.gd",
+          "scripts/acts/act1/living_moon_codec.gd.uid",
+          "scripts/acts/act1/living_moon_layout.gd",
+          "scripts/acts/act1/living_moon_layout.gd.uid",
+          "scripts/acts/act1/living_moon_nose.gd",
+          "scripts/acts/act1/living_moon_nose.gd.uid",
+          "scripts/acts/act1/living_moon_scenery.gd",
+          "scripts/acts/act1/living_moon_scenery.gd.uid",
+          "scripts/acts/act1/rush_selenite.gd",
+          "scripts/acts/act1/rush_selenite.gd.uid",
+          "scripts/acts/act1/rush_selenite_art.gd",
+          "scripts/acts/act1/rush_selenite_art.gd.uid",
+          "scripts/attack_footprint.gd",
+          "scripts/attack_footprint.gd.uid",
+          "scripts/campaign/attempts.gd",
+          "scripts/campaign/attempts.gd.uid",
+          "scripts/campaign/exact_json.gd",
+          "scripts/campaign/exact_json.gd.uid",
+          "scripts/campaign/level.gd",
+          "scripts/campaign/level.gd.uid",
+          "scripts/campaign/registry.gd",
+          "scripts/campaign/registry.gd.uid",
+          "scripts/campaign/save_store.gd",
+          "scripts/campaign/save_store.gd.uid",
+          "scripts/campaign/shell.gd",
+          "scripts/campaign/shell.gd.uid",
+          "scripts/campaign/snapshot_codec.gd",
+          "scripts/campaign/snapshot_codec.gd.uid",
+          "scripts/character/player_presentations.gd",
+          "scripts/character/player_presentations.gd.uid",
+          "scripts/combat/body_sweep.gd",
+          "scripts/combat/body_sweep.gd.uid",
+          "scripts/combat/difficulty.gd",
+          "scripts/combat/difficulty.gd.uid",
+          "scripts/combat/lane_mechanism.gd",
+          "scripts/combat/lane_mechanism.gd.uid",
+          "scripts/combat/lunge_motion.gd",
+          "scripts/combat/lunge_motion.gd.uid",
+          "scripts/combat/native_sampled_circle.gd",
+          "scripts/combat/native_sampled_circle.gd.uid",
+          "scripts/combat/threat_geometry.gd",
+          "scripts/combat/threat_geometry.gd.uid",
+          "scripts/combat/threat_scheduler.gd",
+          "scripts/combat/threat_scheduler.gd.uid",
+          "scripts/cues/cue_mesh.gd",
+          "scripts/cues/cue_mesh.gd.uid",
+          "scripts/cues/interaction_cue.gd",
+          "scripts/cues/interaction_cue.gd.uid",
+          "scripts/cues/threat_cue.gd",
+          "scripts/cues/threat_cue.gd.uid",
+          "scripts/dev/dev.py",
+          "scripts/effects.gd",
+          "scripts/effects.gd.uid",
+          "scripts/equipment.gd",
+          "scripts/equipment.gd.uid",
+          "scripts/game.gd",
+          "scripts/game.gd.uid",
+          "scripts/hud.gd",
+          "scripts/hud.gd.uid",
+          "scripts/pixel_sprite.gd",
+          "scripts/pixel_sprite.gd.uid",
+          "scripts/player.gd",
+          "scripts/player.gd.uid",
+          "scripts/presentation/camera_framing.gd",
+          "scripts/presentation/camera_framing.gd.uid",
+          "scripts/settings/game_settings.gd",
+          "scripts/settings/game_settings.gd.uid",
+          "scripts/ui/campaign_menu.gd",
+          "scripts/ui/campaign_menu.gd.uid",
+          "tests/acts/act1/a1_l5_difficulty.gd",
+          "tests/acts/act1/a1_l5_difficulty.gd.uid",
+          "tests/acts/act1/a1_l5_encounter_transition.gd",
+          "tests/acts/act1/a1_l5_encounter_transition.gd.uid",
+          "tests/acts/act1/a1_l5_shell_transport.gd",
+          "tests/acts/act1/a1_l5_shell_transport.gd.uid"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    ]
+  },
+  "closed_at": "2026-10-16T05:29:15.413902+00:00",
+  "wall_seconds": 11.789486082998337,
+  "selected_input_changes": [],
+  "git_after": {
+    "scope": "Read-only Git revision/branch and selected-path status; no Git mutations or repository-wide status claim.",
+    "revision": "301904c21e72db91bcc04c5d60da71ade2d7b8bd",
+    "branch": "codex/campaign-act1",
+    "selected_path_count": 112,
+    "selected_status": [],
+    "commands": [
+      {
+        "argv": [
+          "git",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exit_code": 0,
+        "stdout": "301904c21e72db91bcc04c5d60da71ade2d7b8bd\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "git",
+          "branch",
+          "--show-current"
+        ],
+        "exit_code": 0,
+        "stdout": "codex/campaign-act1\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "git",
+          "status",
+          "--short",
+          "--untracked-files=all",
+          "--",
+          ".cinder/a1-shared71-adoption.json",
+          ".cinder/l5-difficulty/fresh-producer01/native.json",
+          ".cinder/local.json",
+          "assets/acts/act1/launch/riveted_plate.png",
+          "assets/acts/act1/lunar/accents/human_star_performer.png",
+          "assets/acts/act1/lunar/environment/crescent_performer.png",
+          "assets/acts/act1/lunar/environment/floor_silver_tile.png",
+          "assets/acts/act1/lunar/environment/rock_flat_low_a.png",
+          "assets/acts/act1/lunar/environment/rock_flat_low_b.png",
+          "assets/acts/act1/lunar/rusher_back_crouch.png",
+          "assets/acts/act1/lunar/rusher_back_recovery.png",
+          "assets/acts/act1/lunar/rusher_back_rush.png",
+          "assets/acts/act1/lunar/rusher_back_standing.png",
+          "assets/acts/act1/lunar/rusher_front_crouch.png",
+          "assets/acts/act1/lunar/rusher_front_recovery.png",
+          "assets/acts/act1/lunar/rusher_front_rush.png",
+          "assets/acts/act1/lunar/rusher_front_standing.png",
+          "assets/acts/act1/lunar/rusher_side_crouch.png",
+          "assets/acts/act1/lunar/rusher_side_recovery.png",
+          "assets/acts/act1/lunar/rusher_side_rush.png",
+          "assets/acts/act1/lunar/rusher_side_standing.png",
+          "data/campaign/act1/a1_l5_difficulty_arrangements.json",
+          "data/campaign/registry.json",
+          "data/design/difficulty_profiles.json",
+          "data/design/player_equipment.json",
+          "project.godot",
+          "scenes/acts/act1/a1_l5.tscn",
+          "scenes/main.tscn",
+          "scenes/player.tscn",
+          "scripts/acts/act1/living_moon.gd",
+          "scripts/acts/act1/living_moon.gd.uid",
+          "scripts/acts/act1/living_moon_art.gd",
+          "scripts/acts/act1/living_moon_art.gd.uid",
+          "scripts/acts/act1/living_moon_body.gd",
+          "scripts/acts/act1/living_moon_body.gd.uid",
+          "scripts/acts/act1/living_moon_capsule.gd",
+          "scripts/acts/act1/living_moon_capsule.gd.uid",
+          "scripts/acts/act1/living_moon_codec.gd",
+          "scripts/acts/act1/living_moon_codec.gd.uid",
+          "scripts/acts/act1/living_moon_layout.gd",
+          "scripts/acts/act1/living_moon_layout.gd.uid",
+          "scripts/acts/act1/living_moon_nose.gd",
+          "scripts/acts/act1/living_moon_nose.gd.uid",
+          "scripts/acts/act1/living_moon_scenery.gd",
+          "scripts/acts/act1/living_moon_scenery.gd.uid",
+          "scripts/acts/act1/rush_selenite.gd",
+          "scripts/acts/act1/rush_selenite.gd.uid",
+          "scripts/acts/act1/rush_selenite_art.gd",
+          "scripts/acts/act1/rush_selenite_art.gd.uid",
+          "scripts/attack_footprint.gd",
+          "scripts/attack_footprint.gd.uid",
+          "scripts/campaign/attempts.gd",
+          "scripts/campaign/attempts.gd.uid",
+          "scripts/campaign/exact_json.gd",
+          "scripts/campaign/exact_json.gd.uid",
+          "scripts/campaign/level.gd",
+          "scripts/campaign/level.gd.uid",
+          "scripts/campaign/registry.gd",
+          "scripts/campaign/registry.gd.uid",
+          "scripts/campaign/save_store.gd",
+          "scripts/campaign/save_store.gd.uid",
+          "scripts/campaign/shell.gd",
+          "scripts/campaign/shell.gd.uid",
+          "scripts/campaign/snapshot_codec.gd",
+          "scripts/campaign/snapshot_codec.gd.uid",
+          "scripts/character/player_presentations.gd",
+          "scripts/character/player_presentations.gd.uid",
+          "scripts/combat/body_sweep.gd",
+          "scripts/combat/body_sweep.gd.uid",
+          "scripts/combat/difficulty.gd",
+          "scripts/combat/difficulty.gd.uid",
+          "scripts/combat/lane_mechanism.gd",
+          "scripts/combat/lane_mechanism.gd.uid",
+          "scripts/combat/lunge_motion.gd",
+          "scripts/combat/lunge_motion.gd.uid",
+          "scripts/combat/native_sampled_circle.gd",
+          "scripts/combat/native_sampled_circle.gd.uid",
+          "scripts/combat/threat_geometry.gd",
+          "scripts/combat/threat_geometry.gd.uid",
+          "scripts/combat/threat_scheduler.gd",
+          "scripts/combat/threat_scheduler.gd.uid",
+          "scripts/cues/cue_mesh.gd",
+          "scripts/cues/cue_mesh.gd.uid",
+          "scripts/cues/interaction_cue.gd",
+          "scripts/cues/interaction_cue.gd.uid",
+          "scripts/cues/threat_cue.gd",
+          "scripts/cues/threat_cue.gd.uid",
+          "scripts/dev/dev.py",
+          "scripts/effects.gd",
+          "scripts/effects.gd.uid",
+          "scripts/equipment.gd",
+          "scripts/equipment.gd.uid",
+          "scripts/game.gd",
+          "scripts/game.gd.uid",
+          "scripts/hud.gd",
+          "scripts/hud.gd.uid",
+          "scripts/pixel_sprite.gd",
+          "scripts/pixel_sprite.gd.uid",
+          "scripts/player.gd",
+          "scripts/player.gd.uid",
+          "scripts/presentation/camera_framing.gd",
+          "scripts/presentation/camera_framing.gd.uid",
+          "scripts/settings/game_settings.gd",
+          "scripts/settings/game_settings.gd.uid",
+          "scripts/ui/campaign_menu.gd",
+          "scripts/ui/campaign_menu.gd.uid",
+          "tests/acts/act1/a1_l5_difficulty.gd",
+          "tests/acts/act1/a1_l5_difficulty.gd.uid",
+          "tests/acts/act1/a1_l5_encounter_transition.gd",
+          "tests/acts/act1/a1_l5_encounter_transition.gd.uid",
+          "tests/acts/act1/a1_l5_shell_transport.gd",
+          "tests/acts/act1/a1_l5_shell_transport.gd.uid"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    ]
+  },
+  "source_post_manifest_sha256": "129a0c65ea84e55f6bd78b409f81c82a462995d47170064a612c7edd99667695",
+  "raw_sha256": "927d14b5dd61a86b3b83868dccd846787aa8c29118b0cbb202fb6a8f5e23c6d5",
+  "raw_error_warning_lines": [],
+  "footer_count": 1,
+  "footers": [
+    {
+      "checks": 79,
+      "failures": 0,
+      "complete": true,
+      "report": "res://.cinder/a1-l5-difficulty-36968-11499079.json"
+    }
+  ],
+  "result": "passed",
+  "native_report_original": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-l5-difficulty-36968-11499079.json",
+  "native_report_sha256": "dafd9568c3be07b16fa23e34cec6cf2e016f4150fc7a3cbbe179a605e73df4b5",
+  "native_checks": 79,
+  "native_failures": 0,
+  "native_elapsed_ms": 10536,
+  "first_failure": {},
+  "native_case": "transport",
+  "native_completion_flag": true,
+  "footer_report_counts_agree": true,
+  "footer_report_identity_agrees": true,
+  "assertion_evidence": {
+    "kind": "native_assertion_rows",
+    "row_count": 79,
+    "failed_rows": 0,
+    "agrees": true
+  }
+}

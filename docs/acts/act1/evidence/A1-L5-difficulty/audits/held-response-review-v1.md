@@ -1,0 +1,7 @@
+# Held-response draft review
+
+Reviewed private `held-response-draft.gdpart` SHA256 `4b3ff882798e66eb08ba12ec1da2b2b1748a70e78d48ec7d0b175d864904d1f4`, source-only and unparsed/unexecuted. No edits or engine work.
+
+One concrete fixture-selection issue at lines70–78: `replay_safe` checks only the return-dash segment. An old-relative return scheduled after the new Blink active interval may therefore be classified safe despite the preceding hold crossing that interval. The replay branch is then selected, and its finish-before-Blink assertion fails without trying the intended earlier-return fallback. Include the held interval and finish-before-Blink condition when deciding replay eligibility; otherwise select the existing earlier-return candidate. Preserve both original clocks and the real CP3 one-tick difference. This changes fixture selection only.
+
+No additional concrete API/type or exact-witness issue found in the bounded source pass. Inherited watchers record both native source-hit events even when invulnerability rejects HP damage. The counterfactual uses the actual immutable sampled lease with strict temporal overlap, actual0.32 capsule radius and live contact support, explicitly separated from execution. Useful return uses public full dashes and an actual recovery-gated ordinary eye primary, with unchanged HP/ammo and no source-hit/cancel events. No full-route, equal-clock or both-eligible requirement added.

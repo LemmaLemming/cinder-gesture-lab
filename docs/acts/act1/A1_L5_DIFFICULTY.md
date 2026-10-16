@@ -1,5 +1,11 @@
 # Living Moon difficulty trial
 
+## Independent CP2 compatibility checked — 16 October 2026
+
+Actual old16 and new17 independent whole CP2 disk branches each close **79/0**, complete/clean/exit0 on `301904c2`/Shared71. Real fresh Title Continue, public future Standard, paused Save and actual public Retry retain the entire original current/checkpoint/Attempts, native Challenge entry profile and their respective omitted/retained descriptor. Retry constructs fresh identities, retires the predecessor normally and emits zero recipient callbacks. CP2 was loaded independently from its original generation7 branch; no CP3 checkpoint transplant. Original reports/native files/source banks remain exact under `legacy-cp2-transport01` and `fresh-cp2-transport01`.
+
+The separate actual held-response fixture2b1a941b is source-reviewed and installed, unexecuted. It starts from the literal genuine CP3, performs public full dash/hold/return/ordinary primary, preserves native source/cue/deadline/contact data and tests the same old return schedule before attributing novelty. New counterfactual holding is explicitly analytic against the actual sampled native lease, never inflicted damage or a forged historical segment. Equivalent/refused behavior triggers the authorized Integration stopping rule. No timing/guard/stat/source change is introduced. Metadata negatives, future phase3 after CP2 Retry and the actual changed portrait remain unexecuted.
+
 ## Current L5 focused validation — 16 October 2026
 
 The genuine new Challenge producer closes **172/0**, complete/success/exit0/clean on `2ea6a0a5`/actual Shared71; native SHA256 `4375d37e0bfa65571b3a43ff080ae8b7aa7d35ad26baebb50668f87442970b14`. Same producer independently preserves entry → CP2 after4 ordinary20-damage hits/HP160/gen7 → CP3 after8/HP80/gen12 → first final Sneeze/gen14. All8 complete current/checkpoint units carry the exact new17/closed Challenge descriptor. Independent audit verifies exact whole Store/Attempts/typed joins, all15 original companions and224 pre/post selected-bank copies. New first admission is Nose at13.1500000000002; its two previews are eligible at that tick. Old firstBlink11.6667 still had Nose cooldown-ineligible; these are distinct actual clocks, with no equal-clock or novelty inference.
