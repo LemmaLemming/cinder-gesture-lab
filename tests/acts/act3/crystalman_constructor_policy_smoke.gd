@@ -29,6 +29,7 @@ var _hosts: Array[Node] = []
 var _viewports: Dictionary = {}
 var _rows: Array[Dictionary] = []
 var _finishing: bool = false
+var _legacy_only: bool = false
 
 func _initialize() -> void:
 	node_added.connect(_observe_added)
@@ -39,7 +40,12 @@ func _run() -> void:
 	root.size = Vector2i(340,736)
 	root.content_scale_size = root.size
 	root.content_scale_mode = Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
-	if not _expect(OS.get_cmdline_user_args().is_empty(),"one bounded constructor-format/quiet-restore selector"):
+	var args: PackedStringArray = OS.get_cmdline_user_args()
+	_legacy_only = args.size() == 1 and args[0] == "--legacy-only"
+	if not _expect(args.is_empty() or _legacy_only,"default focused format scope or exact --legacy-only selector"):
+		await _finish(); return
+	if _legacy_only:
+		await _legacy_case()
 		await _finish(); return
 	_key_type_witness()
 	_pure_selections()
@@ -240,7 +246,15 @@ static func _bytes_sha(bytes: PackedByteArray) -> String:
 func _legacy_case() -> bool:
 	if not _expect(FileAccess.get_sha256(ARCHIVE.path_join("manifest.json")) == MANIFEST_SHA,"literal known Standard archive manifest is externally pinned"): return false
 	var manifest: Variant = JSON.parse_string(FileAccess.get_file_as_string(ARCHIVE.path_join("manifest.json")))
-	if not _expect(manifest is Dictionary and manifest.kind == "c50-genuine-warning-seed-1" and manifest.test_only == true and _same(manifest.files,LEGACY_FILES),"original TEST archive inventory remains unchanged"): return false
+	if not _expect(manifest is Dictionary and Value.keys_error(manifest,["schema_version","kind","test_only","producer_fixture_sha256","clock_s","public_flow_validation","test_context","files","source_pins"]).is_empty() and manifest.schema_version is float and manifest.schema_version == 1.0 and manifest.kind is String and manifest.kind == "c50-genuine-warning-seed-1" and manifest.test_only is bool and manifest.test_only == true and manifest.producer_fixture_sha256 is String and manifest.producer_fixture_sha256 == "87921f24de57c5988c855b96858f5abd84b300746677570e08354a4c5ef5ced2" and manifest.clock_s is float and is_finite(manifest.clock_s) and manifest.clock_s >= 0.0 and manifest.public_flow_validation is String and manifest.public_flow_validation == "pending; actual native runner closure is authoritative" and manifest.test_context is String and manifest.source_pins is Dictionary and manifest.files is Dictionary and Value.keys_error(manifest.files,LEGACY_FILES.keys()).is_empty(),"original externally pinned plain-JSON TEST manifest retains its exact fields and native JSON types"): return false
+	for name: String in LEGACY_FILES:
+		var receipt: Variant = manifest.files[name]
+		var expected: Dictionary = LEGACY_FILES[name]
+		# Plain JSON numbers decode as native floats. This metadata comparison is
+		# exact float(expected integer), NOT an ExactJSON/native-payload coercion.
+		var valid: bool = receipt is Dictionary and Value.keys_error(receipt,["bytes","sha256"]).is_empty() and receipt.get("bytes") is float and is_finite(receipt.bytes) and receipt.bytes == float(expected.bytes) and receipt.get("sha256") is String and receipt.sha256 == expected.sha256
+		print("L5_CONSTRUCTOR_MANIFEST_RECEIPT_DIAGNOSTIC "+JSON.stringify({"file":name,"receipt_bytes_type":typeof(receipt.get("bytes")) if receipt is Dictionary else TYPE_NIL,"expected_bytes_type":typeof(expected.bytes),"exact_expected_float":float(expected.bytes),"actual_bytes":receipt.get("bytes") if receipt is Dictionary else null,"valid":valid}))
+		if not _expect(valid,"original raw manifest receipt has exact native JSON float bytes and String SHA: "+name): return false
 	var values: Dictionary = {}
 	for name: String in LEGACY_FILES:
 		var f: FileAccess = FileAccess.open(ARCHIVE.path_join(name),FileAccess.READ)
@@ -408,7 +422,8 @@ func _finish() -> void:
 	if _finishing: return
 	_finishing = true
 	for host: Node in _hosts.duplicate(): await _close_host(host)
-	print("L5_CONSTRUCTOR_RESULT "+JSON.stringify({"checks":_checks,"failures":_failures,"cases":_rows,"scope_complete":_failures == 0 and _rows.size() == 4,"native_route_or_comparison_credit":false,"legacy_scope":"known four-file Standard warning only; format/preflight, no raw Store/new oldwriter/native legacy re-execution","untested":"later native capture/coda checkpoints, oldChallenge, public newMAINtransport, comparison/novelty/portrait"}))
+	var expected_rows: int = 1 if _legacy_only else 4
+	print("L5_CONSTRUCTOR_RESULT "+JSON.stringify({"selector":"--legacy-only" if _legacy_only else "default","executed_scope":"legacy archive physical hashes/native format/pure constructor only" if _legacy_only else "three fresh profiles/changed negatives/one new native quiet restore/legacy format","checks":_checks,"failures":_failures,"cases":_rows,"expected_cases":expected_rows,"scope_complete":_failures == 0 and _rows.size() == expected_rows,"native_route_or_comparison_credit":false,"legacy_scope":"known four-file Standard warning only; format/preflight, no raw Store/new oldwriter/native legacy re-execution","untested":"later native capture/coda checkpoints, oldChallenge, public newMAINtransport, comparison/novelty/portrait; legacy-only does not rerun any new native portion"}))
 	quit(0 if _failures == 0 else 1)
 
 func _expect(ok: bool,label: String,detail: String = "") -> bool:

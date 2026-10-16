@@ -1,3 +1,11 @@
+## L5 native format diagnostics confirmed; legacy-only correction —16 October 2026
+
+Format-02 at732583ab/Shared74 is CLOSED FAILED64/1, exact log01faf9a2. Actual TYPE21 StringName versus TYPE4 String witnesses confirm the first fixture's empty ExactJSON custody encoding fault. All nine corrected malformed-packet rejection checks preserve input/donor/native IDs/optics/events exactly, and the actual new Challenge quiet recipient under opposite future preference passes. These successful native results are reused; no runtime change or rerun of those cases is needed.
+
+The only failure is the archive metadata predicate before member decoding/preflight: raw manifest SHA passes, but plain JSON float byte counts were compared with typed integer constants through ExactJSON. The TEST-only correction keeps the manifest externally pinned, compares closed raw receipt rows using exact finite float(expected integer) and exact String SHA, and logs actual types before asserting. Physical file integer lengths/hashes, native ExactJSON payload types, literal legacy6/Standard and constructor preflight remain unchanged. Peer source review is clear. Next is only --legacy-only; original64/1 and53/9 remain failed evidence, not rewritten passes.
+
+One west-inset comparison remains unexecuted/private pending source review. Runtime3 and all protected source/evidence inputs are unchanged. All8Act3/all24 original acceptances persist; Integration's latest documentation reports17/24 policies, not a new Act3 acceptance. No allocations, old producer, broad suite, premature transport/portrait, other-act or Agent02 work. Root first help. Earlier dated records remain historical.
+
 ## L5 first focused format result preserved; TEST encoding correction —16 October2026
 
 Format-01 at8ffa7051/Shared74 is CLOSED FAILED53/9, raw loge72012d2. There are no parser/native diagnostics, source/HEAD drift or new UID observations. All3 fresh native profile/map/pre-ready/frozen-copy positives pass through43; all9 malformed packets return their intended validation errors but the combined unchanged-donor assertion fails. Actual before/after operands were not retained, so donor mutation versus serializer refusal is not yet established. Quiet candidate, legacy archive check and fixed comparison were not executed.
