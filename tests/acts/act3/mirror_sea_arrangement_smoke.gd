@@ -39,6 +39,9 @@ func _initialize() -> void:
 
 func _run() -> void:
 	var selected: PackedStringArray = OS.get_cmdline_user_args()
+	if selected == PackedStringArray(["--east-component"]) or selected == PackedStringArray(["--east-component-portrait"]):
+		await _eca_run(String(selected[0]))
+		return
 	if selected == PackedStringArray(["--pure"]):
 		var error: String = _pure_arrangement_checks()
 		_expect(error.is_empty(), "pure closed profiles/recipes/malformed metadata and complete whole-east translation remain immutable", error)
@@ -193,6 +196,7 @@ func _p3_wait(page: String, active_id: String = "") -> String:
 
 func _tick() -> String:
 	if _p3_done: return "original producer is retiring"
+	if _ec_running: return await _ec_tick()
 	_p3_driver_observations += 1
 	if _p3_driver_observations > 6000: return "original first-two-entry producer exceeded6000 observer calls"
 	var error: String = await super._tick()
@@ -329,6 +333,9 @@ func _p3_watchdog() -> void:
 func _p3_finish() -> void:
 	if _p3_done: return
 	_p3_done = true
+	if _ec_running or _ec_disposing or not _ec_native_handles.is_empty() or not _ec_scene_handles.is_empty():
+		var component_cleanup: String = await _ec_dispose_all()
+		_expect(component_cleanup.is_empty(), "declared component native handles/scenes retire before common finish", component_cleanup)
 	var prior_clock: float = _scheduler.get_clock() if is_instance_valid(_scheduler) else -1.0
 	var actor_clock: float = _hero.get_world_action_clock() if is_instance_valid(_hero) else -1.0
 	var actions: Array[Dictionary] = []
@@ -350,7 +357,10 @@ func _p3_finish() -> void:
 	if node_added.is_connected(_watch_new_node): node_added.disconnect(_watch_new_node)
 	_expect(_canonical_registry_bytes.is_empty() or FileAccess.get_file_as_string(ProductionRegistry.DATA_PATH) == _canonical_registry_bytes,"canonical Registry bytes remain exact")
 	_cleanup_owned_path(_test_root)
-	print("Mirror Sea arrangement TEST: %d checks/%d failures; selector=%s; complete=%s; driver_observations=%d; last_scheduler_clock_s=%.9f; early MAIN transport only; no earned east/full-route/portrait credit." % [_checks,_failures,str(OS.get_cmdline_user_args()),str(_p3_complete),_p3_driver_observations,_p3_last_clock])
+	if not _eca_selector.is_empty():
+		print("Mirror Sea arrangement declared east component TEST: %d checks/%d failures; selector=%s; complete=%s; result_folder=%s; no earned east/canonical parent save/full-route/human balance credit. Original runner closure remains authoritative." % [_checks,_failures,_eca_selector,str(_p3_complete),_eca_result_folder])
+	else:
+		print("Mirror Sea arrangement TEST: %d checks/%d failures; selector=%s; complete=%s; driver_observations=%d; last_scheduler_clock_s=%.9f; early MAIN transport only; no earned east/full-route/portrait credit." % [_checks,_failures,str(OS.get_cmdline_user_args()),str(_p3_complete),_p3_driver_observations,_p3_last_clock])
 	quit(0 if _failures == 0 and _p3_complete else 1)
 
 ## SOURCE-ONLY reviewed derivative. Original a2fcab7e6210d924c4cf4006bea4ff22fa7e5dcd2b72cdc4c01a69a2de7e02d7 remains unchanged.
@@ -774,3 +784,524 @@ func _p3t_id_text() -> Dictionary:
 	var ids: Dictionary = _p3t_ids()
 	for key: String in ids: result[key] = str(ids[key])
 	return result
+
+## APPEND/merge into Root's new focused test extending production_warning_smoke.
+## _tick dispatch must be merged with any producer override, not duplicated.
+signal ec_component_disposed
+const EC_Runtime = preload("res://scripts/acts/act3/mirror_sea_level.gd")
+const EC_Component = preload("res://tests/acts/act3/fixtures/a3_l3_arrangement/east_component.gd")
+const EC_START: Vector3 = Vector3(0.65, 0.1, -1.7)
+const EC_ID: String = "l3-useful-east-echo"
+const EC_SLOTS: Array[String] = ["jacket", "pants", "shoes", "weapon"]
+var _ec_running: bool = false
+var _ec_disposing: bool = false
+var _ec_dispose_result: String = ""
+var _ec_stopping: bool = false
+var _ec_ticks: int = 0
+var _ec_start_hp: float = 0.0
+var _ec_seen: Dictionary = {}
+var _ec_hit_count: int = 0
+var _ec_contact_count: int = 0
+var _ec_forbidden: Array[String] = []
+var _ec_lease: Dictionary = {}
+var _ec_scene_handles: Array[PackedScene] = []
+var _ec_native_handles: Array[Node] = []
+var _ec_declines: Array[Dictionary] = []
+var _ec_results: Array[Dictionary] = []
+var _ec_quiet: Array[String] = []
+
+func _ec_run(selector: String, portrait_writer: Callable = Callable()) -> Dictionary:
+	if selector not in ["--east-component", "--east-component-portrait"]: return {"error": "Unknown declared east component selector"}
+	if is_instance_valid(_game) or is_instance_valid(_shell): return {"error": "Component cannot borrow a producer/Shell"}
+	if EC_Runtime.API != "act3-mirror-sea-parent-2": return {"error": "Component waits for separately approved reader promotion and real old-writer seal"}
+	_ec_running = true
+	_ec_results.clear()
+	var choices: Array[Dictionary] = [{"label": "canonical-challenge-baseline", "changed": false, "combined": false}, {"label": "changed-challenge-baseline", "changed": true, "combined": false}]
+	if selector == "--east-component-portrait": choices = [{"label": "changed-challenge-portrait", "changed": true, "combined": false}]
+	for choice: Dictionary in choices:
+		var result: Dictionary = await _ec_case(choice, portrait_writer if selector == "--east-component-portrait" else Callable())
+		_ec_results.append(result)
+		var cleanup: String = await _ec_dispose_all()
+		if not cleanup.is_empty(): return {"error": cleanup, "cases": _ec_results, "component_only": true}
+		if not String(result.get("error", "Missing actual case result")).is_empty(): return {"error": String(result.error), "cases": _ec_results, "component_only": true}
+	if selector == "--east-component-portrait": return {"error": "", "cases": _ec_results, "component_only": true, "parent_route_or_save_credit": false}
+	var first: Dictionary = _ec_results[0]
+	var second: Dictionary = _ec_results[1]
+	var different_return: bool = (first.primary_origin as Vector3).distance_to(second.primary_origin) > POINT_TOLERANCE
+	var different_path: bool = not _exact(first.executed_landings, second.executed_landings)
+	var useful_difference: bool = different_return and different_path
+	if not useful_difference: return {"error": "", "outcome": "no_useful_difference", "needs_integration_refinement": true, "cases": _ec_results.duplicate(true), "parent_route_or_save_credit": false}
+	var combined: Dictionary = await _ec_case({"label": "changed-challenge-combined-short-slow", "changed": true, "combined": true}, Callable())
+	_ec_results.append(combined)
+	var cleanup: String = await _ec_dispose_all()
+	return {"error": cleanup if not cleanup.is_empty() else String(combined.get("error", "Missing combined result")), "outcome": "observed_different_native_response", "cases": _ec_results.duplicate(true), "human_balance_credit": false, "parent_route_or_save_credit": false}
+
+func _ec_make_scene(changed: bool, restore_only: bool) -> Dictionary:
+	var template: Node3D = load(LEVEL_PATH).instantiate()
+	var declared: CinderLevel = EC_Component.new()
+	declared.name = "TEST_EastEchoComponent"
+	declared.level_id = "A3-L3"; declared.set("ece_changed", changed); declared.set("ece_restore_only", restore_only)
+	for child: Node in template.get_children():
+		var copy: Node = child.duplicate()
+		declared.add_child(copy); _ec_assign_owner(copy, declared)
+	template.free()
+	(declared.get_node(declared.spawn_path) as Marker3D).position = EC_START
+	var scene := PackedScene.new()
+	var error: Error = scene.pack(declared)
+	declared.free()
+	if error != OK: return {"error": "Declared east component packing failed"}
+	var path: String = "res://tests/acts/act3/__TEST_east_component_%d_%d.tscn" % [OS.get_process_id(), Time.get_ticks_usec()]
+	if FileAccess.file_exists(path) or ResourceLoader.has_cached(path): return {"error": "Unique TEST component scene cache path unavailable"}
+	scene.take_over_path(path); _ec_scene_handles.append(scene)
+	return {"error": "", "scene": scene, "path": path}
+
+func _ec_assign_owner(node: Node, owner_node: Node) -> void:
+	node.owner = owner_node
+	for child: Node in node.get_children(): _ec_assign_owner(child, owner_node)
+
+func _ec_spawn(changed: bool, combined: bool, restore_only: bool) -> Dictionary:
+	if _p3_done: return {"error": "Component finalizer owns shutdown; no new native construction"}
+	var main: Node = MainScene.instantiate()
+	_ec_native_handles.append(main)
+	root.add_child(main)
+	main.call("open_bench")
+	var lab: CinderPlayer = main.get("player") as CinderPlayer
+	var kit: Dictionary = {"jacket": "CLOTH-J0", "pants": "CLOTH-P2" if combined else "CLOTH-P0", "shoes": "CLOTH-S2" if combined else "CLOTH-S0", "weapon": "WEAPON-03" if combined else "WEAPON-01"}
+	if lab == null or not paused: return {"error": "Actual paused Lab required for public initial equipment selection"}
+	for slot: String in EC_SLOTS:
+		if not lab.equip_item(String(kit[slot])): return {"error": "Public initial equipment refused: " + slot}
+	var packed: Dictionary = _ec_make_scene(changed, restore_only)
+	if not String(packed.error).is_empty(): return packed
+	if not main.call("load_level_scene", packed.path): return {"error": "Public fresh component load refused: " + String(main.get("level_load_error"))}
+	main.call("open_bench")
+	var hero: CinderPlayer = main.get("player") as CinderPlayer
+	var level: CinderLevel = main.get("active_level") as CinderLevel
+	if hero == null or hero == lab or level == null or level.get_script() != EC_Component: return {"error": "Fresh declared component/Hero bindings unavailable"}
+	var scheduler: CinderThreatScheduler = level.get("threat_scheduler") as CinderThreatScheduler
+	var source: Node3D = (level.get("sources") as Dictionary).get(EC_ID) as Node3D
+	if scheduler == null or source == null or not String(level.call("runtime_error")).is_empty(): return {"error": "Actual component native construction refused: " + String(level.get("last_configuration_error"))}
+	if not paused or hero.global_position != EC_START or hero.hp != hero.max_hp or hero.get_world_action_clock() != 0.0 or scheduler.get_clock() != 0.0 or scheduler.encounter_profile().id != "challenge" or not _exact(hero.equipment.snapshot(), kit) or float(source.get("hp")) != 36.0 or source.call("source_cycles_managed") == restore_only: return {"error": "Declared full-HP/clock0/Challenge/native configuration differs"}
+	var actual: Dictionary = level.call("state")
+	if not actual.route.entries.is_empty() or not actual.route.deaths.is_empty() or not actual.route.pending_checkpoint_boundaries.is_empty() or actual.completed or actual.exit_state != "clear" or not actual.contact.is_empty() or (level.get("sources") as Dictionary).size() != 1 or is_instance_valid(level.get("mechanism")): return {"error": "Declared component acquired canonical parent prefix/progress"}
+	if not level.snapshot_state().is_empty() or level.last_snapshot_error != EC_Component.ECE_SAVE_LIMIT: return {"error": "Component must refuse canonical parent save authority"}
+	return {"error": "", "main": main, "hero": hero, "level": level, "scheduler": scheduler, "source": source, "kit": kit, "world": hero.get_world_3d()}
+
+func _ec_case(choice: Dictionary, portrait_writer: Callable) -> Dictionary:
+	if _p3_done: return {"error": "Component finalizer owns shutdown; no new native construction"}
+	_ec_running = true; _ec_stopping = false
+	_ec_ticks = 0; _ec_seen.clear(); _ec_hit_count = 0; _ec_contact_count = 0; _ec_forbidden.clear(); _ec_declines.clear(); _ec_lease.clear()
+	_actions.clear(); _events.clear(); _held_source = ""; _held_record = {}; _commit_observation_enabled = false
+	root.size = Vector2i(340, 736); root.content_scale_size = root.size; root.content_scale_mode = Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
+	var opened: Dictionary = _ec_spawn(choice.changed, choice.combined, false)
+	if not String(opened.error).is_empty(): return opened
+	_game = opened.main; _hero = opened.hero; _level = opened.level; _scheduler = opened.scheduler; _echo = opened.source; _stalker = null
+	_kit = opened.kit; _stats = _hero.equipment.resolved_stats(); _hero_hp = _hero.hp; _shells = _hero.shells; _ec_start_hp = _hero.hp
+	_barrier = PostActorBarrier.new(); _barrier.name = "TEST_EastComponentPostActor"; _game.add_child(_barrier)
+	_hero.world_action_executed.connect(_on_action)
+	_hero.fired.connect(func(kind: String) -> void: _event("fired_" + kind))
+	_hero.equipment_changed.connect(func(_id: String) -> void: _ec_forbidden.append("equipment"))
+	_level.checkpoint_requested.connect(func(_id: String, _checkpoint: String, _kind: String) -> void: _ec_forbidden.append("checkpoint"))
+	_level.completion_requested.connect(func(_id: String, _completion: String) -> void: _ec_forbidden.append("completion"))
+	_level.contact_exit_requested.connect(func(_id: String, _exit: String) -> void: _ec_forbidden.append("exit"))
+	_echo.connect("source_hit_resolved", func(_receipt: Dictionary) -> void: _ec_hit_count += 1)
+	_echo.connect("event_dispatched", func(_event_data: Dictionary, receipt: Dictionary) -> void:
+		if receipt.get("contact", false) or receipt.get("damage_attempted", false): _ec_contact_count += 1
+	)
+	_game.call("resume_lab")
+	var error: String = ""
+	for _i: int in range(_frames(WAIT_BUDGET_S)):
+		if (_echo.call("state") as Dictionary).status == "running": break
+		error = await _ec_tick()
+		if not error.is_empty(): return {"error": error, "native_refusals": _ec_declines.duplicate(true)}
+	if (_echo.call("state") as Dictionary).status != "running": return {"error": "Bounded ordinary native admission refused", "native_refusals": _ec_declines.duplicate(true)}
+	var warning: Dictionary = (_level.call("state") as Dictionary).echo_records[EC_ID].duplicate(true)
+	if _echo.call("source_phase") != "warning": return {"error": "Initial actual warning was skipped"}
+	_ec_seen["warning"] = true
+	if choice.label == "changed-challenge-portrait":
+		_game.call("open_bench")
+		if not portrait_writer.is_valid(): return {"error": "Portrait adapter remains unexecuted/unsupplied"}
+		var portrait: Dictionary = await portrait_writer.call(_game, _level, _hero, _scheduler, warning)
+		return {"error": String(portrait.get("error", "Missing actual portrait result")), "portrait": portrait, "component_only": true}
+	# Save actual warning packets only as component transport; parent save refuses.
+	_game.call("open_bench")
+	var pair: Dictionary = _level.call("ece_native_pair")
+	if pair.is_empty(): return {"error": "Actual native warning component pair unavailable"}
+	if choice.changed and not choice.combined:
+		error = await _ec_transport(pair, opened)
+		if not error.is_empty(): return {"error": error, "component_only": true}
+	_game.call("resume_lab")
+	for _i: int in range(_frames(WAIT_BUDGET_S)):
+		var state: Dictionary = _level.call("state")
+		if state.echo_records[EC_ID].locked: break
+		if (_echo.call("state") as Dictionary).status != "running": return {"error": "Actual warning safely cancelled before lock", "reason": _level.get("last_admission_reason")}
+		error = await _ec_tick()
+		if not error.is_empty(): return {"error": error}
+	var actual: Dictionary = _level.call("state")
+	if not actual.echo_records[EC_ID].locked: return {"error": "Actual due observer did not lock within bounded wait"}
+	_ec_lease = _scheduler.replay_reservation_state(String(actual.echo_records[EC_ID].lease.id))
+	var proof: Dictionary = actual.echo_records[EC_ID].proof.duplicate(true)
+	error = await _follow(proof, EC_ID) # Existing public swipe/tap/physical proof checks.
+	if not error.is_empty(): return {"error": error, "native_refusals": _ec_declines.duplicate(true)}
+	var primaries: Array[Dictionary] = []
+	var landings: Array[Vector3] = []
+	for action: Dictionary in _actions:
+		if action.kind == "primary": primaries.append(action)
+		if action.kind == "dash": landings.append(action.landing)
+	if primaries.size() != 1 or _ec_hit_count != 1 or _ec_contact_count != 0 or _hero.hp != _ec_start_hp: return {"error": "One genuine ordinary primary/full Hero HP/no masked contact contract failed"}
+	for phase: String in ["warning", "lock", "active", "recovery"]:
+		if not _ec_seen.has(phase): return {"error": "Actual native phase witness missing: " + phase}
+	return {"error": "", "label": choice.label, "changed": choice.changed, "initial_position": EC_START, "profile": "challenge", "kit": _kit.duplicate(true), "definition": _echo.call("source_definition"), "accepted_proof": proof, "executed_landings": landings, "primary_origin": primaries[0].world_origin, "primary": primaries[0], "hero_hp": _hero.hp, "source_hp": _echo.get("hp"), "native_ticks": _ec_ticks, "native_refusals": _ec_declines.duplicate(true), "parent_route_or_save_credit": false}
+
+func _ec_tick() -> String:
+	if paused or not is_instance_valid(_barrier): return "Actual component cannot tick paused/unbound tree"
+	_barrier.waiting = true
+	await _barrier.observed
+	if _ec_stopping: return "Component retiring; no native observation credit"
+	_ec_ticks += 1
+	if paused: return "Unexpected actual component pause"
+	var error: String = String(_level.call("runtime_error"))
+	if not error.is_empty(): return error
+	if _hero.dead or _hero.hp != _ec_start_hp or not _exact(_hero.equipment.snapshot(), _kit) or not _exact(_hero.equipment.resolved_stats(), _stats) or not _ec_forbidden.is_empty() or _ec_contact_count != 0 or _events.get("fired_blast", 0) != 0: return "Native component HP/kit/ordinary/no-progress invariant changed"
+	if _scheduler.get_clock() > 30.0 or absf(_hero.get_world_action_clock() - _scheduler.get_clock()) > TIME_EPSILON: return "Bounded actual component clock/join changed"
+	var state: Dictionary = _level.call("state")
+	if not state.route.entries.is_empty() or not state.route.deaths.is_empty() or not state.route.pending_checkpoint_boundaries.is_empty() or state.completed or not state.contact.is_empty(): return "TEST component earned forbidden canonical progress"
+	if not _frontier_floor_hit(_hero.global_position) or not String(_echo.call("source_native_error")).is_empty(): return "Actual component floor/native source custody failed"
+	var phase: String = String(_echo.call("source_phase")); _ec_seen[phase] = true
+	if not _ec_lease.is_empty():
+		var lease: Dictionary = _scheduler.replay_reservation_state(String(_ec_lease.id))
+		if lease.is_empty() or lease.source_instance_id != _echo.get_instance_id(): return "Actual held source identity/lease changed"
+		for key: String in FIXED_DEADLINES:
+			if not _exact(lease[key], _ec_lease[key]): return "Actual locked deadline changed: " + key
+	var decline: String = String(_level.get("last_admission_reason"))
+	if not decline.is_empty() and (_ec_declines.is_empty() or _ec_declines.back().reason != decline): _ec_declines.append({"clock_s": _scheduler.get_clock(), "reason": decline})
+	return ""
+
+func _ec_transport(pair: Dictionary, donor: Dictionary) -> String:
+	if not paused or pair.is_empty(): return "Actual paused source/Playback/Scheduler/Player component packets required"
+	var wire: String = ExactJson.stringify(pair)
+	var decoded: Dictionary = ExactJson.parse(wire)
+	if wire.is_empty() or not decoded.get("accepted", false) or not _exact(pair, decoded.value): return "Component native ExactJSON lost typed values/binary64 bits"
+	var donor_observation: Dictionary = _ec_context_observation(donor)
+	if donor_observation.is_empty() or not donor_observation.get("native_pair") is Dictionary or donor_observation.native_pair.is_empty(): return "Nonempty donor native pair/context required before encoding"
+	for key: String in ["player", "source", "scheduler", "playback"]:
+		if not donor_observation.native_pair.get(key) is Dictionary or donor_observation.native_pair[key].is_empty(): return "Complete nonempty donor native field required: " + key
+	var donor_before: PackedByteArray = var_to_bytes(donor_observation)
+	if donor_before.is_empty(): return "Nonempty typed donor witness required"
+	var wrong: Dictionary = _ec_spawn(false, false, true)
+	if not String(wrong.error).is_empty(): return String(wrong.error)
+	if wrong.world == donor.world or wrong.main == donor.main or wrong.source == donor.source: return "Cross-recipe recipient is not an independent actual world/source"
+	_ec_quiet.clear(); _ec_watch_quiet(wrong)
+	var wrong_before: PackedByteArray = var_to_bytes(_ec_untracked_observation(wrong))
+	var rejected: String = String(wrong.level.call("ece_prepare_pair", decoded.value))
+	if rejected.is_empty() or not _ec_quiet.is_empty() or wrong_before != var_to_bytes(_ec_untracked_observation(wrong)) or donor_before != var_to_bytes(_ec_context_observation(donor)): return "Wrong canonical recipe accepted/mutated native state or donor"
+	if not rejected.contains("Actual source/definition/cycle/profile/world binding differs"): return "Cross-recipe refusal has an unrelated cause, no geometry rejection credit: " + rejected
+	print("EAST COMPONENT CROSS-RECIPE REJECT: ", rejected)
+	var cleanup: String = await _ec_dispose_one(wrong)
+	if not cleanup.is_empty(): return cleanup
+	var fresh: Dictionary = _ec_spawn(true, false, true)
+	if not String(fresh.error).is_empty(): return String(fresh.error)
+	if fresh.world == donor.world or fresh.main == donor.main or fresh.hero == donor.hero or fresh.source == donor.source or fresh.scheduler == donor.scheduler: return "Native component transport reused donor identities/world"
+	_ec_quiet.clear(); _ec_watch_quiet(fresh)
+	var error: String = String(fresh.level.call("ece_prepare_pair", decoded.value))
+	if error.is_empty(): error = String(fresh.level.call("ece_commit_pair", decoded.value))
+	if not error.is_empty(): return "Actual strict distinct-world component restore refused: " + error
+	var actual: Dictionary = fresh.level.call("ece_native_pair")
+	if actual.is_empty() or not _exact(actual, pair) or not _ec_quiet.is_empty() or not paused or donor_before != var_to_bytes(_ec_context_observation(donor)): return "Quiet distinct-world native transport changed complete packets/events/donor"
+	if not fresh.level.snapshot_state().is_empty() or fresh.level.last_snapshot_error != EC_Component.ECE_SAVE_LIMIT: return "Native component transport acquired parent save authority"
+	print("EAST COMPONENT NATIVE TRANSPORT: exact actual Player/source/Scheduler/Playback, distinct native world and identities; no parent/save/route authority")
+	return await _ec_dispose_one(fresh)
+
+func _ec_context_observation(handle: Dictionary) -> Dictionary:
+	var pair: Dictionary = handle.level.call("ece_native_pair")
+	if pair.is_empty(): return {}
+	return {"native_pair": pair, "actions": handle.hero.get_world_action_records(), "input": handle.main.call("get_input_observation_state"), "hero_transform": handle.hero.global_transform, "source_transform": handle.source.global_transform, "camera": _ec_camera(handle.main), "component": handle.level.call("state")}
+
+func _ec_untracked_observation(handle: Dictionary) -> Dictionary:
+	var source_state: Dictionary = handle.source.call("get_source_state")
+	source_state.erase("snapshot_error") # Diagnostic error text is not native state.
+	return {"player": handle.hero.snapshot_state(), "actions": handle.hero.get_world_action_records(), "source": source_state, "program": handle.source.call("source_program"), "native": handle.source.call("native_descriptor"), "playback": handle.source.call("state"), "scheduler": handle.scheduler.snapshot_state(handle.level.call("scheduler_bindings")), "recipe": handle.source.call("get_authored_cycle_restore_recipe"), "transform": handle.source.global_transform, "camera": _ec_camera(handle.main)}
+
+func _ec_camera(main: Node) -> Array:
+	var camera: Camera3D = main.get("camera") as Camera3D
+	return [] if camera == null else [camera.global_transform, camera.projection, camera.keep_aspect, camera.size, camera.near, camera.far, camera.h_offset, camera.v_offset, camera.frustum_offset, camera.cull_mask]
+
+func _ec_watch_quiet(handle: Dictionary) -> void:
+	var actor: Node = handle.source
+	actor.connect("state_changed", func(_value: Dictionary) -> void: _ec_quiet.append("source_state"))
+	actor.connect("source_hit_resolved", func(_value: Dictionary) -> void: _ec_quiet.append("source_hit"))
+	actor.connect("source_defeated", func(_value: Dictionary) -> void: _ec_quiet.append("source_defeated"))
+	actor.connect("died", func() -> void: _ec_quiet.append("source_died"))
+	actor.connect("event_dispatched", func(_event_data: Dictionary, _receipt: Dictionary) -> void: _ec_quiet.append("source_event"))
+	handle.hero.world_action_executed.connect(func(_value: Dictionary) -> void: _ec_quiet.append("player_action"))
+	handle.hero.fired.connect(func(_kind: String) -> void: _ec_quiet.append("player_fired"))
+	handle.hero.died.connect(func() -> void: _ec_quiet.append("player_died"))
+	handle.hero.equipment_changed.connect(func(_id: String) -> void: _ec_quiet.append("player_equipment"))
+	handle.scheduler.reservation_invalidated.connect(func(_id: String, _reason: String) -> void: _ec_quiet.append("invalidated"))
+
+func _ec_dispose_one(handle: Dictionary) -> String:
+	var refs: Array[WeakRef] = []
+	for key: String in ["main", "hero", "level", "scheduler", "source"]:
+		if is_instance_valid(handle.get(key)): refs.append(weakref(handle[key]))
+	var clock: float = handle.scheduler.get_clock() if is_instance_valid(handle.get("scheduler")) else -1.0
+	var actor_clock: float = handle.hero.get_world_action_clock() if is_instance_valid(handle.get("hero")) else -1.0
+	var retirement_error: String = ""
+	if is_instance_valid(handle.get("level")): handle.level.exit_level()
+	if is_instance_valid(handle.get("scheduler")) and is_instance_valid(handle.get("source")):
+		var control: Dictionary = handle.scheduler.source_control_state(handle.source)
+		if control.is_empty() or not control.reservations.is_empty() or handle.scheduler.get_clock() != clock or handle.hero.get_world_action_clock() != actor_clock: retirement_error = "Actual component whole-world retirement failed or advanced native clock"
+	if is_instance_valid(handle.get("main")):
+		var effects: PixelEffects = handle.main.get("fx") as PixelEffects
+		if effects != null: effects.clear_lab()
+		handle.main.queue_free()
+	for _i: int in range(120):
+		await process_frame
+		var freed: bool = true
+		for ref: WeakRef in refs:
+			if ref.get_ref() != null: freed = false
+		if freed: return retirement_error
+	return "Native component whole-world references survived bounded normal disposal"
+
+func _ec_dispose_all() -> String:
+	if _ec_disposing:
+		await ec_component_disposed
+		return _ec_dispose_result
+	_ec_disposing = true
+	_ec_stopping = true
+	paused = true
+	if is_instance_valid(_barrier) and _barrier.waiting: _barrier.call("_wake")
+	var error: String = ""
+	for main: Node in _ec_native_handles:
+		if not is_instance_valid(main): continue
+		var level: CinderLevel = main.get("active_level") as CinderLevel
+		var hero: CinderPlayer = main.get("player") as CinderPlayer
+		var scheduler: CinderThreatScheduler = level.get("threat_scheduler") as CinderThreatScheduler if level != null else null
+		var source: Node3D = (level.get("sources") as Dictionary).get(EC_ID) as Node3D if level != null else null
+		var current: String = await _ec_dispose_one({"main": main, "level": level, "hero": hero, "scheduler": scheduler, "source": source})
+		if error.is_empty(): error = current
+	_ec_native_handles.clear()
+	var paths: Array[String] = []
+	var scene_refs: Array[WeakRef] = []
+	for scene: PackedScene in _ec_scene_handles:
+		paths.append(scene.resource_path); scene_refs.append(weakref(scene))
+	_ec_scene_handles.clear()
+	_game = null; _level = null; _hero = null; _scheduler = null; _echo = null; _stalker = null; _barrier = null
+	for _i: int in range(120):
+		await process_frame
+		var released: bool = true
+		for ref: WeakRef in scene_refs:
+			if ref.get_ref() != null: released = false
+		if released: break
+	for path: String in paths:
+		if ResourceLoader.has_cached(path) and error.is_empty(): error = "TEST packed component scene remains cached after disposal"
+	if (not get_nodes_in_group("enemies").is_empty() or not get_nodes_in_group("required_cues").is_empty()) and error.is_empty(): error = "Native component cleanup left enemy/cue group residue"
+	_ec_running = false
+	paused = false
+	_ec_dispose_result = error
+	_ec_disposing = false
+	ec_component_disposed.emit()
+	return error
+
+## OPTIONAL append to focused test; pass Callable(self,"_ecp_portrait") to
+## _ec_run("--east-component-portrait", ...). This is unexecuted draft only.
+var _ecp_draw_seen: bool = false
+
+func _ecp_view_error() -> String:
+	var camera: Camera3D = _game.get("camera") as Camera3D
+	var hud: GameHUD = _game.get("hud") as GameHUD
+	if camera == null or hud == null or camera != _hero.get_viewport().get_camera_3d() or camera.get_world_3d() != _hero.get_world_3d(): return "Actual component native Camera/HUD/world required"
+	var union: Dictionary = _level.call("camera_framing_union", "", [], true, false)
+	if not String(union.get("error", "Missing native current union")).is_empty(): return String(union.get("error"))
+	var points: Array = union.points.duplicate()
+	points.append_array(_game.call("player_camera_framing_points_for", _hero, camera))
+	# Also require the actual nearby east stone to read in this TEST image.
+	var stone: Dictionary = (_level.get("_stones") as Dictionary).get("useful-east-stone", {})
+	if stone.is_empty(): return "Actual retained native east shore stone unavailable"
+	_level.call("_append_mesh", points, stone.mesh, stone.view.global_transform)
+	return String(_game.call("camera_framing_error_for_context", points, _hero, camera, hud))
+
+func _ecp_labels(node: Node, rows: Array) -> void:
+	if node is Label:
+		var label: Label = node as Label
+		rows.append([String(_game.get_path_to(label)), label.text, label.is_visible_in_tree(), label.global_position, label.size, label.get_theme_font_size("font_size")])
+	for child: Node in node.get_children(): _ecp_labels(child, rows)
+
+func _ecp_optics() -> Dictionary:
+	var hud: GameHUD = _game.get("hud") as GameHUD
+	var labels: Array = []; _ecp_labels(hud, labels)
+	return {"camera": _ec_camera(_game), "hud": [hud.visible, hud.combat_safe_rect(), labels]}
+
+func _ecp_render(node: Node, rows: Array) -> void:
+	if node is Node3D:
+		var physical: Node3D = node as Node3D
+		var row: Array = [String(_level.get_path_to(node)), str(node.get_instance_id()), physical.transform, physical.global_transform, physical.visible, physical.is_visible_in_tree()]
+		if node is CollisionObject3D:
+			var body: CollisionObject3D = node as CollisionObject3D
+			row.append_array([body.collision_layer, body.collision_mask, node.is_in_group("enemies")])
+		if node is CollisionShape3D:
+			var collision: CollisionShape3D = node as CollisionShape3D
+			row.append_array([collision.disabled, str(collision.shape.get_instance_id()) if collision.shape != null else ""])
+		if node is MeshInstance3D:
+			var mesh: MeshInstance3D = node as MeshInstance3D
+			row.append_array([str(mesh.mesh.get_instance_id()) if mesh.mesh != null else "", str(mesh.material_override.get_instance_id()) if mesh.material_override != null else "", mesh.layers])
+		if node is Sprite3D:
+			var sprite: Sprite3D = node as Sprite3D
+			row.append_array([str(sprite.texture.get_instance_id()) if sprite.texture != null else "", sprite.pixel_size, sprite.offset, sprite.modulate, sprite.layers])
+		rows.append(row)
+	for child: Node in node.get_children(): _ecp_render(child, rows)
+
+func _ecp_sha(bytes: PackedByteArray) -> String:
+	if bytes.is_empty(): return ""
+	var digest := HashingContext.new()
+	if digest.start(HashingContext.HASH_SHA256) != OK or digest.update(bytes) != OK: return ""
+	return digest.finish().hex_encode()
+
+func _ecp_portrait(main: Node, level: CinderLevel, hero: CinderPlayer, scheduler: CinderThreatScheduler, warning: Dictionary) -> Dictionary:
+	if DisplayServer.get_name() == "headless" or not paused or main != _game or level != _level or hero != _hero or scheduler != _scheduler: return {"error": "Actual graphical paused component/native context required"}
+	var hud: GameHUD = main.get("hud") as GameHUD
+	var bench: CanvasLayer = main.get("bench") as CanvasLayer
+	for _i: int in range(2): await process_frame
+	var native: Dictionary = level.call("ece_native_pair")
+	var playback: Dictionary = _echo.call("state")
+	var lease: Dictionary = scheduler.replay_reservation_state(String(playback.get("reservation_id", "")))
+	var error: String = _ecp_view_error()
+	if hud == null or not hud.visible or bench == null or native.is_empty() or warning.is_empty() or error != "" or _echo.call("source_phase") != "warning" or lease.is_empty() or lease.get("source_instance_id") != _echo.get_instance_id(): return {"error": "Actual paused east warning/native view unavailable: " + error}
+	var input_state: Dictionary = main.call("get_input_observation_state")
+	var optics: Dictionary = _ecp_optics()
+	var render: Array = []; _ecp_render(level, render)
+	if input_state.is_empty() or optics.is_empty() or render.is_empty(): return {"error": "Nonempty native/input/optics/render witnesses required"}
+	var before: Dictionary = {"native": var_to_bytes(native), "input": var_to_bytes(input_state), "optics": var_to_bytes(optics), "render": var_to_bytes(render)}
+	for key: String in before:
+		if (before[key] as PackedByteArray).is_empty(): return {"error": "Empty typed witness: " + key}
+	var bench_visible: bool = bench.visible
+	hud.hide_overlay(); bench.visible = false # Disclosed menu-only exclusion.
+	_ecp_draw_seen = false
+	RenderingServer.frame_post_draw.connect(_ecp_on_draw)
+	for _i: int in range(120):
+		await process_frame
+		if _ecp_draw_seen: break
+	if RenderingServer.frame_post_draw.is_connected(_ecp_on_draw): RenderingServer.frame_post_draw.disconnect(_ecp_on_draw)
+	var picture: Image = root.get_texture().get_image() if _ecp_draw_seen else null
+	hud.show_pause(); bench.visible = bench_visible
+	var render_after: Array = []; _ecp_render(level, render_after)
+	var native_after: Dictionary = level.call("ece_native_pair")
+	var unchanged: bool = not native_after.is_empty() and before.native == var_to_bytes(native_after) and before.input == var_to_bytes(main.call("get_input_observation_state")) and before.optics == var_to_bytes(_ecp_optics()) and before.render == var_to_bytes(render_after)
+	error = _ecp_view_error()
+	if not _ecp_draw_seen or picture == null or picture.get_size().x not in [339, 340] or picture.get_size().y != 736 or not paused or not unchanged or not error.is_empty() or bench.visible != bench_visible or not hud.visible: return {"error": "Actual paused east draw/custody failed", "draw_observed": _ecp_draw_seen, "unchanged": unchanged, "native_view_error": error}
+	var folder: String = "res://captures/act3/mirror-sea-arrangement/east-component-%d-%d" % [OS.get_process_id(), Time.get_ticks_usec()]
+	var path: String = folder.path_join("01-declared-challenge-east-warning.png")
+	if DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(folder)) != OK or picture.save_png(path) != OK: return {"error": "Actual native PNG could not be written"}
+	var pins: Dictionary = {}
+	for key: String in before:
+		var bytes: PackedByteArray = before[key]
+		var witness_path: String = folder.path_join(key + ".var.bin")
+		var stream: FileAccess = FileAccess.open(witness_path, FileAccess.WRITE)
+		if stream == null: return {"error": "Native witness output unavailable: " + key}
+		stream.store_buffer(bytes); stream.flush(); stream.close()
+		pins[key] = {"path": key + ".var.bin", "bytes": bytes.size(), "sha256": _ecp_sha(bytes)}
+		if FileAccess.get_sha256(witness_path) != pins[key].sha256: return {"error": "Typed witness byte pin differs: " + key}
+	var receipt: Dictionary = {"schema_version": 1, "test_only": true, "kind": "a3-l3-declared-east-component-warning-1", "runtime_sha256": FileAccess.get_sha256(RUNTIME_PATH), "component_sha256": FileAccess.get_sha256(EC_Component.resource_path), "png_sha256": FileAccess.get_sha256(path), "actual_dimensions": [picture.get_size().x, picture.get_size().y], "clock_s": scheduler.get_clock(), "source_id": EC_ID, "phase": "warning", "generation": native.source.generation, "reservation_id": playback.reservation_id, "recipe_id": EC_Runtime.CHALLENGE_RECIPE, "native_state_input_optics_render_unchanged": unchanged, "typed_witnesses": pins, "parent_route_or_save_credit": false, "scope": "One actual paused declared Challenge east warning view; HUD overlay/bench excluded and restored, no source hidden. No earned L3 arrival, canonical parent save, full route, active view or human balance credit."}
+	var stream: FileAccess = FileAccess.open(path + ".json", FileAccess.WRITE)
+	var wire: String = ExactJson.stringify(receipt)
+	if stream == null or wire.is_empty(): return {"error": "Actual exact image receipt unavailable"}
+	stream.store_string(wire + "\n"); stream.flush(); stream.close()
+	return {"error": "", "path": ProjectSettings.globalize_path(path), "png_sha256": receipt.png_sha256, "component_only": true}
+
+func _ecp_on_draw() -> void: _ecp_draw_seen = true
+
+## PRIVATE appendable composition adapter. Keep frozen component8170/east5fc6/
+## portrait93c unchanged. No parser/native/draw result is implied by this source.
+var _eca_selector: String = ""
+var _eca_result_folder: String = ""
+var _eca_actual_result: Dictionary = {}
+var _eca_summary: Dictionary = {}
+var _eca_portrait_context: Dictionary = {}
+var _eca_portrait_passed: bool = false
+
+func _eca_run(selector: String) -> void:
+	_eca_selector = selector
+	_p3_complete = false
+	var result: Dictionary
+	if not _p3t_verify_original():
+		result = {"error": "Sealed genuine OLD manifest/file guard failed; component not executed"}
+	else:
+		var writer: Callable = Callable(self, "_eca_portrait") if selector == "--east-component-portrait" else Callable()
+		result = await _ec_run(selector, writer)
+	# The watchdog owns final disposal/exit once it sets this flag. Never revive it.
+	if _p3_done: return
+	_eca_actual_result = result.duplicate(true)
+	var actual_error: String = String(result.get("error", "Missing actual component error field"))
+	var refinement: bool = result.get("needs_integration_refinement", false) == true or result.get("outcome", "") == "no_useful_difference"
+	var portrait_ok: bool = selector != "--east-component-portrait" or _eca_portrait_passed
+	_expect(not result.is_empty() and actual_error.is_empty(), "actual declared component returns its literal native outcome", actual_error)
+	if selector == "--east-component-portrait":
+		_expect(portrait_ok, "actual paused portrait completes its full draw/custody and PNG write", actual_error)
+	var archive_error: String = _eca_archive(result, refinement, portrait_ok)
+	_expect(archive_error.is_empty(), "full actual component result and small summary persist exactly", archive_error)
+	_p3_complete = not result.is_empty() and actual_error.is_empty() and not refinement and portrait_ok and archive_error.is_empty()
+	if refinement:
+		print("Mirror Sea east component outcome remains literal: ", result.get("outcome", ""), "; needs_integration_refinement=true; complete=false")
+	await _p3_finish()
+
+func _eca_portrait(main: Node, level: CinderLevel, hero: CinderPlayer, scheduler: CinderThreatScheduler, warning: Dictionary) -> Dictionary:
+	# These are actual callback observations, not defaults for missing case data.
+	_eca_portrait_context = {"label": "changed-challenge-portrait", "kit": hero.equipment.snapshot().duplicate(true), "hero_hp": hero.hp, "source_hp": _echo.get("hp"), "native_ticks": _ec_ticks}
+	var result: Dictionary = await _ecp_portrait(main, level, hero, scheduler, warning)
+	var path: Variant = result.get("path")
+	_eca_portrait_passed = not result.is_empty() and result.get("error") == "" and _ecp_draw_seen and path is String and not path.is_empty() and FileAccess.file_exists(path) and FileAccess.get_sha256(path) == result.get("png_sha256")
+	# The frozen portrait result is returned without relabeling its error or fields.
+	return result
+
+func _eca_vec3(value: Variant) -> Variant:
+	if value is Vector3: return [value.x, value.y, value.z]
+	return null # Missing/unexecuted observation stays missing, never a zero vector.
+
+func _eca_case_summary(row: Dictionary, index: int) -> Dictionary:
+	var requested: Array[String] = ["canonical-challenge-baseline", "changed-challenge-baseline", "changed-challenge-combined-short-slow"]
+	if _eca_selector == "--east-component-portrait": requested = ["changed-challenge-portrait"]
+	var selected_label: String = requested[index] if index < requested.size() else ""
+	var observed: Dictionary = row
+	if _eca_selector == "--east-component-portrait" and index == 0 and not _eca_portrait_context.is_empty(): observed = _eca_portrait_context
+	var landings: Array = []
+	var recorded_landings: Variant = row.get("executed_landings")
+	if recorded_landings is Array:
+		for landing: Variant in recorded_landings: landings.append(_eca_vec3(landing))
+	var portrait: Dictionary = row.get("portrait", {}) if row.get("portrait", {}) is Dictionary else {}
+	return {"requested_label": selected_label, "actual_label": row.get("label", observed.get("label", "")), "kit": observed.get("kit"), "hero_hp": observed.get("hero_hp"), "source_hp": observed.get("source_hp"), "native_ticks": observed.get("native_ticks"), "primary_origin": _eca_vec3(row.get("primary_origin")), "executed_landings": landings, "landings_recorded": recorded_landings is Array, "error": row.get("error", "Missing actual case error field"), "reason": row.get("reason", ""), "native_refusals": row.get("native_refusals", []), "png_path": portrait.get("path", ""), "png_sha256": portrait.get("png_sha256", "")}
+
+func _eca_write(path: String, bytes: PackedByteArray) -> String:
+	if bytes.is_empty() or FileAccess.file_exists(path): return "New nonempty result output required: " + path
+	var stream: FileAccess = FileAccess.open(path, FileAccess.WRITE)
+	if stream == null: return "Result output unavailable: " + path
+	stream.store_buffer(bytes); stream.flush()
+	var status: Error = stream.get_error()
+	stream.close()
+	if status != OK or FileAccess.get_file_as_bytes(path) != bytes: return "Result bytes did not persist exactly: " + path
+	return ""
+
+func _eca_archive(result: Dictionary, refinement: bool, portrait_ok: bool) -> String:
+	if result.is_empty(): return "No nonempty actual component result to archive"
+	var bytes: PackedByteArray = var_to_bytes(result)
+	var text: String = var_to_str(result)
+	if bytes.is_empty() or text.is_empty(): return "Full native Variant result encoding is empty"
+	_eca_result_folder = "res://captures/act3/mirror-sea-arrangement/result-%s-%d-%d" % ["portrait" if _eca_selector == "--east-component-portrait" else "component", OS.get_process_id(), Time.get_ticks_usec()]
+	if DirAccess.dir_exists_absolute(ProjectSettings.globalize_path(_eca_result_folder)): return "Unique result folder already exists"
+	if DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(_eca_result_folder)) != OK: return "Unique result folder could not be created"
+	var native_path: String = _eca_result_folder.path_join("result.var.bin")
+	var text_path: String = _eca_result_folder.path_join("result.var.txt")
+	var error: String = _eca_write(native_path, bytes)
+	if not error.is_empty(): return error
+	error = _eca_write(text_path, (text + "\n").to_utf8_buffer())
+	if not error.is_empty(): return error
+	var cases: Array = []
+	var actual_cases: Variant = result.get("cases", [])
+	if actual_cases is Array:
+		for index: int in range(actual_cases.size()):
+			if not actual_cases[index] is Dictionary: return "Actual result contains a non-dictionary case; full result retained"
+			cases.append(_eca_case_summary(actual_cases[index], index))
+	_eca_summary = {"schema_version": 1, "kind": "a3-l3-declared-east-component-result-1", "test_only": true, "selector": _eca_selector, "legacy_manifest_sha256": P3T_LEGACY_MANIFEST_SHA256, "error": result.get("error", "Missing actual component error field"), "outcome": result.get("outcome", ""), "needs_integration_refinement": refinement, "portrait_full_draw_passed": _eca_portrait_passed if _eca_selector == "--east-component-portrait" else null, "completion_eligible_before_final_cleanup": result.get("error") == "" and not refinement and portrait_ok, "cases": cases, "full_result": {"native_file": "result.var.bin", "native_bytes": bytes.size(), "native_sha256": FileAccess.get_sha256(native_path), "text_file": "result.var.txt", "text_sha256": FileAccess.get_sha256(text_path)}, "parent_route_or_save_credit": false, "human_balance_credit": false, "scope": "Actual declared isolated east component only. Missing case fields remain null/empty; requested labels do not fabricate observations. Full native Variant/text retain failures and refusal details. This summary is not a closed-run receipt or level acceptance."}
+	var wire: String = ExactJson.stringify(_eca_summary)
+	if wire.is_empty(): return "Small result summary is not ExactJSON safe; full native/text result retained"
+	error = _eca_write(_eca_result_folder.path_join("summary.json"), (wire + "\n").to_utf8_buffer())
+	if not error.is_empty(): return error
+	print("Mirror Sea east component actual result: ", ProjectSettings.globalize_path(_eca_result_folder), "; error=", _eca_summary.error, "; outcome=", _eca_summary.outcome, "; needs_integration_refinement=", refinement)
+	return ""
