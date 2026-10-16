@@ -7,110 +7,10 @@ const Exact = preload("res://scripts/campaign/exact_json.gd")
 const Footprint = preload("res://scripts/combat/replay_footprint.gd")
 const Policy = preload("res://scripts/acts/act3/crystalman_phase_policy.gd")
 const Receipt = preload("res://scripts/combat/authored_echo_terminal_receipt.gd")
-const Difficulty = preload("res://scripts/combat/difficulty.gd")
-const ApproachCodec = preload("res://scripts/acts/act3/crystalman_approach_codec.gd")
-const LEGACY_API: String = "act3-crystalman-parent-local-1"
-const API: String = "act3-crystalman-parent-local-2"
-const POLICY_API: String = "act3-crystalman-approach-policy-1"
-const CANONICAL_RECIPE: String = "canonical-approach-1"
-const CHALLENGE_RECIPE: String = "challenge-west-inset-1"
+const API: String = "act3-crystalman-parent-local-1"
 const KEYS: Array[String] = ["api_revision","schema_version","world","route","current_unit","presentation"]
-const POLICY_KEYS: Array[String] = ["api_revision","schema_version","profile","recipe_id"]
-const PROFILE_KEYS: Array[String] = ["id","name","raw_damage_multiplier","windup_multiplier","recovery_multiplier","reserved_threat_budget","commit_stagger_s","arrangement"]
-const WORLD_KEYS: Array[String] = ["layout_sha256","level_id","world_revision","floor_id","floor_signature","permanent_box","permanent_center","blockers","source_scripts"]
 const ROUTE_KEYS: Array[String] = ["stage","entries","regular_metadata","phase_metadata","pending_checkpoint","phase_observed","exit_state","contact"]
 var last_error: String = ""
-
-
-## Pure closed construction selection. This grants no native/route authority.
-## A fresh attempt resolves one canonical profile before Approach._ready copies rows.
-static func fresh_selection(profile_id: String) -> Dictionary:
-	var profile: Dictionary = Difficulty.new().profile(profile_id)
-	if not _profile_error(profile).is_empty(): return {}
-	var policy: Dictionary = {"api_revision":POLICY_API,"schema_version":1,"profile":profile.duplicate(true),"recipe_id":_recipe_id(profile_id)}
-	return {"legacy":false,"policy":policy,"profile":profile.duplicate(true)}
-
-static func selection_error(selection: Dictionary) -> String:
-	var error: String = Receipt.transport_error(selection)
-	if not error.is_empty(): return error
-	if not Value.keys_error(selection,["legacy","policy","profile"]).is_empty() or not selection.get("legacy") is bool or not selection.get("policy") is Dictionary or not selection.get("profile") is Dictionary:
-		return "Closed typed legacy/policy/full-profile selection required"
-	if selection.legacy:
-		if not selection.policy.is_empty(): return "Literal legacy selection has no new policy"
-		# Disposed legacy stages have no retained serialized Approach profile.
-		return "" if selection.profile.is_empty() else _profile_error(selection.profile)
-	var policy: Dictionary = selection.policy
-	if not Value.keys_error(policy,POLICY_KEYS).is_empty() or not policy.get("api_revision") is String or policy.api_revision != POLICY_API or not policy.get("schema_version") is int or policy.schema_version != 1 or not policy.get("profile") is Dictionary or not policy.get("recipe_id") is String:
-		return "Closed typed four-key Approach policy1 required"
-	error = _profile_error(policy.profile)
-	if not error.is_empty(): return error
-	if policy.recipe_id != _recipe_id(policy.profile.id): return "Approach policy requires its exact finite profile recipe"
-	if not same(selection.profile,policy.profile): return "Selection and policy must retain the same full canonical profile"
-	return ""
-
-static func _profile_error(profile: Dictionary) -> String:
-	if not Value.keys_error(profile,PROFILE_KEYS).is_empty() or not profile.get("id") is String or profile.id not in ["assisted","standard","challenge"] or not profile.get("name") is String or not profile.get("arrangement") is String:
-		return "Full typed eight-key canonical Approach profile required"
-	for key: String in ["raw_damage_multiplier","windup_multiplier","recovery_multiplier","reserved_threat_budget","commit_stagger_s"]:
-		if not profile.get(key) is float or not is_finite(profile[key]) or profile[key] <= 0.0:
-			return "Canonical native float profile fields required"
-	var canonical: Dictionary = Difficulty.new().profile(profile.id)
-	return "" if not canonical.is_empty() and same(profile,canonical) else "Approach profile must equal the complete current canonical profile"
-
-static func _recipe_id(profile_id: String) -> String:
-	return CHALLENGE_RECIPE if profile_id == "challenge" else (CANONICAL_RECIPE if profile_id in ["assisted","standard"] else "")
-
-## Authenticate the saved mode/profile before parent-dependent strict world
-## validation or adding Approach (whose _ready copies selected source rows).
-func constructor_selection(unit: Dictionary) -> Dictionary:
-	last_error = Receipt.transport_error(unit)
-	if not last_error.is_empty(): return {}
-	var legacy: bool = unit.get("api_revision") == LEGACY_API
-	var keys: Array[String] = KEYS.duplicate()
-	if not legacy: keys.append("approach_policy")
-	if not Value.keys_error(unit,keys).is_empty() or not unit.get("api_revision") is String or unit.api_revision not in [LEGACY_API,API] or not unit.get("schema_version") is int or unit.schema_version != (1 if legacy else 2):
-		return failed("Closed literal parent1/six keys or parent2/seven keys required")
-	for key: String in ["world","route","current_unit","presentation"]:
-		if not unit.get(key) is Dictionary: return failed("Typed whole parent branch required: "+key)
-	var world: Dictionary = unit.world
-	if not Value.keys_error(world,WORLD_KEYS).is_empty() or not world.get("layout_sha256") is String or not world.get("level_id") is String or world.level_id != "A3-L5" or not world.get("world_revision") is int or world.world_revision != 1 or not world.get("floor_id") is String:
-		return failed("Closed original parent world identity required")
-	for key: String in ["floor_signature","permanent_box","permanent_center","blockers","source_scripts"]:
-		if not world.get(key) is Array: return failed("Typed original parent world branch required: "+key)
-	var route: Dictionary = unit.route
-	if not Value.keys_error(route,ROUTE_KEYS).is_empty() or not route.get("stage") is int or route.stage < 0 or route.stage > 4 or not route.get("entries") is Array or not route.get("regular_metadata") is Dictionary or not route.get("phase_metadata") is Array or not route.get("pending_checkpoint") is int or not route.get("phase_observed") is bool or not route.get("exit_state") is String or not route.get("contact") is Dictionary:
-		return failed("Closed typed five-stage constructor route required")
-	if not Value.keys_error(unit.current_unit,["kind","state"]).is_empty() or not unit.current_unit.get("kind") is String or unit.current_unit.kind != kind(route.stage) or not unit.current_unit.get("state") is Dictionary or ((route.stage == 4) != unit.current_unit.state.is_empty()):
-		return failed("Exactly entitled complete current constructor topology required")
-	var profile: Dictionary = {}
-	if route.stage < 2:
-		var regular: Dictionary = unit.current_unit.state
-		if not Value.keys_error(regular,ApproachCodec.KEYS).is_empty() or regular.get("api_revision") != ApproachCodec.API or not regular.get("schema_version") is int or regular.schema_version != 1 or not regular.get("stage") is int or regular.stage != route.stage+1 or not regular.get("world") is Dictionary or not regular.get("scheduler") is Dictionary or not regular.world.get("profile_id") is String or not regular.scheduler.get("profile") is Dictionary:
-			return failed("Complete entitled regular saved profile constructor required")
-		profile = regular.scheduler.profile.duplicate(true)
-		last_error = _profile_error(profile)
-		if not last_error.is_empty(): return {}
-		if profile.id != regular.world.profile_id: return failed("Saved full Approach Scheduler/world profiles differ")
-	var selection: Dictionary = {"legacy":legacy,"policy":{},"profile":profile}
-	if not legacy:
-		if not unit.get("approach_policy") is Dictionary: return failed("New parent requires its complete Approach policy")
-		selection.policy = unit.approach_policy.duplicate(true)
-		selection.profile = selection.policy.get("profile",{}).duplicate(true) if selection.policy.get("profile") is Dictionary else {}
-	last_error = selection_error(selection)
-	if not last_error.is_empty(): return {}
-	if not legacy and route.stage < 2 and not same(profile,selection.profile): return failed("New Approach policy and saved whole regular profile differ")
-	return selection.duplicate(true)
-
-func _retained_selection(parent,stage: int) -> Dictionary:
-	if not parent.has_method("crystalman_approach_constructor"): return failed("Retained immutable parent Approach constructor required")
-	var actual: Variant = parent.call("crystalman_approach_constructor")
-	if not actual is Dictionary: return failed("Typed retained Approach constructor required")
-	last_error = selection_error(actual)
-	if not last_error.is_empty(): return {}
-	var retained: Dictionary = actual.duplicate(true)
-	# This comparison copy never rewrites retained instance policy/profile.
-	if retained.legacy and stage >= 2: retained.profile = {}
-	return retained
 
 func capture(parent,player: Dictionary,camera: Camera3D=null,hud: GameHUD=null,optical: bool=true) -> Dictionary:
 	last_error=parent.parent_boundary_error()
@@ -122,14 +22,11 @@ func capture(parent,player: Dictionary,camera: Camera3D=null,hud: GameHUD=null,o
 		last_error=parent.candidate_presentation_error(camera,hud)
 	if not last_error.is_empty(): return {}
 	var route: Dictionary=parent.parent_owned_state()
-	var selection: Dictionary=_retained_selection(parent,route.stage)
-	if selection.is_empty(): return {}
 	var current: Dictionary={"kind":kind(route.stage),"state":{}}
 	if is_instance_valid(parent.current_unit):
 		current.state=parent.current_unit.call("capture_native_state",player,false)
 		if current.state.is_empty(): return failed("Complete current unit refused: "+String(parent.current_unit.call("native_capture_error")))
-	var local: Dictionary={"api_revision":LEGACY_API if selection.legacy else API,"schema_version":1 if selection.legacy else 2,"world":native_world(parent),"route":route,"current_unit":current,"presentation":parent.scenery.call("presentation_state")}
-	if not selection.legacy: local["approach_policy"]=selection.policy.duplicate(true)
+	var local: Dictionary={"api_revision":API,"schema_version":1,"world":native_world(parent),"route":route,"current_unit":current,"presentation":parent.scenery.call("presentation_state")}
 	last_error=record_error(local,parent,player)
 	return local if last_error.is_empty() else {}
 
@@ -142,11 +39,7 @@ func header_error(unit: Dictionary,parent,player: Dictionary) -> String:
 	if error.is_empty(): error=Receipt.transport_error(unit)
 	if error.is_empty(): error=parent.hero.snapshot_error(player)
 	if not error.is_empty(): return error
-	var selected: Dictionary=constructor_selection(unit)
-	if selected.is_empty(): return last_error
-	var retained: Dictionary=_retained_selection(parent,unit.route.stage)
-	if retained.is_empty(): return last_error
-	if not same(selected,retained): return "Saved parent construction differs from its retained immutable selection"
+	if not Value.keys_error(unit,KEYS).is_empty() or unit.get("api_revision")!=API or not unit.get("schema_version") is int or unit.schema_version!=1: return "Closed whole Crystalman parent local1 required"
 	for key: String in ["world","route","current_unit","presentation"]:
 		if not unit.get(key) is Dictionary: return "Typed whole parent branch required: "+key
 	if not same(unit.world,native_world(parent)): return "Exact authored layout/floor/blockers/current source scripts differ"
@@ -187,15 +80,6 @@ func route_error(unit: Dictionary,parent,player: Dictionary) -> String:
 		for id: String in regular.deaths:
 			var death: Variant=regular.deaths[id]
 			if not death is Dictionary or not Value.keys_error(death,["clock_s","source_position"]).is_empty() or not Receipt.clock_valid(death.get("clock_s")) or death.clock_s>regular.completed_at_unit_s or not Value.is_vector3(death.get("source_position")): return "Original source death metadata required"
-		# New format only: the two stationary Echo deaths join their selected
-		# native knots. Dynamic C50 death stays literal actual history.
-		if unit.get("api_revision") == API:
-			var rows: Dictionary=parent.crystalman_source_rows()
-			for id: String in ["l5-offered-echo","l5-plain-echo"]:
-				if not rows.get(id) is Dictionary or not Value.is_vector3(rows[id].get("fixed_knot_world")): return "Retained selected fixed Echo knot required"
-				var actual: Array=Value.vector3(Value.read_vector3(regular.deaths[id].source_position))
-				var expected: Array=Value.vector3(Value.read_vector3(rows[id].fixed_knot_world))
-				if not same(actual,expected): return "Retired fixed Echo death differs from its selected native knot: "+id
 	var phase_clock: float=-1.0
 	for index: int in range(route.phase_metadata.size()):
 		if not route.phase_metadata[index] is Dictionary: return "Closed phase metadata required"

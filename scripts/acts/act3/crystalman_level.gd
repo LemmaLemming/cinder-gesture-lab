@@ -50,11 +50,6 @@ var _capture_hud: GameHUD
 var _capture_error: String = ""
 var _restore_expected: Dictionary = {}
 var _restore_finished: bool = false
-# Legacy is the inert default for previously declared capture-only TEST rooms.
-# Real fresh entry selects the new closed policy before constructing Approach.
-var _approach_selection: Dictionary = {"legacy":true,"policy":{},"profile":{}}
-var _approach_selection_frozen: bool = false
-var _approach_rows: Dictionary = {}
 
 func _ready() -> void:
 	level_id = "A3-L5"
@@ -133,33 +128,7 @@ func crystalman_regular_floor_binding() -> Dictionary:
 func crystalman_capture_floor_binding() -> Dictionary:
 	return {"api_revision":"act3-crystalman-external-floor-1","world_root":self,"floor_id":FLOOR_ID,"collision":floor_collision,"safe_rect":ARENA_RECT}
 
-func crystalman_approach_constructor() -> Dictionary:
-	return _approach_selection.duplicate(true)
-
-func _select_approach_constructor(selection: Dictionary) -> String:
-	if _approach_selection_frozen or is_instance_valid(current_unit) or _active or not _entries.is_empty(): return "Approach construction identity may be selected only once before entry"
-	var error: String = ParentCodec.selection_error(selection)
-	if not error.is_empty(): return error
-	var rows: Dictionary = _canonical_source_rows()
-	if not selection.legacy and selection.policy.recipe_id == "challenge-west-inset-1":
-		var plain: Dictionary = rows["l5-plain-echo"]
-		for point: Dictionary in plain.own_route_world:
-			var at: Vector3 = Value.read_vector3(point.position)
-			at.x = -3.0
-			point.position = Value.vector3(at)
-		for key: String in ["fixed_knot_world","definition_translation_world","slash_origin_world"]:
-			var at: Vector3 = Value.read_vector3(plain[key])
-			at.x = -3.0
-			plain[key] = Value.vector3(at)
-	_approach_selection = selection.duplicate(true)
-	_approach_rows = rows.duplicate(true)
-	_approach_selection_frozen = true
-	return ""
-
 func crystalman_source_rows() -> Dictionary:
-	return _approach_rows.duplicate(true) if _approach_selection_frozen else _canonical_source_rows()
-
-func _canonical_source_rows() -> Dictionary:
 	var result: Dictionary = {}
 	for original: Dictionary in _layout.sources:
 		var row: Dictionary = original.duplicate(true)
@@ -188,10 +157,6 @@ func parent_native_error() -> String:
 func _on_enter_level() -> void:
 	if not last_configuration_error.is_empty(): return
 	if not is_instance_valid(shared_shell) or not shared_shell.has_method("camera_framing_error_for_context"): last_configuration_error = "Actual canonical portrait services required"; return
-	var profile_id: String = String(shared_shell.call("get_difficulty_preference")) if shared_shell.has_method("get_difficulty_preference") else "standard"
-	var selection: Dictionary = ParentCodec.fresh_selection(profile_id)
-	var error: String = _select_approach_constructor(selection)
-	if not error.is_empty(): _fail(error); return
 	_active = true
 	current_unit = Approach.new()
 	current_unit.name = "CurrentRegularApproach"
@@ -459,11 +424,7 @@ func restore_candidate_physics_registration_required() -> bool:
 
 func _on_enter_restore_candidate(local: Dictionary,player: Dictionary) -> String:
 	_active=false
-	var selection: Dictionary = _codec.constructor_selection(local)
-	if selection.is_empty(): return _codec.last_error
-	var error: String = _select_approach_constructor(selection)
-	if not error.is_empty(): return error
-	error = _codec.header_error(local,self,player)
+	var error: String=_codec.header_error(local,self,player)
 	if not error.is_empty(): return error
 	var stage: int=local.route.stage
 	if stage<2:

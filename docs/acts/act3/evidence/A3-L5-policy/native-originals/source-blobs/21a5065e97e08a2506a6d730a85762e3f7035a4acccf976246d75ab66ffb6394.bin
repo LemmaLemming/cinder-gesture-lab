@@ -1,0 +1,99 @@
+from pathlib import Path
+import datetime, hashlib, json, re, subprocess, sys
+
+R=Path.cwd()
+assert str(R)=='/Users/howardchen/.codex/worktrees/campaign-act3/video game idea'
+name,kind=sys.argv[1:]
+assert re.fullmatch('[a-z0-9-]+',name)
+assert kind in ['format','legacy-format','compare']
+fixture={'legacy-format':'tests/acts/act3/crystalman_constructor_policy_smoke.gd','format':'tests/acts/act3/crystalman_constructor_policy_smoke.gd','compare':'tests/acts/act3/crystalman_plain_comparison_smoke.gd'}[kind]
+
+def git(*args):
+    return subprocess.check_output(['git','--no-optional-locks',*args],cwd=R).decode().strip()
+
+def sha(p):
+    return hashlib.sha256(p.read_bytes()).hexdigest()
+
+def now():
+    return datetime.datetime.now(datetime.timezone.utc).isoformat()
+
+assert git('branch','--show-current')=='codex/campaign-act3'
+head=git('rev-parse','HEAD')
+assert not git('status','--short','--untracked-files=no')
+assert subprocess.run(['git','merge-base','--is-ancestor','9d9aebd025098c60bb87e41a4d9453b52f60266a',head],cwd=R).returncode==0
+out=R/'.cinder/l5-policy-runs'/name
+out.mkdir(parents=True,exist_ok=False)
+selected={'.cinder/run_l5_policy.py','.cinder/l5-policy-originals/scope/authority.json','.cinder/l5-policy-originals/scope/ack.json','scripts/dev/dev.py','project.godot',fixture,
+ 'scripts/acts/act3/crystalman_level.gd','scripts/acts/act3/crystalman_parent_codec.gd','scripts/acts/act3/crystalman_approach_unit.gd','scripts/acts/act3/crystalman_approach_codec.gd',
+ 'scripts/acts/act3/crystalman_capture_phase.gd','scripts/acts/act3/crystalman_capture_codec.gd','scripts/acts/act3/crystalman_scenery.gd',
+ 'scripts/acts/act3/mirror_echo.gd','scripts/acts/act3/mirror_echo_codec2.gd','scripts/acts/act3/sunbound_stalker.gd','data/campaign/act3/crystalman_layout.json','scenes/acts/act3/a3_l5_crystalman.tscn',
+ 'scripts/campaign/level.gd','scripts/campaign/shell.gd','scripts/campaign/registry.gd','scripts/campaign/attempts.gd','scripts/campaign/save_store.gd','scripts/campaign/exact_json.gd','scripts/campaign/snapshot_codec.gd','data/campaign/registry.json',
+ 'scripts/combat/threat_scheduler.gd','scripts/combat/body_sweep.gd','scripts/combat/threat_geometry.gd','scripts/combat/difficulty.gd','scripts/combat/replay_playback.gd','scripts/combat/authored_enemy_sequence.gd','scripts/combat/replay_witness.gd','scripts/combat/replay_footprint.gd',
+ 'data/design/player_equipment.json','data/design/equipment_claims.json','data/design/ability_usage.json','data/design/difficulty_profiles.json',
+ 'scripts/game.gd','scripts/player.gd','scripts/equipment.gd','scripts/hud.gd','scripts/effects.gd','scripts/ui/campaign_menu.gd','scripts/presentation/camera_framing.gd','scenes/main.tscn','scenes/player.tscn'}
+selected.update(p.relative_to(R).as_posix() for p in (R/'tests/acts/act3/fixtures').glob('crystalman_*policy*') if p.is_file())
+selected.update(p.relative_to(R).as_posix() for p in (R/'tests/acts/act3/fixtures').glob('crystalman_*west*') if p.is_file())
+queue=list(selected)
+while queue:
+    rel=queue.pop();p=R/rel
+    if p.is_file() and p.suffix in ['.gd','.tscn']:
+        for ref in re.findall(r'res://[^\"\s)]+',p.read_text()):
+            dep=ref.removeprefix('res://')
+            if (R/dep).is_file() and dep not in selected:
+                selected.add(dep);queue.append(dep)
+selected|={p+'.uid' for p in selected if p.endswith('.gd') and (R/(p+'.uid')).is_file()}
+assert all((R/p).is_file() for p in selected)
+possible_uids={p+'.uid' for p in selected if p.endswith('.gd') and p.startswith('tests/acts/act3/') and not (R/(p+'.uid')).exists()}
+sources={p:sha(R/p) for p in sorted(selected)}
+original_dir=R/'.cinder/l5-policy-originals'
+original=json.loads((original_dir/'original-source-custody.json').read_text())
+allowed_runtime={'scripts/acts/act3/crystalman_level.gd','scripts/acts/act3/crystalman_parent_codec.gd','scripts/acts/act3/crystalman_approach_unit.gd'}
+for row in original['files']:
+    assert sha(original_dir/'originals'/row['path'])==row['sha256']
+    if row['path'] not in allowed_runtime:assert sha(R/row['path'])==row['sha256'],row['path']
+bank=out/'source-blobs';bank.mkdir()
+for rel,digest in sources.items():
+    target=bank/(digest+'.bin')
+    if not target.exists():target.write_bytes((R/rel).read_bytes())
+for row in original['files']:
+    target=bank/(row['sha256']+'.bin')
+    if not target.exists():target.write_bytes((original_dir/'originals'/row['path']).read_bytes())
+manifest={'head':head,'shared_api':'campaign-shared-74','actual_adopted_publication':'9d9aebd025098c60bb87e41a4d9453b52f60266a','started_at':now(),'selected_sources':sources,'original_sources':original,'possible_native_generated_new_uid_paths':sorted(possible_uids),'limits':'Selected fixture finite native/process/watchdog bounds are frozen in source. No second placement or oldproducer.','scope':'Necessary changed format/quiet-restore checks OR one fixed same-start declared comparison; no fullroute/broad suite/import. Root PRIMARY/shared/baseJSON and legacy originals protected.'}
+(out/'sources.json').write_text(json.dumps(manifest,indent=2)+'\n')
+command=['python3','scripts/dev/dev.py','engine','--headless','--path','.','--script','res://'+fixture]
+if kind=='legacy-format': command += ['--','--legacy-only']
+(out/'command.json').write_text(json.dumps({'argv':command,'cwd':str(R),'kind':kind,'source_head':head},indent=2)+'\n')
+print('Queued L5 '+kind+'; evidence '+str(out),flush=True)
+diagnostics=[];footers=[]
+with (out/'native.log').open('w') as log:
+    proc=subprocess.Popen(command,cwd=R,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,bufsize=1)
+    for line in proc.stdout:
+        log.write(line);log.flush()
+        if line.startswith(('SCRIPT ERROR:','ERROR:','WARNING:')):
+            diagnostics.append(line.rstrip())
+            if len(diagnostics)<=12:print(line.rstrip(),flush=True)
+        elif any(v in line for v in ['L5_CONSTRUCTOR_RESULT','L5_COMPARE_RESULT','L5 POLICY','L5 COMPARE','FAIL:','Crystalman constructor','Crystalman west','[dev]','Waiting for']):
+            footers.append(line.rstrip());print(line.rstrip(),flush=True)
+    code=proc.wait()
+fixture_output=None
+if kind=='compare':
+    reports=[line.removeprefix('L5_COMPARE_RESULT ') for line in footers if line.startswith('L5_COMPARE_RESULT ')]
+    if len(reports)!=1: diagnostics.append('TEST custody: expected exactly one comparison result footer')
+    else:
+        try:
+            report=json.loads(reports[0])
+            rel=report['native_result_path']
+            assert rel.startswith('res://captures/act3/crystalman-plain-comparison/') and rel.endswith('/native-results.var.bin')
+            native=(R/rel.removeprefix('res://')).resolve()
+            assert native.is_relative_to(R/'captures/act3/crystalman-plain-comparison') and native.is_file()
+            b=native.read_bytes(); assert b
+            (out/'native-results.var.bin').write_bytes(b)
+            (out/'comparison-report.json').write_text(json.dumps(report,indent=2)+'\n')
+            fixture_output={'original_path':str(native),'retained_path':'native-results.var.bin','bytes':len(b),'sha256':hashlib.sha256(b).hexdigest(),'report':'comparison-report.json'}
+        except Exception as e: diagnostics.append('TEST output custody: '+str(e))
+changed=[p for p,d in sources.items() if not (R/p).is_file() or sha(R/p)!=d]
+added={p:sha(R/p) for p in possible_uids if (R/p).is_file()}
+result={'fixture_output':fixture_output,'status':'CLOSED','closed_at':now(),'actual_exit_code':code,'diagnostics':diagnostics,'selected_source_changes_during_run':changed,'actual_new_uid_observations':added,'head_after':git('rev-parse','HEAD'),'native_log_sha256':sha(out/'native.log'),'footers':footers}
+(out/'result.json').write_text(json.dumps(result,indent=2)+'\n')
+print(json.dumps({'actual_exit_code':code,'diagnostic_count':len(diagnostics),'source_drift':changed,'head_after':result['head_after'],'native_log_sha256':result['native_log_sha256'],'footers':footers[-12:],'new_uid_observations':added}),flush=True)
+sys.exit(code if code else (1 if diagnostics or changed or result['head_after']!=head else 0))

@@ -13,7 +13,6 @@ const CueMeshes = preload("res://scripts/cues/cue_mesh.gd")
 const Value = preload("res://scripts/campaign/snapshot_codec.gd")
 const UnitCodec = preload("res://scripts/acts/act3/crystalman_approach_codec.gd")
 const Exact = preload("res://scripts/campaign/exact_json.gd")
-const Difficulty = preload("res://scripts/combat/difficulty.gd")
 const ENCOUNTER_ID: String = "A3-L5/regular-threshold"
 const WORLD_REVISION: int = 1
 const FLOOR_ID: String = "firm-crystalman-route"
@@ -35,8 +34,6 @@ var last_camera_error: String = ""
 var stage: int = 1
 var _active: bool = false
 var _profile: String = "standard"
-var _constructor_profile: Dictionary = {}
-var _constructor_profile_wire: String = ""
 var _floor: Dictionary = {}
 var _rows: Dictionary = {}
 var _deaths: Dictionary = {}
@@ -69,44 +66,18 @@ func _ready() -> void:
 	_view_observer.observe = _guard_before_consumers
 	add_child(_view_observer)
 	var parent: Node = get_parent()
-	if not parent.has_method("crystalman_regular_floor_binding") or not parent.has_method("crystalman_source_rows") or not parent.has_method("crystalman_approach_constructor"):
-		last_configuration_error = "Exact parent floor/layout/frozen constructor services required"
+	if not parent.has_method("crystalman_regular_floor_binding") or not parent.has_method("crystalman_source_rows"):
+		last_configuration_error = "Exact parent floor/layout services required"
 		return
-	# Parent selects once BEFORE add_child/_ready, including legacy saved entry.
-	# Retain that SAME full canonical identity before copying its selected rows.
-	var selection: Variant = parent.call("crystalman_approach_constructor")
-	if not selection is Dictionary or not Value.keys_error(selection, ["legacy", "policy", "profile"]).is_empty() or not selection.get("legacy") is bool or not selection.get("policy") is Dictionary or not selection.get("profile") is Dictionary:
-		last_configuration_error = "Closed parent legacy/policy/full-profile constructor required"
-		return
-	var selected_profile: Dictionary = selection.profile.duplicate(true)
-	var resolver: CinderDifficulty = Difficulty.new()
-	var canonical: Dictionary = resolver.profile(String(selected_profile.get("id", "")))
-	if canonical.is_empty() or Exact.stringify(selected_profile) != Exact.stringify(canonical):
-		last_configuration_error = "Frozen parent constructor requires the same full canonical profile"
-		return
-	_constructor_profile = selected_profile.duplicate(true)
-	_constructor_profile_wire = Exact.stringify(_constructor_profile)
-	_profile = String(_constructor_profile.id)
 	_floor = parent.call("crystalman_regular_floor_binding")
-	var selected_rows: Variant = parent.call("crystalman_source_rows")
-	if not selected_rows is Dictionary:
-		last_configuration_error = "Frozen parent source rows required"
-		return
-	_rows = selected_rows.duplicate(true)
+	_rows = parent.call("crystalman_source_rows")
 	var actual: Dictionary = Footprint.floor_signature(parent as Node3D, [_floor])
 	if not actual.get("accepted",false): last_configuration_error = String(actual.get("reason","Actual full floor refused"))
 
-func _constructor_profile_error() -> String:
-	if _constructor_profile.is_empty() or _constructor_profile_wire.is_empty() or _constructor_profile.get("id") != _profile or Exact.stringify(_constructor_profile) != _constructor_profile_wire:
-		return "Original defensively frozen parent full-profile identity required"
-	return ""
-
 func _on_enter_level() -> void:
 	if not last_configuration_error.is_empty(): return
-	var error: String = _constructor_profile_error()
-	if not error.is_empty(): _fail(error); return
+	_profile = String(shared_shell.call("get_difficulty_preference")) if is_instance_valid(shared_shell) and shared_shell.has_method("get_difficulty_preference") else "standard"
 	if not threat_scheduler.begin_encounter(_profile, ENCOUNTER_ID,1): _fail(threat_scheduler.last_error); return
-	if Exact.stringify(threat_scheduler.encounter_profile()) != _constructor_profile_wire: _fail("Actual Scheduler differs from frozen full constructor profile"); return
 	_active = true
 	_install_source(ENEMY_IDS[0])
 	_update_presentation()
@@ -207,10 +178,6 @@ func _retire_source_held(id: String, reason: String, unfinished: bool = false) -
 func runtime_error() -> String:
 	if not last_configuration_error.is_empty(): return last_configuration_error
 	if global_transform != Transform3D.IDENTITY or not is_instance_valid(hero) or not is_instance_valid(shared_shell) or not is_instance_valid(threat_scheduler) or threat_scheduler.get_script() != Scheduler or threat_scheduler.get_parent() != self: return "Exact local regular identity/shared bindings required"
-	var constructor_error: String = _constructor_profile_error()
-	if not constructor_error.is_empty(): return constructor_error
-	var configured_profile: Dictionary = threat_scheduler.encounter_profile()
-	if (_active or not sources.is_empty() or not configured_profile.is_empty()) and Exact.stringify(configured_profile) != _constructor_profile_wire: return "Actual retained Scheduler must equal frozen full constructor profile"
 	var floor: Dictionary = Footprint.floor_signature(actual_world_root(),[_floor])
 	if not floor.get("accepted",false): return String(floor.get("reason","Actual floor refused"))
 	for id: String in sources:
@@ -729,15 +696,9 @@ func verify_parent_candidate(local: Dictionary,player: Dictionary,camera: Camera
 func _on_enter_restore_candidate(local: Dictionary,player: Dictionary) -> String:
 	_active = false
 	if not local.get("world") is Dictionary or not local.world.get("profile_id") is String or not local.get("stage") is int or local.stage not in [1,2]: return "Closed entitled regular constructor recipe required"
-	var error: String = _constructor_profile_error()
-	if not error.is_empty(): return error
-	# Saved world and complete Scheduler agree with the selection already frozen
-	# before _ready; neither saved entry nor fresh entry consults future prefs.
-	if not local.get("scheduler") is Dictionary or not local.scheduler.get("profile") is Dictionary or local.world.profile_id != _profile or Exact.stringify(local.scheduler.profile) != _constructor_profile_wire:
-		return "Saved Scheduler/world must match the frozen full constructor profile"
+	_profile = local.world.profile_id
 	stage = local.stage
 	if not threat_scheduler.begin_encounter(_profile,ENCOUNTER_ID,1): return threat_scheduler.last_error
-	if Exact.stringify(threat_scheduler.encounter_profile()) != _constructor_profile_wire: return "Actual restored Scheduler differs from frozen full constructor profile"
 	for id: String in UnitCodec.entitled(stage):
 		if not _install_source(id,false): return last_configuration_error
 	return _codec.prepare_sources(local,self,player)

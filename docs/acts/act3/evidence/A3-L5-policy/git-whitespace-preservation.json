@@ -1,0 +1,15 @@
+{
+  "kind": "literal-original-log-whitespace-retained",
+  "command": [
+    "git",
+    "diff",
+    "--cached",
+    "--check"
+  ],
+  "actual_exit_code": 2,
+  "diagnostic_count": 55,
+  "only_path": "docs/acts/act3/evidence/A3-L5-policy/native-originals/runs/compare-01/native.log",
+  "diagnostic_stdout_sha256": "0ff7e01b4f4933a74d81715b766f0482d2b5fb2a4c2fd4b1680937a5de394d78",
+  "raw_log_sha256": "ce602a8d7a9c554c05e07fa0b107141a1586a5c720873c393acded1670287908",
+  "explanation": "All55 trailing spaces are original failed-assertion log bytes. They are preserved, not trimmed. The separately scoped authored-file whitespace check excludes only this exact immutable raw log; no test/runtime assertion is weakened."
+}
