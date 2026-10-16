@@ -1,0 +1,387 @@
+{
+  "schema_version": 1,
+  "kind": "act2-o1-four-closed-failed-original-writer-phases",
+  "phases": [
+    {
+      "phase": "producer-verification-prepare/run-seal-20261016T073122.551819Z-bcf70f10",
+      "index_sha256": "9e43a66573629687d789aa956f0d6a85f0dfa7e06bf3ea47774a591b60989585",
+      "original_result_path": ".cinder/a2-o1-difficulty-20261016/producer-verification-prepare/run-seal-20261016T073122.551819Z-bcf70f10/result.json",
+      "closed": true,
+      "passed": true,
+      "runner_return_code": 0,
+      "canonical_return_code": null,
+      "diagnostics": [],
+      "original_file_count_including_index": 95
+    },
+    {
+      "phase": "producer-verification-prepare/run-native-20261016T073134.044582Z-f1453ca2",
+      "index_sha256": "5b7735ea22a5f58b3fb02ba4a7ef69d1dbb2bd4ec165023c596fc1c9a7bc34a7",
+      "original_result_path": ".cinder/a2-o1-difficulty-20261016/producer-verification-prepare/run-native-20261016T073134.044582Z-f1453ca2/result.json",
+      "closed": true,
+      "passed": false,
+      "runner_return_code": 2,
+      "canonical_return_code": 1,
+      "diagnostics": [
+        "ERROR: FAIL A2-O1 loading side: first passively retained native exchange cancellation; no retry/search",
+        "ERROR: Object is locked and can't be freed.",
+        "SCRIPT ERROR: Attempted to free a locked object (calling or emitting)."
+      ],
+      "original_file_count_including_index": 111
+    },
+    {
+      "phase": "producer-verification-v3/run-seal-20261016T073531.095352Z-0e3da232",
+      "index_sha256": "5a46c6b81f19608808d323128f96001d01d01344fc636a13740d14d94c8a3d6e",
+      "original_result_path": ".cinder/a2-o1-difficulty-20261016/producer-verification-v3/run-seal-20261016T073531.095352Z-0e3da232/result.json",
+      "closed": true,
+      "passed": true,
+      "runner_return_code": 0,
+      "canonical_return_code": null,
+      "diagnostics": [],
+      "original_file_count_including_index": 109
+    },
+    {
+      "phase": "producer-verification-v3/run-native-20261016T073543.517796Z-6f686964",
+      "index_sha256": "a02e0fb840a916188d4e2641bdc169fdfd27927091b0b18ce827c9b97c1b27e2",
+      "original_result_path": ".cinder/a2-o1-difficulty-20261016/producer-verification-v3/run-native-20261016T073543.517796Z-6f686964/result.json",
+      "closed": true,
+      "passed": false,
+      "runner_return_code": 2,
+      "canonical_return_code": 2,
+      "diagnostics": [
+        "ERROR: FAIL A2-O1 loading side: first passively retained native exchange cancellation; no retry/search"
+      ],
+      "original_file_count_including_index": 130,
+      "actual_native_controls": {
+        "checks": 40,
+        "failures": 1,
+        "first_failure": {
+          "diagnostics": {
+            "camera_basis": {
+              "x": [
+                1.0,
+                0.0,
+                0.0
+              ],
+              "y": [
+                0.0,
+                0.5854905843734741,
+                -0.8106791973114014
+              ],
+              "z": [
+                0.0,
+                0.8106791973114014,
+                0.5854905843734741
+              ]
+            },
+            "camera_position": [
+              -1.7552897930145264,
+              18.747962951660156,
+              12.696599960327148
+            ],
+            "encounter": {
+              "admission_errors": {
+                "west": {
+                  "reason": "Source attack cooldown is still occupied"
+                }
+              },
+              "checkpoint_requested": false,
+              "clock_s": 0.6333333333333336,
+              "collected_ids": [],
+              "exit_open": false,
+              "runtime_error": "",
+              "sources": {
+                "final": {
+                  "exchange": {
+                    "actor_id": "final",
+                    "api_revision": "act2-ray-exchange-1",
+                    "armed": false,
+                    "cycle": 0,
+                    "direction": [
+                      0.0,
+                      0.0,
+                      1.0
+                    ],
+                    "exchange": {},
+                    "geometry": {},
+                    "hit_consumed": false,
+                    "last_cancel_reason": "",
+                    "phase": "clear",
+                    "presentation_witness": {},
+                    "proof": {},
+                    "proof_available": false,
+                    "remaining_s": 0.0,
+                    "reservation_id": "",
+                    "resolved_role": {
+                      "active_s": 0.16,
+                      "attack_interval_s": 1.6,
+                      "damage": 10.0,
+                      "difficulty_profile": "challenge",
+                      "difficulty_schema": 1,
+                      "lock_s": 1.1,
+                      "max_hp": 30.0,
+                      "move_speed": 0.0,
+                      "raw_damage": 10.0,
+                      "raw_role": {
+                        "active_s": 0.16,
+                        "attack_interval_s": 1.6,
+                        "lock_s": 1.1,
+                        "max_hp": 30.0,
+                        "move_speed": 0.0,
+                        "raw_damage": 10.0,
+                        "recovery_s": 1.6,
+                        "windup_s": 1.55
+                      },
+                      "recovery_s": 1.6,
+                      "tuning_status": "provisional_unplaytested",
+                      "windup_s": 1.55
+                    },
+                    "source_position": [
+                      0.6499999761581421,
+                      0.0,
+                      -7.800000190734863
+                    ],
+                    "status": "idle"
+                  },
+                  "hp": 30.0,
+                  "visible": false
+                },
+                "west": {
+                  "exchange": {
+                    "actor_id": "west",
+                    "api_revision": "act2-ray-exchange-1",
+                    "armed": false,
+                    "cycle": 1,
+                    "direction": [
+                      -0.9887126088142395,
+                      0.0,
+                      0.14982452988624573
+                    ],
+                    "exchange": {
+                      "active_from_s": 1.7333333333333334,
+                      "active_until_s": 1.8933333333333333,
+                      "adapter": {
+                        "active_s": 0.16,
+                        "attack_interval_s": 1.6,
+                        "kind": "tracking",
+                        "lock_s": 1.1,
+                        "locked": false,
+                        "radius": 0.31,
+                        "reach": 3.799999952316284,
+                        "recovery_s": 1.6
+                      },
+                      "cooldown_until_s": 3.3333333333333335,
+                      "geometry": {
+                        "from": [
+                          -0.6499999761581421,
+                          0.0,
+                          -2.0
+                        ],
+                        "kind": "lane",
+                        "radius": 0.31,
+                        "to": [
+                          -4.407107830047607,
+                          0.0,
+                          -1.4306668043136597
+                        ]
+                      },
+                      "id": "threat-1",
+                      "lock_from_s": 0.6333333333333333,
+                      "opening_position": [
+                        -0.6499999761581421,
+                        0.0,
+                        -2.0
+                      ],
+                      "profile_id": "challenge",
+                      "recovery_until_s": 3.493333333333333,
+                      "source_position": [
+                        -0.6499999761581421,
+                        0.0,
+                        -2.0
+                      ],
+                      "start_s": 0.18333333333333332,
+                      "world_revision": 1
+                    },
+                    "geometry": {
+                      "from": [
+                        -0.6499999761581421,
+                        0.0,
+                        -2.0
+                      ],
+                      "kind": "lane",
+                      "radius": 0.31,
+                      "to": [
+                        -4.407107830047607,
+                        0.0,
+                        -1.4306668043136597
+                      ]
+                    },
+                    "hit_consumed": false,
+                    "last_cancel_reason": "tracking_lock_unproved",
+                    "phase": "clear",
+                    "presentation_witness": {},
+                    "proof": {},
+                    "proof_available": false,
+                    "remaining_s": 0.0,
+                    "reservation_id": "",
+                    "resolved_role": {
+                      "active_s": 0.16,
+                      "attack_interval_s": 1.6,
+                      "damage": 10.0,
+                      "difficulty_profile": "challenge",
+                      "difficulty_schema": 1,
+                      "lock_s": 1.1,
+                      "max_hp": 30.0,
+                      "move_speed": 0.0,
+                      "raw_damage": 10.0,
+                      "raw_role": {
+                        "active_s": 0.16,
+                        "attack_interval_s": 1.6,
+                        "lock_s": 1.1,
+                        "max_hp": 30.0,
+                        "move_speed": 0.0,
+                        "raw_damage": 10.0,
+                        "recovery_s": 1.6,
+                        "windup_s": 1.55
+                      },
+                      "recovery_s": 1.6,
+                      "tuning_status": "provisional_unplaytested",
+                      "windup_s": 1.55
+                    },
+                    "source_position": [
+                      -0.6499999761581421,
+                      0.0,
+                      -2.0
+                    ],
+                    "status": "cancelled"
+                  },
+                  "hp": 30.0,
+                  "visible": true
+                }
+              }
+            },
+            "hero_response": {
+              "action_clock_s": 0.6333333333333336,
+              "commitment_remaining_s": 0.0,
+              "dash_cooldown_left_s": 0.15666666666666673,
+              "equipment_ids": {
+                "jacket": "CLOTH-J0",
+                "pants": "CLOTH-P0",
+                "shoes": "CLOTH-S0",
+                "weapon": "WEAPON-01"
+              },
+              "motion": {
+                "dash_left_s": 0.0,
+                "grounded": true,
+                "knockback_left_s": 0.0,
+                "position": [
+                  -1.909188985824585,
+                  -0.004843761678785086,
+                  -2.0091888904571533
+                ],
+                "queued_dash": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "velocity": [
+                  0.0,
+                  0.0,
+                  -12.0
+                ]
+              },
+              "pending_weapon_id": "",
+              "primary_commitment_s": 0.13,
+              "primary_cooldown_left_s": 0.0,
+              "stable": false,
+              "stats": {
+                "armour": 1.0,
+                "capped_stats": [],
+                "damage_reduction": 0.0,
+                "dash_cooldown": 0.34,
+                "dash_distance": 2.7,
+                "dash_duration": 0.18000000000000002,
+                "dash_invulnerability": 0.12,
+                "dash_speed": 15.0,
+                "effective_health": 100.0,
+                "followup_cone_min_dot": 0.5,
+                "followup_cooldown": 0.45,
+                "followup_damage": 42.0,
+                "followup_range": 3.1,
+                "gear_multipliers": {
+                  "armour": 1.0,
+                  "attack_range": 1.0,
+                  "attack_speed": 1.0,
+                  "damage": 1.0,
+                  "dash_distance": 1.0,
+                  "dash_speed": 1.0,
+                  "max_health": 1.0
+                },
+                "hurt_invulnerability": 0.8,
+                "max_health": 100.0,
+                "primary_cadence_estimate": 0.30000000000000004,
+                "primary_cone_min_dot": 0.05,
+                "primary_cooldown": 0.3,
+                "primary_damage": 20.0,
+                "primary_hit_reload_credit": 0.45,
+                "primary_range": 2.0,
+                "raw_gear_multipliers": {
+                  "armour": 1.0,
+                  "attack_range": 1.0,
+                  "attack_speed": 1.0,
+                  "damage": 1.0,
+                  "dash_distance": 1.0,
+                  "dash_speed": 1.0,
+                  "max_health": 1.0
+                },
+                "shell_capacity": 2,
+                "shell_reload": 1.15,
+                "total_multipliers": {
+                  "armour": 1.0,
+                  "attack_range": 1.0,
+                  "attack_speed": 1.0,
+                  "damage": 1.0,
+                  "dash_distance": 1.0,
+                  "dash_speed": 1.0,
+                  "max_health": 1.0
+                },
+                "weapon_id": "WEAPON-01",
+                "weapon_name": "Balanced Edge"
+              }
+            },
+            "hp": 100.0,
+            "input": {
+              "anchor_normalized": [
+                0.5,
+                0.5
+              ],
+              "last_observation": {},
+              "schema_version": 1,
+              "sequence": 0
+            },
+            "safe_rect": {
+              "native_type": "Rect2",
+              "position": [
+                0.040740739554166794,
+                0.1726495772600174
+              ],
+              "size": [
+                0.9185185432434082,
+                0.7196581363677979
+              ]
+            },
+            "shells": 2
+          },
+          "label": "first passively retained native exchange cancellation; no retry/search"
+        },
+        "complete": false,
+        "success": false,
+        "kind": "a2-o1-original-challenge-writer-1"
+      },
+      "native_report_sha256": "833e606efdb1febbbfe0210cbd2d4a6d14d05d92a7a3ac7024dd055790dc43e8"
+    }
+  ],
+  "unique_CAS_blobs": 139,
+  "original_paths": 479,
+  "source_aliases": 1344,
+  "scope": "Originalv2 HOST2/canonical1 nativecancellation then emittingProbe free/script error and missingreport; v3 HOST2/canonical2 actual40/1 incomplete firsttracking_lock_unproved westcycle1 with realprecleanup/finalreports and successful normalworldcleanup. Both entranceonly, no CP/finalproducer success. Original88/v3source104 preserved, no engine/routechange/candidatepromotion/acceptance."
+}

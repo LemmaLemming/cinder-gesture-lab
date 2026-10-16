@@ -1,0 +1,26 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ERROR: FAIL A2-O1 loading side: first passively retained native exchange cancellation; no retry/search
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/act2_o1_registration_smoke.gd:315)
+       [1] _expect (res://.cinder/a2-o1-difficulty-20261016/producer-verification-prepare/a2_o1_original_challenge_writer.gd:232)
+       [2] _producer_alive (res://.cinder/a2-o1-difficulty-20261016/producer-verification-prepare/a2_o1_original_challenge_writer.gd:107)
+       [3] _producer_step (res://.cinder/a2-o1-difficulty-20261016/producer-verification-prepare/a2_o1_original_challenge_writer.gd:121)
+       [4] _physics_process (res://tests/act2_o1_registration_smoke.gd:26)
+ERROR: Object is locked and can't be freed.
+   at: callp (core/object/object.cpp:787)
+   GDScript backtrace (most recent call first):
+       [0] _finish (res://.cinder/a2-o1-difficulty-20261016/producer-verification-prepare/a2_o1_original_challenge_writer.gd:245)
+       [1] _run (res://.cinder/a2-o1-difficulty-20261016/producer-verification-prepare/a2_o1_original_challenge_writer.gd:67)
+       [2] _producer_dash (res://.cinder/a2-o1-difficulty-20261016/producer-verification-prepare/a2_o1_original_challenge_writer.gd:134)
+       [3] _producer_step (res://.cinder/a2-o1-difficulty-20261016/producer-verification-prepare/a2_o1_original_challenge_writer.gd:121)
+       [4] _physics_process (res://tests/act2_o1_registration_smoke.gd:26)
+SCRIPT ERROR: Attempted to free a locked object (calling or emitting).
+   at: _finish (res://.cinder/a2-o1-difficulty-20261016/producer-verification-prepare/a2_o1_original_challenge_writer.gd:245)
+   GDScript backtrace (most recent call first):
+       [0] _finish (res://.cinder/a2-o1-difficulty-20261016/producer-verification-prepare/a2_o1_original_challenge_writer.gd:245)
+       [1] _run (res://.cinder/a2-o1-difficulty-20261016/producer-verification-prepare/a2_o1_original_challenge_writer.gd:67)
+       [2] _producer_dash (res://.cinder/a2-o1-difficulty-20261016/producer-verification-prepare/a2_o1_original_challenge_writer.gd:134)
+       [3] _producer_step (res://.cinder/a2-o1-difficulty-20261016/producer-verification-prepare/a2_o1_original_challenge_writer.gd:121)
+       [4] _physics_process (res://tests/act2_o1_registration_smoke.gd:26)

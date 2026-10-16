@@ -1,5 +1,9 @@
 # Cinder shared progress
 
+## Current coordination checkpoint —16 October2026
+
+[The checkpoint](INTEGRATION_CHECKPOINT_2026_10_16.md) records Shared74’s clean59/51 repair and local113/30 performance evidence, with original failures retained. Act1’s real60/1 stopping request is resolved and ACKed: only a positive source-backed per-exercise O1 retention proposal follows, without a retry or new credit. Act3 reports3047/0 comparison and815/0 defeated-helper persistence; brief portrait/handoff and Root review remain. Root’s A2O1 original-writer retry40/1 retains its actual tracking_lock_unproved refusal and proves corrected TEST cleanup; no pre-final/final unit or candidate promotion. All Root jobs closed. Original24 levels/difficulty14/24 remain; ten policies and measured-cost engineering work remain. Agent02 inactive/untouched; Root first help contact. No public upload/mobile/export/release.
+
 ## Measured runtime-cost record —16 October2026
 
 [Shared73 measurements](RUNTIME_COST_SHARED73.md) now retain the current authored113/0 and Crossed30/0 clean jobs, plus the original failed2/2 host-label run. Authored automatic p50 is43.860ms; Crossed’s quiet eight-physics/one-process window takes5.060956s wall for0.133333s native. Separate binding probes retain exact native state and callbacks, with existing encounter/optical refusals explicit. These are material costs, not FPS or causal speedup evidence. Both engineering requests remain OPEN; one source-only two-field projection proposal is inert/unexecuted. No production change or new runtime API accompanies this evidence checkpoint; current runtime remains Shared74. Original24 levels/difficulty14/24 and worker scopes remain.

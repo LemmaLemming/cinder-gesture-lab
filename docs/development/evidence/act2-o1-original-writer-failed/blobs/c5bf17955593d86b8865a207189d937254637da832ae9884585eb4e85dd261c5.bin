@@ -1,0 +1,15 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ERROR: FAIL A2-O1 loading side: first passively retained native exchange cancellation; no retry/search
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/act2_o1_registration_smoke.gd:315)
+       [1] _expect (res://.cinder/a2-o1-difficulty-20261016/producer-verification-v3/a2_o1_original_challenge_writer.gd:232)
+       [2] _producer_alive (res://.cinder/a2-o1-difficulty-20261016/producer-verification-v3/a2_o1_original_challenge_writer.gd:107)
+       [3] _producer_step (res://.cinder/a2-o1-difficulty-20261016/producer-verification-v3/a2_o1_original_challenge_writer.gd:121)
+       [4] _physics_process (res://tests/act2_o1_registration_smoke.gd:26)
+CINDER_A2_O1_ORIGINAL_WRITER_PRECLEANUP_REPORT=/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-o1-difficulty-20261016/producer-verification-v3/run-native-20261016T073543.517796Z-6f686964/native-precleanup-report.json sha256=a584a596fb6fcbab0ff8e6217c950845bcb5cf56d0ecf7dbf123ba0607a88e53
+CINDER_A2_O1_ORIGINAL_WRITER_REPORT=/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-o1-difficulty-20261016/producer-verification-v3/run-native-20261016T073543.517796Z-6f686964/native-report.json sha256=833e606efdb1febbbfe0210cbd2d4a6d14d05d92a7a3ac7024dd055790dc43e8
+A2-O1 ORIGINAL WRITER: 40 checks, 1 failures; complete=false
+A2-O1 verification failure: Actual native writer incomplete/failed/refused
+A2-O1 verification CLOSED code=2

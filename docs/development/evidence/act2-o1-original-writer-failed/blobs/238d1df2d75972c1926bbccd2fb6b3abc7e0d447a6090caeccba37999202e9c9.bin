@@ -1,0 +1,11 @@
+# Original O1 writer v2 — source review and observer boundary
+
+Original241-line `4ea88111` and its input spec remain unchanged. This additive260-line successor is `8de0e2251ad2f3623e4eeea064eb2c1d4d1c9df4609ae3186c885f2fa0852599`; it is inert and unexecuted.
+
+The concrete original issue is observer lifetime: native normal disposal can call Exchange.cleanup → cancel_all("exchange_removed") → state_changed while the TEST observer remains connected. A held final warning can then be recorded as `first_native_refusal` after successful sampling. V2 binds/validates the actual unchanged Exchange, rechecks all retained live refusals at the final paused sampling boundary, disconnects only the TEST observer explicitly, records the completed/incomplete boundary, then performs unchanged native disposal and its assertions. It preserves every earlier refusal and does not filter cancellation reasons or alter any native guard.
+
+Only `_run` and `_finish` change, plus the small `_close_producer_sampling` helper. Route/dash/readiness/refusal predicates/checkpoint wait/final wait/Store capture/diagnostic encoding are byte-identical. All40 original canonical and31 genuine UID pins still match. The v2 input spec changes only the selected private execution source and observation-boundary contract. No host wrapper or engine was prepared/run here.
+
+Construction, supported unique `user://` saves, exact original old12/Scout2/Exchange1 tuples, actual protected A2-L2 Story plus disclosed TEST prefix, public Optional entry, genuine stable contact/durable CP gate, four ordinary dashes and original raw Store custody are coherent from source. The route may retain zero collected journals; this does not prove nonempty collection/completion or an earned full loop. Real first refusal remains incomplete. Original user Store files intentionally remain as custody; native nodes/groups/FPS/audio are normally cleaned. A secondary empty-ref cleanup failure before any world exists remains diagnostic-only and was not widened in this minimal correction.
+
+Root alone reviews/selects/copies/freezes and runs the one original producer before any O1 runtime/reader promotion. No actual native pass, reached unit, route feasibility, gameplay decision or test count is inferred. No production/worker/Agent02/Git/engine action occurred.

@@ -1,0 +1,30 @@
+--- original-v2-8de0
++++ private-cleanup-safe-v3
+@@ -234,10 +234,27 @@
+ 	if not ok and producer_first_failure.is_empty(): producer_first_failure = {"label":note,"diagnostics":_producer_diagnostics()}
+ 	return result
+ 
++func _write_precleanup_report() -> void:
++	if not producer_report.is_absolute_path(): return
++	var path: String = producer_report.get_base_dir()+"/native-precleanup-report.json"
++	var file: FileAccess = null
++	if not FileAccess.file_exists(path): file = FileAccess.open(path,FileAccess.WRITE)
++	if not _expect(file != null,"fresh actual precleanup partial report opens before destructive disposal"): return
++	var packet: Dictionary = {"kind":"a2-o1-original-challenge-writer-precleanup-1","checks":_checks,"failures":_failures,"complete":false,"success":false,"sampling_complete":producer_complete,"cleanup_complete":false,"rows":producer_rows,"first_failure":producer_first_failure,"first_native_refusal":producer_first_refusal,"sampling_boundary":producer_sampling_boundary,"units":producer_units,"actual_actions":producer_actions,"native_events":producer_events,"native_store_path":_test_root,"at_finish_diagnostics":_producer_diagnostics(),"scope":"Actual current precleanup partial only. Normal cleanup has not completed; no native pass inferred. Original refusal/events/rows and reached units retained before freeing callbacks; user Store remains original custody."}
++	file.store_string(JSON.stringify(_closed_observation(packet),"",true,true)+"\n"); file.close()
++	print("CINDER_A2_O1_ORIGINAL_WRITER_PRECLEANUP_REPORT=",path," sha256=",FileAccess.get_sha256(path))
++
+ func _finish() -> void:
+ 	if _finished: return
+ 	_finished = true; _watch = false
+ 	if not producer_observer_closed: _close_producer_sampling(false)
++	# Retain actual failure/refusal while native recipients still exist.
++	_write_precleanup_report()
++	# _finish can resume synchronously inside NativeTickProbe.tick_finished.
++	# Pause/disable that probe and yield out of its emitting callback first.
++	paused = true
++	if is_instance_valid(_probe): _probe.set_physics_process(false)
++	await process_frame
+ 	if is_instance_valid(_preview): _preview.free(); _preview = null
+ 	var refs: Array = []
+ 	if is_instance_valid(_shell): refs.append_array(_refs(_shell)); _shell.free()

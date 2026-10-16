@@ -1,0 +1,207 @@
+{
+  "schema_version": 1,
+  "status": "FOUR_CLOSED_FAILED_PRODUCER_PHASES_VERIFIED_NO_VALID_CP_FINAL_PRODUCER",
+  "phases": [
+    {
+      "phase": "producer-verification-prepare/run-seal-20261016T073122.551819Z-bcf70f10",
+      "index_sha256": "9e43a66573629687d789aa956f0d6a85f0dfa7e06bf3ea47774a591b60989585",
+      "result_sha256": "d7679e055a8f0374acead01680db98ba113b9ed0f2c7c3d83aa437e9a425f202",
+      "closed": true,
+      "passed": true,
+      "host_return": 0,
+      "canonical_return": null,
+      "diagnostics": [],
+      "source_count": 88,
+      "native_report_present": false
+    },
+    {
+      "phase": "producer-verification-prepare/run-native-20261016T073134.044582Z-f1453ca2",
+      "index_sha256": "5b7735ea22a5f58b3fb02ba4a7ef69d1dbb2bd4ec165023c596fc1c9a7bc34a7",
+      "result_sha256": "bffdfa155f147aab66855c672cfa01ccad71a81afd4810bee0eacb788577aa15",
+      "closed": true,
+      "passed": false,
+      "host_return": 2,
+      "canonical_return": 1,
+      "diagnostics": [
+        "ERROR: FAIL A2-O1 loading side: first passively retained native exchange cancellation; no retry/search",
+        "ERROR: Object is locked and can't be freed.",
+        "SCRIPT ERROR: Attempted to free a locked object (calling or emitting)."
+      ],
+      "source_count": 88,
+      "native_report_present": false
+    },
+    {
+      "phase": "producer-verification-v3/run-seal-20261016T073531.095352Z-0e3da232",
+      "index_sha256": "5a46c6b81f19608808d323128f96001d01d01344fc636a13740d14d94c8a3d6e",
+      "result_sha256": "d7679e055a8f0374acead01680db98ba113b9ed0f2c7c3d83aa437e9a425f202",
+      "closed": true,
+      "passed": true,
+      "host_return": 0,
+      "canonical_return": null,
+      "diagnostics": [],
+      "source_count": 104,
+      "native_report_present": false
+    },
+    {
+      "phase": "producer-verification-v3/run-native-20261016T073543.517796Z-6f686964",
+      "index_sha256": "a02e0fb840a916188d4e2641bdc169fdfd27927091b0b18ce827c9b97c1b27e2",
+      "result_sha256": "aa70e064e8769d4356b83cac9f2fa367106002c8ad32549ca39eac5ab73d934d",
+      "closed": true,
+      "passed": false,
+      "host_return": 2,
+      "canonical_return": 2,
+      "diagnostics": [
+        "ERROR: FAIL A2-O1 loading side: first passively retained native exchange cancellation; no retry/search"
+      ],
+      "source_count": 104,
+      "native_report_present": true
+    }
+  ],
+  "v3_precleanup_sha256": "a584a596fb6fcbab0ff8e6217c950845bcb5cf56d0ecf7dbf123ba0607a88e53",
+  "v3_final_sha256": "833e606efdb1febbbfe0210cbd2d4a6d14d05d92a7a3ac7024dd055790dc43e8",
+  "v3_controls": {
+    "checks": 40,
+    "failures": 1,
+    "complete": false,
+    "success": false,
+    "first_failure_row": {
+      "check": 35,
+      "label": "first passively retained native exchange cancellation; no retry/search",
+      "note": "first passively retained native exchange cancellation; no retry/search",
+      "ok": false
+    }
+  },
+  "first_native_refusal": {
+    "actor_id": "west",
+    "state": {
+      "actor_id": "west",
+      "api_revision": "act2-ray-exchange-1",
+      "armed": false,
+      "cycle": 1,
+      "direction": [
+        -0.9887126088142395,
+        0.0,
+        0.14982452988624573
+      ],
+      "exchange": {
+        "active_from_s": 1.7333333333333334,
+        "active_until_s": 1.8933333333333333,
+        "adapter": {
+          "active_s": 0.16,
+          "attack_interval_s": 1.6,
+          "kind": "tracking",
+          "lock_s": 1.1,
+          "locked": false,
+          "radius": 0.31,
+          "reach": 3.799999952316284,
+          "recovery_s": 1.6
+        },
+        "cooldown_until_s": 3.3333333333333335,
+        "geometry": {
+          "from": [
+            -0.6499999761581421,
+            0.0,
+            -2.0
+          ],
+          "kind": "lane",
+          "radius": 0.31,
+          "to": [
+            -4.407107830047607,
+            0.0,
+            -1.4306668043136597
+          ]
+        },
+        "id": "threat-1",
+        "lock_from_s": 0.6333333333333333,
+        "opening_position": [
+          -0.6499999761581421,
+          0.0,
+          -2.0
+        ],
+        "profile_id": "challenge",
+        "recovery_until_s": 3.493333333333333,
+        "source_position": [
+          -0.6499999761581421,
+          0.0,
+          -2.0
+        ],
+        "start_s": 0.18333333333333332,
+        "world_revision": 1
+      },
+      "geometry": {
+        "from": [
+          -0.6499999761581421,
+          0.0,
+          -2.0
+        ],
+        "kind": "lane",
+        "radius": 0.31,
+        "to": [
+          -4.407107830047607,
+          0.0,
+          -1.4306668043136597
+        ]
+      },
+      "hit_consumed": false,
+      "last_cancel_reason": "tracking_lock_unproved",
+      "phase": "clear",
+      "presentation_witness": {},
+      "proof": {},
+      "proof_available": false,
+      "remaining_s": 0.0,
+      "reservation_id": "",
+      "resolved_role": {
+        "active_s": 0.16,
+        "attack_interval_s": 1.6,
+        "damage": 10.0,
+        "difficulty_profile": "challenge",
+        "difficulty_schema": 1,
+        "lock_s": 1.1,
+        "max_hp": 30.0,
+        "move_speed": 0.0,
+        "raw_damage": 10.0,
+        "raw_role": {
+          "active_s": 0.16,
+          "attack_interval_s": 1.6,
+          "lock_s": 1.1,
+          "max_hp": 30.0,
+          "move_speed": 0.0,
+          "raw_damage": 10.0,
+          "recovery_s": 1.6,
+          "windup_s": 1.55
+        },
+        "recovery_s": 1.6,
+        "tuning_status": "provisional_unplaytested",
+        "windup_s": 1.55
+      },
+      "source_position": [
+        -0.6499999761581421,
+        0.0,
+        -2.0
+      ],
+      "status": "cancelled"
+    }
+  },
+  "normal_cleanup": "V3 actual finalrows36-40 pass: observer boundary, precleanup reporter, normalworld/source/cue/groups disposal, Registryunchanged and finalwriter. No lockedobject/script errors. NativeuserStore intentionally retained; no directorycleanupclaim. V2 missingfinal genuinely absent, never reconstructed.",
+  "reached_artifacts": "Each nativephase has entranceonly fouropaqueExact +nonempty148940bytevar +rawprimary/backup/preferences; exactindexhashes and rawformat2checksum/fullAttempts and entrancewhole=checkpoint joins verified. Before-final/held-final-warning absent; not a valid requested threeunit originalproducer.",
+  "proven": "Actual west cycle1 threat-1 unarmed tracking warning cancels at firstlock under tracking_lock_unproved, lock_from_s0.6333333333333333; actual failurediagnosticclock0.6333333333333336. HeroHP100, finalidlecycle0, collectedIDs[]; second declared dash accepted but no second completion recorded before cancellation.",
+  "known_context": {
+    "Hero_response_at_failure": {
+      "stable": false,
+      "dash_cooldown_left_s": 0.15666666666666673,
+      "velocity": [
+        0.0,
+        0.0,
+        -12.0
+      ]
+    },
+    "later_admission_error": {
+      "west": {
+        "reason": "Source attack cooldown is still occupied"
+      }
+    }
+  },
+  "unknown": "tracking_lock_unproved is a shared aggregate reason: nativeSchedulercommit_tracking can reject geometry/request-response state/proof. Original report does not retain exact inner return reason at failed commit. Later Sourceattackcooldownoccupied is downstream state, not established trigger. Current callback Hero stablefalse is context, not proof that it was the unique failing input. No HUD/clipping/route/balance/productionbug cause asserted.",
+  "next_scope_recommendation": "No third run/route or candidate change now. Preserve refusal and keep originalreader/layout unimplemented. If Root chooses separate diagnostic scope, passively retain the exact rejected commit_tracking return reason plus samecall native response/geometry/lease/proof context before cancellation, without bypassing guard/forcing lease/changing route; source-only proposal here, no implementation or engine. Accepted O1content remains unchanged; this writer cannot supply required CP/finallegacy custody yet.",
+  "source_scope": "Original88 and v3 104 allavailablephase maps/CAS valid, originalUIDabsences retained. No source mutation or engine/Git by reviewer."
+}

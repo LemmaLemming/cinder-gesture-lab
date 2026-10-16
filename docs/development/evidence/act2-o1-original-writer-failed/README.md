@@ -1,0 +1,7 @@
+# A2-O1 failed original-writer evidence
+
+[index.json](index.json) records four CLOSED original phases: v2seal and native refusal followed by locked-probe cleanup/script error with genuinely absent finalreport; v3seal and native40/1 incomplete with actual precleanup/final refusal reports and normal worldcleanup. No failed/missing result is reconstructed or relabeled pass.
+
+[original-paths.json](original-paths.json) maps original byte/hash/size/mode into deduplicated CAS; [source-observation-aliases.json](source-observation-aliases.json) joins all88/104 named source observations and genuine UID absences. Both reached entranceonly fourExact/nonempty148940bytevar/rawprimary/backup/preferences remain original. Before-final/held-final units are absent; requested threeunit oldChallenge producer is unavailable. NativeuserStore intentionally retained, no directorycleanup claim.
+
+[ORIGINAL_SOURCE_REFERENCE.json](ORIGINAL_SOURCE_REFERENCE.json) pins unchanged originalhost, already in sourceCAS; no ownerbank duplication/runtime/route/candidate change. Proven refusal is westcycle1/threat-1 tracking_lock_unproved. Exact inner commit reason is unretained; Hero unstable/second dash and later cooldown are context, not unique cause. V3 fixes only callback-safe evidence/cleanup. No thirdrun/search/guardbypass/currentreader/newgameplay/GUI/route/allkit/acceptance credit. Future passive reason capture needs separate Root scope.

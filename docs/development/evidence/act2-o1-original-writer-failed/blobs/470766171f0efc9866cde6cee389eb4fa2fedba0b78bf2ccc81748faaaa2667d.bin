@@ -1,0 +1,209 @@
+{
+  "kind": "a2-o1-original-writer-bounded-source-review-v2-1",
+  "status": "V2_SOURCE_READY_FOR_ROOT_REVIEW_NOT_NATIVE_RESULT",
+  "reviewed_original_sha256": "4ea8811162217e31df3414c051029afe3fc4550f898e98de16c7bf48d8ba7dba",
+  "selected_successor_sha256": "8de0e2251ad2f3623e4eeea064eb2c1d4d1c9df4609ae3186c885f2fa0852599",
+  "inputs": [
+    {
+      "path": ".cinder/a2-o1-difficulty-proposal-20261016/PROPOSAL.md",
+      "sha256": "db6f1395cabbd8f59d1a6777e058ee3bfafc3e63a7900a946ac79d10b41577a9",
+      "bytes": 5555
+    },
+    {
+      "path": ".cinder/a2-o1-difficulty-20261016/producer-prepare/a2_o1_original_challenge_writer.gd.txt",
+      "sha256": "4ea8811162217e31df3414c051029afe3fc4550f898e98de16c7bf48d8ba7dba",
+      "bytes": 20274
+    },
+    {
+      "path": ".cinder/a2-o1-difficulty-20261016/producer-prepare/INPUT_SPEC.json",
+      "sha256": "335ff7b9e230db99b60654bb900fb002b358d4f656e821dffed074327d3a46d4",
+      "bytes": 16909
+    },
+    {
+      "path": "tests/act2_o1_registration_smoke.gd",
+      "sha256": "0717c03fb9bd18703feec226402cc753a864aedb535d7ae1f38951379a4cca85",
+      "bytes": 23991
+    },
+    {
+      "path": "scripts/acts/act2/cylinder_perimeter.gd",
+      "sha256": "2c9768f851dc14e1bc433251c13a29154db6213085dda644742fbc366e243fc7",
+      "bytes": 39554
+    },
+    {
+      "path": "scripts/acts/act2/cylinder_perimeter_kit.gd",
+      "sha256": "0676ebcb302b0e037c5c9f426c518d87b714edf5d536868259e7a23e7bd8478d",
+      "bytes": 9926
+    },
+    {
+      "path": "scripts/acts/act2/ray_scout_exchange.gd",
+      "sha256": "6d8e11a29254cad18947655d8e7470d7892b18e856e534859ae6211a897ae7e2",
+      "bytes": 63062
+    },
+    {
+      "path": "scripts/acts/act2/ray_scout_actor.gd",
+      "sha256": "dee72b851cb20b234a05552d07eae9cebd7490ee0fad12b3970da51eae132bb7",
+      "bytes": 12646
+    },
+    {
+      "path": "scripts/campaign/snapshot_codec.gd",
+      "sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+      "bytes": 3350
+    },
+    {
+      "path": "scripts/campaign/save_store.gd",
+      "sha256": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0",
+      "bytes": 7310
+    },
+    {
+      "path": "scripts/campaign/shell.gd",
+      "sha256": "f8df3b798544b79d66985f5e468f13ade5485bccc6050b54c9d9d242b3211a0f",
+      "bytes": 70657
+    },
+    {
+      "path": "scripts/campaign/level.gd",
+      "sha256": "27fdab6686d8ba4b8282c48af84c0c3f63d8c8fa7620ae462a4642ec225100c1",
+      "bytes": 23949
+    }
+  ],
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "fixture-reporting",
+      "original_lines": [
+        85,
+        220,
+        223,
+        237
+      ],
+      "source_chain": [
+        "Original _producer_exchange stores first cancellation without a sampling/cleanup boundary; it remains connected through _finish.",
+        "Native Cylinder._on_exit_level\u2192Exchange.cleanup\u2192cancel_all(\"exchange_removed\")\u2192cancel\u2192_present\u2192state_changed can notify the TEST observer during normal disposal of the intentionally held final warning.",
+        "Original can record a cleanup-labelled first_native_refusal after successful sampling and still report success. No native execution or exact observed cancellation is asserted by this source audit."
+      ],
+      "minimal_fix": "Selected v2 binds actual native Exchange, checks any remaining live refusal at final paused boundary, explicitly disconnects only this TEST observer, records that boundary and then runs unchanged native cleanup. Earlier callback data and refusal predicates remain byte-identical; no live reason is ignored."
+    }
+  ],
+  "checked_boundaries": [
+    {
+      "subject": "genuine construction",
+      "result": "SOURCE_COHERENT_UNEXECUTED",
+      "detail": "Inherited accepted Root helper constructs actual pristine A2-L2 Story/Player through current Main; only completed-main PREFIX is arranged. Public Continue/preference/Optional calls use actual canonical Registry and native Store. No O1 position/HP/clock/progress/collection/checkpoint assignment; no actor activation/guard override."
+    },
+    {
+      "subject": "old format and reader",
+      "result": "SOURCE_COHERENT_UNEXECUTED",
+      "detail": "No separate original O1 Codec exists: canonical Cylinder local/progress validation plus shared SnapshotCodec/Actor2/Exchange1/paired Scheduler own old12. Exact key/profile/world/actor schema checks and genuine whole captures remain. Native old host/kit/Scout/Exchange pins unchanged."
+    },
+    {
+      "subject": "genuine checkpoint/final held unit",
+      "result": "SOURCE_COHERENT_UNEXECUTED",
+      "detail": "Actual stable CHECKPOINT_REGION contact suffices independent of journal count. Final admission requires local checkpoint flags plus actual side attempt durable checkpoint ID. The fourth declared dash approaches final source only after observing genuine committed CP; held warning is captured by public deferred Pause retaining the same earlier CP. If native movement/proof/view refuses, retain incomplete."
+    },
+    {
+      "subject": "journal history scope",
+      "result": "LIMIT_NOT_NEW_GATE",
+      "detail": "The four nominal baseline endpoints miss west/east journal contact rectangles; before-final and held units may have zero collected journals. This is explicitly valid empty-journal-history old transport, not nonempty journal collection/completion/ended-Scheduler evidence. Do not infer it or add a full-loop requirement; reuse accepted unchanged contact/completion evidence and later focused new-goal checks at their scopes."
+    },
+    {
+      "subject": "native Store custody",
+      "result": "SOURCE_COHERENT_UNEXECUTED",
+      "detail": "Supported unique user:// original Store. Exact whole/checkpoint/Story/Attempts typed strings and original var_to_bytes plus raw primary/backup/preferences/settings bytes/hash/path/size/presence retained. Original native files deliberately remain; no historical repair/transplant/schema conversion. Primary format2 payload/checksum joined to actual model. Original raw backups remain genuine prior generations, not rewritten to match current checkpoint."
+    },
+    {
+      "subject": "normal disposal",
+      "result": "SOURCE_COHERENT_WITH_V2_OBSERVER_FIX",
+      "detail": "Actual Shell/free/descendant weakrefs/group checks and FPS/audio/owned observer cleanup retained. User Store retention is intentional custody, not an assertion of filesystem deletion. An early pre-Shell refusal can produce a secondary empty-ref cleanup failure in original/v2; it preserves actual first failure and does not grant a pass. No extra cleanup qualification change made in this minimal successor."
+    },
+    {
+      "subject": "finite route and stop",
+      "result": "SOURCE_COHERENT_UNEXECUTED",
+      "detail": "Exact same four public Player.request_dash directions; same600-tick bounds/120-second wall watchdog/native stable readiness/full completion/first refusal checks. No direction/phase search, retries, quiet-source suppression, kill requirement, timing/pose/resources/proof change or full route."
+    }
+  ],
+  "v2_method_scope": {
+    "kind": "a2-o1-writer-v2-method-byte-comparison-1",
+    "original_sha256": "4ea8811162217e31df3414c051029afe3fc4550f898e98de16c7bf48d8ba7dba",
+    "successor_sha256": "8de0e2251ad2f3623e4eeea064eb2c1d4d1c9df4609ae3186c885f2fa0852599",
+    "changed_existing_methods": [
+      "_run",
+      "_finish"
+    ],
+    "added_methods": [
+      "_close_producer_sampling"
+    ],
+    "unchanged_methods": [
+      {
+        "name": "_producer_action",
+        "sha256": "9ce2cad238ff1714bb99c6d5e9bcba45351230a5b03c16a2f901eccee2335d1e"
+      },
+      {
+        "name": "_producer_exchange",
+        "sha256": "34feb415108cb7f099037cbf14994e7574b01096184dca180b093519cd754e86"
+      },
+      {
+        "name": "_producer_alive",
+        "sha256": "c55292c2c23e09e921839c04e9cfa1247616c32c2dd4baf6c4817879bf1cf543"
+      },
+      {
+        "name": "_producer_step",
+        "sha256": "19a588fa93124d908906eb964b1f99f809fd33da07c0db7d469a6d20699d984a"
+      },
+      {
+        "name": "_producer_dash",
+        "sha256": "b54d1a2e91cab0a993aabe05b850e4512bb232e280dc0d0fdc6a7293bdfb8329"
+      },
+      {
+        "name": "_wait_checkpoint",
+        "sha256": "ed2b39a2fcde643a4ba667db4efb5c3bd88ec23c1a5a4a99afebc85f3b868bfe"
+      },
+      {
+        "name": "_wait_final_warning",
+        "sha256": "0d922f37fbf8c4a744ecf31e81c22239652f9b7c8e354f03f910223efea4a660"
+      },
+      {
+        "name": "_pause_producer",
+        "sha256": "ffd4ddbcf9b7cbd296946de849530c79ccb644880801a827775219e8363c25c4"
+      },
+      {
+        "name": "_retain_unit",
+        "sha256": "4bd50d2f770e8c42919571c4bd1016d2120048368a3eea0f12ed0286fedcdac9"
+      },
+      {
+        "name": "_write_original",
+        "sha256": "ac0e21d79b8e3cf12b7a75d91b59b60502db01db8464c164440642aedcbb05d2"
+      },
+      {
+        "name": "_producer_diagnostics",
+        "sha256": "257977f90411e457aecf21c597e77d6637ae9f7664cb0d2683e3492a470bd22b"
+      },
+      {
+        "name": "_closed_observation",
+        "sha256": "677c0abbf83eaed8f2c068c67378d723afe7f9d48650c61f41e2d90d1aa747ce"
+      },
+      {
+        "name": "_producer_watchdog",
+        "sha256": "8725911238488964f487672888d8bd43bbf4e2d972de1e6583dc8903d63876ad"
+      },
+      {
+        "name": "_expect",
+        "sha256": "0aff2d57303b8ab7ae35f0dd0933ab3f2c4f31fd7acbb7f001cbbdf1b36bfd14"
+      }
+    ],
+    "scope": "Source byte comparison only. Native host/Codec/guards/route/dash/readiness/refusal predicates/Store captures unchanged; only producer observation setup/boundary/closure/report changes."
+  },
+  "current_original_spec_cohort": {
+    "canonical_inputs": 40,
+    "existing_UIDs": 31,
+    "all_actual_bytes_still_match": true
+  },
+  "pending": "Root reads full successor/delta, selects it, freezes one original-writer capsule and runs before ANY O1 reader/runtime/layout promotion. One actual result determines reached artifact scope; no native result is inferred here.",
+  "actions_not_taken": [
+    "Engine/import/parser",
+    "Git",
+    "Production/public/live/worker source edit",
+    "Agent02 checkout access or message",
+    "Allocation",
+    "Guard/route/timing/state repair",
+    "Host wrapper preparation requested later"
+  ]
+}

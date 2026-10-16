@@ -1,0 +1,72 @@
+--- original4ea881/a2_o1_original_challenge_writer.gd.txt
++++ v2/a2_o1_original_challenge_writer.v2.gd.txt
+@@ -21,6 +21,9 @@
+ var protected_story: Dictionary = {}
+ var producer_complete: bool = false
+ var producer_started_ms: int = 0
++var producer_exchange_observer: Node3D
++var producer_observer_closed: bool = false
++var producer_sampling_boundary: Dictionary = {}
+ 
+ func _run() -> void:
+ 	producer_started_ms = Time.get_ticks_msec()
+@@ -52,7 +55,9 @@
+ 	await _settle()
+ 	if not _expect(_live_o1() and paused and _shell.attempts.active_kind() == "optional" and _same(_shell.attempts.story_snapshot(),protected_story),"public Optional entry creates actual old Challenge world and protects whole Story"): await _finish(); return
+ 	_shell.player.world_action_executed.connect(_producer_action)
+-	_shell.active_level.get("_exchange").state_changed.connect(_producer_exchange)
++	producer_exchange_observer = _shell.active_level.get("_exchange") as Node3D
++	if not _expect(is_instance_valid(producer_exchange_observer) and producer_exchange_observer.get_script() == Ray,"actual unchanged native Exchange owns the producer observer"): await _finish(); return
++	if not _expect(producer_exchange_observer.connect("state_changed",_producer_exchange) == OK,"actual producer Exchange observer connects before sampling"): await _finish(); return
+ 	_shell.active_level.checkpoint_requested.connect(func(level_id: String,id: String,kind: String) -> void: producer_events.append({"kind":"checkpoint_requested","level_id":level_id,"id":id,"checkpoint_kind":kind}))
+ 	if not _retain_unit("entrance"): await _finish(); return
+ 	var entrance: Dictionary = _shell.capture_campaign_snapshot()
+@@ -71,6 +76,9 @@
+ 	var held: Dictionary = _shell.capture_campaign_snapshot()
+ 	var record: Dictionary = held.level.local.exchange.records.final
+ 	if not _expect(record.status == "running" and record.phase == "warning" and record.cycle > 0 and held.level.progress.checkpoint_id == O1.CHECKPOINT_ID and _same(_shell.attempts.state().side_attempt.checkpoint,cp),"held final warning whole Optional retains genuine earlier latest checkpoint and untouched protected Story"): await _finish(); return
++	# Check every captured live refusal through this final paused boundary.
++	# Then disconnect only this TEST observer before ordinary native disposal.
++	if not _producer_alive() or not _close_producer_sampling(true): await _finish(); return
+ 	producer_complete = true
+ 	await _finish()
+ 
+@@ -84,6 +92,16 @@
+ 		producer_seen_transitions[key] = true
+ 		producer_events.append({"kind":"native_exchange_transition","actor_id":actor_id,"state":_closed_observation(state)})
+ 	if producer_first_refusal.is_empty() and not String(state.get("last_cancel_reason","")).is_empty(): producer_first_refusal = {"actor_id":actor_id,"state":_closed_observation(state)}
++
++func _close_producer_sampling(completed_sample: bool) -> bool:
++	if producer_observer_closed: return true
++	var callback := Callable(self,"_producer_exchange")
++	var connected: bool = is_instance_valid(producer_exchange_observer) and producer_exchange_observer.is_connected("state_changed",callback)
++	if connected: producer_exchange_observer.disconnect("state_changed",callback)
++	var closed: bool = not is_instance_valid(producer_exchange_observer) or not producer_exchange_observer.is_connected("state_changed",callback)
++	producer_observer_closed = closed
++	producer_sampling_boundary = {"requested_boundary":"completed sampling" if completed_sample else "incomplete sampling before normal disposal","observer_was_connected":connected,"observer_disconnected_before_disposal":closed,"pre_boundary_first_cancellation":producer_first_refusal.duplicate(true),"native_cleanup":"Unchanged Exchange/CinderLevel cleanup runs after this TEST observer boundary; no native cancellation is ignored during sampling."}
++	return _expect(closed and (connected or not completed_sample),"close only producer observer before unchanged native disposal; retain all earlier refusals")
+ 
+ func _producer_alive() -> bool:
+ 	if not producer_first_refusal.is_empty(): return _expect(false,"first passively retained native exchange cancellation; no retry/search")
+@@ -219,10 +237,11 @@
+ func _finish() -> void:
+ 	if _finished: return
+ 	_finished = true; _watch = false
++	if not producer_observer_closed: _close_producer_sampling(false)
+ 	if is_instance_valid(_preview): _preview.free(); _preview = null
+ 	var refs: Array = []
+ 	if is_instance_valid(_shell): refs.append_array(_refs(_shell)); _shell.free()
+-	_shell = null
++	_shell = null; producer_exchange_observer = null
+ 	if is_instance_valid(_probe): refs.append_array(_refs(_probe)); _probe.free()
+ 	_probe = null; paused = false
+ 	await process_frame
+@@ -234,7 +253,7 @@
+ 	var file: FileAccess = null
+ 	if producer_report.is_absolute_path() and not FileAccess.file_exists(producer_report): file = FileAccess.open(producer_report,FileAccess.WRITE)
+ 	if not _expect(file != null,"fresh actual original-writer report opens without overwrite"): producer_complete = false
+-	var packet: Dictionary = {"kind":"a2-o1-original-challenge-writer-1","checks":_checks,"failures":_failures,"complete":producer_complete,"success":producer_complete and _failures == 0,"rows":producer_rows,"first_failure":producer_first_failure,"first_native_refusal":producer_first_refusal,"units":producer_units,"actual_actions":producer_actions,"native_events":producer_events,"original_sources":{"host":OriginalHostSha,"kit":OriginalKitSha,"exchange":OriginalRaySha,"actor":OriginalActorSha},"native_store_path":_test_root,"scope":"Actual unchanged old12 Challenge Optional entrance/durable pre-final checkpoint/held final warning and raw primary/backup/preferences. TEST prefix only; genuine A2-L2 protected Story. Public Player direct dash API, no screen-input/GUI/earned-prefix/full-route/defeat-all/response/exit/art/balance credit. No historical pose/clock/HP/collection/CP repair. Original native user:// Store files and original copied bytes retained."}
++	var packet: Dictionary = {"kind":"a2-o1-original-challenge-writer-1","checks":_checks,"failures":_failures,"complete":producer_complete,"success":producer_complete and _failures == 0,"rows":producer_rows,"first_failure":producer_first_failure,"first_native_refusal":producer_first_refusal,"sampling_boundary":producer_sampling_boundary,"units":producer_units,"actual_actions":producer_actions,"native_events":producer_events,"original_sources":{"host":OriginalHostSha,"kit":OriginalKitSha,"exchange":OriginalRaySha,"actor":OriginalActorSha},"native_store_path":_test_root,"scope":"Actual unchanged old12 Challenge Optional entrance/durable pre-final checkpoint/held final warning and raw primary/backup/preferences. TEST prefix only; genuine A2-L2 protected Story. Public Player direct dash API, no screen-input/GUI/earned-prefix/full-route/defeat-all/response/exit/art/balance credit. No historical pose/clock/HP/collection/CP repair. Original native user:// Store files and original copied bytes retained."}
+ 	if file != null: file.store_string(JSON.stringify(_closed_observation(packet),"",true,true)+"\n"); file.close()
+ 	print("CINDER_A2_O1_ORIGINAL_WRITER_REPORT=",producer_report," sha256=",FileAccess.get_sha256(producer_report) if FileAccess.file_exists(producer_report) else "")
+ 	print("A2-O1 ORIGINAL WRITER: %d checks, %d failures; complete=%s" % [_checks,_failures,str(producer_complete)])

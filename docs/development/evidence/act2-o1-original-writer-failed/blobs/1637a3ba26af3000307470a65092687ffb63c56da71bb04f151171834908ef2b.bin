@@ -1,0 +1,68 @@
+"""Four CLOSED failed original-writer phases; host-only digest pack, no engine/public copy."""
+from pathlib import Path,PurePosixPath
+import json,hashlib,stat,datetime
+HERE=Path(__file__).resolve().parent
+BASE=HERE.parent
+ROOT=BASE.parents[1]
+PUBLIC='docs/development/evidence/act2-o1-original-writer-failed/'
+PHASES=['producer-verification-prepare/run-seal-20261016T073122.551819Z-bcf70f10','producer-verification-prepare/run-native-20261016T073134.044582Z-f1453ca2','producer-verification-v3/run-seal-20261016T073531.095352Z-0e3da232','producer-verification-v3/run-native-20261016T073543.517796Z-6f686964']
+EXTRAS={'producer-verification-prepare':['run.py','INPUT_SPEC.json','SOURCE_INPUTS.json','README.md','SELF_REVIEW.json','READINESS.json','a2_o1_original_challenge_writer.gd'],'producer-verification-v3':['run.py','INPUT_SPEC.json','SOURCE_INPUTS.json','README.md','SELF_REVIEW.json','READINESS.json','a2_o1_original_challenge_writer.gd'],'producer-prepare':['ARCHIVE_SEARCH.json','FREEZE.json','INPUT_SPEC.json','QUERIES.json','READINESS.json','README.md','a2_o1_original_challenge_writer.gd.txt'],'producer-prepare/v2':['FREEZE.json','INPUT_SPEC.json','METHOD_BOUNDARIES.json','OBSERVER_BOUNDARY_DIFF.patch','READINESS.json','README.md','REVIEW.json','a2_o1_original_challenge_writer.v2.gd.txt'],'producer-prepare/v3':['a2_o1_original_challenge_writer.v3.gd.txt','CLEANUP_SAFE_DIFF.patch','SOURCE_EXPLANATION.json'],'failed-producer-review':['REVIEW.json']}
+
+def need(ok,why):
+ if not ok:raise ValueError(why)
+def read(p):return json.loads(p.read_text())
+def data(p):
+ need(p.is_file() and not p.is_symlink(),'Regular original required '+str(p));return p.read_bytes()
+def sha(b):return hashlib.sha256(b).hexdigest()
+def meta(p):
+ b=data(p);return {'sha256':sha(b),'bytes':len(b),'mode_octal':format(stat.S_IMODE(p.stat().st_mode),'04o')}
+def enc(x):return (json.dumps(x,indent=2,allow_nan=False)+'\n').encode()
+def safe(n):
+ p=PurePosixPath(n);need(not p.is_absolute() and '..' not in p.parts and str(p)==n,'Safe relative path');return n
+def main():
+ selected={};aliases=[];phases=[]
+ def select(p,role):
+  n=p.relative_to(ROOT).as_posix();b=data(p);m=meta(p);m['role']=role
+  if n in selected:need(selected[n][0]==b and selected[n][1]==m,'Selection changed')
+  selected[n]=(b,m);return n
+ for name in PHASES:
+  p=BASE/name;idx=read(p/'evidence-index.json');result=read(p/'result.json');need(result['closed'] is True and idx['created_after_raw_close'] is True,'Original CLOSED required');physical={q.relative_to(p).as_posix() for q in p.rglob('*') if q.is_file()};need(physical==set(idx['files'])|{'evidence-index.json'},'Exact original phase physical/index whitelist')
+  for n,m in idx['files'].items():need(sha(data(p/safe(n)))==m['sha256'] and len(data(p/n))==m['bytes'],'Original indexed source differs')
+  members={n:select(p/n,'Original CLOSED phase artifact; historical bytes/status/path untouched') for n in sorted(physical)}
+  for n in sorted(x for x in physical if x.endswith('-retention.json') and x!='native-report-retention.json'):
+   retention=read(p/n);observation=n.replace('-retention.json','.json');observed=read(p/observation);need(set(retention)=={k for k,v in observed.items() if v is not None},'Source retention keyset')
+   for logical,digest in observed.items():
+    if digest is None:
+     aliases.append({'phase':name,'original_observation_path':members[observation],'original_retention_path':members[n],'original_source_path':logical,'present':False});continue
+    m=retention[logical];blob=members[safe(m['blob'])];need(selected[blob][1]['sha256']==digest==m['sha256'] and selected[blob][1]['bytes']==m['bytes'],'Original source/CAS join');aliases.append({'phase':name,'original_observation_path':members[observation],'original_retention_path':members[n],'original_source_path':logical,'sha256':digest,'bytes':m['bytes'],'original_blob_path':blob})
+  row={'phase':name,'index_sha256':sha(data(p/'evidence-index.json')),'original_result_path':members['result.json'],'closed':True,'passed':result['passed'],'runner_return_code':result['runner_return_code'],'canonical_return_code':result['canonical_validation_return_code'],'diagnostics':result['raw_diagnostic_lines'],'original_file_count_including_index':len(physical)}
+  if (p/'native-report.json').exists():
+   report=read(p/'native-report.json');row['actual_native_controls']={k:report[k] for k in ['checks','failures','first_failure','complete','success','kind']};row['native_report_sha256']=sha(data(p/'native-report.json'))
+  phases.append(row)
+ for folder,names in EXTRAS.items():
+  for n in names:select(BASE/folder/n,'Named preparation/promotion/independent/visual/native review snapshot; original status retained')
+ select(Path(__file__),'Exact private host-only packaging helper')
+ output=HERE/('pack-'+datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S.%fZ'));output.mkdir(exist_ok=False);pack=output/'pack';files={};originals={};blobs=set()
+ def put(n,b):
+  need(safe(n).startswith(PUBLIC),'Exact destination prefix');p=pack/n;p.parent.mkdir(parents=True,exist_ok=True)
+  if p.exists():need(data(p)==b,'CAS collision')
+  else:p.write_bytes(b)
+  p.chmod(0o644);files[n]=meta(p)
+ put(PUBLIC+'.gdignore',b'')
+ for n,(b,m) in selected.items():
+  dest=PUBLIC+'blobs/'+m['sha256']+'.bin';put(dest,b);blobs.add(dest);originals[n]={**m,'repository_storage_path':dest}
+ for a in aliases:
+  if 'original_blob_path' in a:a['repository_storage_path']=originals[a['original_blob_path']]['repository_storage_path']
+ put(PUBLIC+'original-paths.json',enc({'schema_version':1,'files':originals,'scope':'Original mode/hash/size/path maps; archive CAS is0644, original modes explicitly retained. Original evidence opaque paths/indexes unchanged, no historical repin.'}))
+ put(PUBLIC+'source-observation-aliases.json',enc({'schema_version':1,'aliases':aliases}))
+ put(PUBLIC+'ORIGINAL_SOURCE_REFERENCE.json',enc({'schema_version':1,'host_path':'scripts/acts/act2/cylinder_perimeter.gd','host_sha256':'2c9768f851dc14e1bc433251c13a29154db6213085dda644742fbc366e243fc7','scope':'Unchanged accepted original old12 host/kit/Scout2/Exchange1 retained in phase sourceCAS. No reader/layout promotion or duplicate whole ownerbank. Both native runs retain only genuinely reached entrance; missing CP/final/missing v2report remain absent.'}))
+ index={'schema_version':1,'kind':'act2-o1-four-closed-failed-original-writer-phases','phases':phases,'unique_CAS_blobs':len(blobs),'original_paths':len(originals),'source_aliases':len(aliases),'scope':'Originalv2 HOST2/canonical1 nativecancellation then emittingProbe free/script error and missingreport; v3 HOST2/canonical2 actual40/1 incomplete firsttracking_lock_unproved westcycle1 with realprecleanup/finalreports and successful normalworldcleanup. Both entranceonly, no CP/finalproducer success. Original88/v3source104 preserved, no engine/routechange/candidatepromotion/acceptance.'}
+ put(PUBLIC+'index.json',enc(index))
+ put(PUBLIC+'README.md',b'# A2-O1 failed original-writer evidence\n\n[index.json](index.json) records four CLOSED original phases: v2seal and native refusal followed by locked-probe cleanup/script error with genuinely absent finalreport; v3seal and native40/1 incomplete with actual precleanup/final refusal reports and normal worldcleanup. No failed/missing result is reconstructed or relabeled pass.\n\n[original-paths.json](original-paths.json) maps original byte/hash/size/mode into deduplicated CAS; [source-observation-aliases.json](source-observation-aliases.json) joins all88/104 named source observations and genuine UID absences. Both reached entranceonly fourExact/nonempty148940bytevar/rawprimary/backup/preferences remain original. Before-final/held-final units are absent; requested threeunit oldChallenge producer is unavailable. NativeuserStore intentionally retained, no directorycleanup claim.\n\n[ORIGINAL_SOURCE_REFERENCE.json](ORIGINAL_SOURCE_REFERENCE.json) pins unchanged originalhost, already in sourceCAS; no ownerbank duplication/runtime/route/candidate change. Proven refusal is westcycle1/threat-1 tracking_lock_unproved. Exact inner commit reason is unretained; Hero unstable/second dash and later cooldown are context, not unique cause. V3 fixes only callback-safe evidence/cleanup. No thirdrun/search/guardbypass/currentreader/newgameplay/GUI/route/allkit/acceptance credit. Future passive reason capture needs separate Root scope.\n')
+ manifest=PUBLIC+'PUBLIC_COPY_MANIFEST.json';put(manifest,enc({'schema_version':1,'status':'PRIVATE_READY_FOR_ROOT_REVIEW_ONLY','file_count_excluding_this_manifest':len(files),'file_count_including_this_manifest':len(files)+1,'self_repository_path':manifest,'files':dict(files)}))
+ for n,m in files.items():need(meta(pack/n)==m,'Pack exact hash/size/mode')
+ for n,(b,m) in selected.items():need(data(ROOT/n)==b and meta(ROOT/n)=={k:m[k] for k in ['sha256','bytes','mode_octal']},'Original changed')
+ for link in ['index.json','original-paths.json','source-observation-aliases.json','ORIGINAL_SOURCE_REFERENCE.json']:need((pack/PUBLIC/link).is_file(),'README link absent')
+ (output/'PUBLICATION_PATHS.txt').write_text('\n'.join(sorted(files))+'\n');(output/'PUBLICATION_PATHS.nul').write_bytes(b''.join(n.encode()+b'\0' for n in sorted(files)))
+ closure={'status':'EXACT_PRIVATE_ROOT_PACK_READY','private_pack':str(pack),'publication_files':len(files),'publication_bytes':sum(m['bytes'] for m in files.values()),'manifest_sha256':files[manifest]['sha256'],'index_sha256':files[PUBLIC+'index.json']['sha256'],'unique_CAS_blobs':len(blobs),'original_paths':len(originals),'source_aliases':len(aliases),'closed_phases':4,'README_links_verified':True,'no_engine_Git_publication':True};(output/'PREPARATION_CLOSURE.json').write_bytes(enc(closure));print(json.dumps(closure,indent=2))
+if __name__=='__main__':main()
