@@ -1,0 +1,596 @@
+extends SceneTree
+## INERT SOURCE TEXT ONLY — RESPONSE9198f939; NOT PARSED OR EXECUTED.
+## Proposed future path tests/acts/act2/a2_l3_difficulty_comparison.gd.
+## Two separate Root-selected builds/invocations, not a live policy toggle.
+## TEST focus is not a campaign attempt: no Store, Save, fabricated prefix or
+## snapshot restore. The genuine entrance writer is a separate fixture.
+const FocusGame = preload("res://tests/acts/act2/fixtures/a2_l3_difficulty_focus_game.gd")
+const Exact = preload("res://scripts/campaign/exact_json.gd")
+const Geometry = preload("res://scripts/combat/threat_geometry.gd")
+const Scheduler = preload("res://scripts/combat/threat_scheduler.gd")
+const HostPath: String = "res://scripts/acts/act2/ruined_house.gd"
+const OriginalHostSHA: String = "728358c5e5864066bcc5eb4821f4e55a39561f9763962478e7338a5dea69baef"
+const PinsPath: String = "res://tests/acts/act2/fixtures/a2_l3_difficulty_comparison_pins.json"
+const PIN_KEYS: Array[String] = [
+	"res://scripts/acts/act2/ruined_house_sequence.gd",
+	"res://scripts/acts/act2/ruined_house_floor.gd",
+	"res://scripts/acts/act2/ruined_house_kit.gd",
+	"res://scripts/acts/act2/ruined_house_bank_guard.gd",
+	"res://scripts/acts/act2/ruined_house_snapshot_rules.gd",
+	"res://scripts/acts/act2/handling_machine_boss_actor.gd",
+	"res://scripts/acts/act2/ray_scout_actor.gd",
+	"res://scripts/acts/act2/weybridge_scout_actor.gd",
+	"res://scripts/acts/act2/weybridge.gd",
+	"res://scripts/acts/act2/horsell_common.gd",
+	"res://scripts/combat/lane_mechanism.gd",
+	"res://scripts/combat/smoke_bank.gd",
+	"res://scripts/combat/threat_scheduler.gd",
+	"res://scripts/game.gd",
+	"res://scripts/campaign/level.gd",
+	"res://scripts/campaign/shell.gd",
+	"res://scripts/player.gd",
+	"res://scripts/equipment.gd",
+	"res://scenes/acts/act2/a2_l3.tscn",
+	"res://scenes/player.tscn",
+	"res://scripts/combat/threat_geometry.gd",
+	"res://scripts/campaign/exact_json.gd",
+	"res://scripts/presentation/camera_framing.gd",
+	"res://scripts/acts/act2/ray_scout_exchange.gd",
+	"res://scripts/acts/act2/canister_tender_actor.gd",
+	"res://scripts/acts/act2/salvage_handler_actor.gd",
+	"res://scripts/acts/act2/ruined_house_smoke_rules.gd",
+	"res://scripts/acts/act2/smoke_bank_visual.gd",
+	"res://scripts/hud.gd",
+	"res://scripts/cues/threat_cue.gd",
+	"res://scripts/cues/interaction_cue.gd",
+	"res://data/design/player_equipment.json",
+	"res://scripts/combat/difficulty.gd",
+	"res://tests/acts/act2/fixtures/a2_l3_difficulty_focus_game.gd",
+	"res://tests/acts/act2/fixtures/a2_l3_difficulty_focus_house.gd",
+	"res://tests/acts/act2/fixtures/a2_l3_difficulty_focus_policy.gd",
+]
+const API: String = "a2-l3-inert-comparison-plan-1"
+const WALL_LIMIT_S: float = 180.0
+const MAX_TRACE_ROWS: int = 128
+class Probe extends Node:
+	signal sampled
+	var observe: Callable
+	func _physics_process(_delta: float) -> void:
+		if observe.is_valid(): observe.call()
+		sampled.emit()
+var options: Dictionary = {}
+var game: Node
+var level: CinderLevel
+var hero: CinderPlayer
+var scheduler: Node
+var boss: Node3D
+var before_probe: Probe
+var after_probe: Probe
+var checks: Array[Dictionary] = []
+var failures: int = 0
+var first_failure: String = ""
+var fault: String = ""
+var closing: bool = false
+var cleanup: bool = false
+var response_complete: bool = false
+var start_ms: int = 0
+var arm: String = ""
+var output_root: String = ""
+var owns_output_root: bool = false
+var pins_before: Dictionary = {}
+var baseline: Dictionary = {}
+var artifacts: Array[Dictionary] = []
+var events: Array[Dictionary] = []
+var actions: Array[Dictionary] = []
+var trace: Array[Dictionary] = []
+var trace_chunks: int = 0
+var tail: Array[Dictionary] = []
+var phase_seen: Dictionary = {}
+var history: Dictionary = {}
+var first_lease: Dictionary = {}
+var first_proof: Dictionary = {}
+var initial_response: Dictionary = {}
+var station: Vector3
+var hp_start: float = 0.0
+var shells_start: int = 0
+var first_clock: float = 0.0
+var last_sample: Dictionary = {}
+var last_signature: String = ""
+var setup_ready: bool = false
+var hold_until_s: float = -1.0
+var primary_start_s: float = -1.0
+var primary_finish_s: float = -1.0
+var summary: Dictionary = {}
+
+func _initialize() -> void:
+	start_ms = Time.get_ticks_msec()
+	_run.call_deferred()
+func _run() -> void:
+	if not _parse_options(): await _finish(); return
+	arm = options["arm"]
+	output_root = options["output-root"]
+	if not _expect(not DirAccess.dir_exists_absolute(ProjectSettings.globalize_path(output_root)), "unique, absent output directory"): await _finish(); return
+	if not _expect(DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(output_root)) == OK, "create only explicit TEST evidence directory"): await _finish(); return
+	owns_output_root=true
+	if not _check_source_inputs(): await _finish(); return
+	create_timer(WALL_LIMIT_S, true).timeout.connect(func() -> void:
+		if not closing:
+			_expect(false, "bounded 180-second wall watchdog; no retry or second candidate")
+			# Latch only. The one main wait unwinds on SceneTree.process_frame,
+			# including a paused tree. Never free a signal awaited by another turn.
+	)
+	game = FocusGame.new()
+	game.set("level_scene_path", "res://scenes/acts/act2/a2_l3.tscn")
+	root.add_child(game)
+	level = game.get("active_level") as CinderLevel
+	hero = game.get("player") as CinderPlayer
+	if not _expect(is_instance_valid(level) and is_instance_valid(hero), "actual Game creates new TEST focus Host and canonical Player"): await _finish(); return
+	scheduler = level.get("_scheduler")
+	boss = level.get("_actors").get("handling_machine")
+	if not _expect(is_instance_valid(scheduler) and is_instance_valid(boss), "inherited House entry constructs native Scheduler/B02"): await _finish(); return
+	var expected: String = "reach" if arm == "reach-control" else "place"
+	if not _expect(level.get("_boss_next_action") == expected and scheduler.call("encounter_profile").get("id") == "challenge" and not level.is_restore_candidate(), "actual fresh birth has expected cursor and Challenge; fixture never sets cursor"): await _finish(); return
+	var body: CollisionShape3D = hero.get_node("BodyCollision")
+	if not _expect(body.shape is CapsuleShape3D and body.position == Vector3(0,Scheduler.CAPSULE_CENTER_Y,0) and (body.shape as CapsuleShape3D).height == Scheduler.CAPSULE_HEIGHT and (body.shape as CapsuleShape3D).radius == Scheduler.CAPSULE_RADIUS, "actual born Player capsule matches preconstruction supported-Y formula"): await _finish(); return
+	if not _expect(boss.get("hp") == 30.0 and boss.get("boss_phase") == 1 and not boss.get("transition_pending") and boss.position == Vector3(0,0,-35), "original full B02 and geometry anchor; no live HP/phase/position transplant"): await _finish(); return
+	var policy: RefCounted = level.get("_crossing")
+	if not _expect(policy.call("current_beat") == "boss_phase_one" and policy.get("defeated_ids").is_empty() and policy.get("crossed_contacts").is_empty(), "disclosed preconstruction TEST focus has no fabricated predecessor history"): await _finish(); return
+	hp_start = hero.hp
+	shells_start = hero.shells
+	_connect_events()
+	before_probe = Probe.new()
+	before_probe.process_physics_priority = 109
+	before_probe.observe = _before_parent
+	game.add_child(before_probe)
+	after_probe = Probe.new()
+	after_probe.process_physics_priority = 3000
+	after_probe.observe = _after_parent
+	game.add_child(after_probe)
+	_write_exact("birth", _boundary("birth-before-first-physics"))
+	if not await _wait(func() -> bool: return bool(hero.get_threat_response_state().stable), 8.0, "actual standing support/readiness at constructor-supported station; no ignored native refusal"): await _finish(); return
+	setup_ready = true
+	station = hero.global_position
+	initial_response = hero.get_threat_response_state().duplicate(true)
+	if not _expect(absf(station.x) <= Scheduler.EPSILON and absf(station.z + 33.4) <= Scheduler.EPSILON and _support(station, station), "same fixed station with actual settled Y, floor and capsule clearance"): await _finish(); return
+	if not _expect(initial_response.equipment_ids == {"jacket":"CLOTH-J0", "pants":"CLOTH-P0", "shoes":"CLOTH-S0", "weapon":"WEAPON-01"}, "baseline existing neutral kit exactly"): await _finish(); return
+	_write_exact("station", {"position":station, "response":initial_response, "boundary":_boundary("supported-station")})
+	if not await _wait(func() -> bool: return not first_lease.is_empty(), 12.0, "first actual native admission; no second candidate"): await _finish(); return
+	if not _expect(first_lease.profile_id == "challenge" and first_lease.source_instance_id == level.get("_mechanisms")["boss_" + expected].get_instance_id(), "first retained lease belongs to expected native tool"): await _finish(); return
+	if not _expect(first_proof.get("accepted",false) and first_proof.get("path") is Array and not first_proof.path.is_empty(), "retain actual full native escape/ordinary guard proof"): await _finish(); return
+	var hold: Dictionary = _segment(station, station, first_lease.start_s, first_lease.active_until_s, "counterfactual_initial_station_hold")
+	var hold_hit: bool = _strict_hits(first_lease, [hold], Scheduler.CAPSULE_RADIUS + Scheduler.SKIN)
+	summary["stationary_hold_hits_first"] = hold_hit
+	_write_exact("first-admission", {"lease":first_lease, "proof":first_proof, "guard_escape_is_not_hold_certificate":true, "counterfactual_hold":hold, "hold_hits_first":hold_hit, "boundary":_boundary("first-admission")})
+	if arm == "reach-control":
+		if not _expect(hold_hit, "Reach really conflicts with complete stationary hold; otherwise equivalence stops"): await _finish(); return
+		if not await _execute_reach(): await _finish(); return
+	else:
+		if not _expect(not hold_hit, "Place candidate stationary hold is geometrically distinct at same supported station"): await _finish(); return
+		if not _expect(_same_station_and_stats(), "Place joins successful original control's actual supported station and resolved kit"): await _finish(); return
+		var attack_at: float = maxf(float(first_lease.active_until_s) + Scheduler.TIME_MARGIN, _clock() + float(hero.get_threat_response_state().primary_cooldown_left_s)) + float(level.call("_response_context").attack_input_margin_s)
+		if not await _hold_to(attack_at, "Place actual stationary hold through native active"): await _finish(); return
+		if not _expect(hero.global_position.distance_to(station) <= Scheduler.EPSILON and actions.is_empty(), "Place remained stationary with no public dash or prior primary"): await _finish(); return
+	if not await _ordinary_primary(): await _finish(); return
+	for phase: String in ["warning","lock","active","recovery"]:
+		_expect(phase_seen.has(phase), "first actual consumer phase observed: " + phase)
+	_expect(_integrity(), "zero native hit/contact opportunities and unchanged Hero HP through full cadence")
+	_expect(boss.get("hp") < 30.0 and boss.get("hp") > 0.0, "one useful ordinary B02 hit without whole encounter kill requirement")
+	_expect(primary_finish_s <= float(first_lease.recovery_until_s) - Scheduler.TIME_MARGIN, "complete actual primary cadence remains inside original recovery")
+	summary.merge({"station":[station.x,station.y,station.z], "stats_exact":Exact.stringify(initial_response.stats), "boss_hp_after":boss.get("hp"), "hero_hp_after":hero.hp, "shells_after":hero.shells, "primary_start_s":primary_start_s, "primary_finish_s":primary_finish_s, "first_recovery_until_s":first_lease.recovery_until_s, "first_action":expected, "dash_count":_dash_count(), "useful_response":failures == 0 and fault.is_empty(), "native_phase_two":boss.get("boss_phase"), "scope":"focused component; not route, saved attempt, input recognizer, balance or visual acceptance"})
+	response_complete = failures == 0 and fault.is_empty()
+	await _finish()
+
+func _parse_options() -> bool:
+	for arg: String in OS.get_cmdline_user_args():
+		if not arg.begins_with("--") or not arg.contains("="): return _expect(false,"only explicit named comparison selectors")
+		var at: int = arg.find("=")
+		var key: String = arg.substr(2,at-2)
+		if key not in ["arm","output-root","host-sha256","fixture-sha256","pins-sha256","baseline-report","baseline-sha256"] or options.has(key): return _expect(false,"unknown or duplicate selector: " + key)
+		options[key] = arg.substr(at+1)
+	if not _expect(options.get("arm") in ["reach-control","place-trial"] and options.get("output-root","").begins_with("res://.cinder/") and String(options.get("host-sha256","")).length()==64 and String(options.get("fixture-sha256","")).length()==64 and String(options.get("pins-sha256","")).length()==64, "closed explicit arm/output/host/fixture/control selectors"): return false
+	if options.arm == "place-trial": return _expect(options.has_all(["baseline-report","baseline-sha256"]), "trial requires exact closed successful original control report")
+	return _expect(not options.has("baseline-report") and not options.has("baseline-sha256") and options["host-sha256"] == OriginalHostSHA, "original control is pinned unchanged Host and has no imported live packet")
+func _check_source_inputs() -> bool:
+	var own_path: String=get_script().resource_path
+	if not _expect(not own_path.is_empty() and FileAccess.get_sha256(own_path)==options["fixture-sha256"] and FileAccess.get_sha256(PinsPath)==options["pins-sha256"], "literal Root-supplied actual fixture and control hashes"): return false
+	pins_before[own_path]=FileAccess.get_sha256(own_path)
+	pins_before[PinsPath]=FileAccess.get_sha256(PinsPath)
+	var pins: Variant = JSON.parse_string(FileAccess.get_file_as_string(PinsPath))
+	if not _expect(pins is Dictionary and pins.get("selected_only",false) and pins.get("files") is Dictionary, "explicit selected-source pins; not global census"): return false
+	var actual_keys: Array=pins.files.keys()
+	var required_keys: Array=PIN_KEYS.duplicate()
+	actual_keys.sort(); required_keys.sort()
+	if not _expect(actual_keys==required_keys and not pins.files.has(HostPath), "closed nonempty selected pins and exactly three fixture helpers; Host separate"): return false
+	for path: String in pins.files:
+		var sha: String = FileAccess.get_sha256(path)
+		pins_before[path] = sha
+		if not _expect(sha == pins.files[path], "exact unchanged selected source " + path): return false
+	pins_before[HostPath] = FileAccess.get_sha256(HostPath)
+	if not _expect(pins_before[HostPath] == options["host-sha256"], "actual Host matches Root-selected expected hash"): return false
+	if arm == "place-trial":
+		if not _expect(options["host-sha256"] != OriginalHostSHA, "trial needs actual separate Root selector source, never fixture cursor write"): return false
+		var path: String = options["baseline-report"]
+		if not _expect(FileAccess.get_sha256(path) == options["baseline-sha256"], "literal original comparison report hash"): return false
+		var parsed_baseline: Variant=JSON.parse_string(FileAccess.get_file_as_string(path))
+		if not _expect(parsed_baseline is Dictionary,"original comparison report is an actual JSON object"): return false
+		baseline=parsed_baseline
+		if not _expect(baseline.get("api_revision") == API and baseline.get("arm") == "reach-control" and baseline.get("complete",false) and baseline.get("success",false) and baseline.get("failures",1)==0 and baseline.get("source_pre",{}).get(HostPath)==OriginalHostSHA and baseline.get("summary",{}).get("useful_response",false) and baseline.summary.get("stationary_hold_hits_first",false), "trial is gated on genuine complete old control, not packet synthesis"): return false
+		if not _expect(baseline.source_pre.get(own_path)==pins_before[own_path] and baseline.source_post.get(own_path)==pins_before[own_path] and baseline.source_pre.get(PinsPath)==pins_before[PinsPath] and baseline.source_post.get(PinsPath)==pins_before[PinsPath],"both arms use exact same reviewed comparison/control bytes"): return false
+		for artifact: Dictionary in baseline.get("artifacts",[]):
+			if not _expect(FileAccess.get_sha256(artifact.path)==artifact.sha256,"original control observation bytes retained: "+String(artifact.label)): return false
+		for path_key: String in pins.files:
+			if not _expect(baseline.source_pre.get(path_key) == pins_before[path_key] and baseline.source_post.get(path_key) == pins_before[path_key], "same selected native dependency in both arms " + path_key): return false
+	return true
+
+func _execute_reach() -> bool:
+	var dashes: int = 0
+	for piece: Dictionary in first_proof.path:
+		if piece.kind not in ["escape_dash","positioning_dash"]: continue
+		if not await _hold_to(float(piece.start_s), "actual readiness before original proof " + piece.kind): return false
+		if not _expect(hero.global_position.distance_to(piece.from) <= Scheduler.SKIN, "actual native path begins at original admitted proof position"): return false
+		var direction: Vector3 = (piece.to - piece.from).normalized()
+		if not await _dash(direction, piece.kind): return false
+		dashes += 1
+		if not _expect(hero.global_position.distance_to(piece.to) <= Scheduler.SKIN, "full native dash reaches original proof endpoint within native skin"): return false
+	if not _expect(dashes >= 1 and dashes <= 2, "one native escape and only admitted optional positioning dash"): return false
+	summary["reach_response"] = "leave-only; no return required" if dashes == 1 else "escape plus admitted positioning/return"
+	return await _hold_to(maxf(float(first_proof.primary_time_s), float(first_lease.active_until_s)+Scheduler.TIME_MARGIN), "actual opening after original Reach active")
+func _dash(direction: Vector3, label: String) -> bool:
+	var response: Dictionary = hero.get_threat_response_state()
+	if not _expect(response.stable and float(response.dash_cooldown_left_s)<=0.0 and float(response.commitment_remaining_s)<=0.0, label+": actual unbuffered dash readiness"): return false
+	var endpoint: Vector3 = hero.global_position + direction * float(response.stats.dash_distance)
+	var piece: Dictionary = _segment(hero.global_position,endpoint,_clock(),_clock()+float(response.stats.dash_duration),label)
+	if not _expect(_path_safe([piece],_union()) and _support(piece.from,piece.to), label+": complete current/held timed union and actual floor/capsule sweep"): return false
+	_write_exact(label+"-request", {"planned_actual_start":piece,"native_response":response,"boundary":_boundary(label)})
+	var count: int = actions.size()
+	if not _expect(hero.request_dash(direction), label+": public full dash accepted"): return false
+	if not await _wait(func() -> bool: return actions.size()>count and bool(hero.get_threat_response_state().stable),8.0,label+": actual full motion completion"): return false
+	var action: Dictionary = actions[-1]
+	if not _expect(action.kind=="dash" and not action.blocked and float(action.distance)+Scheduler.SKIN>=float(response.stats.dash_distance), label+": actual unblocked native full-distance action"): return false
+	return _expect(hero.global_position.distance_to(endpoint)<=Scheduler.SKIN, label+": measured landing (never repositioned)")
+func _ordinary_primary() -> bool:
+	var response: Dictionary = hero.get_threat_response_state()
+	var cadence: float = maxf(float(response.stats.primary_cooldown),float(response.primary_commitment_s))
+	primary_start_s = _clock()
+	var deadline: float = primary_start_s + cadence
+	var piece: Dictionary = _segment(hero.global_position,hero.global_position,primary_start_s,deadline,"actual_full_primary_cadence")
+	if not _expect(response.stable and float(response.primary_cooldown_left_s)<=0.0 and float(response.commitment_remaining_s)<=0.0 and primary_start_s>float(first_lease.active_until_s) and deadline<=float(first_lease.recovery_until_s)-Scheduler.TIME_MARGIN, "actual primary readiness and entire cadence fit original native opening"): return false
+	if not _expect(_path_safe([piece],_union()) and _support(piece.from,piece.to) and scheduler.call("_opening_reachable",hero.global_position,boss.global_position,float(response.stats.primary_range)), "independent held primary path plus actual floor/capsule/range/LOS"): return false
+	var node: Node = level.get("_mechanisms")["boss_" + ("reach" if arm=="reach-control" else "place")]
+	var state: Dictionary = node.call("state")
+	if not _expect(state.status=="running" and state.phase=="recovery" and state.reservation_id==first_lease.id and node.call("get_cue").call("state").phase=="recovery" and level.get("_opening_cues")["handling_machine"].call("state").state=="available", "actual first recovery consumer/cue/low opening remain authoritative"): return false
+	_write_exact("before-primary", {"boundary":_boundary("before-primary"),"primary_path":piece,"response":response})
+	var before_hp: float = boss.get("hp")
+	var old_actions: int = actions.size()
+	var hits: int = hero.slash((boss.global_position-hero.global_position).normalized())
+	if not _expect(hits>0 and boss.get("hp")<before_hp and actions.size()==old_actions+1 and actions[-1].kind=="primary", "one immediate public ordinary primary genuinely damages B02"): return false
+	if not _expect(is_equal_approx(float(hero.get_threat_response_state().primary_cooldown_left_s),float(response.stats.primary_cooldown)), "native primary sets actual full cooldown"): return false
+	# Natural HP15 phase2/side Tender/bank remain enabled and fully observed.
+	if not await _hold_to(deadline,"complete actual primary cadence including naturally live threats"): return false
+	primary_finish_s = _clock()
+	if not _expect(float(hero.get_threat_response_state().primary_cooldown_left_s)<=Scheduler.EPSILON and float(hero.get_threat_response_state().commitment_remaining_s)<=Scheduler.EPSILON, "full primary cooldown and commitment really finish"): return false
+	_write_exact("after-primary", _boundary("after-primary"))
+	return _integrity()
+func _hold_to(end_s: float, label: String) -> bool:
+	if end_s<_clock(): return _integrity()
+	var origin: Vector3 = hero.global_position
+	var piece: Dictionary = _segment(origin,origin,_clock(),end_s,label)
+	if not _expect(_path_safe([piece],_union()) and _support(origin,origin), label+": independent complete stationary-hold safety"): return false
+	hold_until_s=end_s
+	var ok: bool = await _wait(func() -> bool: return _clock()>=end_s,20.0,label)
+	hold_until_s=-1.0
+	return ok and _expect(hero.global_position.distance_to(origin)<=Scheduler.EPSILON,label+": actual unchanged held position")
+func _wait(predicate: Callable, seconds: float, label: String) -> bool:
+	var started: int=Time.get_ticks_msec()
+	while fault.is_empty() and not closing:
+		if not _integrity(): break
+		if predicate.call(): return true
+		if float(Time.get_ticks_msec()-started)/1000.0>seconds: return _expect(false,label+": bounded observation expired")
+		# process_frame remains available when normal focus pauses the tree.
+		# Native clock/probes supply state; wall/render frames grant no physics.
+		await process_frame
+	return _expect(false,label+": "+fault) if not closing else false
+
+func _connect_events() -> void:
+	hero.world_action_executed.connect(func(row: Dictionary) -> void:
+		actions.append(row.duplicate(true))
+		if row.kind not in ["dash","primary"]: _latch("unexpected executed action: "+String(row.kind))
+	)
+	for id: String in level.get("_mechanisms"):
+		var node: Node = level.get("_mechanisms")[id]
+		node.connect("hit_resolved", func(hero_id: String, cycle: int, result: Dictionary) -> void:
+			_event("mechanism_hit", {"source":id,"hero_id":hero_id,"cycle":cycle,"result":result})
+			if not cleanup: _latch("native mechanism hit event, including zero-damage opportunity: "+id)
+		)
+		node.connect("state_changed", func(state: Dictionary) -> void:
+			_event("mechanism_state", {"source":id,"state":state})
+			if id == "boss_"+("reach" if arm=="reach-control" else "place") and int(state.cycle)==1: phase_seen[String(state.phase)]=true
+			if not cleanup and state.status=="cancelled": _latch("native consumer cancellation: "+id+": "+String(state.last_cancel_reason))
+		)
+	for id: String in level.get("_clouds"):
+		var bank: Node = level.get("_clouds")[id]
+		bank.connect("tick_resolved", func(hero_id: String, cycle: int, result: Dictionary) -> void:
+			_event("natural_bank_tick", {"source":id,"hero_id":hero_id,"cycle":cycle,"result":result})
+			if not cleanup and (result.get("contact",false) or result.get("damage_attempted",false) or result.get("opportunity_consumed",false) or float(result.get("hp_damage",0.0))>0.0): _latch("natural bank contact/opportunity cannot use invulnerability as safety: "+id)
+		)
+		bank.connect("state_changed", func(state: Dictionary) -> void: _event("natural_bank_state", {"source":id,"state":state}))
+	level.get("_exchange").connect("hit_resolved", func(id: String,result: Dictionary) -> void:
+		_event("ray_hit", {"source":id,"result":result})
+		if not cleanup: _latch("unexpected native ray hit")
+	)
+	scheduler.connect("reservation_invalidated",func(id: String,reason: String) -> void:
+		_event("native_invalidation",{"id":id,"reason":reason})
+		if not cleanup: _latch("native invalidation: "+id+": "+reason)
+	)
+	level.checkpoint_requested.connect(func(id: String,cp: String,kind: String) -> void:
+		_event("actual_component_checkpoint_request",{"level_id":id,"checkpoint_id":cp,"kind":kind,"not_a_saved_campaign_checkpoint":true})
+	)
+	boss.connect("phase_boundary_reached",func(id: String) -> void: _event("actual_native_hp15_boundary",{"source":id,"hp":boss.get("hp")}))
+func _event(kind: String, value: Dictionary) -> void:
+	events.append({"kind":kind,"clock_s":_clock(),"player_clock_s":hero.get_world_action_clock(),"cleanup":cleanup,"value":value.duplicate(true)})
+	if events.size()>1024: _latch("bounded event budget exceeded; no silent event dropping")
+func _before_parent() -> void:
+	if closing: return
+	# AFTER native Player/Scheduler0, BankGuard99 and consumers100; BEFORE House110.
+	# Not the exact callback boundary and not a precontact optical certificate.
+	var row: Dictionary = _boundary("physics109-after-native-before-parent")
+	tail.append(row)
+	if tail.size()>12: tail.pop_front()
+func _after_parent() -> void:
+	if closing: return
+	var row: Dictionary = _boundary("physics3000-after-parent-not-next-render")
+	tail.append(row)
+	if tail.size()>12: tail.pop_front()
+	var native: Array = row.native_union
+	for lease: Dictionary in native:
+		if not history.has(lease.id): history[lease.id]=lease.duplicate(true)
+		else:
+			for key: String in ["source_instance_id","geometry","start_s","lock_from_s","active_from_s","active_until_s","recovery_until_s","cooldown_until_s"]:
+				if history[lease.id].get(key)!=lease.get(key): _latch("native original static lease changed: "+String(lease.id)+"/"+key)
+	var tool_id: String = "boss_"+("reach" if arm=="reach-control" else "place")
+	var tool: Node3D = level.get("_mechanisms")[tool_id]
+	var tool_state: Dictionary = tool.call("state")
+	if first_lease.is_empty() and tool_state.status=="running":
+		var found: Array = scheduler.call("source_control_state",tool).get("reservations",[])
+		if found.size()==1 and level.get("_mechanism_proofs").has(tool_id):
+			first_lease=found[0].duplicate(true)
+			first_proof=level.get("_mechanism_proofs")[tool_id].duplicate(true)
+			first_clock=_clock()
+	if int(tool_state.cycle)==1: phase_seen[String(tool_state.phase)]=true
+	var current: Dictionary = {"clock_s":_clock(),"player_clock_s":hero.get_world_action_clock(),"position":hero.global_position,"response":hero.get_threat_response_state(),"hp":hero.hp,"shells":hero.shells,"invulnerability_left_s":hero.get("_invulnerable"),"boss_hp":boss.get("hp"),"boss_phase":boss.get("boss_phase"),"cursor":level.get("_boss_next_action"),"native_union_ids":[],"bank_contacts":{},"runtime_error":level.get("runtime_error"),"framing_error":row.current_containment_error}
+	for lease: Dictionary in native: current.native_union_ids.append(lease.id)
+	for id: String in level.get("_clouds"):
+		var bank: Node = level.get("_clouds")[id]
+		current.bank_contacts[id]={"sample":bank.get("_sample").duplicate(true),"trace":bank.get("_trace").duplicate(true),"processed":bank.get("_processed"),"state":bank.call("state")}
+	if setup_ready and not last_sample.is_empty():
+		var measured: Dictionary = _segment(last_sample.position,hero.global_position,last_sample.clock_s,_clock(),"actual_observed_motion_or_hold")
+		current["measured_segment"]=measured
+		if not _path_safe([measured],history.values()): _latch("actual measured motion/hold conflicts with original native timed union")
+		if not _support(measured.from,measured.to): _latch("actual measured path lacks unchanged floor/capsule support")
+	if hold_until_s>=_clock():
+		var rest: Dictionary = _segment(hero.global_position,hero.global_position,_clock(),hold_until_s,"remaining_actual_hold")
+		if not _path_safe([rest],native): _latch("new actual native lease makes intended stationary hold unsafe; stop before next contact")
+	trace.append(current)
+	last_sample=current
+	if trace.size()>=MAX_TRACE_ROWS: _flush_trace()
+	var signature: String = str([tool_state.status,tool_state.phase,tool_state.cycle,current.native_union_ids,current.boss_phase,row.due_lock_ids,level.get("_admission_errors"),row.current_containment_error])
+	if signature!=last_signature:
+		last_signature=signature
+		_write_exact("boundary-%04d"%artifacts.size(),row)
+	for source_id: String in level.get("_admission_errors"):
+		var denied: Dictionary=level.get("_admission_errors")[source_id]
+		if not denied.is_empty(): _latch("native admission refusal (including bootstrap/natural bank): "+source_id+": "+String(denied.get("reason","unknown")))
+	_integrity()
+func _boundary(label: String) -> Dictionary:
+	var controls: Dictionary = {}
+	var held: Dictionary = {}
+	var bindings: Dictionary = level.call("_scheduler_bindings")
+	for id: String in bindings.owners: controls[id]=scheduler.call("source_control_state",bindings.owners[id])
+	for id: String in level.get("_mechanisms"):
+		var node: Node = level.get("_mechanisms")[id]
+		held[id]={"state":node.call("state"),"exchange":node.get("_exchange").duplicate(true),"samples":node.get("_samples").duplicate(true),"pending_segments":node.get("_pending_segments").duplicate(true),"cue":node.call("get_cue").call("state")}
+	for id: String in level.get("_clouds"):
+		var bank: Node = level.get("_clouds")[id]
+		held[id]={"state":bank.call("state"),"exchange":bank.get("_exchange").duplicate(true),"sample":bank.get("_sample").duplicate(true),"pending_stage":bank.get("_pending_stage"),"contact_since_s":bank.get("_contact_since"),"cue":bank.call("get_cue").call("state")}
+	held["apron_scout"]=level.get("_exchange").call("state","apron_scout")
+	var union: Array = _union()
+	var due: Array[String] = []
+	for lease: Dictionary in union:
+		if _clock()>=float(lease.lock_from_s) and _clock()<=float(lease.active_until_s): due.append(String(lease.id))
+	var points: Array = level.call("_camera_framing_points") # private original pure query; no wrapper diagnostic mutation.
+	var camera: Camera3D = game.get("camera")
+	return {"label":label,"clock_s":_clock(),"player_clock_s":hero.get_world_action_clock(),"ordering":"109 after native100 before House110; 3000 after House110, not exact callback nor next render","response":hero.get_threat_response_state(),"body_transform":hero.global_transform,"body_velocity":hero.velocity,"committed_dash":hero.get_committed_dash_state(),"native_controls":controls,"native_held_consumers":held,"native_union":union,"due_lock_ids":due,"original_guard_proofs":level.get("_mechanism_proofs").duplicate(true),"bank_guard_proofs":level.get("_bank_proofs").duplicate(true),"views":level.get("_views").duplicate(true),"bank_views":level.get("_bank_views").duplicate(true),"retained_forecast_points":level.get("_forecast_points").duplicate(true),"actual_parent_point_union":points,"mandatory_player_points":game.call("player_camera_framing_points"),"plan":game.call("camera_framing_plan",points,hero.global_position+Vector3.UP*.65),"current_containment_error":game.call("camera_framing_error",points),"plan_spec":game.call("_camera_framing_spec",.055),"containment_spec":game.call("_camera_framing_spec",.02),"camera":{"transform":camera.global_transform,"size":camera.size,"projection":camera.projection,"keep_aspect":camera.keep_aspect,"near":camera.near,"far":camera.far,"h_offset":camera.h_offset,"v_offset":camera.v_offset,"viewport_size":camera.get_viewport().get_visible_rect().size},"input":game.call("get_input_observation_state"),"admission_errors":level.get("_admission_errors").duplicate(true),"runtime_error":level.get("runtime_error"),"floors":level.call("floor_regions"),"boss_ready_s":level.get("_boss_ready_s"),"boss_hp":boss.get("hp"),"boss_phase":boss.get("boss_phase"),"boss_pending":boss.get("transition_pending"),"boss_action":boss.get("tool_action"),"cursor":level.get("_boss_next_action")}
+func _union() -> Array:
+	# Public pure source_control_state, never reservations()/reservation_state()
+	# which can prune and emit. Include all actual scheduler owner bindings.
+	var rows: Dictionary = {}
+	var owners: Dictionary = level.call("_scheduler_bindings").owners
+	for id: String in owners:
+		var control: Dictionary = scheduler.call("source_control_state",owners[id])
+		for lease: Dictionary in control.get("reservations",[]): rows[lease.id]=lease
+	# A running consumer's held exchange must JOIN a real retained lease. It is
+	# not silently dropped merely because an owner control disappeared.
+	for collection: String in ["_mechanisms","_clouds"]:
+		for id: String in level.get(collection):
+			var node: Node = level.get(collection)[id]
+			var state: Dictionary = node.call("state")
+			if state.status!="running": continue
+			var exchange: Dictionary = node.get("_exchange")
+			if not rows.has(exchange.get("id","")):
+				_latch("running held consumer has no actual current native lease: "+id)
+				rows[exchange.get("id","orphan:"+id)]=exchange.duplicate(true)
+			else:
+				for key: String in ["geometry","active_from_s","active_until_s","recovery_until_s"]:
+					if exchange.get(key)!=rows[exchange.id].get(key): _latch("held/current native union mismatch: "+id+"/"+key)
+	return rows.values()
+func _strict_hits(lease: Dictionary, path: Array, radius: float) -> bool:
+	for segment: Dictionary in path:
+		# Native Lane's exact temporal eligibility check BEFORE Geometry EPS.
+		if maxf(float(segment.start_s),float(lease.active_from_s))>minf(float(segment.end_s),float(lease.active_until_s)): continue
+		if Geometry.timed_path_hits(lease.geometry,[segment],float(lease.active_from_s),float(lease.active_until_s),radius): return true
+	return false
+func _path_safe(path: Array, union: Array) -> bool:
+	for lease: Dictionary in union:
+		if not lease.has_all(["geometry","active_from_s","active_until_s"]): _latch("incomplete native timed lease"); return false
+		if _strict_hits(lease,path,Scheduler.CAPSULE_RADIUS+Scheduler.SKIN): return false
+	return true
+func _support(a: Vector3,b: Vector3) -> bool:
+	var floors: Array=level.call("floor_regions")
+	return String(scheduler.call("_floor_error",floors,a)).is_empty() and String(scheduler.call("_floor_error",floors,b)).is_empty() and scheduler.call("_floor_path_supported",a,b,floors) and scheduler.call("_capsule_path_clear",a,b,hero,floors)
+func _integrity() -> bool:
+	if not is_instance_valid(hero) or not is_instance_valid(level) or not is_instance_valid(scheduler): _latch("native recipient custody lost"); return false
+	if not String(level.get("runtime_error")).is_empty(): _latch("parent runtime refusal: "+String(level.get("runtime_error")))
+	if hero.dead or hero.hp!=hp_start or hero.shells!=shells_start: _latch("Hero death/HP/ammo change; no invulnerability or blast credit")
+	if paused: _latch("actual tree pause during live component; no forced focus/resume")
+	for id: String in level.get("_mechanisms"):
+		var state: Dictionary=level.get("_mechanisms")[id].call("state")
+		if not state.hit_ids.is_empty(): _latch("native hit consumed despite possibly unchanged HP: "+id)
+		if state.status=="cancelled": _latch("native mechanism refused: "+id+": "+String(state.last_cancel_reason))
+	if is_instance_valid(game):
+		var points: Array=level.call("_camera_framing_points")
+		if points.size()>224: _latch("actual required parent point budget exceeded")
+		for point: Variant in points:
+			if not point is Vector3 or not point.is_finite(): _latch("invalid actual required parent corner")
+		var error: String=game.call("camera_framing_error",points)
+		# Observe, never invoke/install a guard. Strict trial stop includes an
+		# actual forecast-union containment refusal before admission; no camera
+		# settling exception or second attempt is credited by this fixture.
+		if not points.is_empty() and not error.is_empty(): _latch("observed current required optical union refused: "+error)
+	return fault.is_empty()
+func _same_station_and_stats() -> bool:
+	var old: Array=baseline.summary.get("station",[])
+	return old.size()==3 and Vector3(float(old[0]),float(old[1]),float(old[2])).distance_to(station)<=Scheduler.EPSILON and baseline.summary.get("stats_exact")==Exact.stringify(initial_response.stats)
+func _dash_count() -> int:
+	var total: int=0
+	for row: Dictionary in actions:
+		if row.kind=="dash": total+=1
+	return total
+func _segment(a: Vector3,b: Vector3,start: float,finish: float,kind: String) -> Dictionary:
+	return {"from":a,"to":b,"start_s":start,"end_s":finish,"kind":kind}
+func _clock() -> float:
+	return float(scheduler.call("get_clock")) if is_instance_valid(scheduler) else -1.0
+func _latch(reason: String) -> void:
+	if fault.is_empty(): fault=reason
+func _expect(ok: bool,label: String) -> bool:
+	checks.append({"index":checks.size()+1,"passed":ok,"label":label,"wall_ms":Time.get_ticks_msec()-start_ms,"native_clock_s":_clock()})
+	if not ok:
+		failures+=1
+		if first_failure.is_empty(): first_failure=label
+		_latch(label)
+		print("FAIL: "+label)
+	return ok
+
+func _portable(value: Variant) -> Variant:
+	# Injective native-type diagnostic encoding. Node identity is an explicit
+	# observation, NEVER a restorable packet or substitute for native state.
+	match typeof(value):
+		TYPE_NIL,TYPE_BOOL,TYPE_STRING,TYPE_INT: return value
+		TYPE_FLOAT:
+			if is_finite(value): return value
+			var bytes:=PackedByteArray(); bytes.resize(8); bytes.encode_double(0,value)
+			return {"native_type":"nonfinite_float64","bits":bytes.hex_encode()}
+		TYPE_STRING_NAME: return {"native_type":"StringName","value":String(value)}
+		TYPE_VECTOR2: return {"native_type":"Vector2","xy":[_portable(value.x),_portable(value.y)]}
+		TYPE_VECTOR2I: return {"native_type":"Vector2i","xy":[value.x,value.y]}
+		TYPE_VECTOR3: return {"native_type":"Vector3","xyz":[_portable(value.x),_portable(value.y),_portable(value.z)]}
+		TYPE_RECT2: return {"native_type":"Rect2","position":_portable(value.position),"size":_portable(value.size)}
+		TYPE_BASIS: return {"native_type":"Basis","x":_portable(value.x),"y":_portable(value.y),"z":_portable(value.z)}
+		TYPE_TRANSFORM3D: return {"native_type":"Transform3D","basis":_portable(value.basis),"origin":_portable(value.origin)}
+		TYPE_COLOR: return {"native_type":"Color","rgba":[_portable(value.r),_portable(value.g),_portable(value.b),_portable(value.a)]}
+		TYPE_ARRAY:
+			var result: Array=[]
+			for item: Variant in value: result.append(_portable(item))
+			return {"native_type":"Array","items":result}
+		TYPE_DICTIONARY:
+			var entries: Array=[]
+			for key: Variant in value: entries.append([_portable(key),_portable(value[key])])
+			return {"native_type":"Dictionary","entries":entries}
+		TYPE_OBJECT:
+			if not is_instance_valid(value): return {"native_type":"Object","valid":false}
+			var row: Dictionary={"native_type":"Object","valid":true,"class":value.get_class(),"instance_id":str(value.get_instance_id())}
+			if value is Node:
+				row["path"]=String(value.get_path()) if value.is_inside_tree() else ""
+				row["inside_tree"]=value.is_inside_tree()
+			if value is Node3D: row["transform"]=_portable(value.global_transform)
+			if value is CollisionShape3D:
+				row["disabled"]=value.disabled
+				row["shape"]=_portable(value.shape)
+			if value is BoxShape3D: row["size"]=_portable(value.size)
+			if value is CapsuleShape3D:
+				row["radius"]=value.radius
+				row["height"]=value.height
+			return row
+	_latch("unsupported diagnostic type "+str(typeof(value)))
+	return {"native_type":"unsupported","variant_type":typeof(value)}
+func _write_exact(label: String,value: Variant) -> void:
+	if not owns_output_root: return
+	var wire: String=Exact.stringify(_portable(value))
+	var parsed: Dictionary=Exact.parse(wire) if not wire.is_empty() else {}
+	if wire.is_empty() or not parsed.get("accepted",false): _latch("nonempty exact diagnostic serialization failed: "+label); return
+	var path: String=output_root.path_join(label+".exact.json")
+	var file: FileAccess=FileAccess.open(path,FileAccess.WRITE)
+	if file==null: _latch("cannot write exact diagnostic: "+path); return
+	file.store_string(wire)
+	file.flush()
+	var error: Error=file.get_error()
+	file.close()
+	if error!=OK or FileAccess.get_file_as_bytes(path)!=wire.to_utf8_buffer() or FileAccess.get_sha256(path)!=wire.sha256_text(): _latch("exact diagnostic flush/readback failed: "+path); return
+	artifacts.append({"label":label,"path":path,"bytes":wire.to_utf8_buffer().size(),"sha256":FileAccess.get_sha256(path),"encoding":"typed native diagnostic, not campaign snapshot"})
+func _flush_trace() -> void:
+	if trace.is_empty(): return
+	_write_exact("trace-%04d"%trace_chunks,trace)
+	trace_chunks+=1
+	trace.clear()
+func _finish() -> void:
+	if closing: return
+	closing=true
+	if is_instance_valid(level) and is_instance_valid(hero) and is_instance_valid(scheduler) and is_instance_valid(boss): _write_exact("terminal-before-cleanup",{"boundary":_boundary("terminal"),"tail":tail,"events":events,"actions":actions,"pending_dash":hero.get("_world_dash_record"),"history":history})
+	_flush_trace()
+	if not fault.is_empty() and failures==0: _expect(false,"terminal fault: "+fault)
+	cleanup=true
+	if is_instance_valid(before_probe): before_probe.set_physics_process(false); before_probe.observe=Callable()
+	if is_instance_valid(after_probe): after_probe.set_physics_process(false); after_probe.observe=Callable()
+	var retired: Array[WeakRef]=[]
+	if is_instance_valid(game):
+		for node: Node in game.find_children("*","",true,false): retired.append(weakref(node))
+		if is_instance_valid(level): level.exit_level()
+		game.queue_free()
+	await process_frame
+	await process_frame
+	var all_freed: bool=true
+	for ref: WeakRef in retired: all_freed=all_freed and ref.get_ref()==null
+	_expect(all_freed,"all observed component descendants freed by normal cleanup")
+	for group: String in ["enemies","practice_targets","environment_attack_targets"]: _expect(get_nodes_in_group(group).is_empty(),"normal group cleanup: "+group)
+	_write_exact("cleanup-events",events)
+	var post: Dictionary={}
+	for path: String in pins_before:
+		post[path]=FileAccess.get_sha256(path)
+		_expect(post[path]==pins_before[path],"selected source unchanged through case: "+path)
+	if not fault.is_empty() and failures==0: _expect(false,"late diagnostic/cleanup fault: "+fault)
+	var complete: bool=response_complete and failures==0 and fault.is_empty()
+	var report: Dictionary={"api_revision":API,"arm":arm,"complete":complete,"success":complete,"checks":checks.size(),"failures":failures,"first_failure":first_failure,"fault":fault,"assertions":checks,"summary":summary,"source_pre":pins_before,"source_post":post,"fixture_sha256":options.get("fixture-sha256",""),"pins_sha256":options.get("pins-sha256",""),"host_sha256":options.get("host-sha256",""),"baseline_report":options.get("baseline-report",""),"baseline_sha256":options.get("baseline-sha256",""),"artifacts":artifacts,"wall_elapsed_s":float(Time.get_ticks_msec()-start_ms)/1000.0,"first_admission_native_clock_s":first_clock,"test_setup":"PRECONSTRUCTION TEST focused boss policy; empty predecessor history; original all native recipients; single initial supported Hero XZ; inherited actual fresh cursor selector","claims_excluded":["campaign Store/Attempts","earned prefix/full route","input gesture/GUI","human learning/balance","all kits","portrait visual acceptance","exact guard-callback causality","escape proof certifies hold"]}
+	var path: String=output_root.path_join("native-report.json") if owns_output_root else ""
+	if not path.is_empty():
+		var file: FileAccess=FileAccess.open(path,FileAccess.WRITE)
+		var report_text: String=JSON.stringify(report,"\t")
+		var write_ok: bool=false
+		if file!=null:
+			file.store_string(report_text)
+			file.flush()
+			var error: Error=file.get_error()
+			file.close()
+			write_ok=error==OK and FileAccess.get_file_as_bytes(path)==report_text.to_utf8_buffer() and FileAccess.get_sha256(path)==report_text.sha256_text()
+		if not write_ok:
+			_expect(false,"native report flush/readback failed; footer cannot claim success")
+			complete=false
+			# Preserve the real failure if a second best-effort failure record can
+			# be written; never report a successful close from an unverified file.
+			report["complete"]=false; report["success"]=false
+			report["failures"]=failures; report["first_failure"]=first_failure
+			report["fault"]=fault; report["checks"]=checks.size()
+			var failure_file: FileAccess=FileAccess.open(path,FileAccess.WRITE)
+			if failure_file!=null:
+				failure_file.store_string(JSON.stringify(report,"\t"))
+				failure_file.flush(); failure_file.close()
+	print("A2-L3 COMPARISON: %d checks, %d failures; complete=%s; report=%s"%[checks.size(),failures,str(complete),path])
+	quit(0 if complete else 1)
