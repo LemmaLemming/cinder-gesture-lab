@@ -913,6 +913,7 @@ var _component_draw_seen: bool = false
 var _component_portrait_path: String = ""
 var _component_host_expired: bool = false
 var _component_probe_done: bool = false
+var _component_view_probe_done: bool = false
 
 func _run_component(selector: String) -> bool:
 	if not _expect(selector in COMPONENT_SELECTORS,"one explicit focused TEST component selector",selector): return false
@@ -1120,6 +1121,8 @@ func _component_observe_pressure() -> void:
 	if _component_held_samples.size() < 24 and (_component_held_samples.is_empty() or _component_held_samples.back().sources != all_held):
 		_component_held_samples.append({"clock_s":_component_scheduler.get_clock(),"sources":all_held})
 	var actual: Dictionary = _component_stalker.state()
+	if not _component_view_probe_done and String(actual.last_rejection).begins_with("Required view unavailable:") and _component_hero.get_threat_response_state().stable:
+		_component_probe_framing(actual)
 	if not _component_probe_done and actual.last_rejection == "Finite bounded native threat/response values required":
 		_component_probe_done = true
 		_component_probe_bound_inputs(actual)
@@ -1342,3 +1345,30 @@ func _component_probe_encode(value: Variant,path: String,depth: int,budget: Arra
 			if not error.is_empty(): return {"accepted":false,"error":path+": "+error}
 		_: return {"accepted":false,"error":path+": unsupported native type "+type_string(typeof(value))}
 	return {"accepted":true,"value":encoded}
+
+## Read-only public prospective measurements after a real native view refusal.
+## The real source owns admission. This measurement cannot create a lease.
+func _component_probe_framing(actual: Dictionary) -> void:
+	var threat: Dictionary = {"role":actual.resolved_role,"source_stationary":false,"opening_stationary":true,"cooldown_remaining_s":0.0,"lunge":{"direction":actual.facing,"speed":CinderAct3SunboundStalker.TUNING.lunge_speed,"distance":CinderAct3SunboundStalker.TUNING.lunge_distance,"damage_radius":CinderAct3SunboundStalker.TUNING.damage_radius,"body_collision_path":"BodyCollision"}}
+	var preview: Dictionary = _component_scheduler.preview_lunge(_component_stalker,threat,_component_level.combat_response(COMPONENT_STALKER))
+	if not preview.get("accepted",false): return
+	var corners: Dictionary = _component_stalker.camera_framing_points(_component_main,preview.plan,{"landing":preview.proof.landing,"attack_position":preview.proof.attack_position})
+	if not String(corners.get("error","missing")).is_empty(): return
+	var union: Dictionary = _component_level.camera_framing_union(COMPONENT_STALKER,corners.points)
+	var retained: Dictionary = _component_level.camera_framing_union()
+	if not String(union.get("error","missing")).is_empty() or not String(retained.get("error","missing")).is_empty(): return
+	_component_view_probe_done = true
+	var camera: Camera3D = _component_main.get("camera") as Camera3D
+	var hud: GameHUD = _component_main.get("hud") as GameHUD
+	var spans: Dictionary = {}
+	for label: String in ["candidate","retained","combined"]:
+		var points: Array = corners.points if label == "candidate" else (retained.points if label == "retained" else union.points)
+		var low: Vector3 = Vector3(INF,INF,INF)
+		var high: Vector3 = Vector3(-INF,-INF,-INF)
+		for point: Vector3 in points:
+			var at: Vector3 = camera.global_basis.transposed()*point
+			low = low.min(at); high = high.max(at)
+		spans[label] = {"count":points.size(),"camera_axis_min":low,"camera_axis_max":high,"span":high-low}
+	var safe: Rect2 = hud.combat_safe_rect()
+	var viewport_size: Vector2 = Vector2(camera.get_viewport().size)
+	print("O2 COMPONENT VIEW PROBE: ",{"clock_s":_component_scheduler.get_clock(),"hero":_component_hero.global_position,"source":actual.position,"direction":actual.facing,"camera_width":camera.size,"viewport":viewport_size,"hud_safe_rect":safe,"available_axes_before_margin":Vector2(camera.size*safe.size.x,camera.size*viewport_size.y/viewport_size.x*safe.size.y),"spans":spans,"public_plan":_component_main.call("camera_framing_plan",union.points,_component_hero.global_position+Vector3.UP*.75),"actual_proof":preview.proof,"retained_owners":_component_held_samples})

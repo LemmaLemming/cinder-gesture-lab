@@ -1,3 +1,9 @@
+## Separate O2 central approach also rejected; public framing diagnostic next — 16 October 2026
+
+Central neutral01 at `f4862817` closed **865/1**,269 ticks,scope incomplete,native/wrapper1; raw `aaaec4ecc6eefa3156c84170a0ee373cb704909af72b86b6a42627e984c2b790`. Actual Root response/full HP passed, but C50 remained cycle0 with the same prospective union fit refusal. No mixed pressure or camera pass is claimed for either declared approach.
+
+The next smallest reproduction adds only public read-only framing measurements after an actual native refusal: unchanged public `Scheduler.preview_lunge`, source framing corners, owned union, Main framing plan and actual Camera/HUD axis spans. It measures candidate/retained/combined groups to determine what exceeds the real safe view; it never requests/adopts a lease, fits a camera or changes gameplay. No further initial-position sampling is planned without this concrete diagnosis/Integration guidance. Unaffected changed-view inspection may proceed separately; short/slow/weak mixed-opportunity acceptance remains pending.
+
 ## Separate O2 native guard rejects right-hand component approach — 16 October 2026
 
 Neutral03 at `0a7103ff` closed **865/1**,269 ticks,scope incomplete,native/wrapper1; raw `80268f8b8a14b545979dfba7a7f2df10267941d43c55449069806945bdb272e3`. Even after genuine forward Root removal, the C50 prospective union remained too wide at the original declared right-hand component approach `(1.2,.1,-3)`. No C50 cycle/lease is credited. Root response/full HP and normal audio-clean teardown retain their actual scopes. Native camera/admission guards correctly retained their refusal.
