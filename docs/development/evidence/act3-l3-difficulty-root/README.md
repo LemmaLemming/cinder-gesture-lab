@@ -1,0 +1,5 @@
+# A3-L3 Root short registration evidence
+
+[index.json](index.json) records exactly three CLOSED phases: host seal, sandbox native10/1 incomplete Save-directory refusal plus CA diagnostic, and scoped escalated clean native24/0 CLOSED0. [original-paths.json](original-paths.json) maps byte-exact originals including modes into deduplicated CAS; [source-observation-aliases.json](source-observation-aliases.json) preserves original95-input custody joins. Original reports/raw/indices/results/queues/source maps remain unchanged.
+
+Two clean native receipts retain whole initial snapshot/checkpoint/session and format2 Store1-to-2 generations, exact prior primary backup, and nine replaced native recipients. Entry/prerequisite/public entranceRetry/quiet cleanup only; no owner Challenge/legacy/combat/route/portrait repeat or new acceptance. Original674 owner paths are referenced separately in [OWNER_ARCHIVE_REFERENCE.json](OWNER_ARCHIVE_REFERENCE.json), not recopied. Clean Root runtime diagnostics do not imply immutable owner archives are whitespace-clean. Root visual record is prior personal pixel evidence, not new inspection by packaging.

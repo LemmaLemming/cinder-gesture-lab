@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "run": "east-component-compare-01",
+  "head": "168f80b6292bd41263ae4bca14a33c84596c40bb",
+  "actual_native_exit": 0,
+  "wrapper_exit": 1,
+  "diagnostics": 2,
+  "native_rows": 0,
+  "complete": false,
+  "log_sha256": "dfea244913996b74ac9bbcc2d4ac9c738838c649684b14aa8563dc06b232bedc",
+  "classification": "Script parse error in appended optional portrait receipt: EC_Component.resource_path resolves as a class static member, unavailable here. No comparison/native body executed; import0 did not prove this test parsed.",
+  "correction": "Use exact known owned resource path string only for FileAccess.get_sha256 receipt metadata. No behavior, state, camera, native guard or tolerance change.",
+  "next": "Rerun only affected declared east comparison; no separate import/parser or old/new transport repetition."
+}
