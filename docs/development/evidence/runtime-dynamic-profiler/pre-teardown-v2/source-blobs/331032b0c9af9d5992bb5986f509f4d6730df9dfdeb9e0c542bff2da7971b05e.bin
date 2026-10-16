@@ -1,0 +1,78 @@
+"""ADDITIVE native113 parser: mechanics/report joins separate from debug diagnostics."""
+import hashlib, json, math, re
+
+def sha(raw): return hashlib.sha256(raw).hexdigest()
+
+def require(ok, message):
+    if not ok: raise ValueError(message)
+
+def summary(values):
+    require(type(values) is list and values and all(type(v) is int and v >= 0 for v in values), "timing values invalid")
+    values = sorted(values); n = len(values)
+    return {"count":n, "inclusive_total_us":sum(values), "mean_us":sum(values)/n,
+            "p50_us":values[math.ceil(n*.50)-1], "p95_us":values[math.ceil(n*.95)-1], "max_us":values[-1]}
+
+def json_number(value):
+    # Existing Godot JSON.stringify(default full_precision=false) emits15 significant
+    # digits. Preserve original report bytes; only validate derived floating summaries
+    # against that transport representation. Integral microsecond samples stay exact.
+    return float(format(value, ".15g"))
+
+def summary_matches(actual, computed):
+    keys = {"count","inclusive_total_us","mean_us","p50_us","p95_us","max_us"}
+    return (type(actual) is dict and set(actual) == keys
+            and all(type(actual[k]) is int and actual[k] == computed[k]
+                    for k in keys - {"mean_us"})
+            and type(actual["mean_us"]) in (int,float)
+            and math.isfinite(actual["mean_us"])
+            and actual["mean_us"] == json_number(computed["mean_us"]))
+
+def report(raw):
+    matches = re.findall(r"^AUTHORED_ECHO_PROFILE_JSON (.+)$", raw, re.M)
+    require(len(matches) == 1, "one actual profile JSON line required")
+    data = json.loads(matches[0])
+    footers = re.findall(r"^Authored echo performance smoke: (\d+) checks, (\d+) failures;.*$", raw, re.M)
+    require(footers == [("113","0")], "actual113/0 footer missing")
+    require(len(re.findall(r"^PASS: ", raw, re.M)) == 113 and not re.search(r"^FAIL:", raw, re.M), "actual printed assertions differ")
+    samples = data["advance_samples"]
+    require(type(samples) is list and len(samples) == 73, "same73 actual advances required")
+    require(all(type(s.get("automatic_native_tick")) is bool and s.get("accepted") is True
+                and type(s.get("inclusive_us")) is int and s["inclusive_us"] >= 0
+                and s["finish_us"] - s["start_us"] == s["inclusive_us"] for s in samples), "actual samples invalid")
+    auto = [s for s in samples if s["automatic_native_tick"]]
+    manual = [s for s in samples if not s["automatic_native_tick"]]
+    require(len(auto) == data["automatic_native_advances"] == 72 and len(manual) == 1, "automatic/manual workload differs")
+    costs = summary([s["inclusive_us"] for s in auto])
+    require(summary_matches(data["advance_cost_summary_us"], costs), "automatic summary/raw samples differ")
+    phases = {}
+    for s in auto: phases.setdefault(s["phase"], []).append(s["inclusive_us"])
+    require(set(phases) == {"warning","lock","active","recovery"}, "all4 actual phases required")
+    phase_summaries = {k:summary(v) for k,v in phases.items()}
+    require(set(phase_summaries) == set(data["advance_phase_summary_us"])
+            and all(summary_matches(data["advance_phase_summary_us"][k],v) for k,v in phase_summaries.items()), "phase summary/raw join differs")
+    require(set(data["native_phases_observed"]) == set(phases), "native phase receipt differs")
+    require(data["required_native_visuals"] == 1 and data["physics_ticks_per_second"] == 60
+            and data["viewport_size"] == [270,585] and data["native_output"] == [540,1170], "native context changed")
+    actions = data["actual_world_actions"]
+    require([a["kind"] for a in actions] == ["dash","dash","primary"], "actual2dashes+ordinaryprimary required")
+    require(all(a["completed_at_s"] >= a["started_at_s"] for a in actions), "native actions incomplete")
+    require(actions[-1]["hits"] == 1 and actions[-1]["damage"] == 20, "ordinary primary result changed")
+    probes = data["separate_fixed_clock_guard_probes"]
+    require(type(probes) is list and len(probes) == 15, "same separate probe set required")
+    require(data["wall_finish_us"] - data["wall_start_us"] == data["wall_elapsed_us"], "wall interval differs")
+    require(json_number(data["simulation_finish_s"] - data["simulation_start_s"]) == data["simulation_elapsed_s"], "native interval differs")
+    require(abs(data["simulation_elapsed_s"] - 1.2) <= 1e-9, "fixture nominal native interval differs")
+    diagnostics = [l for l in raw.splitlines() if re.search(r"SCRIPT ERROR|Parse Error|ERROR:|WARNING:|FAIL:|ObjectDB instances leaked", l)]
+    ca = [l for l in diagnostics if l == 'ERROR: Condition "ret != noErr" is true. Returning: ""']
+    fatal = [l for l in diagnostics if not l.startswith("WARNING:") and l not in ca]
+    if ca and not (len(ca) == 1 and "at: get_system_ca_certificates (platform/macos/os_macos.mm:1035)" in raw):
+        fatal += ca
+    # Preserve every original diagnostic. Native113 data completeness is distinct
+    # from debug warnings/host cleanliness. Host still rejects actionable errors.
+    return data, {"checks":113, "failures":0, "functional_complete":True, "clean":not diagnostics,
+                  "diagnostic_lines":diagnostics, "known_host_ca_only":bool(ca) and len(diagnostics)==len(ca),
+                  "warning_count":sum(l.startswith("WARNING:") for l in diagnostics),
+                  "fatal_diagnostic_lines":fatal,
+                  "raw_profile_line_sha256":sha(matches[0].encode()), "automatic":costs,
+                  "phases":phase_summaries, "manual":manual,
+                  "row_scope":"actual printed PASS/footer; no structured row-array claim"}

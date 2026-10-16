@@ -1,0 +1,21 @@
+extends "res://tests/authored_echo_performance_smoke.gd"
+## PRIVATE TEST ONLY capture boundary; original113 fixture and native classes stay unchanged.
+## quit() is deferred to iteration end. No await occurs after super._run() completes.
+
+func _run() -> void:
+	await super._run()
+	var before: Dictionary = _capture_state("before_stop")
+	print("CINDER_LOCAL_PROFILER_V2_STATE ", JSON.stringify(before))
+	if before.debugger_active and before.has_scripts and before.scripts_active:
+		EngineDebugger.profiler_enable(&"scripts", false)
+	var after: Dictionary = _capture_state("after_stop")
+	print("CINDER_LOCAL_PROFILER_V2_STATE ", JSON.stringify(after))
+	var complete: bool = before.debugger_active and before.has_scripts and before.scripts_active and after.debugger_active and after.has_scripts and not after.scripts_active and _checks == 113 and _failures == 0
+	print("CINDER_LOCAL_PROFILER_V2_CAPTURE complete=", "true" if complete else "false", " boundary=startup_to_post_fixture_pre_teardown")
+	if not complete:
+		push_error("Local profiler v2 capture boundary or original fixture completion failed")
+		quit(1)
+
+func _capture_state(phase: String) -> Dictionary:
+	var has_scripts: bool = EngineDebugger.has_profiler(&"scripts")
+	return {"schema": 1, "phase": phase, "debugger_active": EngineDebugger.is_active(), "has_scripts": has_scripts, "scripts_active": EngineDebugger.is_profiling(&"scripts") if has_scripts else false, "fixture_checks": _checks, "fixture_failures": _failures, "physics_frame": Engine.get_physics_frames(), "process_frame": Engine.get_process_frames()}

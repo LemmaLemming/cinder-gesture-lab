@@ -1,0 +1,92 @@
+"""Host parser for official Godot local stdout profiling; no engine or file actions."""
+from decimal import Decimal, InvalidOperation
+from collections import Counter
+import json, re
+
+NUMBER = r"[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?"
+HEADER = re.compile(r"^(\d+):(.+)$")
+TIMING = re.compile(r"^\s*total:\s+("+NUMBER+r")/([+-]?\d+)\s*%\s+self:\s+("+NUMBER+r")/([+-]?\d+)\s*%\s+tcalls:\s+(\d+)\s*$")
+
+def require(ok, message):
+    if not ok: raise ValueError(message)
+
+def number(text):
+    try: value = Decimal(text)
+    except InvalidOperation as exc: raise ValueError("invalid profiler decimal") from exc
+    require(value.is_finite() and value >= 0, "nonnegative finite profiler time required")
+    return value
+
+def parse_profiler(raw, targets):
+    require(type(raw) is str and type(targets) is list, "raw/target types differ")
+    lines = raw.splitlines()
+    begin = [i for i,l in enumerate(lines) if l == "BEGIN PROFILING"]
+    accumulated = [i for i,l in enumerate(lines) if l.startswith("ACCUMULATED: total: ")]
+    require(len(begin) == 1 and len(accumulated) == 1 and begin[0] < accumulated[0],
+            "one complete profiler begin/final accumulated block required")
+    states = [(i,json.loads(l.removeprefix("CINDER_LOCAL_PROFILER_V2_STATE ")))
+              for i,l in enumerate(lines) if l.startswith("CINDER_LOCAL_PROFILER_V2_STATE ")]
+    keys = {"schema","phase","debugger_active","has_scripts","scripts_active","fixture_checks",
+            "fixture_failures","physics_frame","process_frame"}
+    require(len(states)==2 and all(type(s) is dict and set(s)==keys for _,s in states), "closed pre/post state witnesses required")
+    before_i,before = states[0];after_i,after = states[1]
+    require(before["phase"]=="before_stop" and after["phase"]=="after_stop"
+            and all(s["schema"]==1 and type(s["schema"]) is int for _,s in states), "state witness order/schema differs")
+    require(all(type(s[k]) is bool for _,s in states for k in ("debugger_active","has_scripts","scripts_active"))
+            and all(type(s[k]) is int and s[k]>=0 for _,s in states for k in
+                    ("fixture_checks","fixture_failures","physics_frame","process_frame")), "state witness scalar types differ")
+    require(all(s["debugger_active"] and s["has_scripts"] and s["fixture_checks"]==113
+                and s["fixture_failures"]==0 for _,s in states)
+            and before["scripts_active"] and not after["scripts_active"], "actual profiler state or native113 failed")
+    require(before["physics_frame"]==after["physics_frame"] and before["process_frame"]==after["process_frame"],
+            "driver awaited/advanced frames across explicit stop")
+    footer = [i for i,l in enumerate(lines) if re.fullmatch(r"Authored echo performance smoke: 113 checks, 0 failures;.*",l)]
+    capture = [i for i,l in enumerate(lines) if l.startswith("CINDER_LOCAL_PROFILER_V2_CAPTURE ")]
+    require(len(footer)==1 and len(capture)==1
+            and lines[capture[0]]=="CINDER_LOCAL_PROFILER_V2_CAPTURE complete=true boundary=startup_to_post_fixture_pre_teardown"
+            and footer[0]<before_i<accumulated[0]<after_i<capture[0], "explicit postfixture stop/table/footer order differs")
+    start = accumulated[0]
+    total_text = lines[start].removeprefix("ACCUMULATED: total: ")
+    require(number(total_text)>0, "empty/nonpositive accumulated export is incomplete")
+    rows = []; i = start + 1
+    while i < after_i:
+        line = lines[i]
+        require(not line.startswith("FRAME:") and line != "BEGIN PROFILING", "unexpected profiler restart/frame after final block")
+        header = HEADER.fullmatch(line)
+        if header is None:
+            require(not line.lstrip().startswith("total:") and not line.startswith("ACCUMULATED:"), "orphan or duplicate profiler data")
+            i += 1; continue
+        require(int(header[1]) == len(rows), "profiler indices must be complete and sequential")
+        require(i+1 < after_i, "profiler row missing timing line")
+        timing = TIMING.fullmatch(lines[i+1])
+        require(timing is not None, "profiler row timing/calls malformed")
+        inclusive = number(timing[1]); own = number(timing[3])
+        require(own <= inclusive and int(timing[2]) >= 0 and int(timing[4]) >= 0, "profiler displayed self/inclusive/percent values invalid")
+        rows.append({"index":int(header[1]),"signature":header[2],
+                     "inclusive_seconds_text":timing[1],"self_seconds_text":timing[3],
+                     "inclusive_percent_text":timing[2],"self_percent_text":timing[4],
+                     "calls":int(timing[5]),"source_line_1based":i+1,
+                     "raw_signature_line":line,"raw_timing_line":lines[i+1]})
+        i += 2
+    require(rows and len(rows) < 32768, "empty/capacity-bound capture is incomplete")
+    signature_counts = Counter(r["signature"] for r in rows)
+    matched = []
+    for target in targets:
+        name = re.compile(r"(?:^|[:.\s])"+re.escape(target["function"])+r"(?:$|\()")
+        found = [r["index"] for r in rows if target["path"] in r["signature"] and name.search(r["signature"])]
+        matched.append({**target,"row_indices":found,"matched":bool(found),
+                        "matching_record_calls":sum(rows[i]["calls"] for i in found)})
+    required = [("scripts/combat/threat_scheduler.gd","replay_reservation_error"),
+                ("scripts/combat/threat_scheduler.gd","authored_replay_source_error"),
+                ("scripts/combat/replay_program.gd","_restore_authored_for_source_guard"),
+                ("scripts/combat/authored_enemy_sequence.gd","snapshot_error")]
+    require(all(any(t["path"]==p and t["function"]==n and t["matched"] and t["matching_record_calls"]>0 for t in matched) for p,n in required),
+            "required actual guard/source signatures absent; do not infer zero")
+    return {"schema":1,"complete":True,"scope":"Startup to explicit postfixture completion stop before engine teardown; includes admission/manual/automatic advances, fixed probes and fixture cleanup. Excludes engine teardown and unfinished wrapper calls. Not whole-process or automatic-tick-only.",
+            "rows":rows,"record_count":len(rows),"matched_targets":matched,
+            "duplicate_signatures":sorted(s for s,n in signature_counts.items() if n > 1),
+            "missing_optional_targets":[{"path":t["path"],"function":t["function"]} for t in matched if not t["matched"]],
+            "accumulated_script_self_total_seconds_text":total_text,
+            "accumulated_start_line_1based":start+1,
+            "raw_accumulated_block":"\n".join(lines[start:after_i])+"\n",
+            "boundary_states":[before,after],"frame_snapshot_count":sum(l.startswith("FRAME:") for l in lines[:before_i]),
+            "limits":"Actual dynamic function counts; inclusive scopes overlap. Preserve decimal display precision; do not subtract transitive probe calls, sum inclusive rows, or derive per-tick/FPS/causal costs."}

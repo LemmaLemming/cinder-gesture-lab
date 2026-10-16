@@ -1,5 +1,9 @@
 # Cinder shared progress
 
+## Native function-cost capture —16 October2026
+
+[The bounded local profiler](RUNTIME_DYNAMIC_PROFILER.md) now exports1083 actual records after original113/0 completes and before teardown. Both capture-state witnesses and all102 named inputs/CAS/closed-child joins verify;114 debug warnings plus originalCA diagnostic keep Host2/nonclean. The first empty final accumulator remains incomplete. Guard counters524/532 and bounded JSON traversals guide a source-only optimization audit; overlapping inclusive times and fixture self accounting are qualified, with no per-tick/probe subtraction/FPS/causal gain. The earlier projection remains withdrawn and both engineering requests OPEN. No production/fixture source change, new policy coverage or fullroute gate. All24 originals/16 policies remain; Agent02 inactive/untouched.
+
 ## Source projection withdrawn after measurement —16 October2026
 
 [Root’s withdrawal record](RUNTIME_SOURCE_PROJECTION_WITHDRAWN.md) preserves actual private267/0 plus both paired113/0 native results, with their original CA-only host2/nonclean statuses. The single ordered pair shows small mixed changes: automatic total−2.08% andp50−3.16%, warningp50+4.96%, wall+0.85% and admission+64.45%. No convincing material overall benefit is established; the exact three-file projection is withdrawn, all103 named originals restored under the canonical lock, and no repeat for green/gain follows. Original failed parse, controls, raw diagnostics and scoped custody remain portable. Both engineering requests stay OPEN; no FPS/causal speedup or dynamic-count claim. Separate first local-profiler export is incomplete and does not change this decision. A2-O1 is independently unaccepted; all24 originals/16 policies remain.

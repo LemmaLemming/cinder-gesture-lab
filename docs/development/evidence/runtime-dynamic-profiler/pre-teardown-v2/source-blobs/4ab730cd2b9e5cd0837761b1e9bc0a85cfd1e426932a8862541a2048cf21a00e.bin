@@ -1,0 +1,200 @@
+#!/usr/bin/env python3
+"""ADDITIVE PRIVATE v2: explicit postfixture profiler stop. No production/fixture edits."""
+from pathlib import Path
+import argparse, contextlib, datetime, hashlib, importlib.util, json, os, re
+import signal, stat, sys, traceback, uuid
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[2]
+SPEC = HERE / "RUNNER_INPUTS.json"
+SEAL = HERE / "seal-profiler-v2.json"
+TIMEOUT = 180
+SCRIPT = 'res://.cinder/runtime-source-projection-prepare-v2-20261016/dynamic-profiler-v2-prepare/local_profiler_capture.gd'
+
+def require(ok, message):
+    if not ok: raise ValueError(message)
+def now(): return datetime.datetime.now(datetime.timezone.utc).isoformat()
+def sha(raw): return hashlib.sha256(raw).hexdigest()
+def load(path): return json.loads(path.read_bytes())
+def save(path, value):
+    path.parent.mkdir(parents=True,exist_ok=True)
+    with path.open("x",encoding="utf-8") as stream: json.dump(value,stream,indent=2,ensure_ascii=False);stream.write("\n")
+def relative(p):
+    require(type(p) is str and p and not Path(p).is_absolute() and ".." not in Path(p).parts,"unsafe named path")
+    return p
+def observation(path):
+    if not path.exists() and not path.is_symlink(): return {"present":False}
+    require(path.is_file() and not path.is_symlink() and path.resolve().is_relative_to(ROOT),"regular Root file required")
+    data=path.read_bytes()
+    return {"present":True,"sha256":sha(data),"bytes":len(data),"mode":format(stat.S_IMODE(path.stat().st_mode),"04o")}
+def observe(paths):
+    found={}
+    for p in paths:
+        try:found[p]=observation(ROOT/p)
+        except BaseException as exc:found[p]={"observation_error":type(exc).__name__+": "+str(exc)}
+    return found
+def module(path,name):
+    selected=importlib.util.spec_from_file_location(name,path)
+    require(selected is not None and selected.loader is not None,"host loader unavailable")
+    value=importlib.util.module_from_spec(selected);absent=object();previous=sys.modules.get(name,absent)
+    old=sys.dont_write_bytecode;sys.modules[name]=value;sys.dont_write_bytecode=True
+    try:selected.loader.exec_module(value)
+    except BaseException:
+        if previous is absent:sys.modules.pop(name,None)
+        else:sys.modules[name]=previous
+        raise
+    finally:sys.dont_write_bytecode=old
+    return value
+def selected_inputs(spec):
+    require(spec.get("schema")==1 and len(spec.get("runtime_sources",{}))==92
+            and len(spec.get("control_sources",{}))==9,"fixed92+9 explicit maps required")
+    expected={**spec["runtime_sources"],**spec["control_sources"]}
+    require(len(expected)==101,"runtime/control paths overlap")
+    expected[str(SPEC.relative_to(ROOT))]=observation(SPEC)
+    return expected
+def inputs():
+    spec=load(SPEC);expected=selected_inputs(spec)
+    require(spec.get("schema")==1 and len(spec["runtime_paths"])==92 and len(expected)==102,"fixed92+10 source scope required")
+    require(set(spec["runtime_paths"]).issubset(expected),"runtime map incomplete")
+    require(observe(sorted(expected))==expected,"named source/control drift; no repin")
+    require(Path(__file__).suffix==".py" and Path(__file__).read_bytes()==(HERE/"run_local_profiler.py.txt").read_bytes(),"Root selects exact runner text")
+    require(observation(ROOT/spec["driver_selected"])==observation(ROOT/spec["driver_inert"]), "Root selects exact private driver text")
+    require(observation(ROOT/spec["driver_uid"])=={"present":False}, "no new driver UID/import selected")
+    return spec,sorted(expected),expected
+def helpers(spec):
+    previous=module(HERE/"native_profile.py","cinder_dynamic_profiler_v2_native")
+    control=module(ROOT/spec["dev_loader_host"],"cinder_dynamic_profiler_dev_loader")
+    require(control.ROOT==ROOT,"dev loader Root differs")
+    parser=module(HERE/"profile_stdout.py","cinder_dynamic_profiler_stdout")
+    return previous,control,parser
+def seal():
+    spec,paths,expected=inputs();previous,control,parser=helpers(spec)
+    dev=control.devmodule();context=dev.ProjectContext(ROOT);engine=dev.resolve_godot(context)
+    data=engine.read_bytes()
+    selected={"schema":1,"created_at":now(),"paths":paths,"sources":expected,"script":SCRIPT,
+              "engine_path":str(engine),"engine_sha256":sha(data),"engine_bytes":len(data),
+              "engine_mode":format(stat.S_IMODE(engine.stat().st_mode),"04o"),"timeout_after_queue_s":TIMEOUT,
+              "scope":"92 fixed runtime/config/fixture/UID plus10 actual driver/UID/host/parser/spec controls; no global closure",
+              "engine_executed":False}
+    save(SEAL,selected)
+    print(json.dumps({"seal":str(SEAL),"sha256":sha(SEAL.read_bytes()),"named_pins":len(paths),"engine_executed":False}))
+    return 0
+def retain(out,paths,expected):
+    pool=out/"source-blobs";pool.mkdir()
+    records=[]
+    for p in paths:
+        row=expected[p];entry={"original_path":p,**row}
+        if row.get("present"):
+            data=(ROOT/p).read_bytes()
+            require(sha(data)==row["sha256"] and len(data)==row["bytes"],"at-lock retention drift")
+            target=pool/(row["sha256"]+".bin")
+            if not target.exists():
+                with target.open("xb") as stream:stream.write(data)
+            require(sha(target.read_bytes())==row["sha256"],"CAS bytes differ")
+            entry["portable_relative_path"]=str(target.relative_to(out))
+        records.append(entry)
+    save(out/"source-retention.json",{"scope":"fixed actual named sources; logical modes separate from CAS storage","files":records})
+def close_index(out,result):
+    result["closed_at"]=now()
+    records=[{"path":str(p.relative_to(out)),**observation(p)} for p in sorted(out.rglob("*"))
+             if p.is_file() and p not in (out/"result.json",out/"index.json")]
+    result["files"]=records;save(out/"result.json",result)
+    save(out/"index.json",{"schema":1,"result":{"path":"result.json",**observation(out/"result.json")},"files":records,
+                           "limits":"Original raw and failures retained. Startup-to-explicit-postfixture-preteardown function counts; not wholeprocess/per-tick/FPS/causal attribution or global resource/UID closure."})
+def run():
+    label="local-profiler-"+datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dt%H%M%S%fz")+"-"+uuid.uuid4().hex[:8]
+    out=HERE/"runs"/label;out.mkdir(parents=True,exist_ok=False)
+    result={"schema":1,"status":"CLOSED_INCOMPLETE","functional_complete":False,"clean":False,
+            "native_functional_complete":False,"profiler_complete":False,"engine_attempted":False,
+            "launch_attempted":False,"owned_children":[],"deferred_shutdown_signals":[],
+            "capture_scope":"startup to explicit postfixture completion before engine teardown; excludes unfinished wrapper calls; not wholeprocess"}
+    paths=[];expected={};owned=[];pending=[];errors=[]
+    try:
+        sealed=load(SEAL);spec=load(SPEC)
+        paths=[relative(p) for p in sealed["paths"]];expected=sealed["sources"]
+        require(len(paths)==102 and len(set(paths))==102 and set(paths)==set(expected)==set(selected_inputs(spec))
+                and expected==selected_inputs(spec) and sealed["script"]==SCRIPT,"selected fixed source seal differs")
+        save(out/"selected-seal.json",sealed);save(out/"source-before.json",observe(paths))
+        require(observe(paths)==expected,"inputs drifted before queue")
+        previous,control,parser=helpers(spec)
+        dev=control.devmodule();context=dev.ProjectContext(ROOT);engine=dev.resolve_godot(context)
+        def engine_matches():
+            return (str(engine)==sealed["engine_path"] and engine.is_file()
+                    and sha(engine.read_bytes())==sealed["engine_sha256"] and engine.stat().st_size==sealed["engine_bytes"]
+                    and format(stat.S_IMODE(engine.stat().st_mode),"04o")==sealed["engine_mode"])
+        require(engine_matches(),"engine differs")
+        command=[str(engine),"--headless","--debug","--profiling","--ignore-error-breaks","--path",str(ROOT),
+                 "--log-file",str(out/"engine.log"),"--script",SCRIPT]
+        save(out/"command.json",{"argv":command,"canonical_queue":"actual dev.godot_lock/dev.run_validation",
+                                 "timeout_after_queue_s":TIMEOUT,"user_arguments":[],
+                                 "ignore_error_breaks":"Only debugger prompt disabled; native assertions/diagnostics/exit retained"})
+        save(out/"queue-wait.json",{"at":now()})
+        with (out/"raw.log").open("x") as stream,contextlib.redirect_stdout(stream),contextlib.redirect_stderr(stream):
+            with dev.godot_lock(ROOT) as lock:
+                require(observe(paths)==expected and engine_matches(),"source/engine drift while queued")
+                save(out/"source-at-lock.json",observe(paths));retain(out,paths,expected)
+                save(out/"queue-acquired.json",{"at":now(),"timeout_starts_after_this":True})
+                handlers={s:signal.getsignal(s) for s in (signal.SIGINT,signal.SIGTERM)}
+                actual_popen=dev.subprocess.Popen
+                def defer_signal(number,_frame):
+                    if len(pending)<16:pending.append(number)
+                def track(*args,**kwargs):
+                    require(not owned,"exactly one owned child permitted")
+                    child=actual_popen(*args,**kwargs);owned.append(child);result["engine_attempted"]=True;return child
+                try:
+                    for s in handlers:signal.signal(s,defer_signal)
+                    dev.subprocess.Popen=track
+                    result["launch_attempted"]=True
+                    result["owned_validation_return"]=dev.run_validation(command,context,lock,TIMEOUT,detect_godot_errors=False)
+                finally:
+                    dev.subprocess.Popen=actual_popen
+                    try:
+                        for child in owned:
+                            if child.poll() is None:dev.stop_validation(child)  # Only this wrapper's owned child.
+                            child.wait()
+                        require(all(c.poll() is not None for c in owned),"owned child still running")
+                        result["owned_children"]=[{"pid":c.pid,"closed":c.poll() is not None,"popen_returncode":c.poll()} for c in owned]
+                        result["owned_closed_under_lock_at"]=now() if owned else None
+                        save(out/"source-after-child.json",observe(paths))
+                    finally:
+                        result["deferred_shutdown_signals"]=pending
+                        for s,h in handlers.items():signal.signal(s,h)
+        result["return_qualification"]="Pinned dev non124 is child.wait-derived;124 ambiguous native124 versus synthesized timeout. Owned Popen closure is recorded, not independent OS terminal evidence."
+        raw=(out/"raw.log").read_text(errors="replace")
+        markers=re.findall(r"^AUTHORED_ECHO_PROFILE_JSON (.+)$",raw,re.M)
+        if len(markers)==1:
+            with (out/"native-profile.original-line.json").open("x") as stream:stream.write(markers[0]+"\n")
+        try:
+            data,native=previous.report(raw)
+            save(out/"native-profile.json",data);result["native_evidence"]=native
+            result["native_functional_complete"]=True;result["clean"]=native["clean"]
+        except BaseException as exc:errors.append({"scope":"native113","error":type(exc).__name__+": "+str(exc)})
+        try:
+            captured=parser.parse_profiler(raw,spec["targets"])
+            block=captured.pop("raw_accumulated_block")
+            with (out/"profiler-accumulated.raw.txt").open("x") as stream:stream.write(block)
+            save(out/"profiler-functions.json",captured)
+            result["profiler_complete"]=True;result["profiler_records"]=captured["record_count"]
+            result["profiler_raw_sha256"]=sha(block.encode())
+        except BaseException as exc:errors.append({"scope":"local_profiler","error":type(exc).__name__+": "+str(exc)})
+        result["functional_complete"]=(result.get("owned_validation_return")==0 and len(owned)==1
+             and owned[0].poll()==0 and not pending and result["native_functional_complete"] and result["profiler_complete"]
+             and not result["native_evidence"]["fatal_diagnostic_lines"]
+             and observe(paths)==expected)
+        if result["functional_complete"]:result["status"]="CLOSED" if result["clean"] else "CLOSED_FUNCTIONAL_HOST_DIAGNOSTIC"
+    except BaseException as exc:
+        errors.append({"scope":"host","error":type(exc).__name__+": "+str(exc)})
+        with (out/"host-exception.txt").open("x") as stream:stream.write(traceback.format_exc())
+    finally:
+        result["errors"]=errors;result["deferred_shutdown_signals"]=pending
+        final=observe(paths);save(out/"source-at-close.json",final)
+        result["named_sources_equal_at_close"]=bool(expected) and final==expected
+        if not result["named_sources_equal_at_close"] or pending:result["functional_complete"]=False
+        close_index(out,result)
+    print(json.dumps({"output":str(out),"functional_complete":result["functional_complete"],
+                      "native_complete":result["native_functional_complete"],"profiler_complete":result["profiler_complete"],"clean":result["clean"]}))
+    return 0 if result["functional_complete"] and result["clean"] else 2
+def main():
+    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument("phase",choices=("seal","run"))
+    args=parser.parse_args();return seal() if args.phase=="seal" else run()
+if __name__=="__main__":raise SystemExit(main())

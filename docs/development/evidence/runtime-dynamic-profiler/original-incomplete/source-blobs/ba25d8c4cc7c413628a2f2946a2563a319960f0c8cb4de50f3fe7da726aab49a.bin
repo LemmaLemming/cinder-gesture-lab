@@ -1,0 +1,412 @@
+#!/usr/bin/env python3
+"""PRIVATE paired measurement: one queue custody, two explicit children, finally restore.
+No engine resolution, queue acquisition or source selection happens on module load.
+Root must select this exact text as run_pair.py, review, seal, then explicitly run.
+"""
+from pathlib import Path
+import argparse, contextlib, datetime, hashlib, importlib.util, json, math, os, re
+import signal, stat, sys, tempfile, traceback, uuid
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[2]
+SPEC = HERE / "INPUT_SPEC.json"
+SEAL = HERE / "seal-pair.json"
+CONTROL = HERE.parent / "run_controlled.py"
+TIMEOUT = 180
+SCRIPT = "res://tests/authored_echo_performance_smoke.gd"
+KEYS = ("present", "sha256", "bytes", "mode")
+SUBJECTS = ("scripts/combat/authored_enemy_sequence.gd",
+            "scripts/combat/replay_program.gd",
+            "scripts/combat/threat_scheduler.gd")
+
+def require(ok, message):
+    if not ok: raise ValueError(message)
+
+def now(): return datetime.datetime.now(datetime.timezone.utc).isoformat()
+def sha(raw): return hashlib.sha256(raw).hexdigest()
+def load(path): return json.loads(path.read_bytes())
+def save(path, value):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("x", encoding="utf-8") as stream:
+        json.dump(value, stream, indent=2, ensure_ascii=False); stream.write("\n")
+
+def safe_path(value):
+    require(type(value) is str and value and not Path(value).is_absolute()
+            and ".." not in Path(value).parts, "unsafe fixed relative path")
+    return value
+
+def observation(path):
+    if not path.exists() and not path.is_symlink(): return {"present": False}
+    require(path.is_file() and not path.is_symlink()
+            and path.resolve().is_relative_to(ROOT), "regular local source required: " + str(path))
+    raw = path.read_bytes()
+    return {"present": True, "sha256": sha(raw), "bytes": len(raw),
+            "mode": format(stat.S_IMODE(path.stat().st_mode), "04o")}
+
+def observe(paths):
+    found = {}
+    for p in paths:
+        try: found[p] = observation(ROOT / p)
+        except BaseException as exc: found[p] = {"observation_error": type(exc).__name__ + ": " + str(exc)}
+    return found
+
+def module(path, name):
+    selected = importlib.util.spec_from_file_location(name, path)
+    require(selected is not None and selected.loader is not None, "host loader missing")
+    value = importlib.util.module_from_spec(selected)
+    absent = object(); previous = sys.modules.get(name, absent)
+    flag = sys.dont_write_bytecode
+    sys.modules[name] = value; sys.dont_write_bytecode = True
+    try: selected.loader.exec_module(value)
+    except BaseException:
+        if previous is absent: sys.modules.pop(name, None)
+        else: sys.modules[name] = previous
+        raise
+    finally: sys.dont_write_bytecode = flag
+    return value
+
+def prepared():
+    spec = load(SPEC)
+    original = {safe_path(r["path"]): {k:r[k] for k in KEYS} for r in spec["current_original_sources"]}
+    candidate = {safe_path(r["path"]): {k:r[k] for k in KEYS} for r in spec["prospective_candidate_sources"]}
+    require(len(original) == 92 and set(original) == set(candidate), "fixed92 subject map required")
+    require(sorted(p for p in original if original[p] != candidate[p]) == sorted(SUBJECTS), "exact3 subject delta required")
+    controls = [str(SPEC.relative_to(ROOT)), str(Path(__file__).relative_to(ROOT)),
+                str((HERE / "run_pair.py.txt").relative_to(ROOT)), str(CONTROL.relative_to(ROOT)),
+                safe_path(spec["production_patch"]["path"])]
+    selections = spec["only_expected_runtime_changes"]
+    require(len(selections) == 3 and {s["destination"] for s in selections} == set(SUBJECTS), "exact raw selections required")
+    for s in selections:
+        for which, expected in (("original_donor", original[s["destination"]]),
+                                ("candidate_donor", candidate[s["destination"]])):
+            donor = s[which]; path = safe_path(donor["path"]); controls.append(path)
+            require(observation(ROOT / path) == {k:donor[k] for k in KEYS}, "raw donor drift")
+            require(donor["sha256"] == expected["sha256"] and donor["bytes"] == expected["bytes"],
+                    "raw donor/production map mismatch")
+        require(s["mode"] == original[s["destination"]]["mode"] == candidate[s["destination"]]["mode"], "subject mode changed")
+    require(Path(__file__).suffix == ".py" and Path(__file__).read_bytes() == (HERE / "run_pair.py.txt").read_bytes(),
+            "Root must select exact private runner text as run_pair.py")
+    require(observe(sorted(original)) == original, "original source mismatch; do not repin")
+    paths = sorted(set(original) | set(controls))
+    originals = observe(paths)
+    require(all(x.get("present") is True for x in originals.values()), "named control source missing")
+    candidates = {p:dict(x) for p,x in originals.items()}
+    candidates.update(candidate)
+    return spec, paths, originals, candidates
+
+def seal():
+    spec, paths, originals, candidates = prepared()
+    control = module(CONTROL, "cinder_projection_pair_control")
+    dev = control.devmodule(); context = dev.ProjectContext(ROOT)
+    engine = dev.resolve_godot(context); data = engine.read_bytes()
+    value = {"schema":1, "created_at":now(), "paths":paths,
+             "original_sources":originals, "candidate_sources":candidates,
+             "engine_path":str(engine), "engine_sha256":sha(data), "engine_bytes":len(data),
+             "engine_mode":format(stat.S_IMODE(engine.stat().st_mode), "04o"),
+             "native_script":SCRIPT, "timeout_after_queue_s":TIMEOUT,
+             "scope":spec["scope"], "engine_executed":False}
+    save(SEAL, value)
+    print(json.dumps({"seal":str(SEAL), "sha256":sha(SEAL.read_bytes()), "named_pins":len(paths),
+                      "runtime_inputs":92, "engine_executed":False}))
+    return 0
+
+def replace_exact(path, raw, mode, allowed):
+    require(observation(path) in allowed, "subject byte/mode custody conflict: " + str(path))
+    require(not path.is_symlink(), "refuse linked subject")
+    if path.is_file() and path.read_bytes() == raw and stat.S_IMODE(path.stat().st_mode) == mode: return
+    fd, name = tempfile.mkstemp(prefix=".projection-pair-", dir=path.parent)
+    try:
+        os.fchmod(fd, mode)
+        with os.fdopen(fd, "wb") as stream:
+            stream.write(raw); stream.flush(); os.fsync(stream.fileno())
+        require(observation(path) in allowed, "subject changed before atomic replacement: " + str(path))
+        os.replace(name, path)
+    finally:
+        if os.path.exists(name): os.unlink(name)
+    require(path.read_bytes() == raw and stat.S_IMODE(path.stat().st_mode) == mode, "exact subject replace failed")
+
+def retain(out, paths, expected):
+    records = []
+    pool = out.parent / "source-blobs"; pool.mkdir(exist_ok=True)
+    for p in paths:
+        row = expected[p]; data = (ROOT / p).read_bytes()
+        require(sha(data) == row["sha256"] and len(data) == row["bytes"], "at-lock retention drift")
+        target = pool / (row["sha256"] + ".bin")
+        if not target.exists():
+            with target.open("xb") as stream: stream.write(data)
+        require(sha(target.read_bytes()) == row["sha256"], "retained source corruption")
+        records.append({"original_path":p, **row, "portable_relative_path":str(Path("..") / "source-blobs" / target.name)})
+    save(out / "source-retention.json", {"scope":"fixed named sources, no global closure", "files":records})
+
+def summary(values):
+    require(type(values) is list and values and all(type(v) is int and v >= 0 for v in values), "timing values invalid")
+    values = sorted(values); n = len(values)
+    return {"count":n, "inclusive_total_us":sum(values), "mean_us":sum(values)/n,
+            "p50_us":values[math.ceil(n*.50)-1], "p95_us":values[math.ceil(n*.95)-1], "max_us":values[-1]}
+
+def json_number(value):
+    # Existing Godot JSON.stringify(default full_precision=false) emits15 significant
+    # digits. Preserve original report bytes; only validate derived floating summaries
+    # against that transport representation. Integral microsecond samples stay exact.
+    return float(format(value, ".15g"))
+
+def summary_matches(actual, computed):
+    keys = {"count","inclusive_total_us","mean_us","p50_us","p95_us","max_us"}
+    return (type(actual) is dict and set(actual) == keys
+            and all(type(actual[k]) is int and actual[k] == computed[k]
+                    for k in keys - {"mean_us"})
+            and type(actual["mean_us"]) in (int,float)
+            and math.isfinite(actual["mean_us"])
+            and actual["mean_us"] == json_number(computed["mean_us"]))
+
+def report(raw):
+    matches = re.findall(r"^AUTHORED_ECHO_PROFILE_JSON (.+)$", raw, re.M)
+    require(len(matches) == 1, "one actual profile JSON line required")
+    data = json.loads(matches[0])
+    footers = re.findall(r"^Authored echo performance smoke: (\d+) checks, (\d+) failures;.*$", raw, re.M)
+    require(footers == [("113","0")], "actual113/0 footer missing")
+    require(len(re.findall(r"^PASS: ", raw, re.M)) == 113 and not re.search(r"^FAIL:", raw, re.M), "actual printed assertions differ")
+    samples = data["advance_samples"]
+    require(type(samples) is list and len(samples) == 73, "same73 actual advances required")
+    require(all(type(s.get("automatic_native_tick")) is bool and s.get("accepted") is True
+                and type(s.get("inclusive_us")) is int and s["inclusive_us"] >= 0
+                and s["finish_us"] - s["start_us"] == s["inclusive_us"] for s in samples), "actual samples invalid")
+    auto = [s for s in samples if s["automatic_native_tick"]]
+    manual = [s for s in samples if not s["automatic_native_tick"]]
+    require(len(auto) == data["automatic_native_advances"] == 72 and len(manual) == 1, "automatic/manual workload differs")
+    costs = summary([s["inclusive_us"] for s in auto])
+    require(summary_matches(data["advance_cost_summary_us"], costs), "automatic summary/raw samples differ")
+    phases = {}
+    for s in auto: phases.setdefault(s["phase"], []).append(s["inclusive_us"])
+    require(set(phases) == {"warning","lock","active","recovery"}, "all4 actual phases required")
+    phase_summaries = {k:summary(v) for k,v in phases.items()}
+    require(set(phase_summaries) == set(data["advance_phase_summary_us"])
+            and all(summary_matches(data["advance_phase_summary_us"][k],v) for k,v in phase_summaries.items()), "phase summary/raw join differs")
+    require(set(data["native_phases_observed"]) == set(phases), "native phase receipt differs")
+    require(data["required_native_visuals"] == 1 and data["physics_ticks_per_second"] == 60
+            and data["viewport_size"] == [270,585] and data["native_output"] == [540,1170], "native context changed")
+    actions = data["actual_world_actions"]
+    require([a["kind"] for a in actions] == ["dash","dash","primary"], "actual2dashes+ordinaryprimary required")
+    require(all(a["completed_at_s"] >= a["started_at_s"] for a in actions), "native actions incomplete")
+    require(actions[-1]["hits"] == 1 and actions[-1]["damage"] == 20, "ordinary primary result changed")
+    probes = data["separate_fixed_clock_guard_probes"]
+    require(type(probes) is list and len(probes) == 15, "same separate probe set required")
+    require(data["wall_finish_us"] - data["wall_start_us"] == data["wall_elapsed_us"], "wall interval differs")
+    require(json_number(data["simulation_finish_s"] - data["simulation_start_s"]) == data["simulation_elapsed_s"], "native interval differs")
+    require(abs(data["simulation_elapsed_s"] - 1.2) <= 1e-9, "fixture nominal native interval differs")
+    diagnostics = [l for l in raw.splitlines() if re.search(r"SCRIPT ERROR|Parse Error|ERROR:|WARNING:|FAIL:|ObjectDB instances leaked", l)]
+    ca = [l for l in diagnostics if l == 'ERROR: Condition "ret != noErr" is true. Returning: ""']
+    fatal = [l for l in diagnostics if l not in ca]
+    require(not fatal, "actual native/script/cleanup diagnostic")
+    if ca: require(len(ca) == 1 and "at: get_system_ca_certificates (platform/macos/os_macos.mm:1035)" in raw, "unrecognized CA context")
+    return data, {"checks":113, "failures":0, "functional_complete":True, "clean":not diagnostics,
+                  "diagnostic_lines":diagnostics, "known_host_ca_only":bool(ca),
+                  "raw_profile_line_sha256":sha(matches[0].encode()), "automatic":costs,
+                  "phases":phase_summaries, "manual":manual,
+                  "row_scope":"actual printed PASS/footer; no structured row-array claim"}
+
+def close_index(out, result):
+    files = []
+    for p in sorted(out.rglob("*")):
+        if p.is_file() and p not in (out / "result.json", out / "index.json"):
+            files.append({"path":str(p.relative_to(out)), **observation(p)})
+    result["closed_at"] = now(); result["files"] = files
+    save(out / "result.json", result)
+    save(out / "index.json", {"schema":1, "result":{"path":"result.json", **observation(out / "result.json")},
+                             "files":files, "limits":"Exact original artifacts. Named source scope; no global UID closure, FPS/causal gain or permanent production selection."})
+
+def run_phase(name, pair, dev, context, lock, engine, paths, expected, registry):
+    out = pair / name; out.mkdir()
+    result = {"schema":1, "selection":name, "status":"CLOSED_INCOMPLETE", "functional_complete":False,
+              "clean":False, "launch_attempted":False, "engine_attempted":False, "owned_children":[],
+              "deadline_after_queue_s":TIMEOUT}
+    owned = []; actual_popen = dev.subprocess.Popen
+    try:
+        save(out / "source-before.json", observe(paths))
+        require(observe(paths) == expected, "selected sources differ before child")
+        save(out / "source-at-lock.json", observe(paths)); retain(out, paths, expected)
+        command = [str(engine),"--headless","--path",str(ROOT),"--log-file",str(out / "engine.log"),"--script",SCRIPT]
+        save(out / "command.json", {"argv":command,"canonical_queue":"one outer dev.godot_lock; actual dev.run_validation",
+                                    "timeout_after_queue_s":TIMEOUT,"user_arguments":[]})
+        save(out / "queue-owned.json", {"at":now(),"shared_outer_lock_held":True})
+        def track(*args, **kwargs):
+            require(not owned, "one owned child per selection")
+            child = actual_popen(*args, **kwargs); owned.append(child); registry.append(child); result["engine_attempted"] = True; return child
+        with (out / "raw.log").open("x") as stream, contextlib.redirect_stdout(stream), contextlib.redirect_stderr(stream):
+            dev.subprocess.Popen = track
+            try:
+                result["launch_attempted"] = True
+                code = dev.run_validation(command, context, lock, TIMEOUT, detect_godot_errors=False)
+                result["owned_validation_return"] = code
+                result["return_qualification"] = "Pinned dev non124 return derives from child.wait;124 is native124 versus synthesized timeout ambiguous. Owned Popen closure is recorded, not an independent OS terminal receipt."
+            finally:
+                dev.subprocess.Popen = actual_popen
+                for child in owned:
+                    if child.poll() is None: dev.stop_validation(child)  # Only this selection's owned child.
+                    child.wait()
+                result["owned_children"] = [{"pid":c.pid,"closed":c.poll() is not None,"popen_returncode":c.poll()} for c in owned]
+                save(out / "source-after-child.json", observe(paths))
+        require(len(owned) == 1 and all(c.poll() is not None for c in owned), "owned child closure incomplete")
+        require(result["owned_validation_return"] == 0, "validation did not return0")
+        raw = (out / "raw.log").read_text(errors="replace")
+        data, evidence = report(raw)
+        save(out / "native-profile.json", data)
+        result.update(evidence)
+        require(observe(paths) == expected, "named input drift during child")
+        result["status"] = "CLOSED" if result["clean"] else "CLOSED_FUNCTIONAL_HOST_DIAGNOSTIC"
+    except BaseException as exc:
+        result["exception"] = type(exc).__name__ + ": " + str(exc)
+        with (out / "host-exception.txt").open("x") as stream: stream.write(traceback.format_exc())
+    finally:
+        dev.subprocess.Popen = actual_popen
+        # Also cover a launch/stream setup exception before its inner finally.
+        for child in owned:
+            if child.poll() is None: dev.stop_validation(child)
+            child.wait()
+        result["owned_children"] = [{"pid":c.pid,"closed":c.poll() is not None,"popen_returncode":c.poll()} for c in owned]
+        final = observe(paths); save(out / "source-at-close.json", final)
+        result["named_sources_equal_at_close"] = final == expected
+        if final != expected: result["functional_complete"] = False
+        close_index(out, result)
+    return result
+
+def comparison(a, b):
+    def delta(x,y):
+        return {"original":x,"candidate":y,"candidate_minus_original":y-x,
+                "percent_change":(y/x-1)*100 if x else None}
+    result = {"automatic":{k:delta(a["automatic"][k],b["automatic"][k]) for k in
+                          ("inclusive_total_us","p50_us","p95_us","max_us")},
+              "phases":{},"qualification":"One original-first/candidate-second sequential pair. Order/cache/OS noise remains; descriptive, no causal/FPS/full-route claim."}
+    for p in a["phases"]:
+        require(a["phases"][p]["count"] == b["phases"][p]["count"], "phase sample counts differ")
+        result["phases"][p] = {k:delta(a["phases"][p][k],b["phases"][p][k]) for k in
+                              ("inclusive_total_us","p50_us","p95_us","max_us")}
+    return result
+
+def run_pair():
+    label = "pair-" + datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dt%H%M%S%fz") + "-" + uuid.uuid4().hex[:8]
+    out = HERE / "runs" / label; out.mkdir(parents=True, exist_ok=False)
+    result = {"schema":1,"status":"CLOSED_INCOMPLETE","functional_complete":False,"clean":False,
+              "engine_attempted":False,"temporary_selection_attempted":False,
+              "original_restored_under_lock":False,"deferred_shutdown_signals":[]}
+    paths = []; original = {}; pending = []; saved_handlers = {}; backups = {}; closure_errors = []; registry = []
+    try:
+        sealed = load(SEAL)
+        paths = [safe_path(p) for p in sealed["paths"]]
+        original = sealed["original_sources"]; candidate = sealed["candidate_sources"]
+        require(len(paths) == len(set(paths)) and set(paths) == set(original) == set(candidate), "sealed source maps differ")
+        require(sorted(p for p in paths if original[p] != candidate[p]) == sorted(SUBJECTS), "sealed delta must be3")
+        save(out / "selected-seal.json", sealed)
+        save(out / "source-before.json", observe(paths))
+        require(observe(paths) == original, "sources drifted since independent seal; no repin")
+        spec = load(SPEC)
+        control = module(CONTROL, "cinder_projection_pair_control")
+        dev = control.devmodule(); context = dev.ProjectContext(ROOT)
+        engine = dev.resolve_godot(context)
+        def engine_matches():
+            return (str(engine) == sealed["engine_path"] and engine.is_file()
+                    and sha(engine.read_bytes()) == sealed["engine_sha256"]
+                    and engine.stat().st_size == sealed["engine_bytes"]
+                    and format(stat.S_IMODE(engine.stat().st_mode),"04o") == sealed["engine_mode"])
+        require(engine_matches(), "selected engine drifted")
+        save(out / "queue-wait.json", {"at":now(),"timeout_starts_after_acquisition_per_child":True})
+        with dev.godot_lock(ROOT) as lock:
+            save(out / "queue-acquired.json", {"at":now(),"one_lock_for_both_children_and_restoration":True})
+            require(observe(paths) == original and engine_matches(), "source/engine drift while queued")
+            save(out / "source-at-lock.json", observe(paths))
+            recovery = []; pool = out / "source-blobs"; pool.mkdir(exist_ok=True)
+            for p in SUBJECTS:
+                data = (ROOT / p).read_bytes(); mode = stat.S_IMODE((ROOT / p).stat().st_mode)
+                require(observation(ROOT / p) == original[p] and sha(data) == original[p]["sha256"],
+                        "original subject drift before recovery capture")
+                backups[p] = (data, mode)
+                target = pool / (sha(data) + ".bin")
+                if not target.exists():
+                    with target.open("xb") as stream: stream.write(data)
+                require(sha(target.read_bytes()) == original[p]["sha256"], "recovery donor mismatch")
+                recovery.append({"original_path":p, **original[p],
+                                 "portable_relative_path":str(target.relative_to(out))})
+            save(out / "recovery-originals.json", {"scope":"exact at-lock original byte/mode recovery donors",
+                                                 "files":recovery})
+            saved_handlers = {s:signal.getsignal(s) for s in (signal.SIGINT,signal.SIGTERM)}
+            def defer_signal(number, _frame):
+                if len(pending) < 16: pending.append(number)
+            try:
+                for s in saved_handlers: signal.signal(s, defer_signal)
+                first = run_phase("original", out, dev, context, lock, engine, paths, original, registry)
+                result["original"] = {k:first[k] for k in ("status","functional_complete","clean","engine_attempted")}
+                result["engine_attempted"] = first["engine_attempted"]
+                require(first["functional_complete"] and not pending, "original failed/incomplete/shutdown; no candidate")
+                require(observe(paths) == original and engine_matches(), "sources changed before temporary selection")
+                result["temporary_selection_attempted"] = True
+                for selection in spec["only_expected_runtime_changes"]:
+                    p = selection["destination"]; donor = ROOT / selection["candidate_donor"]["path"]
+                    data = donor.read_bytes()
+                    require(sha(data) == candidate[p]["sha256"] and len(data) == candidate[p]["bytes"], "candidate donor changed")
+                    require(observation(ROOT / p) == original[p], "subject changed before temporary selection: " + p)
+                    replace_exact(ROOT / p, data, int(candidate[p]["mode"],8), [original[p]])
+                require(observe(paths) == candidate, "temporary exact3 selection mismatch")
+                save(out / "source-candidate-selected.json", observe(paths))
+                save(out / "source-selection-delta.json", {"changed_paths":[p for p in paths if original[p] != candidate[p]],
+                                                         "original":{p:original[p] for p in SUBJECTS},
+                                                         "candidate":{p:candidate[p] for p in SUBJECTS}})
+                require(not pending and engine_matches(), "shutdown/engine change before candidate")
+                second = run_phase("candidate", out, dev, context, lock, engine, paths, candidate, registry)
+                result["candidate"] = {k:second[k] for k in ("status","functional_complete","clean","engine_attempted")}
+                require(second["functional_complete"] and not pending, "candidate failed/incomplete/shutdown")
+                compared = comparison(first,second)
+                for field in ("wall_elapsed_us","admission_projection_bind_inclusive_us",
+                              "separate_fixed_clock_probe_elapsed_us","simulation_elapsed_s"):
+                    a=load(out/"original/native-profile.json")[field]; b=load(out/"candidate/native-profile.json")[field]
+                    compared[field]={"original":a,"candidate":b,"candidate_minus_original":b-a,
+                                     "percent_change":(b/a-1)*100 if a else None}
+                save(out / "comparison.json", compared)
+                result["functional_complete"] = True
+                result["clean"] = first["clean"] and second["clean"]
+            finally:
+                # run_phase does not return until its only owned child is closed.
+                # Restore every subject even if candidate replacement failed partway.
+                # Recheck shared registry even when phase output/closure writing raised.
+                for child in registry:
+                    if child.poll() is None: dev.stop_validation(child)
+                    child.wait()
+                require(all(c.poll() is not None for c in registry), "never restore before all owned children close")
+                result["all_owned_children"] = [{"pid":c.pid,"closed":c.poll() is not None,"popen_returncode":c.poll()} for c in registry]
+                for p,(data,mode) in backups.items():
+                    try:
+                        current = observation(ROOT / p)
+                        require(current in [original[p],candidate[p]], "unexpected/foreign subject bytes or mode; refuse overwrite")
+                        replace_exact(ROOT / p,data,mode,[original[p],candidate[p]])
+                    except BaseException as exc:
+                        closure_errors.append({"path":p,"error":type(exc).__name__+": "+str(exc),
+                                               "current":observe([p])[p],
+                                               "original_recovery_sha256":original[p]["sha256"],
+                                               "recovery_map":"recovery-originals.json"})
+                restored = observe(paths)
+                result["original_restored_under_lock"] = restored == original
+                save(out / "source-after-restore.json", restored)
+                result["deferred_shutdown_signals"] = pending
+                for s,h in saved_handlers.items(): signal.signal(s,h)
+                require(not closure_errors and result["original_restored_under_lock"], "original source restoration failed")
+        result["status"] = "CLOSED" if result["clean"] else "CLOSED_FUNCTIONAL_HOST_DIAGNOSTIC"
+    except BaseException as exc:
+        result["exception"] = type(exc).__name__ + ": " + str(exc)
+        with (out / "host-exception.txt").open("x") as stream: stream.write(traceback.format_exc())
+    finally:
+        result["closure_errors"] = closure_errors
+        result["deferred_shutdown_signals"] = pending
+        final = observe(paths); save(out / "source-at-close.json", final)
+        result["named_sources_equal_at_close"] = bool(original) and final == original
+        if not result["named_sources_equal_at_close"] or not result["original_restored_under_lock"] or pending or closure_errors:
+            result["functional_complete"] = False
+        close_index(out,result)
+    print(json.dumps({"output":str(out),"functional_complete":result["functional_complete"],"clean":result["clean"],
+                      "original_restored_under_lock":result["original_restored_under_lock"]}))
+    return 0 if result["functional_complete"] and result["clean"] else 2
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("phase",choices=("seal","run")); args=parser.parse_args()
+    return seal() if args.phase=="seal" else run_pair()
+
+if __name__ == "__main__": raise SystemExit(main())

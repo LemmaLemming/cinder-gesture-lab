@@ -1,5 +1,7 @@
 # Shared73 runtime cost measurements
 
+Later bounded evidence: [native function profiler](RUNTIME_DYNAMIC_PROFILER.md) completes113/0 with1083 pre-teardown records, nonclean debug/certificate diagnostics and qualified accounting. It adds actual reported function counters, not whole-process, per-tick, FPS or speedup conclusions.
+
 Current16 October update: the separate [two-field source projection](RUNTIME_SOURCE_PROJECTION_WITHDRAWN.md) was measured and withdrawn for no convincing overall benefit. Its267/0 differential and paired113/0 results retain CA-only host2/nonclean qualifications. These newer observations do not rewrite the original clean Shared73 measurements below. Both engineering requests remain OPEN.
 
 Measured 16 October 2026 at the exact selected Shared73 source cohorts. The later [Shared74 Living Moon cleanup](LIVING_MOON_FORECAST_CLEANUP.md) is separate and makes no performance claim. Both Root engineering requests remain **OPEN**: Act 1 `f8d3b120-e7b0-429c-8516-d90ee447f947` and Act 3 `c936b6fb-c078-4de6-8f5d-32d88e8fd873`.

@@ -1,0 +1,299 @@
+#!/usr/bin/env python3
+"""PRIVATE SOURCE-ONLY proposal. Root materializes nine resources, reviews, then seals.
+
+Explicit seal/parse/native phases only; no implicit import or default suite.
+Nothing is imported from dev, resolved, queued or executed merely by loading this file.
+"""
+from pathlib import Path
+import argparse, contextlib, datetime, hashlib, importlib.util, json, os, re
+import signal, stat, sys, tempfile, traceback, uuid
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[1]
+SPEC = HERE / "SOURCE_INPUTS.json"
+SEAL = HERE / "seal-controlled.json"
+CATALOGUE = "data/design/difficulty_profiles.json"
+TIMEOUT = 180
+REPORT_LIMIT = 16777216
+
+
+def require(ok, message):
+    if not ok: raise ValueError(message)
+
+
+def now(): return datetime.datetime.now(datetime.timezone.utc).isoformat()
+def digest(raw): return hashlib.sha256(raw).hexdigest()
+def load(path): return json.loads(path.read_bytes())
+
+
+def save(path, value):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("x", encoding="utf-8") as stream:
+        json.dump(value, stream, indent=2, ensure_ascii=False)
+        stream.write("\n")
+
+
+def relative(value):
+    require(isinstance(value, str) and value and not Path(value).is_absolute()
+            and ".." not in Path(value).parts, "unsafe fixed input path")
+    return value
+
+
+def observation(path):
+    if not path.exists() and not path.is_symlink(): return {"present": False}
+    require(not path.is_symlink() and path.is_file(), "regular unlinked input required: " + str(path))
+    require(path.resolve().is_relative_to(ROOT), "input escapes checkout: " + str(path))
+    raw = path.read_bytes()
+    return {"present": True, "sha256": digest(raw), "bytes": len(raw),
+            "mode": format(stat.S_IMODE(path.stat().st_mode), "04o")}
+
+
+def observe(paths):
+    records = {}
+    for item in paths:
+        try: records[item] = observation(ROOT / item)
+        except BaseException as exc: records[item] = {"observation_error": type(exc).__name__ + ": " + str(exc)}
+    return records
+
+
+def devmodule():
+    name = "cinder_projection_controlled_actual_dev"
+    spec = importlib.util.spec_from_file_location(name, ROOT / "scripts/dev/dev.py")
+    require(spec is not None and spec.loader is not None, "actual dev loader unavailable")
+    dev = importlib.util.module_from_spec(spec)
+    absent = object(); previous = sys.modules.get(name, absent)
+    old_flag = sys.dont_write_bytecode
+    sys.modules[name] = dev; sys.dont_write_bytecode = True
+    try: spec.loader.exec_module(dev)
+    except BaseException:
+        if previous is absent: sys.modules.pop(name, None)
+        else: sys.modules[name] = previous
+        raise
+    finally: sys.dont_write_bytecode = old_flag
+    require(dev.ROOT == ROOT, "canonical dev root differs")
+    return dev
+
+
+def prepared_inputs():
+    spec = load(SPEC)
+    require(spec.get("schema") == 1 and len(spec.get("named_existing_inputs", [])) == 90
+            and len(spec.get("root_materialization_only", [])) == 9
+            and len(spec.get("future_private_uid_states", [])) == 9, "fixed 90+9+9 spec required")
+    expected = {}
+    for row in spec["named_existing_inputs"]:
+        expected[relative(row["path"])] = {k: row[k] for k in ("present", "sha256", "bytes", "mode")}
+    for row in spec["root_materialization_only"]:
+        wanted = {"present": True, **{k: row[k] for k in ("sha256", "bytes", "mode")}}
+        require(observation(ROOT / relative(row["source"])) == wanted, "selected inert source changed")
+        expected[relative(row["destination"])] = wanted
+    for row in spec["future_private_uid_states"]:
+        require(row.get("present_before_promotion") is False, "unexpected prepared UID policy")
+        expected[relative(row["path"])] = {"present": False}
+    require(len(expected) == 108 and observe(sorted(expected)) == expected,
+            "Root must materialize exact nine resources; prepared inputs/UID states must match before seal")
+    patch = spec["proposal_patch"]
+    require(observation(ROOT / relative(patch["path"])) == {"present": True, **{k: patch[k] for k in ("sha256", "bytes", "mode")}}, "original proposal patch changed")
+    controls = [str(SPEC.relative_to(ROOT)), str(Path(__file__).relative_to(ROOT)),
+                str((HERE / "run_controlled.py.txt").relative_to(ROOT)),
+                str((HERE / "DONOR_TRANSFORMS.json").relative_to(ROOT)), spec["proposal_patch"]["path"]]
+    controls += [row["source"] for row in spec["root_materialization_only"]]
+    require(Path(__file__).suffix == ".py" and Path(__file__).read_bytes() == (HERE / "run_controlled.py.txt").read_bytes(),
+            "Root must select exact runner text as private run_controlled.py")
+    paths = sorted(set(expected) | {relative(p) for p in controls})
+    return spec, paths, expected
+
+
+def seal():
+    spec, paths, expected = prepared_inputs()
+    sources = observe(paths)
+    require(all(row.get("present") is True for p, row in sources.items() if p not in expected), "missing control source")
+    dev = devmodule(); context = dev.ProjectContext(ROOT); engine = dev.resolve_godot(context)
+    # Engine may live outside ROOT; it is pinned separately, never copied or executed here.
+    raw = engine.read_bytes()
+    value = {"schema": 1, "created_at": now(), "paths": paths, "sources": sources,
+             "engine_path": str(engine), "engine_sha256": digest(raw), "engine_bytes": len(raw),
+             "engine_mode": format(stat.S_IMODE(engine.stat().st_mode), "04o"),
+             "native_entry": spec["native_entry"], "report_env": spec["native_report_env"],
+             "scope": spec["no_global_closure"], "deadline_after_queue_s": TIMEOUT,
+             "native_jobs_executed": False}
+    save(SEAL, value)
+    print(json.dumps({"seal": str(SEAL), "sha256": digest(SEAL.read_bytes()), "fixed_runtime_inputs": 108,
+                      "total_named_pins": len(paths), "engine_executed": False}))
+
+
+def restore_catalogue(path, original, mode):
+    require(not path.is_symlink(), "refuse to overwrite linked catalogue")
+    if path.is_file() and path.read_bytes() == original and stat.S_IMODE(path.stat().st_mode) == mode: return
+    fd, name = tempfile.mkstemp(prefix=".projection-restore-", dir=path.parent)
+    try:
+        os.fchmod(fd, mode)
+        with os.fdopen(fd, "wb") as stream:
+            stream.write(original); stream.flush(); os.fsync(stream.fileno())
+        os.replace(name, path)
+    finally:
+        if os.path.exists(name): os.unlink(name)
+    require(path.read_bytes() == original and stat.S_IMODE(path.stat().st_mode) == mode,
+            "exact original catalogue byte/mode restoration failed")
+
+
+def native_report(out, raw, baseline, spec):
+    path = out / "native-report.json"
+    require(path.is_file() and not path.is_symlink() and path.stat().st_size <= REPORT_LIMIT,
+            "bounded original native report missing")
+    data = path.read_bytes(); report = json.loads(data)
+    require(type(report) is dict and report.get("schema") == 1, "native plain JSON envelope required")
+    rows = report.get("rows"); checks = report.get("checks"); failures = report.get("failures")
+    require(type(checks) is int and checks > 0 and type(failures) is int and failures >= 0
+            and type(rows) is list and len(rows) == checks, "actual row/count shape differs")
+    require(all(type(r) is dict and r.get("index") == i + 1 and type(r.get("index")) is int
+                and type(r.get("passed")) is bool and type(r.get("label")) is str
+                for i, r in enumerate(rows)), "native assertion rows malformed")
+    failed = [r for r in rows if not r["passed"]]
+    require(failures == len(failed) and report.get("first_failure") == (failed[0] if failed else {}),
+            "native failures/first-failure join differs")
+    require(type(report.get("complete")) is bool and type(report.get("success")) is bool
+            and report["success"] == (report["complete"] and failures == 0), "native completion shape differs")
+    footers = re.findall(r"^Source projection boundary smoke: (\d+) checks, (\d+) failures; complete=(true|false); success=(true|false)$", raw, re.M)
+    require(len(footers) == 1 and footers[0] == (str(checks), str(failures), str(report["complete"]).lower(), str(report["success"]).lower()),
+            "actual raw footer/report join differs")
+    markers = re.findall(r"^CINDER_SOURCE_PROJECTION_REPORT path=(.+) sha256=([0-9a-f]{64})$", raw, re.M)
+    require(markers == [(str(path), digest(data))], "actual raw report path/hash join differs")
+    require(re.findall(r"^PASS: (.*)$", raw, re.M) == [r["label"] for r in rows if r["passed"]],
+            "actual printed passing rows differ")
+    named = ["tests/authored_echo_playback_smoke.gd", "tests/fixtures/authored_echo_actor.gd",
+             "scripts/combat/replay_playback.gd", "scripts/combat/difficulty.gd", CATALOGUE]
+    named += [r["destination"] for r in spec["root_materialization_only"]]
+    expected = {"res://" + p: baseline[p]["sha256"] for p in named}
+    require(report.get("source_before") == expected and report.get("source_after") == expected,
+            "native named before/after source hashes differ from actual sealed inputs")
+    require(report["complete"] and report["success"] and failures == 0, "native focused differential failed or incomplete")
+    return {"sha256": digest(data), "bytes": len(data), "checks": checks, "failures": failures,
+            "actual_footer": footers[0], "source_pin_join": True}
+
+
+def run(phase):
+    label = phase + "-" + datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dt%H%M%S%fz") + "-" + uuid.uuid4().hex[:8]
+    out = HERE / "runs" / label; out.mkdir(parents=True, exist_ok=False)
+    result = {"schema": 1, "phase": phase, "label": label, "started_at": now(), "status": "PREFLIGHT",
+              "engine_attempted": False, "complete": False, "clean": False, "deadline_after_queue_s": TIMEOUT}
+    paths = []; baseline = {}; spec = {}; closure_errors = []; closure_failed = False
+    try:
+        require(re.fullmatch(r"[a-z0-9-]+", label) is not None, "safe unique label required")
+        sealed = load(SEAL); spec = load(SPEC)
+        require(type(sealed) is dict and sealed.get("schema") == 1 and type(sealed.get("paths")) is list
+                and type(sealed.get("sources")) is dict, "selected seal missing/malformed")
+        paths = [relative(p) for p in sealed["paths"]]; baseline = sealed["sources"]
+        require(len(paths) == len(set(paths)) and set(paths) == set(baseline), "seal path map differs")
+        save(out / "selected-seal.json", sealed)
+        before = observe(paths); save(out / "source-before.json", before)
+        require(before == baseline, "named inputs drifted since seal; no repin")
+        catalogue = ROOT / CATALOGUE; original = catalogue.read_bytes(); mode = stat.S_IMODE(catalogue.stat().st_mode)
+        with (out / "catalogue-original.bin").open("xb") as stream: stream.write(original)
+        save(out / "catalogue-before.json", {"sha256": digest(original), "bytes": len(original), "mode": format(mode, "04o")})
+        dev = devmodule(); environment = dict(os.environ); environment.pop(sealed["report_env"], None)
+        if phase == "native": environment[sealed["report_env"]] = str(out / "native-report.json")
+        context = dev.ProjectContext(ROOT, environ=environment); engine = dev.resolve_godot(context)
+        def engine_matches():
+            return str(engine) == sealed["engine_path"] and engine.is_file() and digest(engine.read_bytes()) == sealed["engine_sha256"] and engine.stat().st_size == sealed["engine_bytes"] and format(stat.S_IMODE(engine.stat().st_mode), "04o") == sealed["engine_mode"]
+        require(engine_matches(), "selected engine bytes/path/mode changed")
+        command = [str(engine), "--headless", "--path", str(ROOT), "--log-file", str(out / "engine.log")]
+        if phase == "parse": command.append("--check-only")
+        command += ["--script", sealed["native_entry"]]
+        if phase == "native": command += ["--", "--allow-canonical-catalogue-mutation"]
+        save(out / "command.json", {"argv": command, "environment_delta": {sealed["report_env"]: environment.get(sealed["report_env"])},
+                                    "canonical_queue": "actual dev.godot_lock / dev.run_validation", "timeout_after_queue_s": TIMEOUT})
+        save(out / "queue-wait.json", {"at": now()})
+        with (out / "raw.log").open("x") as log, contextlib.redirect_stdout(log), contextlib.redirect_stderr(log):
+            with dev.godot_lock(ROOT) as lock:
+                atlock = observe(paths); save(out / "source-at-lock.json", atlock)
+                require(atlock == baseline and engine_matches(), "named source/engine drift while queued")
+                require(catalogue.read_bytes() == original and stat.S_IMODE(catalogue.stat().st_mode) == mode, "catalogue changed while queued; no restoration armed")
+                retained = []
+                for p, row in atlock.items():
+                    entry = {"original_path": p, **row}
+                    if row.get("present"):
+                        data = (ROOT / p).read_bytes(); require(digest(data) == row["sha256"], "at-lock retention drift")
+                        target = out / "source-blobs" / (row["sha256"] + ".bin"); target.parent.mkdir(exist_ok=True)
+                        if not target.exists():
+                            with target.open("xb") as stream: stream.write(data)
+                        entry["portable_relative_path"] = str(target.relative_to(out))
+                    retained.append(entry)
+                save(out / "source-retention.json", {"scope": sealed["scope"], "files": retained})
+                save(out / "queue-acquired.json", {"at": now(), "timeout_starts_after_this": True})
+                owned = []; pending = []; actual_popen = dev.subprocess.Popen
+                handlers = {s: signal.getsignal(s) for s in (signal.SIGINT, signal.SIGTERM)}
+                def defer_signal(number, _frame):
+                    if len(pending) < 16: pending.append(number)
+                def track_owned(*args, **kwargs):
+                    require(not owned, "exactly one owned validation child required")
+                    child = actual_popen(*args, **kwargs); owned.append(child); return child
+                try:
+                    for s in handlers: signal.signal(s, defer_signal)
+                    dev.subprocess.Popen = track_owned
+                    result["engine_attempted"] = True
+                    code = dev.run_validation(command, context, lock, TIMEOUT, detect_godot_errors=False)
+                    result["owned_validation_return"] = code
+                    result["native_exit_code"] = code if code != 124 else None
+                    result["native_exit_independently_observed"] = False
+                    result["return_qualification"] = "Pinned dev API with detect_godot_errors=False: non124 returns derive from child.wait;124 is ambiguous native124 versus synthesized timeout. Ownership observer records closure only, no independent terminal-return record."
+                finally:
+                    dev.subprocess.Popen = actual_popen
+                    try:
+                        for child in owned:
+                            if child.poll() is None: dev.stop_validation(child)  # ONLY this wrapper's owned child.
+                            child.wait()
+                        result["owned_children"] = [{"pid": c.pid, "closed": c.poll() is not None} for c in owned]
+                        result["owned_child_closed_at"] = now() if owned else None
+                        save(out / "source-after-child.json", observe(paths))
+                    finally:
+                        try:
+                            require(all(c.poll() is not None for c in owned), "refuse catalogue restoration before owned child closes")
+                            restore_catalogue(catalogue, original, mode)
+                            result["catalogue_restored_under_lock"] = observation(catalogue) == baseline[CATALOGUE]
+                            require(result["catalogue_restored_under_lock"], "catalogue restoration differs from sealed original")
+                            save(out / "source-after-restore.json", observe(paths))
+                        finally:
+                            result["deferred_shutdown_signals"] = pending
+                            for s, handler in handlers.items(): signal.signal(s, handler)
+                require(not pending, "shutdown requested; preserved closure is not a successful check")
+                require(len(owned) == 1, "one actual owned child required")
+                require(load(out / "source-after-child.json") == baseline, "child left named source drift before restoration")
+                require(load(out / "source-after-restore.json") == baseline, "named source drift after catalogue restoration")
+        raw = (out / "raw.log").read_text(errors="replace")
+        diagnostics = [line for line in raw.splitlines() if re.search(r"SCRIPT ERROR|Parse Error|ERROR:|WARNING:|FAIL:|ObjectDB instances leaked", line)]
+        result["diagnostic_lines"] = diagnostics; result["clean"] = not diagnostics
+        require(result.get("owned_validation_return") == 0 and result["clean"], "actual validation return/diagnostics failed")
+        if phase == "native": result["actual_report"] = native_report(out, raw, baseline, spec)
+        else: result["scope_qualification"] = "One selected check-only parse; no import, fixture execution, catalogue-control or runtime acceptance credit."
+        result["complete"] = True; result["status"] = "CLOSED"
+    except BaseException as exc:
+        result["status"] = "CLOSED_INCOMPLETE"; result["exception"] = type(exc).__name__ + ": " + str(exc)
+        with (out / "host-exception.txt").open("x") as stream: stream.write(traceback.format_exc())
+    finally:
+        final = observe(paths); result["named_sources_equal_at_close"] = bool(baseline) and final == baseline
+        if not result["named_sources_equal_at_close"]: result["complete"] = False
+        result["closed_at"] = now(); result["closure_errors"] = closure_errors
+        try:
+            save(out / "source-at-close.json", final)
+            names = ["selected-seal.json", "source-before.json", "source-at-lock.json", "source-after-child.json", "source-after-restore.json", "source-at-close.json", "source-retention.json", "catalogue-original.bin", "catalogue-before.json", "command.json", "queue-wait.json", "queue-acquired.json", "raw.log", "engine.log", "native-report.json", "host-exception.txt"]
+            result["files"] = [{"path": n, **observation(out / n)} for n in names if (out / n).is_file()]
+            save(out / "result.json", result)
+            save(out / "index.json", {"schema": 1, "result": {"path": "result.json", **observation(out / "result.json")},
+                                       "files": result["files"], "limits": "Fixed named source scope; original raw/report/partial failures retained. No global UID/import closure, FPS, performance gain or production promotion credit. API return qualified; no independent native terminal return."})
+        except BaseException as exc:
+            print(json.dumps({"status": "CLOSED_HOST_CLOSURE_WRITE_FAILURE", "output": str(out), "exception": type(exc).__name__ + ": " + str(exc)}))
+            closure_failed = True
+    if closure_failed: return 2
+    print(json.dumps({"output": str(out), "complete": result["complete"], "clean": result["clean"], "phase": phase}))
+    return 0 if result["complete"] and result["clean"] else 2
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("phase", choices=("seal", "parse", "native"))
+    args = parser.parse_args()
+    if args.phase == "seal": seal(); return 0
+    return run(args.phase)
+
+
+if __name__ == "__main__": raise SystemExit(main())
