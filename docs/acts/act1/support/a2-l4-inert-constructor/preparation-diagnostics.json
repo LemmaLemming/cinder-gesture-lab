@@ -1,0 +1,17 @@
+{
+  "scope": "Read-only preparation path mistakes; corrected after rg lookup. No native/parser result.",
+  "events": [
+    {
+      "operation": "initial source inventory",
+      "exit_code": 1,
+      "first_error": "FileNotFoundError scripts/combat/ray_scout_exchange.gd",
+      "correction": "scripts/acts/act2/ray_scout_exchange.gd; corrected25pin check succeeds"
+    },
+    {
+      "operation": "targeted rg",
+      "exit_code": 2,
+      "first_error": "scripts/acts/act2/weapons_demonstration.gd: No such file or directory",
+      "correction": "Observed actual extends horsell_common.gd; subsequent reads use actual path"
+    }
+  ]
+}

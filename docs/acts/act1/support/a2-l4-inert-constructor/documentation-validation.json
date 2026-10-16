@@ -1,0 +1,1925 @@
+{
+  "scope": "Documentation source unit: JSON and payload hashes, links, assigned prefix, no executable .gd, raw Git whitespace check retained. No native/parser validation.",
+  "links_checked": 3,
+  "git_whitespace_exit_code": 2,
+  "git_whitespace_notices": 273,
+  "all_notices_are_exact_unified_patch_context": true,
+  "unexpected_notices": [],
+  "notices": [
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 18,
+      "reason": "trailing whitespace.",
+      "exact_patch_context": true,
+      "line_text": " "
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 20,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t_art_preview = false"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 22,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tif is_instance_valid(mesh): _bank_visuals.append(mesh)"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 23,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tset_physics_process(false)"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 24,
+      "reason": "trailing whitespace.",
+      "exact_patch_context": true,
+      "line_text": " "
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 38,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tif is_instance_valid(shared_shell) and shared_shell.has_method(\"get_difficulty_preference\"):"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 39,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\t_profile_id = shared_shell.call(\"get_difficulty_preference\")"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 59,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t_scheduler = Scheduler.new()"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 60,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t_scheduler.name = \"LondonApproachesThreatScheduler\""
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 61,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tadd_child(_scheduler)"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 62,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tif not _scheduler.call(\"begin_encounter\", _profile_id, LONDON_EPOCH, WORLD_REVISION):"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 63,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\truntime_error = _scheduler.get(\"last_error\")"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 64,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\treturn"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 71,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tvar actor_script: Script = TenderActor if LondonSequence.TENDERS.has(id) else (HandlerActor if LondonSequence.HANDLERS.has(id) else WeybridgeScoutActor)"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 72,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tvar actor: Node3D = actor_script.new() as Node3D"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 73,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tactor.name = \"LondonApproaches_\" + id"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 76,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tadd_child(actor)"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 77,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tif not actor.call(\"configure\", hero, effects, id):"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 78,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\t\truntime_error = \"Cannot bind actual L4 actor \" + id"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 80,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tbank.name = id"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 81,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tbank.position = LondonSequence.CLOUDS[id]"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 82,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tadd_child(bank)"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 85,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\t\truntime_error = \"Cannot bind actual L4 smoke bank \" + id + \": \" + String(bank.get(\"last_error\"))"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 86,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\t\treturn false"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 87,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\t_clouds[id] = bank"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 89,
+      "reason": "trailing whitespace.",
+      "exact_patch_context": true,
+      "line_text": " "
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 91,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tvar state: Dictionary = _clouds[id].call(\"state\")"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 94,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tstate[\"remaining_s\"] = 0.0"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 95,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tif state.status == \"running\":"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 96,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tvar deadline: String = {\"warning\": \"lock_from_s\", \"lock\": \"active_from_s\", \"active\": \"active_until_s\", \"recovery\": \"recovery_until_s\"}[state.phase]"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 98,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \treturn node"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 99,
+      "reason": "trailing whitespace.",
+      "exact_patch_context": true,
+      "line_text": " "
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 104,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tvar actor: Variant = _actors.get(id)"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 105,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tif not is_instance_valid(actor) or not actor is Node3D or not actor.is_inside_tree() or actor.is_queued_for_deletion(): return \"L4 actual actor custody lost: \" + id"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 107,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \treturn \"\""
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 108,
+      "reason": "trailing whitespace.",
+      "exact_patch_context": true,
+      "line_text": " "
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 111,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tif not error.is_empty(): return error"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 112,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tfor id: String in KnownSnapshotRules.TOOL_IDS:"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 113,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tvar tool: Variant = _mechanisms.get(id)"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 116,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tif not state.mechanisms[id] is Dictionary: return \"Known L4 tool requires its public dictionary\""
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 117,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\terror = _mechanisms[id].call(\"snapshot_error\", state.mechanisms[id], bindings, state.scheduler)"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 118,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tif not error.is_empty(): return error"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 120,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\t\tvar actor: Dictionary = state.targets[target_id]"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 121,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\t\tif saved.exchange.source_position != actor.root_position or saved.exchange.opening_position != actor.root_position or saved.exchange.profile_id != state.profile_id or int(saved.exchange.world_revision) != WORLD_REVISION:"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 122,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\t\t\treturn \"Known L4 executed tool retains its exact actual source/opening/profile/revision\""
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 125,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tif not error.is_empty(): return error"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 126,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tfor id: String in state.views:"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 127,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tvar view: Dictionary = state.views[id]"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 129,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tif banks[id].is_empty(): return {\"error\": \"L4 bank capture failed \" + id + \": \" + String(_clouds[id].get(\"last_snapshot_error\"))}"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 130,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tstate[\"banks\"] = banks"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 131,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tstate[\"bank_views\"] = _bank_views.duplicate(true)"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 136,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \treturn state"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 137,
+      "reason": "trailing whitespace.",
+      "exact_patch_context": true,
+      "line_text": " "
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 139,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tvar known: Dictionary = state.duplicate()"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 140,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tknown.erase(\"banks\")"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 141,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tknown.erase(\"bank_views\")"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 143,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \treturn known"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 144,
+      "reason": "trailing whitespace.",
+      "exact_patch_context": true,
+      "line_text": " "
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 146,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tif not _smoke_api_ready or _clouds.size() != BANK_TO_TENDER.size() or _cloud_art.size() != BANK_TO_TENDER.size(): return \"L4 requires its actual supported bank/source/art bindings\""
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 147,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tif not is_instance_valid(_bank_guard) or _bank_guard.get_script() != BankGuard or _bank_guard.get_parent() != self or not _bank_guard.call(\"binding_matches\", Callable(self, \"_guard_banks_before_contact\")): return \"L4 requires its original active native pre-contact presentation guard\""
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 148,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tvar error: String = Codec.value_error(state)"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 151,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tif not error.is_empty(): return error"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 152,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tif not state.banks is Dictionary or not state.bank_views is Dictionary or not Codec.keys_error(state.banks, SmokeSnapshotRules.BANK_IDS).is_empty(): return \"L4 requires two complete bank snapshots and their view dictionary\""
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 153,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tif not is_instance_valid(hero): return \"L4 requires its actual shared Hero\""
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 164,
+      "reason": "trailing whitespace.",
+      "exact_patch_context": true,
+      "line_text": " "
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 172,
+      "reason": "trailing whitespace.",
+      "exact_patch_context": true,
+      "line_text": " "
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 173,
+      "reason": "trailing whitespace.",
+      "exact_patch_context": true,
+      "line_text": " "
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 176,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tvar error: String = Codec.value_error(state)"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 177,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tif error.is_empty(): error = Codec.keys_error(state, KNOWN_KEYS)"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 178,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tif not error.is_empty(): return \"L4 known envelope: \" + error"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 180,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tif beat != \"clear\" or state.completion_pending or not state.scheduler.profile.is_empty() or not state.scheduler.reservations.is_empty(): return \"Ended L4 Scheduler must follow committed quiet clear\""
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 181,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \telif state.scheduler.encounter_id != LEVEL_EPOCH or state.scheduler.profile.get(\"id\") != state.profile_id:"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 182,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\treturn \"L4 live or cloud-tail Scheduler must retain the original fixed epoch/profile\""
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 188,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tif not Codec.is_number(state.rays.get(\"clock_s\")) or float(state.rays.clock_s) != float(state.scheduler.clock_s): return \"L4 Ray transport must share the exact Scheduler clock\""
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 189,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tvar targets: Dictionary = {}"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 190,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tfor id: String in TARGET_IDS:"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 192,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tif not state.rays.actors[id] is Dictionary or not state.rays.records[id] is Dictionary: return \"L4 requires every prevalidated Scout actor/cycle\""
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 193,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\ttargets[id] = state.rays.actors[id]"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 194,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tfor id: String in Sequence.ACTORS:"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 197,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tif not error.is_empty(): return error"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 198,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tvar actor: Dictionary = targets[id]"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 199,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tif (float(actor.hp) <= 0.0) != state.sequence.defeated_ids.has(id): return \"L4 actor HP differs from its earned defeat prefix: \" + id"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 201,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \treturn \"\""
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 202,
+      "reason": "trailing whitespace.",
+      "exact_patch_context": true,
+      "line_text": " "
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 203,
+      "reason": "trailing whitespace.",
+      "exact_patch_context": true,
+      "line_text": " "
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 208,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\treturn \"L4 target must preserve its finite HP30/root/actor schema: \" + id"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 209,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tif (actor.phase == \"defeated\") != (float(actor.hp) <= 0.0): return \"L4 target spent phase must match its actual HP: \" + id"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 210,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tif not RAY_IDS.has(id) and (actor.direction != [0.0, 0.0, 1.0] or float(actor.body_yaw) != 0.0): return \"L4 fixed non-Ray target retains original +Z/zero-yaw pose: \" + id"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 226,
+      "reason": "trailing whitespace.",
+      "exact_patch_context": true,
+      "line_text": " "
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 233,
+      "reason": "trailing whitespace.",
+      "exact_patch_context": true,
+      "line_text": " "
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 235,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tvar error: String = Codec.value_error(state)"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 237,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tif not error.is_empty(): return \"L4 full local envelope: \" + error"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 240,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tif not state.banks is Dictionary or not state.bank_views is Dictionary or not Codec.keys_error(state.banks, BANK_IDS).is_empty(): return \"L4 requires both complete independent bank snapshots\""
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 241,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tvar known: Dictionary = state.duplicate()"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 242,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tknown.erase(\"banks\")"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 243,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tknown.erase(\"bank_views\")"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 247,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tif not error.is_empty(): return error"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 248,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tvar stage: int = int(state.sequence.stage_index)"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 249,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tvar ended: bool = state.scheduler.encounter_id.is_empty()"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 251,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tif outer.api_revision != Level.API_REVISION or not Codec.is_integer(outer.schema_version, Level.SNAPSHOT_SCHEMA_VERSION, Level.SNAPSHOT_SCHEMA_VERSION) or outer.level_id != \"A2-L4\" or outer.scene_path != \"res://scenes/acts/act2/a2_l4.tscn\" or not Codec.is_integer(outer.local_snapshot_version, 1, 1) or not outer.local is Dictionary or not outer.progress is Dictionary: return \"L4 progression must retain its authored CinderLevel identity\""
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 252,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tvar local: Dictionary = outer.local"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 253,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tvar progress: Dictionary = outer.progress"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 258,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tfor key: String in [\"completion_id\", \"contact_exit_id\", \"checkpoint_id\", \"checkpoint_kind\"]:"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 259,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tif not progress[key] is String: return \"L4 progression ID/kind must be a string\""
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/constructor.patch.txt",
+      "line": 260,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \terror = Sequence.new().snapshot_error(local.sequence)"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 18,
+      "reason": "trailing whitespace.",
+      "exact_patch_context": true,
+      "line_text": " "
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 20,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t_art_preview = false"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 22,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tif is_instance_valid(mesh): _bank_visuals.append(mesh)"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 23,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tset_physics_process(false)"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 24,
+      "reason": "trailing whitespace.",
+      "exact_patch_context": true,
+      "line_text": " "
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 38,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tif is_instance_valid(shared_shell) and shared_shell.has_method(\"get_difficulty_preference\"):"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 39,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\t_profile_id = shared_shell.call(\"get_difficulty_preference\")"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 59,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t_scheduler = Scheduler.new()"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 60,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t_scheduler.name = \"LondonApproachesThreatScheduler\""
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 61,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tadd_child(_scheduler)"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 62,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tif not _scheduler.call(\"begin_encounter\", _profile_id, LONDON_EPOCH, WORLD_REVISION):"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 63,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\truntime_error = _scheduler.get(\"last_error\")"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 64,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\treturn"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 71,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tvar actor_script: Script = TenderActor if LondonSequence.TENDERS.has(id) else (HandlerActor if LondonSequence.HANDLERS.has(id) else WeybridgeScoutActor)"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 72,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tvar actor: Node3D = actor_script.new() as Node3D"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 73,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tactor.name = \"LondonApproaches_\" + id"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 76,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tadd_child(actor)"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 77,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tif not actor.call(\"configure\", hero, effects, id):"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 78,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\t\truntime_error = \"Cannot bind actual L4 actor \" + id"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 80,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tbank.name = id"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 81,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tbank.position = LondonSequence.CLOUDS[id]"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 82,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tadd_child(bank)"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 85,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\t\truntime_error = \"Cannot bind actual L4 smoke bank \" + id + \": \" + String(bank.get(\"last_error\"))"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 86,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\t\treturn false"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 87,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\t_clouds[id] = bank"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 89,
+      "reason": "trailing whitespace.",
+      "exact_patch_context": true,
+      "line_text": " "
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 91,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tvar state: Dictionary = _clouds[id].call(\"state\")"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 94,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tstate[\"remaining_s\"] = 0.0"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 95,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tif state.status == \"running\":"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 96,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tvar deadline: String = {\"warning\": \"lock_from_s\", \"lock\": \"active_from_s\", \"active\": \"active_until_s\", \"recovery\": \"recovery_until_s\"}[state.phase]"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 98,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \treturn node"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 99,
+      "reason": "trailing whitespace.",
+      "exact_patch_context": true,
+      "line_text": " "
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 104,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tvar actor: Variant = _actors.get(id)"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 105,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tif not is_instance_valid(actor) or not actor is Node3D or not actor.is_inside_tree() or actor.is_queued_for_deletion(): return \"L4 actual actor custody lost: \" + id"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 106,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \treturn \"\""
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 108,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tif not error.is_empty(): return error"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 109,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tfor id: String in KnownSnapshotRules.TOOL_IDS:"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 110,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tvar tool: Variant = _mechanisms.get(id)"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 113,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tif not state.mechanisms[id] is Dictionary: return \"Known L4 tool requires its public dictionary\""
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 114,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\terror = _mechanisms[id].call(\"snapshot_error\", state.mechanisms[id], bindings, state.scheduler)"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 115,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tif not error.is_empty(): return error"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 117,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\t\tvar actor: Dictionary = state.targets[target_id]"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 118,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\t\tif saved.exchange.source_position != actor.root_position or saved.exchange.opening_position != actor.root_position or saved.exchange.profile_id != state.profile_id or int(saved.exchange.world_revision) != WORLD_REVISION:"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 119,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\t\t\treturn \"Known L4 executed tool retains its exact actual source/opening/profile/revision\""
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 122,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tif not error.is_empty(): return error"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 123,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tfor id: String in state.views:"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 124,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tvar view: Dictionary = state.views[id]"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 126,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tif banks[id].is_empty(): return {\"error\": \"L4 bank capture failed \" + id + \": \" + String(_clouds[id].get(\"last_snapshot_error\"))}"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 127,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tstate[\"banks\"] = banks"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 128,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tstate[\"bank_views\"] = _bank_views.duplicate(true)"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 133,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \treturn state"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 134,
+      "reason": "trailing whitespace.",
+      "exact_patch_context": true,
+      "line_text": " "
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 136,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tvar known: Dictionary = state.duplicate()"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 137,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tknown.erase(\"banks\")"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 138,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tknown.erase(\"bank_views\")"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 140,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \treturn known"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 141,
+      "reason": "trailing whitespace.",
+      "exact_patch_context": true,
+      "line_text": " "
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 143,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tif not _smoke_api_ready or _clouds.size() != BANK_TO_TENDER.size() or _cloud_art.size() != BANK_TO_TENDER.size(): return \"L4 requires its actual supported bank/source/art bindings\""
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 144,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tif not is_instance_valid(_bank_guard) or _bank_guard.get_script() != BankGuard or _bank_guard.get_parent() != self or not _bank_guard.call(\"binding_matches\", Callable(self, \"_guard_banks_before_contact\")): return \"L4 requires its original active native pre-contact presentation guard\""
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 145,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tvar error: String = Codec.value_error(state)"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 148,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tif not error.is_empty(): return error"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 149,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tif not state.banks is Dictionary or not state.bank_views is Dictionary or not Codec.keys_error(state.banks, SmokeSnapshotRules.BANK_IDS).is_empty(): return \"L4 requires two complete bank snapshots and their view dictionary\""
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host-v1.patch.txt",
+      "line": 150,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tif not is_instance_valid(hero): return \"L4 requires its actual shared Hero\""
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 18,
+      "reason": "trailing whitespace.",
+      "exact_patch_context": true,
+      "line_text": " "
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 20,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t_art_preview = false"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 22,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tif is_instance_valid(mesh): _bank_visuals.append(mesh)"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 23,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tset_physics_process(false)"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 24,
+      "reason": "trailing whitespace.",
+      "exact_patch_context": true,
+      "line_text": " "
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 38,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tif is_instance_valid(shared_shell) and shared_shell.has_method(\"get_difficulty_preference\"):"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 39,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\t_profile_id = shared_shell.call(\"get_difficulty_preference\")"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 59,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t_scheduler = Scheduler.new()"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 60,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t_scheduler.name = \"LondonApproachesThreatScheduler\""
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 61,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tadd_child(_scheduler)"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 62,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tif not _scheduler.call(\"begin_encounter\", _profile_id, LONDON_EPOCH, WORLD_REVISION):"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 63,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\truntime_error = _scheduler.get(\"last_error\")"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 64,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\treturn"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 71,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tvar actor_script: Script = TenderActor if LondonSequence.TENDERS.has(id) else (HandlerActor if LondonSequence.HANDLERS.has(id) else WeybridgeScoutActor)"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 72,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tvar actor: Node3D = actor_script.new() as Node3D"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 73,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tactor.name = \"LondonApproaches_\" + id"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 76,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tadd_child(actor)"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 77,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tif not actor.call(\"configure\", hero, effects, id):"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 78,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\t\truntime_error = \"Cannot bind actual L4 actor \" + id"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 80,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tbank.name = id"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 81,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tbank.position = LondonSequence.CLOUDS[id]"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 82,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tadd_child(bank)"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 85,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\t\truntime_error = \"Cannot bind actual L4 smoke bank \" + id + \": \" + String(bank.get(\"last_error\"))"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 86,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\t\treturn false"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 87,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\t_clouds[id] = bank"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 89,
+      "reason": "trailing whitespace.",
+      "exact_patch_context": true,
+      "line_text": " "
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 91,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tvar state: Dictionary = _clouds[id].call(\"state\")"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 94,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tstate[\"remaining_s\"] = 0.0"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 95,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tif state.status == \"running\":"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 96,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tvar deadline: String = {\"warning\": \"lock_from_s\", \"lock\": \"active_from_s\", \"active\": \"active_until_s\", \"recovery\": \"recovery_until_s\"}[state.phase]"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 98,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \treturn node"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 99,
+      "reason": "trailing whitespace.",
+      "exact_patch_context": true,
+      "line_text": " "
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 104,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tvar actor: Variant = _actors.get(id)"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 105,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tif not is_instance_valid(actor) or not actor is Node3D or not actor.is_inside_tree() or actor.is_queued_for_deletion(): return \"L4 actual actor custody lost: \" + id"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 107,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \treturn \"\""
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 108,
+      "reason": "trailing whitespace.",
+      "exact_patch_context": true,
+      "line_text": " "
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 111,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tif not error.is_empty(): return error"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 112,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tfor id: String in KnownSnapshotRules.TOOL_IDS:"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 113,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tvar tool: Variant = _mechanisms.get(id)"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 116,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tif not state.mechanisms[id] is Dictionary: return \"Known L4 tool requires its public dictionary\""
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 117,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\terror = _mechanisms[id].call(\"snapshot_error\", state.mechanisms[id], bindings, state.scheduler)"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 118,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tif not error.is_empty(): return error"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 120,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\t\tvar actor: Dictionary = state.targets[target_id]"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 121,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\t\tif saved.exchange.source_position != actor.root_position or saved.exchange.opening_position != actor.root_position or saved.exchange.profile_id != state.profile_id or int(saved.exchange.world_revision) != WORLD_REVISION:"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 122,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\t\t\treturn \"Known L4 executed tool retains its exact actual source/opening/profile/revision\""
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 125,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tif not error.is_empty(): return error"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 126,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tfor id: String in state.views:"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 127,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tvar view: Dictionary = state.views[id]"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 129,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tif banks[id].is_empty(): return {\"error\": \"L4 bank capture failed \" + id + \": \" + String(_clouds[id].get(\"last_snapshot_error\"))}"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 130,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tstate[\"banks\"] = banks"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 131,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tstate[\"bank_views\"] = _bank_views.duplicate(true)"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 136,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \treturn state"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 137,
+      "reason": "trailing whitespace.",
+      "exact_patch_context": true,
+      "line_text": " "
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 139,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tvar known: Dictionary = state.duplicate()"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 140,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tknown.erase(\"banks\")"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 141,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tknown.erase(\"bank_views\")"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 143,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \treturn known"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 144,
+      "reason": "trailing whitespace.",
+      "exact_patch_context": true,
+      "line_text": " "
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 146,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tif not _smoke_api_ready or _clouds.size() != BANK_TO_TENDER.size() or _cloud_art.size() != BANK_TO_TENDER.size(): return \"L4 requires its actual supported bank/source/art bindings\""
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 147,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tif not is_instance_valid(_bank_guard) or _bank_guard.get_script() != BankGuard or _bank_guard.get_parent() != self or not _bank_guard.call(\"binding_matches\", Callable(self, \"_guard_banks_before_contact\")): return \"L4 requires its original active native pre-contact presentation guard\""
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 148,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tvar error: String = Codec.value_error(state)"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 151,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tif not error.is_empty(): return error"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 152,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tif not state.banks is Dictionary or not state.bank_views is Dictionary or not Codec.keys_error(state.banks, SmokeSnapshotRules.BANK_IDS).is_empty(): return \"L4 requires two complete bank snapshots and their view dictionary\""
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/host.patch.txt",
+      "line": 153,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tif not is_instance_valid(hero): return \"L4 requires its actual shared Hero\""
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/validators.patch",
+      "line": 11,
+      "reason": "trailing whitespace.",
+      "exact_patch_context": true,
+      "line_text": " "
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/validators.patch",
+      "line": 19,
+      "reason": "trailing whitespace.",
+      "exact_patch_context": true,
+      "line_text": " "
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/validators.patch",
+      "line": 20,
+      "reason": "trailing whitespace.",
+      "exact_patch_context": true,
+      "line_text": " "
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/validators.patch",
+      "line": 23,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tvar error: String = Codec.value_error(state)"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/validators.patch",
+      "line": 24,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tif error.is_empty(): error = Codec.keys_error(state, KNOWN_KEYS)"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/validators.patch",
+      "line": 25,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tif not error.is_empty(): return \"L4 known envelope: \" + error"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/validators.patch",
+      "line": 27,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tif beat != \"clear\" or state.completion_pending or not state.scheduler.profile.is_empty() or not state.scheduler.reservations.is_empty(): return \"Ended L4 Scheduler must follow committed quiet clear\""
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/validators.patch",
+      "line": 28,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \telif state.scheduler.encounter_id != LEVEL_EPOCH or state.scheduler.profile.get(\"id\") != state.profile_id:"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/validators.patch",
+      "line": 29,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\treturn \"L4 live or cloud-tail Scheduler must retain the original fixed epoch/profile\""
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/validators.patch",
+      "line": 35,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tif not Codec.is_number(state.rays.get(\"clock_s\")) or float(state.rays.clock_s) != float(state.scheduler.clock_s): return \"L4 Ray transport must share the exact Scheduler clock\""
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/validators.patch",
+      "line": 36,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tvar targets: Dictionary = {}"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/validators.patch",
+      "line": 37,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tfor id: String in TARGET_IDS:"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/validators.patch",
+      "line": 39,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tif not state.rays.actors[id] is Dictionary or not state.rays.records[id] is Dictionary: return \"L4 requires every prevalidated Scout actor/cycle\""
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/validators.patch",
+      "line": 40,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\ttargets[id] = state.rays.actors[id]"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/validators.patch",
+      "line": 41,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tfor id: String in Sequence.ACTORS:"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/validators.patch",
+      "line": 44,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tif not error.is_empty(): return error"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/validators.patch",
+      "line": 45,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tvar actor: Dictionary = targets[id]"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/validators.patch",
+      "line": 46,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tif (float(actor.hp) <= 0.0) != state.sequence.defeated_ids.has(id): return \"L4 actor HP differs from its earned defeat prefix: \" + id"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/validators.patch",
+      "line": 48,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \treturn \"\""
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/validators.patch",
+      "line": 49,
+      "reason": "trailing whitespace.",
+      "exact_patch_context": true,
+      "line_text": " "
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/validators.patch",
+      "line": 50,
+      "reason": "trailing whitespace.",
+      "exact_patch_context": true,
+      "line_text": " "
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/validators.patch",
+      "line": 55,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\treturn \"L4 target must preserve its finite HP30/root/actor schema: \" + id"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/validators.patch",
+      "line": 56,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tif (actor.phase == \"defeated\") != (float(actor.hp) <= 0.0): return \"L4 target spent phase must match its actual HP: \" + id"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/validators.patch",
+      "line": 57,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tif not RAY_IDS.has(id) and (actor.direction != [0.0, 0.0, 1.0] or float(actor.body_yaw) != 0.0): return \"L4 fixed non-Ray target retains original +Z/zero-yaw pose: \" + id"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/validators.patch",
+      "line": 73,
+      "reason": "trailing whitespace.",
+      "exact_patch_context": true,
+      "line_text": " "
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/validators.patch",
+      "line": 80,
+      "reason": "trailing whitespace.",
+      "exact_patch_context": true,
+      "line_text": " "
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/validators.patch",
+      "line": 82,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tvar error: String = Codec.value_error(state)"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/validators.patch",
+      "line": 84,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tif not error.is_empty(): return \"L4 full local envelope: \" + error"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/validators.patch",
+      "line": 87,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tif not state.banks is Dictionary or not state.bank_views is Dictionary or not Codec.keys_error(state.banks, BANK_IDS).is_empty(): return \"L4 requires both complete independent bank snapshots\""
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/validators.patch",
+      "line": 88,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tvar known: Dictionary = state.duplicate()"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/validators.patch",
+      "line": 89,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tknown.erase(\"banks\")"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/validators.patch",
+      "line": 90,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tknown.erase(\"bank_views\")"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/validators.patch",
+      "line": 94,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tif not error.is_empty(): return error"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/validators.patch",
+      "line": 95,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tvar stage: int = int(state.sequence.stage_index)"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/validators.patch",
+      "line": 96,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tvar ended: bool = state.scheduler.encounter_id.is_empty()"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/validators.patch",
+      "line": 98,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tif outer.api_revision != Level.API_REVISION or not Codec.is_integer(outer.schema_version, Level.SNAPSHOT_SCHEMA_VERSION, Level.SNAPSHOT_SCHEMA_VERSION) or outer.level_id != \"A2-L4\" or outer.scene_path != \"res://scenes/acts/act2/a2_l4.tscn\" or not Codec.is_integer(outer.local_snapshot_version, 1, 1) or not outer.local is Dictionary or not outer.progress is Dictionary: return \"L4 progression must retain its authored CinderLevel identity\""
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/validators.patch",
+      "line": 99,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tvar local: Dictionary = outer.local"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/validators.patch",
+      "line": 100,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tvar progress: Dictionary = outer.progress"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/validators.patch",
+      "line": 105,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \tfor key: String in [\"completion_id\", \"contact_exit_id\", \"checkpoint_id\", \"checkpoint_kind\"]:"
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/validators.patch",
+      "line": 106,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \t\tif not progress[key] is String: return \"L4 progression ID/kind must be a string\""
+    },
+    {
+      "path": "docs/acts/act1/support/a2-l4-inert-constructor/validators.patch",
+      "line": 107,
+      "reason": "space before tab in indent.",
+      "exact_patch_context": true,
+      "line_text": " \terror = Sequence.new().snapshot_error(local.sequence)"
+    }
+  ],
+  "files_at_initial_stage": 27,
+  "final_package_files_including_index": 29,
+  "initial_links_checked": 3,
+  "final_links_checked": 5
+}

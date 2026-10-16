@@ -1,0 +1,148 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-10-16T11:14:44.898556+00:00",
+  "scope": "Parent text/function comparison only; regex boundaries are not a GDScript parser or semantic/runtime proof",
+  "reviewed_source_commit": "1bfbf64aec755bd0d3a02f7f1cfb4da235d4ed88",
+  "function_text_comparisons": [
+    {
+      "original": "original-host.gd.txt",
+      "candidate": "london_approaches.gd.txt",
+      "original_function_count": 64,
+      "candidate_function_count": 67,
+      "byte_identical_functions": [
+        "_ready",
+        "_bank_id",
+        "_activate_bank",
+        "_cancel_admitted_bank",
+        "_bank_framed",
+        "_guard_banks_before_contact",
+        "_cue_storage_bytes",
+        "_bank_cue_signature",
+        "_remember_bank_cue",
+        "_bank_cue_current",
+        "_tender_context_live",
+        "_tender_window",
+        "_on_bank_state",
+        "_on_bank_tick",
+        "_pose_bank",
+        "_refresh_smoke_masks",
+        "_new_mechanism",
+        "_physics_process",
+        "_activate_mechanism",
+        "_response_context",
+        "_tool_target",
+        "_actor_exchange",
+        "_tool_context_live",
+        "_handler_window",
+        "_on_mechanism_state",
+        "_on_mechanism_hit",
+        "_pose_mechanism",
+        "_on_ray_state",
+        "_flush_defeats",
+        "_flush_progress_requests",
+        "_clouds_quiet",
+        "_on_world_action",
+        "_update_actor_visibility",
+        "_update_objective",
+        "_apply_tableau",
+        "_required_source_points",
+        "_conservative_corners",
+        "_source_points",
+        "_exchange_framed",
+        "_mechanism_framed",
+        "_apply_readability",
+        "_camera_framing_points",
+        "_scheduler_bindings",
+        "encounter_state",
+        "_capture_known_state",
+        "_saved_response_point_supported",
+        "_restore_known_state",
+        "_commit_known_state",
+        "_derive_restored_presentation",
+        "_local_snapshot_error",
+        "_local_snapshot_error_with_player",
+        "_local_snapshot_error_for_bindings",
+        "_progress_snapshot_error",
+        "_restore_local_state",
+        "_on_hero_died",
+        "_on_exit_level"
+      ],
+      "changed_original_functions": [
+        "_on_enter_level",
+        "_configure_clouds",
+        "_bank_state",
+        "_actor_custody_error",
+        "_known_snapshot_error",
+        "_capture_local_state",
+        "_known_pack",
+        "_whole_snapshot_error"
+      ],
+      "new_functions": [
+        "restore_candidate_construction_required",
+        "_on_enter_restore_candidate",
+        "_l4_construct"
+      ],
+      "removed_functions": []
+    },
+    {
+      "original": "original/london_approaches_snapshot_rules.gd.txt",
+      "candidate": "candidate/london_approaches_snapshot_rules.gd.txt",
+      "original_function_count": 6,
+      "candidate_function_count": 6,
+      "byte_identical_functions": [
+        "_tool_error",
+        "_pose_error",
+        "_saved_progress",
+        "_tool_target"
+      ],
+      "changed_original_functions": [
+        "known_state_error",
+        "_target_error"
+      ],
+      "new_functions": [],
+      "removed_functions": []
+    },
+    {
+      "original": "original/london_approaches_smoke_rules.gd.txt",
+      "candidate": "candidate/london_approaches_smoke_rules.gd.txt",
+      "original_function_count": 6,
+      "candidate_function_count": 6,
+      "byte_identical_functions": [
+        "_bank_error",
+        "_view_error",
+        "_retains_recovery_boundary",
+        "_saved_progress"
+      ],
+      "changed_original_functions": [
+        "smoke_state_error",
+        "progress_error"
+      ],
+      "new_functions": [],
+      "removed_functions": []
+    }
+  ],
+  "source_findings": [
+    {
+      "id": "H1-live-actor-map-custody",
+      "initial_host_sha256": "6572f5ec411f335b4df891ae891990a31c27b06f5a4c9db4b4cb578d22857483",
+      "finding": "Initial frame custody only verified live actor presence. Root-selected same-map custody also requires actual root correspondence.",
+      "resolution": "Final host adds passive actual global_position.is_equal_approx(selected.positions[id]) check; no movement, phase, timing or geometry repair. Initial draft/patch retained.",
+      "final_host_sha256": "b81f9e8274bf72dca952fd1da8d41fd73e49059f24e0004ece6ca011d31fb3b4",
+      "status": "source amended; unexecuted"
+    }
+  ],
+  "reviewed_invariants": [
+    "Exact old16 and new17 closure, known14/sequence7 remain; legacy omission distinct explicit null/empty descriptor rejection.",
+    "New schema strict actual int1 and full canonical typed8 profile; saved canonicalChallenge valid, exchange onlyChallenge.",
+    "Whole9map derived from immutable base, two XZslots exchanged with ownY, no arbitrary serialized vectors.",
+    "Selected full profile/map frozen before nativeactor treeentry; actual Scheduler fullprofile joined before actor configure; _ready unchanged/mapindependent.",
+    "Full-state binding before native preflight; descriptor survives endedepoch; legacyrecapture keeps16.",
+    "Known/Smoke source modifications preserve original native pose/tool/bank/cadence/earned-prefix bodies, only expectedroot and closedselection envelope altered.",
+    "Native loops, heldunions, Player preflight, guards/LOS/range/ordinaryresponse cadence remain in original bodies."
+  ],
+  "remaining_limits": [
+    "No parser/import/engine/producer/portrait/realpacket validation was run.",
+    "No runtime compatibility, compilation, native map acceptance or changed-player-response credit.",
+    "Root reviews all four necessary sources as one unit before any live application."
+  ]
+}

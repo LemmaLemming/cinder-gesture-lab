@@ -1,0 +1,96 @@
+{
+  "authorization": "14ca0a5e-bdbd-4e4c-bd0e-e6edace020a9",
+  "ack": "886eb444",
+  "scope": "inert pure validator source copies only",
+  "accepted_source_revision": "9f2dfa1a33de2ed7d1247c903616991c69263beb",
+  "status": {
+    "source_text_reviewed": true,
+    "gdscript_parsed": false,
+    "engine_run": false,
+    "native_packets_executed": false,
+    "production_modified": false,
+    "construction_helper_compatibility_review": "complete source-only; no concrete API/type or new/legacy dispatch issue found"
+  },
+  "interface": {
+    "preload": "res://scripts/acts/act2/london_approaches_construction.gd",
+    "known": "known_state_error(state: Dictionary, arrangement: Variant = null) -> String",
+    "selector_calls": [
+      "Construction.select_known(state, arrangement)",
+      "Construction.saved(state)",
+      "Construction.saved(local)"
+    ],
+    "selector_result_keys": [
+      "error",
+      "legacy",
+      "descriptor",
+      "profile_id",
+      "profile",
+      "positions"
+    ],
+    "legacy_marker": "null only; explicit empty Dictionary is malformed new descriptor"
+  },
+  "sources": [
+    {
+      "source_path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/acts/act2/london_approaches_snapshot_rules.gd",
+      "original_path": "/private/tmp/act1-support-a2-l4-inert-constructor/original/london_approaches_snapshot_rules.gd.txt",
+      "original_sha256": "85c470289212aaabc86c842e4d464768d7e6993ed59aac99146cde64803613b4",
+      "candidate_path": "/private/tmp/act1-support-a2-l4-inert-constructor/candidate/london_approaches_snapshot_rules.gd.txt",
+      "candidate_sha256": "d6f70d2eed03299b6627d7e179fa7e980e58ec8f6ad577f6697e1038b8c42229",
+      "source_equal_accepted_9f2dfa1a": true,
+      "live_source_untouched": true,
+      "unchanged_complete_function_bodies": {
+        "_tool_error": true,
+        "_pose_error": true,
+        "_saved_progress": true,
+        "_tool_target": true
+      }
+    },
+    {
+      "source_path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/acts/act2/london_approaches_smoke_rules.gd",
+      "original_path": "/private/tmp/act1-support-a2-l4-inert-constructor/original/london_approaches_smoke_rules.gd.txt",
+      "original_sha256": "8c0264f7a83a208c59563e76ca1f5e286bbfd73e0f7a344558d881be3d1fa904",
+      "candidate_path": "/private/tmp/act1-support-a2-l4-inert-constructor/candidate/london_approaches_smoke_rules.gd.txt",
+      "candidate_sha256": "e54af1c3800b63c10764b7f9b52cb6a29713e5f4923ee591030430193619b2bb",
+      "source_equal_accepted_9f2dfa1a": true,
+      "live_source_untouched": true,
+      "unchanged_complete_function_bodies": {
+        "_bank_error": true,
+        "_view_error": true,
+        "_retains_recovery_boundary": true,
+        "_saved_progress": true
+      }
+    }
+  ],
+  "patch": {
+    "path": "/private/tmp/act1-support-a2-l4-inert-constructor/validators.patch",
+    "sha256": "41ac137b528886004e544fc98310a7b43ff790452cfe6b80849ab1e75889aca9"
+  },
+  "notes": {
+    "path": "/private/tmp/act1-support-a2-l4-inert-constructor/validator-proof.md",
+    "sha256": "663ea468d1dcca9eeb1a79b7f828ab9cbf01b269c2dfb640fd49c1533cc735a3"
+  },
+  "cross_read": {
+    "helper": {
+      "path": "/private/tmp/act1-support-a2-l4-inert-constructor/london_approaches_construction.gd.txt",
+      "sha256": "2733421a461c2b2f2421ea4a5500aabd370096b043612bb04860e01480ed551e"
+    },
+    "host": {
+      "path": "/private/tmp/act1-support-a2-l4-inert-constructor/london_approaches.gd.txt",
+      "sha256": "b81f9e8274bf72dca952fd1da8d41fd73e49059f24e0004ece6ca011d31fb3b4",
+      "scope": "only validator calls / nullable descriptor / known-pack strip / whole binding / progress entry"
+    },
+    "source_text_assertions": {
+      "helper_expected_preload_independent": true,
+      "helper_known_signature": true,
+      "helper_saved_signature": true,
+      "explicit_local_null_rejected_before_legacy_sentinel": true,
+      "new_schema_requires_actual_int": true,
+      "legacy_branch_before_new_descriptor_validation": true,
+      "host_known_forwards_selected_nullable_descriptor": true,
+      "host_whole_binding_precedes_native_known_validation": true,
+      "host_known_pack_strips_arrangement": true,
+      "host_progress_uses_modified_smoke_progress": true
+    },
+    "limits": "Source text checks are not GDScript parsing or native acceptance; no packet was constructed, executed or restored."
+  }
+}

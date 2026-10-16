@@ -1,0 +1,150 @@
+--- a/scripts/acts/act2/london_approaches.gd
++++ b/scripts/acts/act2/london_approaches.gd
+@@ -10,6 +10,7 @@
+ const SmokeSnapshotRules: Script = preload("res://scripts/acts/act2/london_approaches_smoke_rules.gd")
+ const KnownSnapshotRules: Script = preload("res://scripts/acts/act2/london_approaches_snapshot_rules.gd")
+ const LondonSequence: Script = preload("res://scripts/acts/act2/london_approaches_sequence.gd")
++const LondonConstruction: Script = preload("res://scripts/acts/act2/london_approaches_construction.gd")
+ const LondonFloor: Script = preload("res://scripts/acts/act2/london_approaches_floor.gd")
+ const LondonKit: Script = preload("res://scripts/acts/act2/london_approaches_kit.gd")
+ const TenderActor: Script = preload("res://scripts/acts/act2/canister_tender_actor.gd")
+@@ -24,6 +25,9 @@
+ var _bank_guard: Node
+ var _smoke_api_ready: bool = false
+ var _forecast_points: Dictionary = {}
++# Frozen construction authority only; never HP, progress, clocks or a lease.
++var _l4_construction: Dictionary = {}
++var _l4_construction_started: bool = false
+ 
+ func _ready() -> void:
+ 	_art_preview = false
+@@ -37,20 +41,55 @@
+ 		if is_instance_valid(mesh): _bank_visuals.append(mesh)
+ 	set_physics_process(false)
+ 
++func restore_candidate_construction_required() -> bool:
++	# Saved old/new attempts can require different immutable native roots.
++	return true
++
++func _on_enter_restore_candidate(local: Dictionary, _saved_player: Dictionary) -> String:
++	# Pure saved selection precedes every recipient configure/bind. The current
++	# public preference has no authority over this paused saved candidate.
++	var selected: Dictionary = LondonConstruction.saved(local)
++	if not String(selected.error).is_empty(): return selected.error
++	_l4_construct(selected)
++	return runtime_error
++
+ func _on_enter_level() -> void:
+ 	if is_instance_valid(shared_shell) and shared_shell.has_method("get_difficulty_preference"):
+ 		_profile_id = shared_shell.call("get_difficulty_preference")
++	var selected: Dictionary = LondonConstruction.fresh(_profile_id)
++	if not String(selected.error).is_empty(): runtime_error = selected.error; return
++	_l4_construct(selected)
++
++func _l4_construct(selected: Dictionary) -> void:
++	if _l4_construction_started or is_instance_valid(_scheduler) or not _actors.is_empty() or not _mechanisms.is_empty() or not _clouds.is_empty():
++		runtime_error = "L4 native recipients can only be configured once"
++		return
++	_l4_construction_started = true
++	# _ready builds only map-independent floor/scenery. Actor-owned rigs are
++	# created below after their root is selected, before native configure.
++	_l4_construction = selected.duplicate(true)
++	(_l4_construction.profile as Dictionary).make_read_only()
++	(_l4_construction.positions as Dictionary).make_read_only()
++	if not _l4_construction.legacy:
++		(_l4_construction.descriptor.profile as Dictionary).make_read_only()
++	(_l4_construction.descriptor as Dictionary).make_read_only()
++	_l4_construction.make_read_only()
++	_profile_id = _l4_construction.profile_id
+ 	_scheduler = Scheduler.new()
+ 	_scheduler.name = "LondonApproachesThreatScheduler"
+ 	add_child(_scheduler)
+ 	if not _scheduler.call("begin_encounter", _profile_id, LONDON_EPOCH, WORLD_REVISION):
+ 		runtime_error = _scheduler.get("last_error")
+ 		return
+-	for id: String in LondonSequence.ACTORS:
++	var profile_exact: String = ExactJson.stringify(_l4_construction.profile)
++	if profile_exact.is_empty() or ExactJson.stringify(_scheduler.call("encounter_profile")) != profile_exact:
++		runtime_error = "L4 actual entry Scheduler profile differs from frozen construction"
++		return
++	for id: String in _l4_construction.positions:
+ 		var actor_script: Script = TenderActor if LondonSequence.TENDERS.has(id) else (HandlerActor if LondonSequence.HANDLERS.has(id) else WeybridgeScoutActor)
+ 		var actor: Node3D = actor_script.new() as Node3D
+ 		actor.name = "LondonApproaches_" + id
+-		actor.position = LondonSequence.ACTORS[id]
++		actor.position = _l4_construction.positions[id]
+ 		add_child(actor)
+ 		if not actor.call("configure", hero, effects, id):
+ 			runtime_error = "Cannot bind actual L4 actor " + id
+@@ -105,7 +144,7 @@
+ 		bank.name = id
+ 		bank.position = LondonSequence.CLOUDS[id]
+ 		add_child(bank)
+-		if not bank.call("configure", id, Geometry.circle(bank.position, 1.05), LondonSequence.ACTORS[BANK_TO_TENDER[id]]) or not bank.call("bind", _scheduler, {"hero": hero}):
++		if not bank.call("configure", id, Geometry.circle(bank.position, 1.05), _l4_construction.positions[BANK_TO_TENDER[id]]) or not bank.call("bind", _scheduler, {"hero": hero}):
+ 			runtime_error = "Cannot bind actual L4 smoke bank " + id + ": " + String(bank.get("last_error"))
+ 			return false
+ 		_clouds[id] = bank
+@@ -128,7 +167,7 @@
+ 
+ func _bank_state(id: String) -> Dictionary:
+ 	var state: Dictionary = _clouds[id].call("state")
+-	state["opening_position"] = state.exchange.get("opening_position", LondonSequence.ACTORS[BANK_TO_TENDER[id]])
++	state["opening_position"] = state.exchange.get("opening_position", _l4_construction.positions[BANK_TO_TENDER[id]])
+ 	state["remaining_s"] = 0.0
+ 	if state.status == "running":
+ 		var deadline: String = {"warning": "lock_from_s", "lock": "active_from_s", "active": "active_until_s", "recovery": "recovery_until_s"}[state.phase]
+@@ -328,7 +367,8 @@
+ 	return node
+ 
+ func _actor_custody_error() -> String:
+-	for id: String in LondonSequence.ACTORS:
++	if not _l4_construction_started or _l4_construction.is_empty(): return "L4 requires its immutable native construction"
++	for id: String in _l4_construction.positions:
+ 		var actor: Variant = _actors.get(id)
+ 		if not is_instance_valid(actor) or not actor is Node3D or not actor.is_inside_tree() or actor.is_queued_for_deletion(): return "L4 actual actor custody lost: " + id
+ 	return ""
+@@ -742,7 +782,7 @@
+ 		if not error.is_empty(): return error
+ 	for id: String in KnownSnapshotRules.TOOL_IDS:
+ 		var tool: Variant = _mechanisms.get(id)
+-		if not is_instance_valid(tool) or not tool is Node3D or not tool.is_inside_tree() or tool.is_queued_for_deletion() or not tool.global_position.is_equal_approx(LondonSequence.ACTORS[_tool_target(id)]): return "L4 actual tool must retain its original anchored native position: " + id
++		if not is_instance_valid(tool) or not tool is Node3D or not tool.is_inside_tree() or tool.is_queued_for_deletion() or not tool.global_position.is_equal_approx(_l4_construction.positions[_tool_target(id)]): return "L4 actual tool must retain its original anchored native position: " + id
+ 		if not state.mechanisms[id] is Dictionary: return "Known L4 tool requires its public dictionary"
+ 		error = _mechanisms[id].call("snapshot_error", state.mechanisms[id], bindings, state.scheduler)
+ 		if not error.is_empty(): return error
+@@ -752,7 +792,7 @@
+ 			var actor: Dictionary = state.targets[target_id]
+ 			if saved.exchange.source_position != actor.root_position or saved.exchange.opening_position != actor.root_position or saved.exchange.profile_id != state.profile_id or int(saved.exchange.world_revision) != WORLD_REVISION:
+ 				return "Known L4 executed tool retains its exact actual source/opening/profile/revision"
+-	error = KnownSnapshotRules.known_state_error(state)
++	error = KnownSnapshotRules.known_state_error(state, null if _l4_construction.legacy else _l4_construction.descriptor)
+ 	if not error.is_empty(): return error
+ 	for id: String in state.views:
+ 		var view: Dictionary = state.views[id]
+@@ -851,19 +891,24 @@
+ 		if banks[id].is_empty(): return {"error": "L4 bank capture failed " + id + ": " + String(_clouds[id].get("last_snapshot_error"))}
+ 	state["banks"] = banks
+ 	state["bank_views"] = _bank_views.duplicate(true)
++	# Genuine legacy construction keeps the literal old16 writer. Fresh/new
++	# construction adds its retained descriptor, including after epoch end.
++	if not _l4_construction.legacy:
++		state["arrangement"] = _l4_construction.descriptor.duplicate(true)
+ 	return state
+ 
+ func _known_pack(state: Dictionary) -> Dictionary:
+ 	var known: Dictionary = state.duplicate()
+ 	known.erase("banks")
+ 	known.erase("bank_views")
++	known.erase("arrangement")
+ 	return known
+ 
+ func _whole_snapshot_error(state: Dictionary, saved_player: Dictionary = {}) -> String:
+ 	if not _smoke_api_ready or _clouds.size() != BANK_TO_TENDER.size() or _cloud_art.size() != BANK_TO_TENDER.size(): return "L4 requires its actual supported bank/source/art bindings"
+ 	if not is_instance_valid(_bank_guard) or _bank_guard.get_script() != BankGuard or _bank_guard.get_parent() != self or not _bank_guard.call("binding_matches", Callable(self, "_guard_banks_before_contact")): return "L4 requires its original active native pre-contact presentation guard"
+ 	var error: String = Codec.value_error(state)
+-	if error.is_empty(): error = Codec.keys_error(state, SmokeSnapshotRules.LOCAL_KEYS)
++	if error.is_empty(): error = LondonConstruction.binding(state, _l4_construction)
+ 	if not error.is_empty(): return error
+ 	if not state.banks is Dictionary or not state.bank_views is Dictionary or not Codec.keys_error(state.banks, SmokeSnapshotRules.BANK_IDS).is_empty(): return "L4 requires two complete bank snapshots and their view dictionary"
+ 	if not is_instance_valid(hero): return "L4 requires its actual shared Hero"
