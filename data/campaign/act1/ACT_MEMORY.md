@@ -1,5 +1,13 @@
 # Act 1 — durable memory
 
+## Canonical L5 retention decision and actual Shared72 adoption — 16 October 2026
+
+Integration RESPONSE `93776400`, ACK `723fe44a-e607-46d7-bb81-f5f211982c89`, resolves REQUEST4338: retain accepted canonical Blink-first L5 at `d37734b0` (host9056/Codec2fafe). The source-only [specific exercise retention record](../../../docs/acts/act1/A1_L5_RETENTION_POLICY.md) is submitted for Integration review; coverage stays12/24 until that review. The owner dual reader/Sneeze-first runtime remains unaccepted and recoverable in this branch/history. Both actual86/1 failures and original168/172/77/79/79 scopes remain; no third direction, further engine comparison or historical repin. Original Act1 eight/all24 and L3 acceptance remain complete; all own jobs are closed.
+
+Shared72 is actually preserving-adopted at `accab10cf11d9db8e07f8319cf1445abf08a7f55`, ACK `3fb87248-1886-4936-b776-9d98cbd41453`; receipt SHA `d1e46d8c04585172a56b31b038ef6d5b43be1cd18dd66bb98ccd2a0e08e2732c` preserves six then-current owned trees,26 named physical inputs,585 prior active UIDs plus7 published new paths, and121734 nonowned publication rows. No engine/import/retest. This additive note is later metadata and does not change frozen native source attribution. Next authorized work after retention submission is one read-only A1-O1 proposal; no allocation/runtime/art/layout before exact Integration ACK. No human permission/unlock or other-act gate.
+
+> Earlier snapshots below retain their original historical state; this decision controls current work.
+
 ## BACK refinement refused; specific retention decision requested — 16 October 2026
 
 The one additive BACK trial authorized by Integration RESPONSE `c6cf20dc` closes **86 checks/1 failure**, complete=false/exit1, on `dfb080e7`/actual Shared71. From the independently restored genuine old Challenge CP3, one actual full public BACK dash runs12.7166667→12.9000000, travels2.699999809units and reaches `(0,Y,-4.900000095)`, unblocked/unshortened with no movement damage. At13.1333333 the sole admitted Blink `threat-4` is observed canceled `required_parent_presentation_unavailable`; retained parent diagnostic remains `Required union cannot fit the fixed-width HUD-safe rectangle`. No Nose admission, completed hold, return or primary exists. All89 traces retain HP100/ammo2; zero source-hit events; normal cleanup83–86 passes. Native SHA256 `967914fa4bd8a6827a1279aba1329155faa73ad5217f0a152b73d5558c09eb9e` and original raw/source banks are preserved separately from the original LEFT86/1.
