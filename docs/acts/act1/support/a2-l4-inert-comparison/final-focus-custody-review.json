@@ -1,0 +1,99 @@
+{
+  "scope": "Final bounded source-only review of explicit native-binding observation projection, typed pure-data binary/readback/roundtrip/SHA, summary persistence and cleanup/exit failure boundaries. No parser/engine, source edit, materialization or native result.",
+  "source_path": "/private/tmp/act1-support-a2-l4-fixed-comparison/fixed_comparison.gd.txt",
+  "source_bytes": 55888,
+  "source_sha256": "bf57df2ed7a1756e2bc489e3f6acc3cb2fdc21ad2f35cf107e1b7c753797036a",
+  "findings": [],
+  "resolved_prior_findings": [
+    {
+      "id": "C1",
+      "status": "resolved in frozen source",
+      "lines": [
+        677,
+        685
+      ],
+      "observation": "Optional level WeakRef is constructed only for valid level, checked for null before get_ref, while owned Game is still normally freed and its own WeakRef verified."
+    }
+  ],
+  "source_controls": {
+    "selected_count": 37,
+    "raw_map_equals_json": true,
+    "control_json_sha256": "cfaa4b181f99e74b5c345597a8128c611138a9389adb47a0ae48d1c4e618b589",
+    "immutable_original_verification_reused": "/private/tmp/act1-support-a2-l4-fixed-comparison/implementation-controls-custody-review.json",
+    "immutable_original_verification_sha256": "7c742cac15545843992c17fe3bf8662d3a8b661c6a461780dc66ae56bfc4cca4",
+    "unchanged_control_bytes_reuse_prior_33accepted1bfb_plus4c310_checks": true,
+    "embedded_helpers": [
+      {
+        "label": "HOST",
+        "sha256": "1fc574eff95d8d0e295a6a61ee3fa15a416634313b552282d7c7fb8e3a816760",
+        "matches_declared_and_json": true
+      },
+      {
+        "label": "GAME",
+        "sha256": "c3d67c5b2ceba7877dac5a0d17dafeaa4f49a26f1d36874af033ecaffb733ec8",
+        "matches_declared_and_json": true
+      }
+    ]
+  },
+  "observations": [
+    {
+      "lines": [
+        479,
+        490,
+        710,
+        755
+      ],
+      "result": "Each per-tick trace projects recognized Hero/static-floor/collision-shape/Box/Capsule references before later cleanup. Metadata keeps explicit instance/script/path/world/transform/collision dimensions with reconstructible:false. Native Vector/Rect/Basis/Transform/scalar/path values remain native Variants; this is an explicit projection, not a lossless runtime Object graph or campaign/native save."
+    },
+    {
+      "lines": [
+        723,
+        754,
+        794,
+        807
+      ],
+      "result": "Released/unrecognized Object references and Callable/RID/Signal values set persistent evidence_error; positive difference and exit0 require it empty. No such handles are intentionally serialized as live runtime authority."
+    },
+    {
+      "lines": [
+        715,
+        722
+      ],
+      "result": "Dictionary keys are retained rather than recursively projected. Selected native response/proof/lease/action dictionaries use primitive/String keys; no actual selected handle-key input found. This review makes no claim that arbitrary Variant graphs are a supported input domain."
+    },
+    {
+      "lines": [
+        758,
+        774
+      ],
+      "result": "Raw trace writer computes SHA256, flushes, reads original file bytes, compares exact bytes and readback SHA, then requires bytes_to_var/var_to_bytes roundtrip equality. Decode uses ordinary safe nonobject Variant decoding. A write/open/readback/hash/roundtrip failure produces accepted:false."
+    },
+    {
+      "lines": [
+        259,
+        267,
+        786,
+        807
+      ],
+      "result": "Options refuse existing summary or raw trace in unique TEST namespace. Raw persistence is capped at128MiB without truncating paths. Evidence/write/cleanup/assertion failures deny fixed_difference and exit0. Summary is primitive metadata plus raw receipt and requires exact text readback and SHA before a success exit."
+    },
+    {
+      "lines": [
+        666,
+        687,
+        777,
+        807
+      ],
+      "result": "Completion latches before normal exit/free, verifies Game/optional level release, and includes cleanup assertions before computing final difference. Watchdog/bootstrap refusal or missing candidate cannot inherit success from a partial response; typed trace/raw write failures remain nonpassing."
+    }
+  ],
+  "precision_limits": [
+    "var_to_bytes preserves the pure native Variant graph produced after explicit binding projection, not ephemeral runtime Object identity or a restorable native save.",
+    "No claim of native executable parser validity, dictionary serialization behavior or successful file write/roundtrip is made without Root execution.",
+    "Complete gameplay proof/held-union/cadence analysis belongs to the parallel native source review, not this custody pass.",
+    "Only exact frozen bf57 source is reviewed; later modifications require their own relevant delta review."
+  ],
+  "no_campaign_or_legacy_native_credit": true,
+  "engine_or_parser_run": false,
+  "source_edited": false
+}
