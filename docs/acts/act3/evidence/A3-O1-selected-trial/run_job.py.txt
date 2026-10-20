@@ -1,0 +1,47 @@
+from pathlib import Path
+import datetime,hashlib,json,os,re,subprocess,sys,uuid
+
+ROOT=Path('/Users/howardchen/.codex/worktrees/campaign-act3/video game idea')
+MODE=sys.argv[1]
+OWN=['scripts/acts/act3/pillars_before_time.gd','scripts/acts/act3/pillars_construction.gd','tests/acts/act3/pillars_construction_focused.gd','tests/acts/act3/pillars_arrangement_comparison.gd']
+NAMES=OWN+['scripts/acts/act3/twin_suns.gd','scripts/acts/act3/twin_suns_scenery.gd','scripts/acts/act3/sunbound_stalker.gd','scripts/acts/act3/temporal_marker_prop.gd','scripts/campaign/level.gd','scripts/campaign/shell.gd','scripts/campaign/snapshot_codec.gd','scripts/campaign/exact_json.gd','scripts/campaign/registry.gd','scripts/campaign/attempts.gd','scripts/campaign/save_store.gd','scripts/combat/threat_scheduler.gd','scripts/combat/difficulty.gd','scripts/combat/body_sweep.gd','scripts/combat/threat_geometry.gd','scripts/game.gd','scripts/player.gd','scripts/equipment.gd','scripts/effects.gd','scripts/hud.gd','scripts/pixel_sprite.gd','scripts/ui/campaign_menu.gd','scripts/presentation/camera_framing.gd','scripts/dev/dev.py','tests/acts/act3/pillars_before_time_optional_shell.gd','scenes/acts/act3/a3_o1_pillars_before_time.tscn','scenes/main.tscn','scenes/player.tscn','data/campaign/act3/a3_o1_encounters.json','data/design/difficulty_profiles.json','data/design/player_equipment.json','data/campaign/registry.json','project.godot']
+NAMES += [p+'.uid' for p in OWN]
+ARCHIVE=ROOT/'assets/acts/act3/evidence/A3-O1-native/captures/authentic-held'
+NAMES += [str(p.relative_to(ROOT)) for p in sorted(ARCHIVE.iterdir()) if p.is_file()]
+JOB=ROOT/'.cinder/o1-selected-trial'/f'{datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%S")}-{MODE}-{uuid.uuid4().hex[:8]}'
+JOB.mkdir(parents=True)
+def save(name,value): (JOB/name).write_text(json.dumps(value,indent=2)+'\n')
+def observe():
+ rows={}
+ for name in NAMES:
+  p=ROOT/name
+  if p.exists():
+   b=p.read_bytes();h=hashlib.sha256(b).hexdigest();pool=JOB/'sources'/h;pool.parent.mkdir(exist_ok=True)
+   if not pool.exists(): pool.write_bytes(b)
+   rows[name]={'sha256':h,'bytes':len(b),'mode':p.stat().st_mode&511}
+  else: rows[name]=None
+ return rows
+before=observe();save('sources-before.json',before)
+save('source-scope.json',{'scope':'Fixed named changed-level, direct shared, existing archive and UID inputs. Pre-command observation; no lock-acquisition-time or whole-project dependency/census claim.','git_head':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),'git_status':subprocess.check_output(['git','status','--short'],cwd=ROOT,text=True),'wrapper_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest()})
+cmd=['python3','scripts/dev/dev.py']
+if MODE=='import': cmd+=['import']
+else:
+ script=OWN[3] if MODE=='compare' else OWN[2]
+ cmd+=['engine','--headless','--path','.', '--script','res://'+script]
+ if MODE=='parse': cmd+=['--check-only']
+ elif MODE!='compare': cmd+=['--','--'+MODE]
+save('command.json',{'argv':cmd,'cwd':str(ROOT),'started':datetime.datetime.now(datetime.timezone.utc).isoformat(),'queue':'canonical dev.py shared lock; no foreign process/lock operations'})
+print('O1_JOB',JOB,flush=True)
+with (JOB/'raw.log').open('w') as log:
+ p=subprocess.Popen(cmd,cwd=ROOT,stdout=log,stderr=subprocess.STDOUT)
+ save('lifecycle.json',{'state':'RUNNING_OR_QUEUED','owned_dev_pid':p.pid})
+ code=p.wait()
+after=observe();save('sources-after.json',after)
+changed=[n for n in NAMES if before[n] is not None and before[n]!=after[n]]
+added=[n for n in NAMES if before[n] is None and after[n] is not None]
+text=(JOB/'raw.log').read_text(errors='replace')
+diags=[line for line in text.splitlines() if re.search(r'SCRIPT ERROR|Parse Error|ERROR:|WARNING:',line)]
+result={'state':'CLOSED','dev_exit_code':code,'finished':datetime.datetime.now(datetime.timezone.utc).isoformat(),'changed_named_sources':changed,'added_named_sources':added,'diagnostic_lines':diags,'log_sha256':hashlib.sha256((JOB/'raw.log').read_bytes()).hexdigest(),'log_bytes':(JOB/'raw.log').stat().st_size,'native_summary':[line for line in text.splitlines() if 'O1 focused construction:' in line or 'Pillars fixed pair:' in line or 'Pillars fixed pair actual result:' in line]}
+save('result.json',result);save('lifecycle.json',{'state':'CLOSED','owned_dev_pid':p.pid,'dev_exit_code':code})
+print(json.dumps(result),flush=True)
+sys.exit(code)
