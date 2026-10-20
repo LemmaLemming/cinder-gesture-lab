@@ -1,0 +1,178 @@
+--- original6127/a2_l5_fixed_response_comparison.gd.txt
++++ additive/a2_l5_fixed_response_comparison_store_custody.gd.txt
+@@ -146,0 +147,4 @@
++var store_output: String = ""
++var store_output_created: bool = false
++var store_listing_ok: bool = false
++var owned_store_files: Dictionary = {}
+@@ -193,0 +198 @@
++	if not _prepare_store_output(): await _finish(); return
+@@ -494,9 +499,15 @@
+-		var store: CinderSaveStore = Store.new(output + stem + ".component-store.json")
+-		store.payload_validator = _component_payload_error
+-		var stored: bool = store.write_payload(payload)
+-		record["store_write"] = stored
+-		record["store_error"] = store.last_error
+-		for suffix: String in ["", ".bak"]:
+-			var path: String = output + stem + ".component-store.json" + suffix
+-			if FileAccess.file_exists(path): record["raw_store" + suffix] = {"path": path, "sha256": FileAccess.get_sha256(path), "bytes": FileAccess.get_file_as_bytes(path).size()}
+-		if not stored: problem = store.last_error
++		if not _store_slot_available(stem):
++			problem = "fresh invocation Store slot collision or custody refusal"
++		else:
++			var store: CinderSaveStore = Store.new(store_output + stem + ".component-store.json")
++			store.payload_validator = _component_payload_error
++			var stored: bool = store.write_payload(payload)
++			record["store_write"] = stored
++			record["store_error"] = store.last_error
++			record["store_generation"] = store.generation
++			# Archive actual raw primary/backup, including absence, BEFORE cleanup.
++			var custody: Dictionary = _archive_store(stem, stored, store.generation)
++			record["store_custody"] = custody
++			if not stored: problem = store.last_error
++			if not custody.get("accepted", false): problem = "raw Store archive/custody refused; actual partial evidence retained"
++	record["capture_error"] = problem
+@@ -506,0 +518,141 @@
++
++func _prepare_store_output() -> bool:
++	# One exclusive invocation directory in the real normal user context.
++	var nonce: String = Crypto.new().generate_random_bytes(16).hex_encode()
++	store_output = "user://test-a2-l5-fixed-store-" + nonce + "/"
++	var parent: DirAccess = DirAccess.open("user://")
++	if not _expect(parent != null, "actual user data root must exist for fresh Store custody"): return false
++	var name: String = store_output.trim_prefix("user://").trim_suffix("/")
++	if not _expect(not parent.file_exists(name) and not parent.dir_exists(name) and not parent.is_link(name), "refuse any existing user Store directory/file/link"): return false
++	if not _expect(parent.make_dir(name) == OK, "exclusive invocation user Store directory creation"): return false
++	store_output_created = true
++	var initial_entries: Array[String] = _store_entries()
++	if not _write_exact("component-store-directory.native.json", {"path": store_output, "absolute_path": ProjectSettings.globalize_path(store_output), "created_by_this_invocation": true, "initial_entries": initial_entries}): return false
++	return _expect(store_listing_ok and initial_entries.is_empty(), "new invocation Store directory must be listable and empty")
++
++func _store_directory() -> DirAccess:
++	if not store_output_created: return null
++	var parent: DirAccess = DirAccess.open("user://")
++	var name: String = store_output.trim_prefix("user://").trim_suffix("/")
++	if parent == null or parent.is_link(name) or not parent.dir_exists(name): return null
++	return DirAccess.open(store_output)
++
++func _store_entries() -> Array[String]:
++	store_listing_ok = false
++	var result: Array[String] = []
++	var dir: DirAccess = _store_directory()
++	if dir == null: return result
++	dir.include_hidden = true
++	dir.include_navigational = false
++	if dir.list_dir_begin() != OK: return result
++	var name: String = dir.get_next()
++	while not name.is_empty():
++		result.append(name)
++		name = dir.get_next()
++	dir.list_dir_end()
++	store_listing_ok = true
++	result.sort()
++	return result
++
++func _store_slot_available(stem: String) -> bool:
++	var dir: DirAccess = _store_directory()
++	if not _expect(dir != null, "actual owned user Store directory remains regular"): return false
++	var name: String = stem + ".component-store.json"
++	var entries: Array[String] = _store_entries()
++	if not _expect(store_listing_ok, "Store collision listing must succeed"): return false
++	for entry: String in entries:
++		if not owned_store_files.has(store_output + entry): return _expect(false, "unattributed entry in invocation Store directory retained: " + entry)
++		if entry == name or entry == name + ".bak" or entry.begins_with(name + ".tmp-") or entry.begins_with(name + ".bak.tmp-"):
++			return _expect(false, "refuse existing primary/backup/temp Store collision: " + entry)
++	return true
++
++func _archive_store(stem: String, stored: bool, generation: int) -> Dictionary:
++	var result: Dictionary = {"accepted": true, "directory": store_output, "store_write": stored, "store_generation": generation, "raw": {}}
++	for suffix: String in ["", ".bak"]:
++		var name: String = stem + ".component-store.json" + suffix
++		var path: String = store_output + name
++		var row: Dictionary = {"path": path, "absolute_path": ProjectSettings.globalize_path(path), "present": false, "generation": null, "observed_type": "absent"}
++		var dir: DirAccess = _store_directory()
++		if dir == null or dir.is_link(name) or dir.dir_exists(name):
++			row["present"] = null if dir == null else true
++			row["observed_type"] = "unknown-root" if dir == null else ("symlink" if dir.is_link(name) else "directory")
++			row["custody_error"] = "unknown Store directory/link/type left in situ"
++			result.accepted = false
++		elif dir.file_exists(name):
++			row.present = true
++			row["observed_type"] = "regular"
++			var file: FileAccess = FileAccess.open(path, FileAccess.READ)
++			if file == null:
++				row["custody_error"] = "actual raw Store could not be opened"
++				result.accepted = false
++			else:
++				var size: int = file.get_length()
++				var modified: int = FileAccess.get_modified_time(path)
++				var sha: String = FileAccess.get_sha256(path)
++				var literal: PackedByteArray = file.get_buffer(size)
++				var read_error: Error = file.get_error()
++				file.close()
++				row.merge({"bytes": size, "sha256": sha, "modified_unix": modified})
++				var archive: String = output + stem + (".store-primary.raw.json" if suffix.is_empty() else ".store-backup.raw.json")
++				var archive_file: FileAccess = null
++				if not FileAccess.file_exists(archive) and not DirAccess.dir_exists_absolute(ProjectSettings.globalize_path(archive)):
++					archive_file = FileAccess.open(archive, FileAccess.WRITE)
++				if archive_file == null:
++					row["custody_error"] = "fresh literal archive path could not be created; raw left in situ"
++					result.accepted = false
++				else:
++					archive_file.store_buffer(literal)
++					archive_file.flush()
++					var write_error: Error = archive_file.get_error()
++					archive_file.close()
++					var stable: bool = read_error == OK and write_error == OK and literal.size() == size and not sha.is_empty() and FileAccess.get_sha256(path) == sha and FileAccess.get_modified_time(path) == modified and FileAccess.get_sha256(archive) == sha and FileAccess.get_file_as_bytes(archive).size() == size
++					row.merge({"archive_path": archive, "archive_sha256": FileAccess.get_sha256(archive), "copied_verbatim": stable})
++					var parser: JSON = JSON.new()
++					var parsed: bool = parser.parse(literal.get_string_from_utf8()) == OK and parser.data is Dictionary
++					if parsed:
++						var wire: Dictionary = parser.data
++						var serial: Variant = wire.get("generation")
++						parsed = (serial is int or serial is float) and is_finite(float(serial)) and serial >= 1 and serial <= Store.MAX_GENERATION and serial == floor(serial) and wire.get("format_version") == Store.FORMAT_VERSION
++						if parsed: row.merge({"generation": int(serial), "format_version": wire.format_version})
++					if not stable or not parsed:
++						row["custody_error"] = "raw archive stability/header check refused; actual bytes retained"
++						result.accepted = false
++					# Each unique fresh slot has one real write; never fabricate backup generations.
++					elif stored and suffix.is_empty() and int(row.generation) == generation:
++						owned_store_files[path] = row.duplicate(true)
++					else:
++						row["custody_error"] = "unexpected/unattributed generation left in situ"
++						result.accepted = false
++		result.raw["primary" if suffix.is_empty() else "backup"] = row
++	result["actual_entries_after_write"] = _store_entries()
++	if not store_listing_ok: result.accepted = false
++	for entry: String in result.actual_entries_after_write:
++		if not owned_store_files.has(store_output + entry): result.accepted = false
++	if stored and not result.raw.primary.present: result.accepted = false
++	if not _write_exact(stem + ".store-custody.native.json", result): result.accepted = false
++	return result
++
++func _cleanup_store_output() -> void:
++	if not store_output_created: return
++	var receipt: Dictionary = {"directory": store_output, "removed": [], "left_in_situ": [], "directory_removed": false, "scope": "only fresh invocation files with verified archived raw bytes; no native inode identity claim"}
++	if not _write_exact("component-store-before-cleanup.native.json", {"directory": store_output, "owned_archived_files": owned_store_files, "actual_entries": _store_entries()}): return
++	var dir: DirAccess = _store_directory()
++	if dir == null:
++		receipt.left_in_situ.append({"path": store_output, "reason": "directory ownership/type changed"})
++	else:
++		for path: String in owned_store_files:
++			var row: Dictionary = owned_store_files[path]
++			var name: String = path.trim_prefix(store_output)
++			var same: bool = not name.contains("/") and not dir.is_link(name) and dir.file_exists(name) and not dir.dir_exists(name) and FileAccess.get_sha256(path) == row.sha256 and FileAccess.get_file_as_bytes(path).size() == row.bytes and FileAccess.get_modified_time(path) == row.modified_unix and FileAccess.get_sha256(row.archive_path) == row.sha256
++			if same and dir.remove(name) == OK:
++				receipt.removed.append(path)
++			else:
++				receipt.left_in_situ.append({"path": path, "reason": "final exact owned/archive check or removal refused"})
++		var remaining: Array[String] = _store_entries()
++		if not store_listing_ok: receipt.left_in_situ.append({"path": store_output, "reason": "final directory listing refused; directory retained"})
++		for name: String in remaining: receipt.left_in_situ.append({"path": store_output + name, "reason": "unattributed entry retained; never remove foreign or temporary paths"})
++		if remaining.is_empty() and store_listing_ok:
++			receipt.directory_removed = DirAccess.remove_absolute(ProjectSettings.globalize_path(store_output)) == OK
++			if not receipt.directory_removed: receipt.left_in_situ.append({"path": store_output, "reason": "empty directory removal refused"})
++	_write_exact("component-store-cleanup.native.json", receipt)
++	_expect(receipt.left_in_situ.is_empty() and receipt.directory_removed, "only invocation-owned archived Store files cleaned; unknowns retained")
+@@ -615,0 +768 @@
++	_cleanup_store_output()
