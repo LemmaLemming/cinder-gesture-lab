@@ -1,0 +1,125 @@
+extends SceneTree
+## Brief actual graphical view of the changed first Place warning.
+## TEST preconstruction focus; no earned campaign, save, balance or route claim.
+const FocusGame = preload("res://tests/acts/act2/fixtures/a2_l3_difficulty_focus_game.gd")
+const EXPECTED_HOST: String = "01954a3f861ab4ebe605191f0c87a57a972b73742cff3c5b1e06125ac1deed71"
+const REPORT_API: String = "a2-l3-brief-place-portrait-1"
+var game: Node
+var output: String = ""
+var rows: Array[Dictionary] = []
+var failed: bool = false
+var first_failure: String = ""
+var observation: Dictionary = {}
+var owns_output: bool = false
+var closing: bool = false
+var draw_seen: bool = false
+
+func _initialize() -> void:
+	root.size = Vector2i(540,1170)
+	root.content_scale_size = root.size
+	root.content_scale_mode = Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
+	output = OS.get_environment("CINDER_L3_PORTRAIT_OUTPUT")
+	_run.call_deferred()
+
+func check(ok: bool, label: String) -> bool:
+	rows.append({"index":rows.size()+1,"passed":ok,"label":label})
+	if not ok:
+		failed = true
+		if first_failure.is_empty(): first_failure = label
+		print("FAIL: " + label)
+	return ok
+
+func _valid_output() -> bool:
+	if not output.begins_with("res://.cinder/") or output.contains("\\") or output.ends_with("/"): return false
+	for part: String in output.trim_prefix("res://").split("/"):
+		if part.is_empty() or part in [".",".."] or part.contains(":"): return false
+	return DirAccess.dir_exists_absolute(ProjectSettings.globalize_path(output)) and DirAccess.get_files_at(ProjectSettings.globalize_path(output)).is_empty() and DirAccess.get_directories_at(ProjectSettings.globalize_path(output)).is_empty()
+
+func _on_draw() -> void:
+	# Freeze at the actual rendered boundary, without moving camera or actors.
+	draw_seen = true
+	paused = true
+
+func _run() -> void:
+	if not check(_valid_output(), "existing empty owned ignored output directory"): await _finish(); return
+	owns_output = true
+	if not check(FileAccess.get_sha256("res://scripts/acts/act2/ruined_house.gd") == EXPECTED_HOST, "exact selected fresh Place runtime"): await _finish(); return
+	var expected_fixture: String = OS.get_environment("CINDER_L3_PORTRAIT_FIXTURE_SHA256")
+	if not check(expected_fixture.length() == 64 and FileAccess.get_sha256(get_script().resource_path) == expected_fixture, "exact Root-selected portrait fixture bytes"): await _finish(); return
+	game = FocusGame.new()
+	game.set("level_scene_path", "res://scenes/acts/act2/a2_l3.tscn")
+	root.add_child(game)
+	var level: CinderLevel = game.get("active_level")
+	var hero: CinderPlayer = game.get("player")
+	if not check(is_instance_valid(level) and is_instance_valid(hero) and not level.is_restore_candidate() and level.get("_boss_next_action") == "place", "actual fresh focused House and canonical Player use Place cursor"): await _finish(); return
+	var tool: Node = level.get("_mechanisms")["boss_place"]
+	var end_ms: int = Time.get_ticks_msec()+30000
+	var ready: bool = false
+	while Time.get_ticks_msec()<end_ms:
+		await process_frame
+		if not String(level.get("runtime_error")).is_empty() or hero.dead or paused: break
+		var current: Dictionary = tool.call("state")
+		var current_points: Array = level.call("test_published_camera_framing_points")
+		if current.status == "running" and current.phase in ["warning","lock"] and current.cycle == 1 and not current_points.is_empty() and String(game.call("camera_framing_error", current_points)).is_empty():
+			ready = true
+			break
+	if not check(ready and not paused, "natural first Place warning is published and currently framed without camera or state mutation"): await _finish(); return
+	var observer: Callable = _on_draw
+	RenderingServer.frame_post_draw.connect(observer, CONNECT_ONE_SHOT)
+	var draw_end_ms: int = Time.get_ticks_msec()+3000
+	while not draw_seen and Time.get_ticks_msec()<draw_end_ms:
+		await process_frame
+	if RenderingServer.frame_post_draw.is_connected(observer): RenderingServer.frame_post_draw.disconnect(observer)
+	if not check(draw_seen and paused, "actual post-draw boundary observed and frozen within3seconds"): await _finish(); return
+	var points: Array = level.call("test_published_camera_framing_points")
+	var state: Dictionary = tool.call("state")
+	var image: Image = root.get_texture().get_image()
+	if not check(image != null and not image.is_empty(), "actual rendered viewport image is available"): await _finish(); return
+	observation = {"phase":state.phase,"status":state.status,"cycle":state.cycle,"source_position":str(tool.global_position),"player_position":str(hero.global_position),"hp":hero.hp,"shells":hero.shells,"profile":level.get("_scheduler").call("encounter_profile").id,"native_clock_s":level.get("_scheduler").call("get_clock"),"player_clock_s":hero.get_world_action_clock(),"tree_paused_at_draw":paused,"published_points":points.size(),"current_containment_error":game.call("camera_framing_error",points),"runtime_error":level.get("runtime_error"),"image_width":image.get_width(),"image_height":image.get_height(),"actual_window_size":[root.size.x,root.size.y],"internal_content_size":[root.content_scale_size.x,root.content_scale_size.y],"renderer":RenderingServer.get_video_adapter_name(),"scope":"actual graphical TEST focused first Place warning; no full route, earned save, all-kit or balance proof"}
+	check(state.status == "running" and state.phase in ["warning","lock"] and state.cycle == 1, "first original native warning/lock remains current at captured frame")
+	check(not points.is_empty() and String(observation.current_containment_error).is_empty() and String(observation.runtime_error).is_empty(), "all current published source/footprint/landing/player corners remain contained")
+	check(hero.hp == hero.max_hp and hero.shells == hero.max_shells and not hero.dead and hero.get_world_action_records().is_empty(), "visual capture uses untouched native resources and no executed actions")
+	check(image.get_height() > image.get_width() and image.get_width() >= 320, "actual viewport image is portrait")
+	var path: String = output.path_join("place-warning.png")
+	check(not FileAccess.file_exists(path) and image.save_png(path) == OK, "new actual rendered PNG saved without overwriting evidence")
+	observation["png_sha256"] = FileAccess.get_sha256(path)
+	await _finish()
+
+func _finish() -> void:
+	if closing: return
+	closing = true
+	var retired: Array[WeakRef] = []
+	if is_instance_valid(game):
+		for node: Node in game.find_children("*","",true,false): retired.append(weakref(node))
+		var level: CinderLevel = game.get("active_level")
+		if is_instance_valid(level): level.exit_level()
+		game.queue_free()
+	await process_frame
+	await process_frame
+	var freed: bool = true
+	for ref: WeakRef in retired: freed = freed and ref.get_ref() == null
+	check(freed, "normal exit releases all observed descendants")
+	for group: String in ["enemies","practice_targets","environment_attack_targets"]:
+		check(get_nodes_in_group(group).is_empty(), "normal group cleanup: " + group)
+	var failures: int = 0
+	for row: Dictionary in rows:
+		if not row.passed: failures += 1
+	var complete: bool = not failed and owns_output and not observation.is_empty()
+	var report: Dictionary = {"api_revision":REPORT_API,"complete":complete,"success":complete,"checks":rows.size(),"failures":failures,"first_failure":first_failure,"rows":rows,"observation":observation}
+	var path: String = output.path_join("portrait.json") if owns_output else ""
+	if not path.is_empty():
+		var text: String = JSON.stringify(report,"\t")
+		var file: FileAccess = FileAccess.open(path,FileAccess.WRITE)
+		var write_ok: bool = false
+		if file != null:
+			file.store_string(text); file.flush()
+			var error: Error = file.get_error()
+			file.close()
+			write_ok = error == OK and FileAccess.get_file_as_bytes(path) == text.to_utf8_buffer() and FileAccess.get_sha256(path) == text.sha256_text()
+		if not write_ok:
+			check(false, "native portrait report flush/readback failed")
+			complete = false
+			# Original partial/report bytes remain evidence; footer cannot claim success.
+			failures += 1
+	print("A2-L3 PORTRAIT: %d checks, %d failures; complete=%s; report=%s" % [rows.size(),failures,str(complete),path])
+	quit(0 if complete else 1)

@@ -1,0 +1,14 @@
+--- original/scripts/acts/act2/ruined_house.gd
++++ private-candidate/scripts/acts/act2/ruined_house.gd
+@@ -51,6 +51,11 @@
+ 	if not _scheduler.call("begin_encounter", _profile_id, HOUSE_EPOCH, WORLD_REVISION):
+ 		runtime_error = _scheduler.get("last_error")
+ 		return
++	# Fresh choice only. Whole saved cursor/deadlines remain authoritative
++	# for every paused restore candidate, including earlier checkpoint Retry.
++	if not is_restore_candidate():
++		var applied: Dictionary = _scheduler.call("encounter_profile")
++		_boss_next_action = "place" if applied.get("id") == "challenge" else "reach"
+ 	for id: String in HouseSequence.ACTORS:
+ 		var actor_script: Script = TenderActor if HouseSequence.TENDERS.has(id) else (BossActor if id == "handling_machine" else (HandlerActor if HouseSequence.HANDLERS.has(id) else WeybridgeScoutActor))
+ 		var actor: Node3D = actor_script.new() as Node3D

@@ -1,0 +1,211 @@
+"""Host-only independent closed-evidence audit. Never imports engine/dev/host controls."""
+from pathlib import Path
+import datetime, hashlib, json, math, os, re, stat
+ROOT=Path("/Users/howardchen/Documents/ChatGPT/video game idea")
+BASE=ROOT/".cinder/a2-l3-original-writer-host-v2-20261016"
+PHASE=BASE/"run-native-20261016T105426.785091Z-d87b5a2a"
+OUT=ROOT/".cinder/a2-l3-original-writer-actual-review-20261016"
+def H(data): return hashlib.sha256(data).hexdigest()
+def STRICT(data):
+    def pairs(items):
+        result={}
+        for key,value in items:
+            assert key not in result,("duplicate JSON key",key)
+            result[key]=value
+        return result
+    def finite(token):
+        value=float(token);assert math.isfinite(value),token
+        return value
+    return json.loads(data.decode("utf8",errors="strict"),object_pairs_hook=pairs,parse_float=finite,
+                      parse_constant=lambda token: (_ for _ in ()).throw(ValueError(token)))
+def J(path):return STRICT(path.read_bytes())
+def STABLE(path):
+    assert path.is_absolute() and path.resolve()==path,str(path)
+    s=path.lstat();assert stat.S_ISREG(s.st_mode) and not stat.S_ISLNK(s.st_mode),str(path)
+    data=path.read_bytes();t=path.lstat()
+    assert (s.st_dev,s.st_ino,s.st_size,s.st_mode,s.st_mtime_ns)==(t.st_dev,t.st_ino,t.st_size,t.st_mode,t.st_mtime_ns)
+    assert data==path.read_bytes()
+    return dict(sha256=H(data),bytes=len(data),mode=format(stat.S_IMODE(s.st_mode),"04o")),data
+def SAME(path,row):
+    actual,data=STABLE(path)
+    assert all(actual[k]==row[k] for k in actual if k in row),(str(path),actual,row)
+    return actual,data
+def OBS(path):
+    present=os.path.lexists(path);s=path.lstat() if present else None
+    regular=bool(s and stat.S_ISREG(s.st_mode));meta,_=STABLE(path) if regular else ({},None)
+    return dict(exists=present,regular=regular,symlink=bool(s and stat.S_ISLNK(s.st_mode)),
+                sha256=meta.get("sha256"),bytes=meta.get("bytes"),mode=format(stat.S_IMODE(s.st_mode),"04o") if s else None)
+def INDEX(path):
+    index=J(path/"evidence-index.json");assert index["created_after_raw_close"] is True
+    for name,row in index["files"].items():
+        assert not Path(name).is_absolute() and ".." not in Path(name).parts
+        SAME(path/name,row)
+    actual={str(p.relative_to(path)) for p in path.rglob("*") if p.is_file()}
+    assert actual==set(index["files"])|{"evidence-index.json"},actual.symmetric_difference(set(index["files"])|{"evidence-index.json"})
+    return dict(path=str(path.relative_to(ROOT)),index_sha256=H((path/"evidence-index.json").read_bytes()),indexed_files=len(index["files"]),physical_files=len(actual))
+def EXACT(text):
+    assert type(text) is str and text
+    header=STRICT(text.encode())
+    assert type(header) is dict and set(header)=={"api_revision","schema_version","value"}
+    assert header["api_revision"]=="exact-json-1" and type(header["schema_version"]) is int and header["schema_version"]==1 and type(header["value"]) is list
+    return dict(sha256=H(text.encode()),bytes=len(text.encode()),scope="Opaque literal/header only; no native Variant decode or Exact AST semantics reconstructed")
+OUT.mkdir(exist_ok=True)
+spec=J(BASE/"INPUT_SPEC.json");ready=J(BASE/"READINESS.json")
+result=J(PHASE/"result.json");queue=J(PHASE/"queue.json");command=J(PHASE/"command.json")
+selected=J(PHASE/"selected-seal.json");sealpath=Path(selected["path"])
+assert H(sealpath.read_bytes())==selected["sha256"]=="6a4eeff665f13541118a2f1d544620da552e6dd4eee5dc95bd7ae7e21b6130c8"
+seal=J(sealpath);sealresult=J(sealpath.parent/"result.json")
+assert sealresult["closed"] is True and sealresult["passed"] is True and sealresult["host_return"]==0 and sealresult["engine_launch_attempted"] is False
+assert seal["sealed"] is True and seal["source_phase"]==str(sealpath.parent)
+phaseindex=INDEX(PHASE);sealindex=INDEX(sealpath.parent)
+assert result["closed"] is True and result["passed"] is True and result["engine_launch_attempted"] is True
+assert type(result["canonical_api_return"]) is int and result["canonical_api_return"]==0
+assert type(result["owned_child_return"]) is int and result["owned_child_return"]==0
+assert type(result["host_return"]) is int and result["host_return"]==0
+assert type(result["owned_child_pid"]) is int and result["owned_child_pid"]==30320
+assert result["owned_child_closed_before_lock_release"] is True and result["raw_diagnostics"]==[]
+assert queue==dict(queued=True,acquired=True,lock_path=str(ROOT/".cinder/locks/godot.lock"),lock_context_released=True)
+expected=seal["sources"];assert len(expected)==367
+maplabels=["preflight-observed","sources-before-queue","sources-at-lock","sources-after-child","sources-at-runner-close"]
+retentionjoins=0
+for phase,labels in [(PHASE,maplabels),(sealpath.parent,["preflight-observed","sources-at-seal","sources-at-runner-close"])]:
+    for label in labels:
+        observed=J(phase/(label+".json"));retained=J(phase/(label+"-retention.json"))
+        assert observed==expected
+        assert set(retained)=={p for p,row in observed.items() if row["exists"]}
+        for path,row in retained.items():
+            assert {k:v for k,v in row.items() if k!="blob"}==observed[path]
+            blob=phase/row["blob"];assert blob.name==row["sha256"]+".bin"
+            # Original logical source modes remain in the path map. CAS storage
+            # modes are independently verified against the actual closed index.
+            SAME(blob,{k:row[k] for k in ["sha256","bytes"]});retentionjoins+=1
+absent=[path for path,row in expected.items() if not row["exists"]]
+assert absent==[spec["fixture"]+".uid"]
+for path,row in expected.items(): assert OBS(ROOT/path)==row,(path,OBS(ROOT/path),row)
+for path,digest in ready["frozen_files"].items():
+    assert expected[path]["sha256"]==digest and expected[path]["mode"]=="0644"
+for path,row in spec["expected"].items(): assert expected[path]==row
+assert set(expected)==set(spec["expected"])|set(spec["self_files"])
+enginebefore=J(PHASE/"engine-before.json");engineafter=J(PHASE/"engine-after.json")
+assert enginebefore==engineafter and enginebefore["retained_binary"] is False
+assert OBS(Path(enginebefore["path"]))==spec["engine_expected"]["record"]
+assert enginebefore["sha256"]=="c7cccbf8fb143e34e02fd6521e09be2c2b974f0d5db080b19071c9c570718ccf" and enginebefore["mode"]=="0755"
+assert {k:v for k,v in enginebefore.items() if k not in ["path","retained_binary"]}==spec["engine_expected"]["record"]
+reportmeta,data=STABLE(PHASE/"writer-output/native.json");native=STRICT(data)
+assert reportmeta["sha256"]=="b8a74c312102d9d936d7362c859075bd7305a869e6e7bc9afb597997a66293ed"
+rows=native["assertions"]
+assert type(rows) is list and len(rows)==196
+for i,row in enumerate(rows,1):
+    assert type(row) is dict and set(row)=={"index","passed","label"} and type(row["index"]) is int and row["index"]==i and type(row["passed"]) is bool and row["passed"] is True and type(row["label"]) is str
+assert type(native["checks"]) is int and native["checks"]==196 and type(native["failures"]) is int and native["failures"]==0
+assert native["complete"] is True and native["success"] is True and native["cleanup_complete"] is True
+assert native["first_failure"]=={} and native["assertion_errors"]==[] and native["partial_original_files"]==[]
+assert native["source_pre"]==native["source_post"]==spec["native_original_sources"] and len(native["source_pre"])==28
+for path,digest in native["source_pre"].items():
+    assert path.startswith("res://") and expected[path[6:]]["sha256"]==digest
+assert native["fixture_sha256"]==spec["fixture_sha256"]=="997a0eb78c6627183ffea651fa07b3937df9757dfb91212f30d0bdfa92320daa"
+assert native["fixture_path"]=="res://"+spec["fixture"]
+assert native["accepted_source_commit"]==spec["accepted_source_commit"] and native["runtime_api"]=="campaign-shared-74"
+assert native["project_root"].rstrip("/")==str(ROOT) and native["executable_path"]==enginebefore["path"]
+assert native["user_args"]==command["user_arguments"]==["--case=original-challenge-entrance","--fixture-sha256="+spec["fixture_sha256"],"--output-root=res://"+str((PHASE/"writer-output").relative_to(ROOT))]
+assert command["argv"]==[enginebefore["path"],"--path",str(ROOT),"--headless","--log-file",str(PHASE/"engine.log"),"--script",native["fixture_path"],"--"]+native["user_args"]
+assert command["canonical_api"]=="dev.godot_lock/run_validation" and command["timeout_after_lock_seconds"]==180
+raw=(PHASE/"raw.log").read_text();enginelog=(PHASE/"engine.log").read_text()
+footer="A2-L3 ORIGINAL ENTRANCE: 196 checks, 0 failures; complete=true; report=res://"+str((PHASE/"writer-output/native.json").relative_to(ROOT))
+assert [line for line in raw.splitlines() if line.startswith("A2-L3 ORIGINAL ENTRANCE:")]==[footer]
+assert [line for line in enginelog.splitlines() if line.startswith("A2-L3 ORIGINAL ENTRANCE:")]==[footer]
+diagnostic=re.compile(r"^\s*(?:ERROR|WARNING|SCRIPT ERROR):|ObjectDB.*leak|Orphan.*StringName",re.I)
+assert not any(diagnostic.search(line) for line in (raw+"\n"+enginelog).splitlines())
+assert re.fullmatch(r"user://a2-l3-original-entrance-30320-[0-9]+/",native["user_root"])
+userdir=Path(spec["userdata_base"])/native["user_root"].removeprefix("user://").rstrip("/")
+assert userdir.resolve()==userdir and userdir.is_dir()
+fresh=native["fresh_snapshot_exact"];freshmeta=EXACT(fresh)
+assert freshmeta["sha256"]=="6165a8a125b57e45a15e3c17af704093efe7fd4f96646973f3af489ac8183779"
+assert native["test_setup"]["test_only"] is True and native["test_setup"]["no_earned_route_claim"] is True
+assert native["test_setup"]["completed_main"]==["A1-L1","A1-L2","A1-L3","A1-L4","A1-L5","A2-L1","A2-L2"]
+companions=["campaign.json","campaign.json.bak","settings.json","settings.json.bak","preferences.json","preferences.json.bak"]
+stagefacts=[];primary=[];last=None
+assert [row["label"] for row in native["branches"]]==["initial-store","public-save"]
+for stage in native["branches"]:
+    label=stage["label"];directory=PHASE/"writer-output"/label
+    assert type(stage["generation"]) is int and stage["generation"]>0
+    assert stage["exact_snapshot"]==stage["exact_checkpoint"]==fresh
+    EXACT(stage["exact_attempts"]);primary.append(stage["exact_attempts"])
+    assert J(directory/"manifest.json")==stage
+    for name,text in [("attempts.exact.json",stage["exact_attempts"]),("snapshot.exact.json",fresh),("checkpoint.exact.json",fresh)]:
+        _,literal=STABLE(directory/name);assert literal==text.encode()
+    assert [r["name"] for r in stage["raw_files"]]==companions
+    names={"attempts.exact.json","snapshot.exact.json","checkpoint.exact.json","manifest.json"}
+    for row in stage["raw_files"]:
+        assert type(row["present"]) is bool and row["original_path"]==native["user_root"]+row["name"]
+        path=directory/row["name"]
+        if row["present"]:
+            meta,literal=SAME(path,row);names.add(row["name"])
+            assert row["path"]=="res://"+str(path.relative_to(ROOT)) and type(row["bytes"]) is int and row["bytes"]>0
+            env=STRICT(literal);assert type(env) is dict
+            if not row["name"].startswith("settings."):
+                assert type(env["format_version"]) is int and env["format_version"]==2 and type(env["generation"]) is int and type(env["payload_json"]) is str
+                assert H(env["payload_json"].encode())==env["sha256"]
+            if row["name"]=="campaign.json":
+                assert env["generation"]==stage["generation"] and env["payload_json"]==stage["exact_attempts"]
+        else:
+            assert not os.path.lexists(path) and "path" not in row and "sha256" not in row
+    assert {p.name for p in directory.iterdir()}==names
+    stagefacts.append(dict(label=label,generation=stage["generation"],manifest_sha256=H((directory/"manifest.json").read_bytes()),
+                           attempts=EXACT(stage["exact_attempts"]),snapshot=EXACT(stage["exact_snapshot"]),checkpoint=EXACT(stage["exact_checkpoint"]),
+                           raw_slots=stage["raw_files"]))
+    last=stage
+assert [r["generation"] for r in native["branches"]]==[1,2] and primary[0]==primary[1]
+for row in last["raw_files"]:
+    path=userdir/row["name"]
+    if row["present"]:SAME(path,row)
+    else:assert not os.path.lexists(path)
+literalrows=J(PHASE/"native-literal-retention.json");assert len(literalrows)==17
+for row in literalrows:
+    SAME(Path(row["path"]),row)
+    SAME(PHASE/row["retained_blob"],row)
+    assert row["stable_two_reads"] is True
+observation=J(PHASE/"native-observation.json")
+assert observation==result["native_observation"] and observation["functional_pass"] is True
+assert observation["joins"]["native_sha256"]==reportmeta["sha256"] and observation["joins"]["generations"]==[1,2]
+assert all(observation["joins"][k]==result[k] for k in ["canonical_api_return","owned_child_pid","owned_child_return"])
+history=J(BASE/"V1_HISTORY.json");histcount=0
+for name,row in history["expected_history"].items():
+    SAME(ROOT/name,row);histcount+=1
+v1=ROOT/history["failed_host_seal"]["path"];v1result=J(v1/"result.json")
+assert v1result==history["failed_host_seal"]["result"] and v1result["closed"] is True and v1result["passed"] is False
+assert v1result["host_return"]==2 and v1result["engine_launch_attempted"] is False and v1result["owned_child_pid"] is None
+v1queue=J(v1/"queue.json");assert v1queue["queued"] is False and v1queue["acquired"] is False
+assert not (v1/"engine.log").exists() and not (v1/"command.json").exists()
+v1index=INDEX(v1)
+# Final stable read validates that independent checking did not change literal report/source/userdata.
+assert STABLE(PHASE/"writer-output/native.json")[1]==data
+for path,row in expected.items():assert OBS(ROOT/path)==row
+receipt=dict(schema_version=1,status="ACTUAL_ORIGINAL_ENTRANCE_WRITER_AUDIT_CLEAR",at=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+    actual_phase=str(PHASE.relative_to(ROOT)),selected_seal=selected,closed_seal=sealindex,closed_native=phaseindex,
+    native=dict(report=reportmeta,checks=196,failures=0,typed_consecutive_rows=196,complete=True,success=True,cleanup_complete=True,footer=footer,
+                source_prepost28_exact=True,fixture_sha256=native["fixture_sha256"],first_failure={},raw_engine_diagnostics=[],
+                runtime_api=native["runtime_api"],accepted_source_commit_attribution_not_newGit_audit=native["accepted_source_commit"]),
+    child_queue=dict(canonical_api_return=0,same_actual_owned_Popen_return=0,owned_pid=30320,Host_return=0,
+                     owned_child_closed_before_lock_release=True,queue=queue,qualification="Canonical API and independently polled same-owned Popen are distinct recorded facts about one child, not a second external OS receipt."),
+    sources=dict(slots=367,existing=366,absent=absent,maps_before_queue_at_lock_after_child_runner_close_exact=True,
+                 selected_seal_preflight_at_seal_close_exact=True,retention_CAS_joins_verified=retentionjoins,
+                 mode_custody="Original logical source modes verified in all maps and against current original paths; CAS storage modes verified separately by each closed index, never inferred equal to original logical mode.",
+                 original_House=expected["scripts/acts/act2/ruined_house.gd"],Authored=expected["scripts/combat/authored_enemy_sequence.gd"],
+                 Scheduler=expected["scripts/combat/threat_scheduler.gd"],all_current_hash_size_mode_presence_exact=True),
+    engine=dict(metadata=enginebefore,current_exact_hash_size_mode_type=True,binary_copied=False,engine_executed_by_reviewer=False),
+    raw_custody=dict(fresh_snapshot=freshmeta,stages=stagefacts,whole_Attempts_same_across_Save=True,user_root=native["user_root"],
+                    actual_userdata_directory=str(userdir),six_original_companion_slots_current_exact=True,native_literal_CAS_rows_verified=17,
+                    W1="Closed via original host stable literal strict readback; no writer/packet reconstruction",typed_semantics="Native assertion authority plus opaque literal Exact/header equality; no host Variant decode"),
+    scope=dict(actual="Pristine original Challenge road entrance only, captured from actual fresh _prepare/_capture_fresh_candidate; paused process registration; disclosed TEST preceding-main wrapper; real Store writes, public Continue, public paused Save, distinct fresh Shell Continue.",
+               test_setup=native["test_setup"],epoch_claim="Native pristine assertions: original closed19, Reach, stage0, no boss cooldown/admission, zero scheduler/scenic/action clocks, idle tools/banks, full30 targetHP, full PlayerHP/ammo. Reviewer does not decode typed Exact fields.",
+               no_authority=["oldChallenge495","boss/Stage/later-held history","earned predecessor route","full route","full playthrough","new native mechanics policy coverage","new portrait inspection","runtime speedup"]),
+    cleanup=dict(native_normal_release_assertions=[r for r in rows if any(x in r["label"] for x in ["cleanup waits","releases old Shell subtree","bounded cleanup"])],
+                 original_userdata_deliberately_retained=True,no_foreign_process_or_lock_action=True),
+    source_only_v1_history=dict(status=history["status"],frozen_history_files_verified=histcount,failed_host_only_seal=v1index,
+                                original_result=v1result,no_dev_queue_native_job=True,finite_v2_fix_preserved="FINITE_JSON_FIX.patch; native997a unchanged; strict finite parse_float;13 frozen synthetic host controls only, not native credit."),
+    findings=[],no_Store_write_binary_decode_engine_rerun_Git_or_Agent02_access=True,no_new_acceptance_decision=True)
+with (OUT/"REVIEW.json").open("x") as f:json.dump(receipt,f,indent=2,allow_nan=False);f.write("\n")
+print(json.dumps(dict(review=str(OUT/"REVIEW.json"),sha256=H((OUT/"REVIEW.json").read_bytes()),status=receipt["status"],phase_index=phaseindex,
+    seal_index=sealindex,source_slots=367,source_retention_joins=retentionjoins,v1_frozen_history_files=histcount,v1_index=v1index,checks=196,failures=0),indent=2))
+

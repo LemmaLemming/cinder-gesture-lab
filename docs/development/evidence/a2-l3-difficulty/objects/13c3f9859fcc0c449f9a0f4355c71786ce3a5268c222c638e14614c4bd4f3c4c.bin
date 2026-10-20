@@ -1,0 +1,84 @@
+"""Synthetic Python-only report/guard tests; never native gameplay evidence."""
+from pathlib import Path
+import importlib.util
+import json
+import tempfile
+import native_inspect as check
+
+HERE=Path(__file__).resolve().parent
+rows=[]
+def expect(label,ok):
+    assert ok,label
+    rows.append({"label":label,"passed":True})
+
+
+def mock_report(root):
+    out=root/".cinder/MOCK-original"; target=out/"case"; target.mkdir(parents=True)
+    fixture="tests/MOCK.gd"; pins="tests/MOCK-pins.json"; subject="scripts/MOCK.gd"
+    spec={"fixture":fixture,"fixture_sha256":"a"*64,"pins_path":pins,"pins_sha256":"b"*64,"subject":subject,
+          "subject_variants":{"original":{"sha256":"c"*64}},"native_control_sources":{"res://MOCK-CONTROL":"d"*64}}
+    sources=dict(spec["native_control_sources"]); sources.update({"res://"+fixture:"a"*64,"res://"+pins:"b"*64,"res://"+subject:"c"*64})
+    exact=json.dumps({"api_revision":"exact-json-1","schema_version":1,"value":["dictionary",[]]},separators=(",",":"))
+    artifacts=[]
+    for label in ["birth","station","first-admission","before-primary","after-primary","terminal-before-cleanup","cleanup-events","trace-0000"]:
+        path=target/(label+".exact.json"); path.write_text(exact)
+        artifacts.append({"label":label,"path":"res://"+str(path.relative_to(root)),"bytes":len(exact.encode()),"sha256":check.digest(exact.encode()),"encoding":"typed native diagnostic, not campaign snapshot"})
+    packet={"api_revision":"a2-l3-inert-comparison-plan-1","arm":"reach-control","assertions":[{"index":1,"passed":True,"label":"MOCK-ONLY","wall_ms":1,"native_clock_s":0.0}],
+            "checks":1,"failures":0,"first_failure":"","fault":"","complete":True,"success":True,"source_pre":sources,"source_post":sources,
+            "fixture_sha256":"a"*64,"pins_sha256":"b"*64,"host_sha256":"c"*64,"baseline_report":"","baseline_sha256":"","artifacts":artifacts,
+            "summary":{"useful_response":True,"first_action":"reach","stationary_hold_hits_first":True,"dash_count":1,"station":[0,0,-33.4],"stats_exact":exact}}
+    native=target/"native-report.json"; native.write_text(json.dumps(packet))
+    raw="A2-L3 COMPARISON: 1 checks, 0 failures; complete=true; report=res://"+str(native.relative_to(root))+"\n"
+    return out,spec,packet,native,raw
+
+
+def main():
+    with tempfile.TemporaryDirectory(prefix="cinder-l3-pair-host-tests-") as directory:
+        root=Path(directory).resolve(); out,spec,packet,native,raw=mock_report(root)
+        observe=lambda text=raw,api=0,popen=0:check.observe(out,root,spec,"original",text,api,popen)
+        expect("Synthetic closed original report joins opaque diagnostic bytes, not native credit",observe()["functional_pass"])
+        native.write_text(json.dumps(packet)[:-1]+',"elapsed":1e999}')
+        expect("Positive exponent overflow refuses",not observe()["functional_pass"])
+        native.write_text(json.dumps(packet)[:-1]+',"elapsed":-1e999}')
+        expect("Negative exponent overflow refuses",not observe()["functional_pass"])
+        native.write_text(json.dumps(packet)[:-1]+',"complete":true}')
+        expect("Duplicate JSON key refuses",not observe()["functional_pass"])
+        modified=json.loads(json.dumps(packet)); modified["assertions"][0]["index"]=True; native.write_text(json.dumps(modified))
+        expect("Bool row index cannot masquerade as int",not observe()["functional_pass"])
+        native.write_text(json.dumps(packet))
+        expect("Wrong footer refuses",not observe(raw.replace("1 checks","2 checks"))["functional_pass"])
+        expect("Actual Popen failure remains distinct from native complete and API0",not observe(popen=2)["functional_pass"])
+        artifact=out/"case/first-admission.exact.json"; original=artifact.read_bytes(); artifact.write_bytes(original+b" ")
+        expect("Literal held-union diagnostic corruption refuses",not observe()["functional_pass"]); artifact.write_bytes(original)
+        loader=importlib.util.spec_from_file_location("MOCK_ONLY_l3_pair_host",HERE/"run.py"); host=importlib.util.module_from_spec(loader); loader.loader.exec_module(host)
+        subject=root/"MOCK-SUBJECT.gd"; original=b"MOCK-ORIGINAL"; candidate=b"MOCK-CANDIDATE"; subject.write_bytes(original); subject.chmod(0o644)
+        old_record,_=host.record(subject); subject.write_bytes(candidate); candidate_record,_=host.record(subject)
+        receipts=root/"restore"; receipts.mkdir()
+        answer=host.restore_subject_if_known(subject,original,old_record,candidate_record,receipts,True,True)
+        expect("Exact known candidate restores original after mocked child closure",answer["restored_exact_bytes_and_mode"] and subject.read_bytes()==original)
+        receipts=root/"noop"; receipts.mkdir(); inode=subject.stat().st_ino
+        answer=host.restore_subject_if_known(subject,original,old_record,candidate_record,receipts,True,False)
+        expect("Exact original no-op preserves inode and makes no source write",answer["status"]=="ALREADY_EXACT_ORIGINAL_NO_WRITE" and subject.stat().st_ino==inode)
+        subject.write_bytes(b"MOCK-FOREIGN"); receipts=root/"foreign"; receipts.mkdir()
+        answer=host.restore_subject_if_known(subject,original,old_record,candidate_record,receipts,True,True)
+        expect("Unknown source bytes retained and left in situ",not answer["restored_exact_bytes_and_mode"] and subject.read_bytes()==b"MOCK-FOREIGN" and (receipts/"unexpected-subject-before-restore.bin").read_bytes()==b"MOCK-FOREIGN")
+        subject.write_bytes(candidate); receipts=root/"open-child"; receipts.mkdir()
+        answer=host.restore_subject_if_known(subject,original,old_record,candidate_record,receipts,False,True)
+        expect("Open mocked owned child forbids every source restore write",not answer["subject_write_attempted"] and subject.read_bytes()==candidate)
+        subject.write_bytes(original); actual_record=host.file_record
+        def race(path):
+            subject.write_bytes(b"MOCK-LATE-FOREIGN")
+            return actual_record(path)
+        host.file_record=race
+        try:
+            try: host.replace_subject(subject,candidate,"0644",old_record); refused=False
+            except ValueError: refused=True
+        finally: host.file_record=actual_record
+        expect("Final prior guard after temp readiness preserves late foreign change",refused and subject.read_bytes()==b"MOCK-LATE-FOREIGN")
+    result={"status":"PYTHON_ONLY_SYNTHETIC_CONTROLS_PASSED","checks":len(rows),"failures":0,"rows":rows,
+            "limits":"Mock JSON/diagnostics/source files and mocked child-closure flag only under temporary directory. No canonical dev/queue/engine/native/Script/Store/worker/Git/live-source operation or actual gameplay/pair result."}
+    (HERE/"HOST_TESTS.json").write_text(json.dumps(result,indent=2)+"\n")
+    print(json.dumps({"Python_only_checks":len(rows),"failures":0,"native_credit":False}))
+
+
+if __name__=="__main__": main()

@@ -1,0 +1,183 @@
+"""Strict closed original-entrance report joins; never a Godot Variant decoder."""
+from pathlib import Path
+import hashlib
+import json
+import math
+import os
+import re
+import stat
+
+
+def require(ok, reason):
+    if not ok:
+        raise ValueError(reason)
+
+
+def digest(data):
+    return hashlib.sha256(data).hexdigest()
+
+
+def strict(data):
+    def pairs(items):
+        result = {}
+        for key, value in items:
+            require(key not in result, "Duplicate JSON key: " + key)
+            result[key] = value
+        return result
+    def finite_float(token):
+        value = float(token)
+        require(math.isfinite(value), "Nonfinite JSON exponent: " + token)
+        return value
+    return json.loads(data.decode("utf-8", errors="strict"), object_pairs_hook=pairs, parse_float=finite_float,
+                      parse_constant=lambda value: (_ for _ in ()).throw(ValueError(value)))
+
+
+def stable(path):
+    path = Path(path)
+    require(path.is_absolute() and path.resolve() == path, "Literal nonsymlink absolute path required: " + str(path))
+    before = path.lstat()
+    require(stat.S_ISREG(before.st_mode), "Regular file required: " + str(path))
+    fd = os.open(path, os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0))
+    with os.fdopen(fd, "rb") as stream:
+        opened = os.fstat(stream.fileno())
+        require((opened.st_dev, opened.st_ino) == (before.st_dev, before.st_ino), "Input changed before open")
+        data = stream.read()
+        after_fd = os.fstat(stream.fileno())
+    second = path.read_bytes()
+    after = path.lstat()
+    fields = lambda s: (s.st_dev, s.st_ino, s.st_size, s.st_mode, s.st_mtime_ns)
+    require(fields(before) == fields(opened) == fields(after_fd) == fields(after) and data == second,
+            "Unstable literal file readback: " + str(path))
+    return {"path": str(path), "sha256": digest(data), "bytes": len(data),
+            "mode": format(stat.S_IMODE(after.st_mode), "04o"), "stable_two_reads": True}, data
+
+
+def exact_wire(text):
+    require(type(text) is str and bool(text), "Nonempty opaque native Exact wire required")
+    outer = strict(text.encode())
+    require(type(outer) is dict and set(outer) == {"api_revision", "schema_version", "value"}
+            and outer["api_revision"] == "exact-json-1" and type(outer["schema_version"]) is int
+            and outer["schema_version"] == 1 and type(outer["value"]) is list,
+            "Native Exact envelope header differs")
+    return {"sha256": digest(text.encode()), "bytes": len(text.encode()),
+            "scope": "Strict JSON envelope/header and opaque literal equality only; no native Variant decode"}
+
+
+def observe(out, root, spec, raw, api_return, child_pid, child_return):
+    result = {"functional_pass": False, "retained": [], "joins": {}, "report_present": False}
+    native = out / "writer-output/native.json"
+    if not native.exists():
+        result["error"] = "Actual native.json absent; no report/pass reconstruction"
+        return result
+    try:
+        record, data = stable(native)
+        result["retained"].append(record)
+        result["report_present"] = True
+        packet = strict(data)
+        require(type(packet) is dict and packet.get("case") == "original-challenge-entrance", "Actual original writer case required")
+        rows = packet.get("assertions")
+        require(type(rows) is list and bool(rows), "Actual assertion rows required")
+        require(all(type(row) is dict and set(row) == {"index", "passed", "label"}
+                    and type(row["index"]) is int and row["index"] == i
+                    and type(row["passed"]) is bool and type(row["label"]) is str
+                    for i, row in enumerate(rows, 1)), "Consecutive exact native row types differ")
+        failed = [row for row in rows if not row["passed"]]
+        require(type(packet.get("checks")) is int and packet["checks"] == len(rows)
+                and type(packet.get("failures")) is int and packet["failures"] == len(failed)
+                and type(packet.get("complete")) is bool and type(packet.get("success")) is bool
+                and packet["complete"] == packet["success"], "Actual count/complete/success controls differ")
+        require(packet.get("first_failure") == (failed[0] if failed else {}), "Actual first failure differs")
+        expected_report = "res://" + str(native.relative_to(root))
+        expected_footer = "A2-L3 ORIGINAL ENTRANCE: %d checks, %d failures; complete=%s; report=%s" % (
+            len(rows), len(failed), str(packet["complete"]).lower(), expected_report)
+        require([line for line in raw.splitlines() if line.startswith("A2-L3 ORIGINAL ENTRANCE:")] == [expected_footer],
+                "Literal report/count/complete/footer path join differs")
+        result["joins"] = {"checks": len(rows), "failures": len(failed), "complete": packet["complete"],
+                           "success": packet["success"], "cleanup_complete": packet.get("cleanup_complete"),
+                           "first_failure": packet["first_failure"], "native_sha256": record["sha256"],
+                           "canonical_api_return": api_return, "owned_child_pid": child_pid, "owned_child_return": child_return}
+        require(packet.get("source_pre") == spec["native_original_sources"] == packet.get("source_post"), "Actual28 original runtime source maps differ")
+        require(packet.get("fixture_sha256") == spec["fixture_sha256"] and packet.get("fixture_path") == "res://" + spec["fixture"], "Actual selected immutable writer identity differs")
+        require(packet.get("accepted_source_commit") == spec["accepted_source_commit"] and packet.get("runtime_api") == "campaign-shared-74", "Actual writer baseline attribution differs")
+        require(packet.get("project_root", "").rstrip("/") == str(root)
+                and packet.get("executable_path") == spec["engine_expected"]["path"], "Actual native project/engine path differs")
+        expected_args = ["--case=original-challenge-entrance", "--fixture-sha256=" + spec["fixture_sha256"],
+                         "--output-root=res://" + str((out / "writer-output").relative_to(root))]
+        require(packet.get("user_args") == expected_args, "Actual native three user arguments differ")
+        user_root = packet.get("user_root")
+        require(type(user_root) is str and re.fullmatch(r"user://a2-l3-original-entrance-%d-[0-9]+/" % child_pid, user_root),
+                "Actual unique native user directory must join owned child PID")
+        user_directory = Path(spec["userdata_base"]) / user_root.removeprefix("user://").rstrip("/")
+        require(user_directory.resolve() == user_directory and user_directory.is_dir(), "Actual declared app userdata directory required")
+        fresh = packet.get("fresh_snapshot_exact")
+        result["joins"]["fresh_snapshot"] = exact_wire(fresh)
+        stages = packet.get("branches")
+        require(type(stages) is list and [row.get("label") for row in stages] == ["initial-store", "public-save"], "Actual two archive stages required")
+        companions = ["campaign.json", "campaign.json.bak", "settings.json", "settings.json.bak", "preferences.json", "preferences.json.bak"]
+        generations, attempts = [], []
+        last_files = {}
+        for stage in stages:
+            label = stage["label"]
+            directory = out / "writer-output" / label
+            require(type(stage.get("generation")) is int and stage["generation"] > 0, "Observed native generation integer required")
+            generations.append(stage["generation"])
+            attempts.append(stage.get("exact_attempts"))
+            exact_wire(stage["exact_attempts"])
+            require(stage.get("exact_snapshot") == fresh == stage.get("exact_checkpoint"), "Current/checkpoint must join genuine fresh capture")
+            expected = {"attempts.exact.json": stage["exact_attempts"], "snapshot.exact.json": fresh, "checkpoint.exact.json": fresh}
+            for name, text in expected.items():
+                item, literal = stable(directory / name)
+                require(literal == text.encode(), "Literal native typed file differs: " + name)
+                result["retained"].append(item)
+            manifest, literal = stable(directory / "manifest.json")
+            require(strict(literal) == stage, "Actual literal stage manifest differs")
+            result["retained"].append(manifest)
+            files = stage.get("raw_files")
+            require(type(files) is list and [row.get("name") for row in files] == companions, "Six original companion slots required")
+            expected_names = set(expected) | {"manifest.json"}
+            for row in files:
+                name = row["name"]
+                require(type(row.get("present")) is bool and row.get("original_path") == user_root + name, "Native original path/presence differs")
+                copied = directory / name
+                if row["present"]:
+                    item, literal = stable(copied)
+                    require(row.get("path") == "res://" + str(copied.relative_to(root)) and type(row.get("bytes")) is int
+                            and row["bytes"] == item["bytes"] > 0 and row.get("sha256") == item["sha256"], "Copied literal raw file metadata differs")
+                    envelope = strict(literal)
+                    require(type(envelope) is dict, "Original companion must retain its actual JSON object")
+                    # Settings uses its independent plain JSON file; never
+                    # pretend it is a SaveStore envelope or rewrite it.
+                    if not name.startswith("settings."):
+                        require(type(envelope.get("format_version")) is int
+                                and envelope["format_version"] == 2 and type(envelope.get("generation")) is int
+                                and type(envelope.get("payload_json")) is str
+                                and digest(envelope["payload_json"].encode()) == envelope.get("sha256"), "Original raw Store format2 checksum differs")
+                    if name == "campaign.json":
+                        require(envelope["generation"] == stage["generation"] and envelope["payload_json"] == stage["exact_attempts"], "Primary actual generation/whole Attempts differs")
+                    result["retained"].append(item)
+                    expected_names.add(name)
+                else:
+                    require(not copied.exists() and "path" not in row and "sha256" not in row, "Absent raw slot cannot be fabricated")
+                last_files[name] = row
+            require({p.name for p in directory.iterdir()} == expected_names, "Actual stage whitelist differs")
+        require(generations[1] > generations[0] and attempts[0] == attempts[1], "Observed Save generation must advance without rewriting whole Attempts")
+        for name, row in last_files.items():
+            current = user_directory / name
+            if row["present"]:
+                item, _ = stable(current)
+                require(item["sha256"] == row["sha256"] and item["bytes"] == row["bytes"], "Original user file drift after retained Save: " + name)
+                result["retained"].append(item)
+            else:
+                require(not current.exists(), "Literal original absence changed after Save: " + name)
+        record_after, after = stable(native)
+        require(after == data and record_after == record, "Final report changed during complete host joins")
+        result["joins"].update({"actual_user_root": user_root, "actual_userdata_directory": str(user_directory),
+                                 "generations": generations, "native_report_stable_through_all_joins": True,
+                                 "opaque_typed_scope": "Native assertions and strict opaque Exact/raw custody; no host Variant decoder"})
+        require(not failed and packet["complete"] is True and packet["success"] is True
+                and packet.get("cleanup_complete") is True and api_return == 0 and child_return == 0,
+                "Actual native incomplete/failed or API/owned process not zero")
+        result["functional_pass"] = True
+    except Exception as error:
+        result["error"] = str(error)
+    return result

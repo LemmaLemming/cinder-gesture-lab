@@ -1,0 +1,158 @@
+"""Strict closed original-entrance report joins; never a Godot Variant decoder."""
+from pathlib import Path
+import hashlib
+import json
+import math
+import os
+import re
+import stat
+
+
+def require(ok, reason):
+    if not ok:
+        raise ValueError(reason)
+
+
+def digest(data):
+    return hashlib.sha256(data).hexdigest()
+
+
+def strict(data):
+    def pairs(items):
+        result = {}
+        for key, value in items:
+            require(key not in result, "Duplicate JSON key: " + key)
+            result[key] = value
+        return result
+    def finite_float(token):
+        value = float(token)
+        require(math.isfinite(value), "Nonfinite JSON exponent: " + token)
+        return value
+    return json.loads(data.decode("utf-8", errors="strict"), object_pairs_hook=pairs, parse_float=finite_float,
+                      parse_constant=lambda value: (_ for _ in ()).throw(ValueError(value)))
+
+
+def stable(path):
+    path = Path(path)
+    require(path.is_absolute() and path.resolve() == path, "Literal nonsymlink absolute path required: " + str(path))
+    before = path.lstat()
+    require(stat.S_ISREG(before.st_mode), "Regular file required: " + str(path))
+    fd = os.open(path, os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0))
+    with os.fdopen(fd, "rb") as stream:
+        opened = os.fstat(stream.fileno())
+        require((opened.st_dev, opened.st_ino) == (before.st_dev, before.st_ino), "Input changed before open")
+        data = stream.read()
+        after_fd = os.fstat(stream.fileno())
+    second = path.read_bytes()
+    after = path.lstat()
+    fields = lambda s: (s.st_dev, s.st_ino, s.st_size, s.st_mode, s.st_mtime_ns)
+    require(fields(before) == fields(opened) == fields(after_fd) == fields(after) and data == second,
+            "Unstable literal file readback: " + str(path))
+    return {"path": str(path), "sha256": digest(data), "bytes": len(data),
+            "mode": format(stat.S_IMODE(after.st_mode), "04o"), "stable_two_reads": True}, data
+
+
+def exact_wire(text):
+    require(type(text) is str and bool(text), "Nonempty opaque native Exact wire required")
+    outer = strict(text.encode())
+    require(type(outer) is dict and set(outer) == {"api_revision", "schema_version", "value"}
+            and outer["api_revision"] == "exact-json-1" and type(outer["schema_version"]) is int
+            and outer["schema_version"] == 1 and type(outer["value"]) is list,
+            "Native Exact envelope header differs")
+    return {"sha256": digest(text.encode()), "bytes": len(text.encode()),
+            "scope": "Strict JSON envelope/header and opaque literal equality only; no native Variant decode"}
+
+
+def observe(out, root, spec, variant, raw, api_return, child_return, baseline=None):
+    """Retain native assertions and opaque exact evidence; do not re-prove geometry."""
+    result = {"functional_pass": False, "retained": [], "report_present": False, "joins": {}}
+    native = out / "case/native-report.json"
+    if not native.exists():
+        result["error"] = "Actual report absent; partial/raw evidence remains, no pass reconstructed"
+        return result
+    try:
+        meta, data = stable(native); result["retained"].append(meta); result["report_present"] = True
+        packet = strict(data)
+        arm = "reach-control" if variant == "original" else "place-trial"
+        require(type(packet) is dict and packet.get("api_revision") == "a2-l3-inert-comparison-plan-1"
+                and packet.get("arm") == arm, "Actual comparison API/arm differs")
+        rows = packet.get("assertions")
+        require(type(rows) is list and bool(rows), "Actual assertion rows required")
+        require(all(type(row) is dict and set(row) == {"index", "passed", "label", "wall_ms", "native_clock_s"}
+                    and type(row["index"]) is int and row["index"] == index and type(row["passed"]) is bool
+                    and type(row["label"]) is str and type(row["wall_ms"]) is int
+                    and type(row["native_clock_s"]) in [int, float]
+                    for index, row in enumerate(rows, 1)), "Exact consecutive native row/control types differ")
+        failed = [row for row in rows if not row["passed"]]
+        require(type(packet.get("checks")) is int and packet["checks"] == len(rows)
+                and type(packet.get("failures")) is int and packet["failures"] == len(failed)
+                and type(packet.get("complete")) is bool and type(packet.get("success")) is bool
+                and packet["complete"] == packet["success"] and type(packet.get("first_failure")) is str
+                and packet["first_failure"] == (failed[0]["label"] if failed else "")
+                and type(packet.get("fault")) is str, "Actual rows/count/first-failure/complete controls differ")
+        uri = "res://" + str(native.relative_to(root))
+        footer = "A2-L3 COMPARISON: %d checks, %d failures; complete=%s; report=%s" % (
+            len(rows), len(failed), str(packet["complete"]).lower(), uri)
+        require([line for line in raw.splitlines() if line.startswith("A2-L3 COMPARISON:")] == [footer], "Actual report/footer/count/complete path join differs")
+        # This immutable fixture prints only FAIL rows and its final footer.
+        # Success comes from real report rows, never invented PASS log lines.
+        expected_fail = ["FAIL: " + row["label"] for row in failed]
+        require([line for line in raw.splitlines() if line.startswith("FAIL: ")] == expected_fail, "Actual failed assertion stdout differs")
+        expected_sources = dict(spec["native_control_sources"])
+        expected_sources.update({"res://" + spec["fixture"]: spec["fixture_sha256"],
+                                 "res://" + spec["pins_path"]: spec["pins_sha256"],
+                                 "res://" + spec["subject"]: spec["subject_variants"][variant]["sha256"]})
+        require(packet.get("source_pre") == expected_sources == packet.get("source_post"), "Actual39 source/control pre/post maps differ")
+        require(packet.get("fixture_sha256") == spec["fixture_sha256"] and packet.get("pins_sha256") == spec["pins_sha256"]
+                and packet.get("host_sha256") == spec["subject_variants"][variant]["sha256"], "Actual immutable fixture/control/Host selectors differ")
+        if baseline is None:
+            require(packet.get("baseline_report") == "" and packet.get("baseline_sha256") == "", "Original cannot import another report")
+        else:
+            before, _ = stable(Path(baseline["path"]))
+            require(before["sha256"] == baseline["sha256"] and packet.get("baseline_report") == "res://" + str(Path(baseline["path"]).relative_to(root))
+                    and packet.get("baseline_sha256") == baseline["sha256"], "Candidate must join exact actual closed original report")
+        artifacts = packet.get("artifacts")
+        require(type(artifacts) is list, "Actual native artifacts list required")
+        labels, paths = set(), set()
+        for row in artifacts:
+            require(type(row) is dict and set(row) == {"label", "path", "bytes", "sha256", "encoding"}
+                    and type(row["label"]) is str and re.fullmatch(r"[A-Za-z0-9_-]+", row["label"])
+                    and type(row["bytes"]) is int and row["bytes"] > 0
+                    and row["encoding"] == "typed native diagnostic, not campaign snapshot", "Actual diagnostic metadata differs")
+            path = out / "case" / (row["label"] + ".exact.json")
+            require(row["path"] == "res://" + str(path.relative_to(root)) and row["label"] not in labels
+                    and row["path"] not in paths, "Actual unique owned diagnostic path differs")
+            item, literal = stable(path)
+            require(item["sha256"] == row["sha256"] and item["bytes"] == row["bytes"], "Original diagnostic bytes/hash differ")
+            exact_wire(literal.decode("utf-8", errors="strict"))
+            labels.add(row["label"]); paths.add(row["path"]); result["retained"].append(item)
+        result["joins"] = {"checks": len(rows), "failures": len(failed), "complete": packet["complete"],
+                           "success": packet["success"], "first_failure": packet["first_failure"], "fault": packet["fault"],
+                           "native_sha256": meta["sha256"], "artifact_count": len(artifacts), "artifact_labels": sorted(labels),
+                           "canonical_api_return": api_return, "owned_child_return": child_return,
+                           "diagnostic_scope": "Opaque original Exact diagnostic envelopes retained. Native pinned fixture checks current+held unions/proof/paths/hold/cadence/hits; host does not decode/re-prove native geometry or infer absent evidence."}
+        after, literal = stable(native)
+        require(after == meta and literal == data, "Actual native report changed through host joins")
+        require(not failed and not packet["fault"] and packet["complete"] is True and packet["success"] is True
+                and api_return == 0 and child_return == 0, "Native incomplete/failed/API/actual process not zero")
+        mandatory = {"birth", "station", "first-admission", "before-primary", "after-primary", "terminal-before-cleanup", "cleanup-events"}
+        require(mandatory <= labels and any(label.startswith("trace-") for label in labels), "Actual completed native union/path/terminal/cleanup trace evidence missing")
+        require({p.name for p in (out / "case").iterdir()} == {Path(path).name for path in paths} | {"native-report.json"}, "Actual completed output whitelist differs")
+        summary = packet.get("summary")
+        require(type(summary) is dict and summary.get("useful_response") is True
+                and summary.get("first_action") == ("reach" if variant == "original" else "place")
+                and type(summary.get("stationary_hold_hits_first")) is bool
+                and summary["stationary_hold_hits_first"] == (variant == "original")
+                and type(summary.get("dash_count")) is int and summary["dash_count"] in ([1, 2] if variant == "original" else [0]),
+                "Actual native fixed experiment summary differs; no equivalence/unused response promoted")
+        require(type(summary.get("station")) is list and len(summary["station"]) == 3
+                and all(type(value) in [int, float] for value in summary["station"])
+                and type(summary.get("stats_exact")) is str, "Actual constructor station/stats observations required")
+        exact_wire(summary["stats_exact"])
+        result["summary"] = summary
+        result["native_report"] = {"path": str(native), "sha256": meta["sha256"], "bytes": meta["bytes"]}
+        result["functional_pass"] = True
+    except Exception as error:
+        result["error"] = str(error)
+    return result
+

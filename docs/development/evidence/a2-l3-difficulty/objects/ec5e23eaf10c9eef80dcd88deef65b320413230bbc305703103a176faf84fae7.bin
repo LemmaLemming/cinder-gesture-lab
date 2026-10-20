@@ -1,0 +1,129 @@
+"""Source-only input freeze; no dev import, Godot, Git, UID or runtime write."""
+from pathlib import Path
+import ast
+import json
+import os
+import re
+import stat
+import native_inspect as check
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[1]
+BASE = ".cinder/a2-l3-original-writer-host-v2-20261016/"
+FIXTURE = BASE + "original_challenge_entrance_writer.gd"
+INERT = FIXTURE + ".txt"
+FIXTURE_SHA = "997a0eb78c6627183ffea651fa07b3937df9757dfb91212f30d0bdfa92320daa"
+CONTROL = BASE + "original-source-pins.json"
+
+
+def record(name):
+    path = ROOT / name
+    present = os.path.lexists(path)
+    status = path.lstat() if present else None
+    regular = bool(status and stat.S_ISREG(status.st_mode))
+    check.require(not present or (regular and not stat.S_ISLNK(status.st_mode)), "Named regular or genuinely absent input required: " + name)
+    data = check.stable(path)[1] if present else None
+    return {"exists": present, "regular": regular, "symlink": False,
+            "sha256": check.digest(data) if data is not None else None, "bytes": len(data) if data is not None else None,
+            "mode": format(stat.S_IMODE(status.st_mode), "04o") if present else None}
+
+
+def put(name, value):
+    (HERE / name).write_text(json.dumps(value, indent=2, allow_nan=False) + "\n")
+
+
+def main():
+    history = check.strict((HERE / "V1_HISTORY.json").read_bytes())["expected_history"]
+    for name, prior in history.items():
+        actual = record(name)
+        check.require(all(actual[key] == prior[key] for key in ["sha256", "bytes", "mode"]), "Frozen original v1/history changed; do not repin: " + name)
+    check.require(check.digest((ROOT / INERT).read_bytes()) == FIXTURE_SHA, "Exact inert997a original writer required")
+    check.require(not os.path.lexists(ROOT / FIXTURE) and not os.path.lexists(ROOT / (FIXTURE + ".uid")), "Preparation must not select executable/UID")
+    submitted = check.strict((ROOT / CONTROL).read_bytes())
+    expected_native = {"res://" + row["path"]: row["sha256"] for row in submitted["sources"]}
+    check.require(len(expected_native) == 28, "Exact original28 native control cohort required")
+    for row in submitted["sources"]:
+        observed = record(row["path"])
+        check.require(observed["sha256"] == row["sha256"] and observed["bytes"] == row["bytes"], "Do not repin changed original source: " + row["path"])
+    check.require(record("scripts/combat/authored_enemy_sequence.gd")["sha256"] == "9aed90b797bdef3388a82b63f40390e2b779f2fec671ed3914a33b1ff42950a3", "Independent withdrawn4b baseline must be original9aed")
+    cache_name = ".godot/global_script_class_cache.cfg"
+    cache = (ROOT / cache_name).read_text()
+    classes = {m.group(1): m.group(2) for m in re.finditer(r'"class": &"([^"]+)".*?"path": "res://([^"]+)"', cache, re.S)}
+    pending = [FIXTURE, "scenes/acts/act2/a2_l3.tscn"]
+    seen, edges, unresolved = set(), [], []
+    while pending:
+        name = pending.pop(0)
+        if name in seen: continue
+        seen.add(name)
+        physical = ROOT / (INERT if name == FIXTURE else name)
+        if name != FIXTURE and physical.suffix not in [".gd", ".tscn", ".tres"]: continue
+        text = physical.read_text()
+        if name.endswith(".gd"):
+            targets = set(re.findall(r'''(?:preload|load)\(\s*["']res://([^"']+)["']\s*\)''', text))
+            targets.update(re.findall(r'''^\s*extends\s+["']res://([^"']+)["']''', text, re.M))
+        else:
+            targets = set(re.findall(r'''path\s*=\s*["']res://([^"']+)["']''', text))
+        for target in sorted(targets):
+            if (ROOT / target).is_file():
+                edges.append({"from": name, "to": target, "reason": "literal preload/load/extends or scene resource"}); pending.append(target)
+            else: unresolved.append({"from": name, "target": target})
+        for klass, target in sorted(classes.items()):
+            if target != name and re.search(r"\b" + re.escape(klass) + r"\b", text):
+                edges.append({"from": name, "to": target, "reason": "global class token " + klass}); pending.append(target)
+    check.require(not unresolved, "Actual named static resource unresolved")
+    check.require("[autoload]" not in (ROOT / "project.godot").read_text(), "Unexpected autoload needs separate targeted review")
+    graph = {"schema": 1, "roots": [FIXTURE, "scenes/acts/act2/a2_l3.tscn"], "source_alias": {FIXTURE: INERT},
+             "resources": sorted(seen), "edges": edges, "unresolved": unresolved,
+             "method": "Named writer actual preload/extends, explicit dynamic targetA2-L3 scene and recursive static/global-class references; Hash-only28 source controls are pinned separately, not falsely described as parsed/executed test scripts.",
+             "limits": "Bounded source graph, not arbitrary dynamic/global/UID census. Existing Registry JSON scene catalogue is pinned data; no loading/all-scene campaign audit inferred."}
+    put("DEPENDENCY_GRAPH.json", graph)
+    names = set(seen) | {row["path"] for row in submitted["sources"]}
+    names |= set(check.strict((HERE / "V1_HISTORY.json").read_bytes())["expected_history"])
+    names |= {name + ".uid" for name in names.copy() if name.endswith(".gd")}
+    # FileAccess catalogue reads are not preload edges. Pin the actual shared
+    # equipment/profile data and inherited arrangement data separately.
+    names |= {INERT, CONTROL, ".cinder/local.json", "project.godot", cache_name, ".godot/uid_cache.bin", "scripts/dev/dev.py", "data/design/difficulty_profiles.json", "data/design/player_equipment.json", "data/campaign/act2/a2_l1_difficulty_arrangements.json", "data/campaign/act2/a2_l2_difficulty_arrangements.json", "scripts/combat/authored_enemy_sequence.gd", "scripts/combat/authored_enemy_sequence.gd.uid"}
+    expected = {}
+    for name in sorted(names):
+        if name == FIXTURE:
+            expected[name] = {"exists": True, "regular": True, "symlink": False, "sha256": FIXTURE_SHA, "bytes": 25337, "mode": "0644"}
+        else: expected[name] = record(name)
+    engine_path = ROOT / ".tools/Godot.app/Contents/MacOS/Godot"
+    engine_expected = {"path": str(engine_path), "record": record(str(engine_path.relative_to(ROOT)))}
+    check.require(engine_expected["record"]["sha256"].startswith("c7"), "Expected previously selected c7 engine identity; do not resolve/launch another")
+    userdata = Path.home() / "Library/Application Support/Godot/app_userdata/Cinder"
+    own = ["run.py", "native_inspect.py", "prepare_inputs.py", "host_tests.py", "HOST_TESTS.json", "README.md", "DEPENDENCY_GRAPH.json", "PROVENANCE.json", "INPUT_SPEC.json", "READINESS.json", "original_challenge_entrance_writer.gd.txt", "original-source-pins.json", "V1_HISTORY.json", "FINITE_JSON_FIX.patch"]
+    spec = {"schema": 1, "status": "SOURCE_ONLY_FROZEN_UNSELECTED_UNEXECUTED", "integration_root": str(ROOT),
+            "accepted_source_commit": "01f7e7bbfadf74d044d5686c9f485073e965eb4a", "runtime_api_attribution": "campaign-shared-74; source pins physical only, no Git inspection",
+            "fixture": FIXTURE, "inert_fixture": INERT, "fixture_sha256": FIXTURE_SHA, "fixture_mode": "0644", "fixture_UID_expected_absent": True,
+            "native_original_sources": expected_native, "expected": expected, "self_files": [BASE + name for name in own],
+            "engine_expected": engine_expected, "userdata_base": str(userdata),
+            "userdata_contract": "Exact997a writer creates ONE user://a2-l3-original-entrance-<actual ownedchildPID>-<native ticks>/ under normal Cinder app userdata; suffix is observed, not precomputed. Report must join literal directory to actual owned PID. No native Store replacement/path repair/redirect. Six original companion slots retained; directory deliberately not deleted.",
+            "permission_limit": "Default workspace sandbox does not permit native writes to macOS app userdata. Root must select scoped execution permission for the normal Cinder userdata base plus this unique native directory and owned .cinder phase output. No permission action or workaround is performed by this source preparation.",
+            "timeout_after_lock_seconds": 180, "native_settle_deadline_seconds": 120, "native_cleanup_wait_seconds": 2,
+            "native_report_contract": "Literal two stable reads +hash/strict duplicate-free finite JSON, exact row types/count/first_failure, bool complete/success, footer path/count, actual API0 and owned Popen0; exact whole/current/checkpoint/raw-stage joins, normal cleanup. Native diagnostic/nonclean remains Host2.",
+            "scope": "Host-only seal then ONE original unchanged-runtime fresh Challenge entrance writer. No Place candidate/comparison/Stage/fullroute/oldChallenge495/held recreation. All24/current17 unchanged. Root full review/materialization precedes seal/native; no engine or dev import occurred in preparation."}
+    put("INPUT_SPEC.json", spec)
+    put("PROVENANCE.json", {"status": "PRIVATE_SOURCE_ONLY_UNEXECUTED", "request": "Root preparation assignment following Act1REQUEST2f99e0b2 source review",
+                            "original_inert_sha256": FIXTURE_SHA, "writer_bytes_unchanged": True, "W1_resolution": "Mandatory host stable literal final report/hash/strict JSON/rows/footer/API+Popen joins; no fixture mutation",
+                            "donor_host_pattern": ".cinder/a2-o1-difficulty-20261016/producer-verification-v3/run.py", "source_review": ".cinder/a2-l3-inert-code-root-review-20261016/REVIEW.json",
+                            "four_b": "Root reports actual113 cost pair closed and4bwithdrawn; current Authored9aed/Schedulerc28 independently checked as fixed inputs. No composed candidate/performance credit.",
+                            "dependency_resources": len(seen), "dependency_edges": len(edges), "fixed_input_slots": len(expected),
+                            "writer_executable_absent": True, "writer_uid_absent": True, "engine_imported_or_launched": False,
+                            "additive_v2": {"scope": "Only finite parse_float, overflow-negative controls and flat successor path/spec/history refresh", "predecessor": ".cinder/a2-l3-original-writer-host-prepare-20261016/", "history": "V1_HISTORY.json", "native_failures_created": False},
+                            "unit_tests": check.strict((HERE / "HOST_TESTS.json").read_bytes()), "permissions": spec["permission_limit"], "userdata": spec["userdata_contract"]})
+    for name in ["run.py", "native_inspect.py", "prepare_inputs.py", "host_tests.py"]:
+        ast.parse((HERE / name).read_text(), filename=str(HERE / name))
+    frozen = {BASE + name: check.digest((HERE / name).read_bytes()) for name in own if name != "READINESS.json"}
+    put("READINESS.json", {"schema": 1, "status": "FROZEN_SOURCE_READY_FOR_ROOT_FULL_REVIEW_ONLY", "frozen_files": frozen,
+                           "fixed_input_slots": len(expected), "resource_count": len(seen), "edge_count": len(edges),
+                           "inert_writer_sha256": FIXTURE_SHA, "future_executable_absent_now": True, "future_UID_absent": True,
+                           "host_AST_only": True, "host_tests": check.strict((HERE / "HOST_TESTS.json").read_bytes()),
+                           "actual_seal_created": False, "engine_or_dev_imported": False, "runtime_or_worker_or_Git_changed": False,
+                           "preconditions": "Root reviews exact frozen files, selects997a .txt-to.gd0644 with UID still absent, then host-only seal; independently inspect seal before ONE canonical queued native writer with appropriate normal app userdata permission. No other experiment."})
+    print(json.dumps({"status": "SOURCE_ONLY_UNSELECTED_UNEXECUTED", "fixed_inputs": len(expected), "resources": len(seen), "edges": len(edges),
+                      "run_sha256": check.digest((HERE / "run.py").read_bytes()), "spec_sha256": check.digest((HERE / "INPUT_SPEC.json").read_bytes()),
+                      "readiness_sha256": check.digest((HERE / "READINESS.json").read_bytes()), "engine_sha256": engine_expected["record"]["sha256"]}))
+
+
+if __name__ == "__main__": main()

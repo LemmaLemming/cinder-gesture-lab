@@ -1,0 +1,139 @@
+func _produce() -> bool:
+	if not await _new_shell(): return false
+	if not _expect(shell.attempts.state().story == null and not is_instance_valid(shell.active_level), "initial Shell has no fabricated Story/current unit"): return false
+	for profile: String in ["standard", "assisted", "challenge"]:
+		shell.menu.difficulty_preference_requested.emit(profile)
+		if not await _settle(): return false
+		if not _expect(shell.get_difficulty_preference() == profile, "public preference before genuine fresh birth: " + profile): return false
+		candidate = shell.call("_prepare", LEVEL_ID, Equipment.STARTER)
+		if not _expect(not candidate.is_empty(), "real fresh _prepare: " + profile + ": " + shell.campaign_error): return false
+		for frame: int in range(8): await process_frame
+		if not _expect(paused and not candidate.level.is_restore_candidate(), "actual fresh constructor, never restore: " + profile): return false
+		var actual: Dictionary = shell.call("_capture_fresh_candidate", candidate, shell.call("_fresh_shell_state"))
+		var cursor: String = "place" if profile == "challenge" else "reach"
+		if not _pristine(actual, profile, cursor): return false
+		var wire: String = _wire(actual, "actual fresh " + profile)
+		if wire.is_empty() or not _write_new_bytes(output_root + "/fresh-" + profile + ".exact.json", wire.to_utf8_buffer()): return false
+		fresh_captures.append({"profile": profile, "cursor": cursor, "path": output_root + "/fresh-" + profile + ".exact.json", "sha256": wire.sha256_text(), "bytes": wire.to_utf8_buffer().size()})
+		if profile == "challenge": actual_fresh_wire = wire
+		shell.call("_dispose", candidate)
+		candidate.clear()
+	if actual_fresh_wire.is_empty(): return _expect(false, "actual Challenge whole capture retained")
+	var parsed: Dictionary = Exact.parse(actual_fresh_wire)
+	if not _expect(parsed.get("accepted", false) and parsed.value is Dictionary, "native parse of actual fresh Challenge capture"): return false
+	var actual: Dictionary = parsed.value
+	var model: CinderCampaignAttempts = Attempts.new(shell.registry)
+	model.snapshot_validator = Callable(shell, "_snapshot_problem")
+	var payload: Dictionary = model.state()
+	var route: Array[String] = shell.registry.main_route()
+	var index: int = route.find(LEVEL_ID)
+	if not _expect(index > 0, "canonical route supplies disclosed TEST predecessor metadata only"): return false
+	payload.completed_main = route.slice(0, index)
+	payload.story = {"kind": "story", "level_id": LEVEL_ID, "snapshot": actual.duplicate(true), "checkpoint": actual.duplicate(true)}
+	setup_metadata = {"test_only": true, "completed_main": payload.completed_main.duplicate(), "unlocked_equipment": payload.unlocked_equipment.duplicate(), "local_source": "real _prepare + _capture_fresh_candidate", "no_earned_route_claim": true, "no_extra_equipment_grant": true, "legacy_origin": LEGACY_DIR}
+	if not _expect(model.state_error(payload).is_empty(), "genuine whole capture with only outer TEST predecessor metadata validates"): return false
+	var store: CinderSaveStore = Store.new(user_root + "campaign.json")
+	store.payload_validator = Callable(model, "saved_payload_error")
+	if not _expect(store.write_payload(payload), "public Store writes actual fresh candidate unit: " + store.last_error): return false
+	original_payload_wire = _wire(payload, "initial candidate complete Attempts")
+	if original_payload_wire.is_empty() or not _archive_stage("fresh-initial", original_payload_wire, actual_fresh_wire, actual_fresh_wire): return false
+	if not await _release_shell() or not await _new_shell(): return false
+	if not _expect(_wire(shell.attempts.state(), "candidate Title Attempts") == original_payload_wire, "fresh Title loads exact candidate Attempts"): return false
+	shell.menu.continue_story_requested.emit()
+	if not await _settle(): return false
+	if not _current_exact(actual_fresh_wire, "candidate first Continue"): return false
+	shell.request_pause()
+	if not await _settle(): return false
+	if not _expect(shell.menu.page_name() == "pause" and _wire(shell.attempts.state(), "candidate public Save Attempts") == original_payload_wire, "real paused Save preserves complete candidate whole history"): return false
+	if not _archive_stage("fresh-save", original_payload_wire, actual_fresh_wire, actual_fresh_wire): return false
+	if not await _release_shell() or not await _new_shell(): return false
+	shell.menu.difficulty_preference_requested.emit("standard")
+	if not await _settle(): return false
+	if not _expect(shell.get_difficulty_preference() == "standard", "opposite future Standard selected publicly before saved Challenge Continue"): return false
+	shell.menu.continue_story_requested.emit()
+	if not await _settle(): return false
+	if not _current_exact(actual_fresh_wire, "fresh Shell Continue ignores future preference for saved Place/cooldown"): return false
+	if not await _pulse_and_retry("fresh", "place", actual_fresh_wire, original_payload_wire): return false
+	if not await _release_shell(): return false
+	# Literal original196 archived Store bytes; no legacy producer or fabricated local.
+	user_root = user_base + "legacy/"
+	if not _expect(not DirAccess.dir_exists_absolute(ProjectSettings.globalize_path(user_root)) and DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(user_root)) == OK, "new isolated legacy reader directory"): return false
+	var old: Dictionary = _read_legacy()
+	if old.is_empty(): return false
+	legacy_snapshot_wire = String(old.snapshot_wire)
+	legacy_attempts_wire = String(old.attempts_wire)
+	for name: String in COMPANIONS:
+		var source: String = LEGACY_DIR + "/" + name
+		if FileAccess.file_exists(source):
+			if not _write_new_bytes(user_root + name, FileAccess.get_file_as_bytes(source)): return false
+	if not await _new_shell(): return false
+	if not _expect(_wire(shell.attempts.state(), "actual legacy Title Attempts") == legacy_attempts_wire, "candidate runtime loads exact original196 whole Attempts from literal raw Store"): return false
+	if not _archive_stage("legacy-import", legacy_attempts_wire, legacy_snapshot_wire, legacy_snapshot_wire): return false
+	shell.menu.difficulty_preference_requested.emit("standard")
+	if not await _settle(): return false
+	if not _expect(shell.get_difficulty_preference() == "standard", "opposite future preference selected for literal old Challenge Reach"): return false
+	shell.menu.continue_story_requested.emit()
+	if not await _settle(): return false
+	if not _current_exact(legacy_snapshot_wire, "candidate Continue retains original196 Reach and whole unit"): return false
+	return await _pulse_and_retry("legacy", "reach", legacy_snapshot_wire, legacy_attempts_wire)
+
+func _current_exact(expected: String, label: String) -> bool:
+	return _expect(paused and is_instance_valid(shell.active_level) and shell.menu.page_name() == "resume" and _wire(shell.capture_campaign_snapshot(), label) == expected, label)
+
+func _read_legacy() -> Dictionary:
+	var manifest: Variant = JSON.parse_string(FileAccess.get_file_as_string(LEGACY_DIR + "/manifest.json"))
+	if not _expect(manifest is Dictionary and manifest.get("raw_files") is Array and manifest.raw_files.size() == COMPANIONS.size(), "actual196 plain manifest supplies all six literal raw presence slots"): return {}
+	for index: int in range(COMPANIONS.size()):
+		var row: Dictionary = manifest.raw_files[index]
+		var source: String = LEGACY_DIR + "/" + COMPANIONS[index]
+		if not _expect(row.get("name") == COMPANIONS[index] and row.get("present") is bool and FileAccess.file_exists(source) == row.present and not DirAccess.dir_exists_absolute(ProjectSettings.globalize_path(source)), "original196 literal raw presence/type agrees with actual manifest: " + COMPANIONS[index]): return {}
+		if row.present and not _expect(FileAccess.get_sha256(source) == row.sha256, "actual196 raw companion hash agrees with original manifest: " + COMPANIONS[index]): return {}
+	var attempts_text: String = FileAccess.get_file_as_string(LEGACY_DIR + "/attempts.exact.json")
+	var snapshot_text: String = FileAccess.get_file_as_string(LEGACY_DIR + "/snapshot.exact.json")
+	var checkpoint_text: String = FileAccess.get_file_as_string(LEGACY_DIR + "/checkpoint.exact.json")
+	var parsed: Dictionary = Exact.parse(attempts_text)
+	var unit: Dictionary = Exact.parse(snapshot_text)
+	if not _expect(parsed.get("accepted", false) and parsed.get("value") is Dictionary and unit.get("accepted", false) and unit.get("value") is Dictionary, "native Exact codec reads only actual196 archived complete units"): return {}
+	if not _expect(Exact.stringify(parsed.value) == attempts_text and Exact.stringify(unit.value) == snapshot_text and checkpoint_text == snapshot_text and Exact.stringify(parsed.value.story.snapshot) == snapshot_text and Exact.stringify(parsed.value.story.checkpoint) == checkpoint_text, "literal original196 Attempts/current/checkpoint exactly join without reconstruction"): return {}
+	if not _pristine(unit.value, "challenge", "reach"): return {}
+	return {"attempts_wire": attempts_text, "snapshot_wire": snapshot_text}
+
+func _pulse_and_retry(prefix: String, cursor: String, checkpoint_wire: String, whole_wire: String) -> bool:
+	var before: Dictionary = shell.attempts.state()
+	var before_current: Dictionary = shell.capture_campaign_snapshot()
+	if not _expect(_wire(before, prefix + " pre-pulse whole Attempts") == whole_wire and _wire(before_current, prefix + " pre-pulse current") == checkpoint_wire, prefix + " begins with genuine saved current/checkpoint"): return false
+	var scheduler: Node = shell.active_level.get("_scheduler")
+	var start_clock: float = scheduler.call("get_clock")
+	shell.menu.resume_requested.emit()
+	if not _expect(not paused, prefix + " actual public Resume starts native simulation"): return false
+	for tick: int in range(4):
+		if Time.get_ticks_msec() >= deadline_ms: return _expect(false, "bounded native pulse deadline")
+		await physics_frame
+		if paused: return _expect(false, prefix + " pulse paused unexpectedly")
+	# Public Pause drains the real final tick at the existing deferred barrier.
+	shell.request_pause()
+	if not await _settle(): return false
+	var current: Dictionary = shell.capture_campaign_snapshot()
+	var current_wire: String = _wire(current, prefix + " actual paused current")
+	if current_wire.is_empty(): return false
+	var clock: float = current.level.local.scheduler.clock_s
+	if not _expect(clock > start_clock and clock - start_clock <= 0.25 and current_wire != checkpoint_wire, prefix + " a few actual native physics ticks create a distinct current"): return false
+	if not _expect(current.level.local.boss_next_action == cursor and float(current.level.local.boss_ready_s) == float(before_current.level.local.boss_ready_s) and current.shell.difficulty_at_entry == "challenge" and current.level.local.profile_id == "challenge", prefix + " saved cursor/original cooldown/profile survive native pulse and opposite future preference"): return false
+	if not _expect(current.player.world_actions.sequence == 0 and current.player.resources.hp == before_current.player.resources.hp and current.player.resources.shells == before_current.player.resources.shells and current.level.local.sequence == before_current.level.local.sequence, prefix + " pulse used no input, HP/stage/history edits or route progression"): return false
+	var after: Dictionary = shell.attempts.state()
+	if not _expect(_wire(after.story.snapshot, prefix + " saved current") == current_wire and _wire(after.story.checkpoint, prefix + " retained checkpoint") == checkpoint_wire and _protected(after) == _protected(before), prefix + " public Pause records current while retaining exact checkpoint/protected whole history"): return false
+	var current_payload: String = _wire(after, prefix + " actual changed whole Attempts")
+	if not _archive_stage(prefix + "-current", current_payload, current_wire, checkpoint_wire): return false
+	pulse_records.append({"branch": prefix, "actual_clock_before_s": start_clock, "actual_clock_after_s": clock, "no_actions": true, "cursor": cursor, "cooldown_before_s": before_current.level.local.boss_ready_s, "cooldown_after_s": current.level.local.boss_ready_s, "checkpoint_sha256": checkpoint_wire.sha256_text(), "changed_current_sha256": current_wire.sha256_text(), "future_preference": shell.get_difficulty_preference()})
+	var old_level: WeakRef = weakref(shell.active_level)
+	shell.menu.retry_requested.emit()
+	if not await _settle(): return false
+	if not _expect(old_level.get_ref() == null, prefix + " public Retry normally disposes actual changed live level"): return false
+	if not _current_exact(checkpoint_wire, prefix + " real public Retry restores earlier actual whole checkpoint"): return false
+	if not _expect(_wire(shell.attempts.state(), prefix + " retried whole Attempts") == whole_wire, prefix + " public Retry preserves exact original protected history and checkpoint"): return false
+	return _archive_stage(prefix + "-retry", whole_wire, checkpoint_wire, checkpoint_wire)
+
+func _protected(payload: Dictionary) -> String:
+	var copy: Dictionary = payload.duplicate(true)
+	copy.story.erase("snapshot")
+	return _wire(copy, "whole Attempts except its current snapshot only")

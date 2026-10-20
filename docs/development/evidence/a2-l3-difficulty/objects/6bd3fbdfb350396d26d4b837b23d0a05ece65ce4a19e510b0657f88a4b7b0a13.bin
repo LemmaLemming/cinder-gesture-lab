@@ -1,0 +1,95 @@
+--- v1/native_inspect.py
++++ v2/native_inspect.py
+@@ -2,6 +2,7 @@
+ from pathlib import Path
+ import hashlib
+ import json
++import math
+ import os
+ import re
+ import stat
+@@ -23,7 +24,11 @@
+             require(key not in result, "Duplicate JSON key: " + key)
+             result[key] = value
+         return result
+-    return json.loads(data.decode("utf-8", errors="strict"), object_pairs_hook=pairs,
++    def finite_float(token):
++        value = float(token)
++        require(math.isfinite(value), "Nonfinite JSON exponent: " + token)
++        return value
++    return json.loads(data.decode("utf-8", errors="strict"), object_pairs_hook=pairs, parse_float=finite_float,
+                       parse_constant=lambda value: (_ for _ in ()).throw(ValueError(value)))
+ 
+ 
+--- v1/host_tests.py
++++ v2/host_tests.py
+@@ -69,6 +69,10 @@
+             test(label, not run()["functional_pass"])
+         path.write_text(json.dumps(packet)[:-1] + ',"complete":true}')
+         test("Duplicate native JSON key refuses", not run()["functional_pass"])
++        path.write_text(json.dumps(packet)[:-1] + ",\"elapsed_ms\":1e999}")
++        test("Positive exponent overflow1e999 cannot pass finite JSON", not run()["functional_pass"])
++        path.write_text(json.dumps(packet)[:-1] + ",\"elapsed_ms\":-1e999}")
++        test("Negative exponent overflow-1e999 cannot pass finite JSON", not run()["functional_pass"])
+         path.write_text(json.dumps(packet)); test("Mismatched footer refuses", not run(raw.replace("1 checks", "2 checks"))["functional_pass"])
+         result = run(api=0, returned=2)
+         test("Native complete true/API0 with actual owned child2 remains failed and distinctly observed", not result["functional_pass"] and result["joins"]["complete"] is True and result["joins"]["owned_child_return"] == 2)
+--- v1/prepare_inputs.py
++++ v2/prepare_inputs.py
+@@ -9,7 +9,7 @@
+ 
+ HERE = Path(__file__).resolve().parent
+ ROOT = HERE.parents[1]
+-BASE = ".cinder/a2-l3-original-writer-host-prepare-20261016/"
++BASE = ".cinder/a2-l3-original-writer-host-v2-20261016/"
+ FIXTURE = BASE + "original_challenge_entrance_writer.gd"
+ INERT = FIXTURE + ".txt"
+ FIXTURE_SHA = "997a0eb78c6627183ffea651fa07b3937df9757dfb91212f30d0bdfa92320daa"
+@@ -33,6 +33,10 @@
+ 
+ 
+ def main():
++    history = check.strict((HERE / "V1_HISTORY.json").read_bytes())["expected_history"]
++    for name, prior in history.items():
++        actual = record(name)
++        check.require(all(actual[key] == prior[key] for key in ["sha256", "bytes", "mode"]), "Frozen original v1/history changed; do not repin: " + name)
+     check.require(check.digest((ROOT / INERT).read_bytes()) == FIXTURE_SHA, "Exact inert997a original writer required")
+     check.require(not os.path.lexists(ROOT / FIXTURE) and not os.path.lexists(ROOT / (FIXTURE + ".uid")), "Preparation must not select executable/UID")
+     submitted = check.strict((ROOT / CONTROL).read_bytes())
+@@ -74,6 +78,7 @@
+              "limits": "Bounded source graph, not arbitrary dynamic/global/UID census. Existing Registry JSON scene catalogue is pinned data; no loading/all-scene campaign audit inferred."}
+     put("DEPENDENCY_GRAPH.json", graph)
+     names = set(seen) | {row["path"] for row in submitted["sources"]}
++    names |= set(check.strict((HERE / "V1_HISTORY.json").read_bytes())["expected_history"])
+     names |= {name + ".uid" for name in names.copy() if name.endswith(".gd")}
+     # FileAccess catalogue reads are not preload edges. Pin the actual shared
+     # equipment/profile data and inherited arrangement data separately.
+@@ -87,7 +92,7 @@
+     engine_expected = {"path": str(engine_path), "record": record(str(engine_path.relative_to(ROOT)))}
+     check.require(engine_expected["record"]["sha256"].startswith("c7"), "Expected previously selected c7 engine identity; do not resolve/launch another")
+     userdata = Path.home() / "Library/Application Support/Godot/app_userdata/Cinder"
+-    own = ["run.py", "native_inspect.py", "prepare_inputs.py", "host_tests.py", "HOST_TESTS.json", "README.md", "DEPENDENCY_GRAPH.json", "PROVENANCE.json", "INPUT_SPEC.json", "READINESS.json", "original_challenge_entrance_writer.gd.txt", "original-source-pins.json"]
++    own = ["run.py", "native_inspect.py", "prepare_inputs.py", "host_tests.py", "HOST_TESTS.json", "README.md", "DEPENDENCY_GRAPH.json", "PROVENANCE.json", "INPUT_SPEC.json", "READINESS.json", "original_challenge_entrance_writer.gd.txt", "original-source-pins.json", "V1_HISTORY.json", "FINITE_JSON_FIX.patch"]
+     spec = {"schema": 1, "status": "SOURCE_ONLY_FROZEN_UNSELECTED_UNEXECUTED", "integration_root": str(ROOT),
+             "accepted_source_commit": "01f7e7bbfadf74d044d5686c9f485073e965eb4a", "runtime_api_attribution": "campaign-shared-74; source pins physical only, no Git inspection",
+             "fixture": FIXTURE, "inert_fixture": INERT, "fixture_sha256": FIXTURE_SHA, "fixture_mode": "0644", "fixture_UID_expected_absent": True,
+@@ -105,6 +110,7 @@
+                             "four_b": "Root reports actual113 cost pair closed and4bwithdrawn; current Authored9aed/Schedulerc28 independently checked as fixed inputs. No composed candidate/performance credit.",
+                             "dependency_resources": len(seen), "dependency_edges": len(edges), "fixed_input_slots": len(expected),
+                             "writer_executable_absent": True, "writer_uid_absent": True, "engine_imported_or_launched": False,
++                            "additive_v2": {"scope": "Only finite parse_float, overflow-negative controls and flat successor path/spec/history refresh", "predecessor": ".cinder/a2-l3-original-writer-host-prepare-20261016/", "history": "V1_HISTORY.json", "native_failures_created": False},
+                             "unit_tests": check.strict((HERE / "HOST_TESTS.json").read_bytes()), "permissions": spec["permission_limit"], "userdata": spec["userdata_contract"]})
+     for name in ["run.py", "native_inspect.py", "prepare_inputs.py", "host_tests.py"]:
+         ast.parse((HERE / name).read_text(), filename=str(HERE / name))
+--- v1/README.md
++++ v2/README.md
+@@ -1,6 +1,8 @@
++This is an additive flat v2 successor. The sole corrected semantic issue is JSON exponent overflow: Python parses1e999 as infinity unless parse_float checks finiteness. Negative exponent-overflow controls now refuse it. Exact997a writer and all other native/host semantics remain unchanged. V1 stays frozen including its failed HOST-ONLY missing-leaf seal1c3a; no engine/dev/queue/native failure occurred there. V1_HISTORY.json records exact originals, without recreating a pass.
++
+ This is a private source-only host capsule for ONE original A2-L3 Challenge entrance writer. No executable leaf, UID, import, seal, dev import or engine job has been created by preparation. Root must review this exact capsule, select the unchanged inert997a text as the named future .gd0644 with UID absent, then run the host-only seal. Only after reviewing that closed seal should Root execute one native phase with its exact seal.json path.
+ 
+-The eventual commands are `python3 .cinder/a2-l3-original-writer-host-prepare-20261016/run.py seal`, then `python3 .cinder/a2-l3-original-writer-host-prepare-20261016/run.py native --seal ABSOLUTE-CLOSED-SEAL-PATH`. These are unexecuted command templates. The native command uses the canonical integration project, pinned existing c7 engine, exact original writer and exactly three named user arguments: case, fixture SHA and a unique absent .cinder phase output leaf. It uses canonical dev.py godot_lock/run_validation and a180s timeout after lock acquisition, never a second/bypassed engine. Popen observation wraps only the canonical API's actual one planned child, records real PID/poll separately from API return and closes only that owned child if an exception unwinds. No subject swap/runtime patch/restore, foreign kill or held-lock deletion exists.
++The eventual commands are `python3 .cinder/a2-l3-original-writer-host-v2-20261016/run.py seal`, then `python3 .cinder/a2-l3-original-writer-host-v2-20261016/run.py native --seal ABSOLUTE-CLOSED-SEAL-PATH`. These are unexecuted command templates. The native command uses the canonical integration project, pinned existing c7 engine, exact original writer and exactly three named user arguments: case, fixture SHA and a unique absent .cinder phase output leaf. It uses canonical dev.py godot_lock/run_validation and a180s timeout after lock acquisition, never a second/bypassed engine. Popen observation wraps only the canonical API's actual one planned child, records real PID/poll separately from API return and closes only that owned child if an exception unwinds. No subject swap/runtime patch/restore, foreign kill or held-lock deletion exists.
+ 
+ W1 is closed by the host rather than changing the writer. A completed native report must survive two literal stable reads and SHA/size/type checks, strict duplicate-free finite JSON, exact row types/consecutive counts/first failure, complete/success booleans, native report/footer path/count join, API0, actual Popen0 and normal cleanup. The host checks original28 source maps and fixed writer identity; joins both actual archive stages/current/checkpoint/whole opaque Exact wires and literal raw campaign/preferences Store checksum/generation. Settings remains its original plain JSON format. It retains all originals and hashes, without a Python Variant decoder or packet reconstruction. Failed/partial/missing reports and raw diagnostics remain evidence. A native functional result with a macOS CA or other diagnostic stays Host2/nonclean, never rerun for green.
+ 

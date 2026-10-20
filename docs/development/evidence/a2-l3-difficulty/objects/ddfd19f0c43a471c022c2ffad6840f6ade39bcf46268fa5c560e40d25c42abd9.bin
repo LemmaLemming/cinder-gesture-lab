@@ -1,0 +1,80 @@
+extends SceneTree
+## Brief actual graphical inspection of the changed first Place warning.
+## TEST preconstruction boss focus; no earned campaign, balance or route claim.
+const FocusGame = preload("res://tests/acts/act2/fixtures/a2_l3_difficulty_focus_game.gd")
+const EXPECTED_HOST: String = "01954a3f861ab4ebe605191f0c87a57a972b73742cff3c5b1e06125ac1deed71"
+var game: Node
+var output: String = ""
+var rows: Array[Dictionary] = []
+var failed: bool = false
+var observation: Dictionary = {}
+
+func _initialize() -> void:
+	root.size = Vector2i(540,1170)
+	root.content_scale_size = root.size
+	root.content_scale_mode = Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
+	output = OS.get_environment("CINDER_L3_PORTRAIT_OUTPUT")
+	_run.call_deferred()
+
+func check(ok: bool, label: String) -> bool:
+	rows.append({"index":rows.size()+1,"passed":ok,"label":label})
+	if not ok:
+		failed = true
+		print("FAIL: " + label)
+	return ok
+
+func _run() -> void:
+	if not check(output.begins_with("res://.cinder/") and not output.contains("..") and DirAccess.dir_exists_absolute(ProjectSettings.globalize_path(output)), "existing owned ignored output directory"): await _finish(); return
+	if not check(FileAccess.get_sha256("res://scripts/acts/act2/ruined_house.gd") == EXPECTED_HOST, "exact selected fresh Place runtime"): await _finish(); return
+	game = FocusGame.new()
+	game.set("level_scene_path", "res://scenes/acts/act2/a2_l3.tscn")
+	root.add_child(game)
+	var level: CinderLevel = game.get("active_level")
+	var hero: CinderPlayer = game.get("player")
+	if not check(is_instance_valid(level) and is_instance_valid(hero) and not level.is_restore_candidate() and level.get("_boss_next_action") == "place", "actual fresh focused House and canonical Player use Place cursor"): await _finish(); return
+	var tool: Node = level.get("_mechanisms")["boss_place"]
+	var end_ms: int = Time.get_ticks_msec()+30000
+	var ready: bool = false
+	while Time.get_ticks_msec()<end_ms:
+		await process_frame
+		if not String(level.get("runtime_error")).is_empty() or hero.dead or paused: break
+		var state: Dictionary = tool.call("state")
+		var points: Array = level.call("test_published_camera_framing_points")
+		if state.status == "running" and state.phase in ["warning","lock"] and not points.is_empty() and String(game.call("camera_framing_error", points)).is_empty():
+			ready = true
+			break
+	if not check(ready and not paused, "natural first Place warning is published and currently framed without camera or state mutation"): await _finish(); return
+	await RenderingServer.frame_post_draw
+	paused = true
+	var points: Array = level.call("test_published_camera_framing_points")
+	var state: Dictionary = tool.call("state")
+	var image: Image = root.get_texture().get_image()
+	observation = {"phase":state.phase,"status":state.status,"cycle":state.cycle,"source_position":str(tool.global_position),"player_position":str(hero.global_position),"hp":hero.hp,"shells":hero.shells,"profile":level.get("_scheduler").call("encounter_profile").id,"published_points":points.size(),"current_containment_error":game.call("camera_framing_error",points),"image_width":image.get_width(),"image_height":image.get_height(),"renderer":RenderingServer.get_video_adapter_name(),"scope":"actual graphical TEST focused first Place warning; no full route, earned save, all-kit or balance proof"}
+	check(state.status == "running" and state.phase in ["warning","lock"] and state.cycle == 1, "first original native warning/lock remains current at captured frame")
+	check(String(observation.current_containment_error).is_empty(), "all current published source/footprint/landing/player corners remain contained")
+	check(hero.hp == hero.max_hp and not hero.dead and hero.get_world_action_records().is_empty(), "visual capture uses untouched native resources and no requested actions")
+	check(image.get_height()>image.get_width() and image.get_width()>=320, "actual viewport image is portrait")
+	var path: String = output.path_join("place-warning.png")
+	check(not FileAccess.file_exists(path) and image.save_png(path) == OK, "new actual rendered PNG saved without overwriting evidence")
+	observation["png_sha256"] = FileAccess.get_sha256(path)
+	await _finish()
+
+func _finish() -> void:
+	var retired: Array[WeakRef] = []
+	if is_instance_valid(game):
+		for node: Node in game.find_children("*","",true,false): retired.append(weakref(node))
+		var level: CinderLevel = game.get("active_level")
+		if is_instance_valid(level): level.exit_level()
+		game.queue_free()
+	await process_frame
+	await process_frame
+	var freed: bool = true
+	for ref: WeakRef in retired: freed = freed and ref.get_ref() == null
+	check(freed and get_nodes_in_group("enemies").is_empty(), "normal exit releases all observed descendants and enemies")
+	var report: Dictionary = {"complete":not failed,"checks":rows.size(),"failures":rows.filter(func(row: Dictionary) -> bool: return not row.passed).size(),"rows":rows,"observation":observation}
+	if not output.is_empty():
+		var file: FileAccess = FileAccess.open(output.path_join("portrait.json"),FileAccess.WRITE)
+		if file != null:
+			file.store_string(JSON.stringify(report,"\t")); file.flush(); file.close()
+	print("A2-L3 PORTRAIT: %d checks, %d failures; complete=%s" % [report.checks,report.failures,str(report.complete)])
+	quit(1 if failed else 0)

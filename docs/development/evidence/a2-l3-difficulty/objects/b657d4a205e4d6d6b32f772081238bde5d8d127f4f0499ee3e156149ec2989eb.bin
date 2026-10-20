@@ -1,0 +1,171 @@
+"""Root-selected one-child queued graphical House Place portrait; no source swap."""
+from pathlib import Path
+import argparse
+import contextlib
+import datetime
+import importlib.util
+import json
+import os
+import re
+import signal
+import stat
+import sys
+import types
+import uuid
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[1]
+literal = types.ModuleType("cinder_l3_portrait_literal")
+exec(compile((HERE/"literal.py").read_bytes(),str(HERE/"literal.py"),"exec"),literal.__dict__)
+DIAGNOSTIC = re.compile(r"^\s*(?:ERROR|WARNING|SCRIPT ERROR):|ObjectDB.*leak|Orphan.*StringName",re.I)
+
+
+def save(path,value):
+    data = (json.dumps(value,indent=2,allow_nan=False)+"\n").encode()
+    temporary = path.with_name(path.name+".tmp")
+    with temporary.open("xb") as stream:
+        stream.write(data); stream.flush(); os.fsync(stream.fileno())
+    os.replace(temporary,path)
+
+
+def record(path):
+    present = os.path.lexists(path); info = path.lstat() if present else None
+    regular = bool(info and stat.S_ISREG(info.st_mode)); data = literal.stable(path)[1] if regular else None
+    return {"exists":present,"regular":regular,"symlink":bool(info and stat.S_ISLNK(info.st_mode)),"sha256":literal.digest(data) if data is not None else None,
+            "bytes":len(data) if data is not None else None,"mode":format(stat.S_IMODE(info.st_mode),"04o") if info else None},data
+
+
+def snapshot(spec,readiness,out,label):
+    names = sorted(set(spec["expected"])|set(spec["self_files"]))
+    rows = {}; retained = {}; destination = out/"source-blobs"; destination.mkdir(exist_ok=True)
+    for name in names:
+        row,data = record(ROOT/name); rows[name] = row
+        if data is not None:
+            target = destination/(row["sha256"]+".bin")
+            if not target.exists():
+                with target.open("xb") as stream: stream.write(data)
+            literal.require(literal.digest(target.read_bytes()) == row["sha256"],"Source CAS differs")
+            retained[name] = dict(row,blob=str(target.relative_to(out)))
+    save(out/(label+".json"),rows); save(out/(label+"-retention.json"),retained)
+    for name,expected in spec["expected"].items(): literal.require(rows[name] == expected,"Named input/absence/mode/type differs: "+name)
+    for name in spec["self_files"]:
+        literal.require(rows[name]["regular"] and not rows[name]["symlink"] and rows[name]["mode"] == "0644","Regular0644 host input required: "+name)
+    for name,sha in readiness["frozen_files"].items(): literal.require(rows[name]["sha256"] == sha,"Frozen host/input changed: "+name)
+    return rows
+
+
+def engine(spec):
+    path = Path(spec["engine"]["path"]); meta,_ = record(path)
+    literal.require(meta == spec["engine"]["record"] and os.access(path,os.X_OK),"Exact C7 engine identity differs")
+    return dict(meta,path=str(path),retained_binary=False)
+
+
+class Tee:
+    def __init__(self,terminal,log): self.terminal,self.log = terminal,log
+    def write(self,value): self.log.write(value); return self.terminal.write(value)
+    def flush(self): self.log.flush(); self.terminal.flush()
+
+
+def indexed(out):
+    files = {}
+    for path in sorted(out.rglob("*")):
+        if path.is_file() and path != out/"evidence-index.json":
+            meta,_ = literal.stable(path); files[str(path.relative_to(out))] = {k:meta[k] for k in ["sha256","bytes","mode"]}
+    save(out/"evidence-index.json",{"created_after_raw_close":True,"files":files})
+
+
+def retain_native(out,observed):
+    rows = []; destination = out/"native-retained-blobs"; destination.mkdir(exist_ok=True)
+    for row in observed.get("retained",[]):
+        meta,data = literal.stable(Path(row["path"])); literal.require(meta == row,"Actual native literal changed before CAS")
+        target = destination/(meta["sha256"]+".bin")
+        if not target.exists():
+            with target.open("xb") as stream: stream.write(data)
+        literal.require(literal.digest(target.read_bytes()) == meta["sha256"],"Native literal CAS differs")
+        rows.append(dict(meta,blob=str(target.relative_to(out))))
+    save(out/"native-literal-retention.json",rows)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__); parser.add_argument("phase",choices=["run"])
+    parser.add_argument("--spec-sha256",required=True); parser.add_argument("--readiness-sha256",required=True); args = parser.parse_args()
+    spec_data = (HERE/"INPUT_SPEC.json").read_bytes(); ready_data = (HERE/"READINESS.json").read_bytes()
+    literal.require(literal.digest(spec_data) == args.spec_sha256 and literal.digest(ready_data) == args.readiness_sha256,"Root-selected exact spec/readiness differs")
+    spec = literal.strict(spec_data); readiness = literal.strict(ready_data)
+    literal.require(spec["integration_root"] == str(ROOT),"Exact flat canonical Integration root required")
+    stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%S.%fZ")
+    out = HERE/("run-graphical-"+stamp+"-"+uuid.uuid4().hex[:8]); out.mkdir(exist_ok=False)
+    result = {"closed":False,"passed":False,"visual_acceptance":False,"engine_launch_attempted":False,"canonical_api_return":None,"owned_children":[],
+              "selection":{"spec_sha256":args.spec_sha256,"readiness_sha256":args.readiness_sha256},"scope":spec["scope"]}
+    queue = {"queued":False,"acquired":False,"lock_context_released":False}; owned = []; code = 2
+    old_term = signal.getsignal(signal.SIGTERM); signal.signal(signal.SIGTERM,lambda _s,_f:(_ for _ in ()).throw(KeyboardInterrupt()))
+    with (out/"raw.log").open("x") as raw,contextlib.redirect_stdout(Tee(sys.stdout,raw)),contextlib.redirect_stderr(Tee(sys.stderr,raw)):
+        try:
+            before = engine(spec); save(out/"engine-before.json",before)
+            baseline = snapshot(spec,readiness,out,"preflight-observed")
+            module = importlib.util.spec_from_file_location("cinder_l3_portrait_dev",ROOT/"scripts/dev/dev.py")
+            literal.require(module is not None and module.loader is not None,"Canonical dev module required")
+            dev = importlib.util.module_from_spec(module); sys.modules[module.name] = dev
+            prior = sys.dont_write_bytecode
+            try: sys.dont_write_bytecode=True; module.loader.exec_module(dev)
+            finally: sys.dont_write_bytecode=prior
+            env = dict(os.environ); env.update(CINDER_GODOT=spec["engine"]["path"],CINDER_CANONICAL_ROOT=str(ROOT),PYTHONDONTWRITEBYTECODE="1",
+                CINDER_L3_PORTRAIT_OUTPUT="res://"+str((out/"case").relative_to(ROOT)),CINDER_L3_PORTRAIT_FIXTURE_SHA256=spec["fixture_sha256"])
+            context = dev.ProjectContext(root=ROOT,environ=env)
+            literal.require(context.root == ROOT and context.canonical_root == ROOT and str(dev.resolve_godot(context)) == spec["engine"]["path"],"Canonical context/engine differs")
+            literal.require(snapshot(spec,readiness,out,"sources-before-queue") == baseline,"Inputs changed before queue")
+            queue.update(queued=True,lock_path=str(dev.shared_lock_path(ROOT))); save(out/"queue.json",queue)
+            try:
+                with dev.godot_lock(ROOT) as lock_fd:
+                    queue["acquired"] = True; save(out/"queue.json",queue)
+                    literal.require(snapshot(spec,readiness,out,"sources-at-lock") == baseline and engine(spec) == before,"Exact inputs/engine at lock required")
+                    (out/"case").mkdir(exist_ok=False)
+                    command = [spec["engine"]["path"],"--path",str(ROOT),"--log-file",str(out/"engine.log"),"--script","res://"+spec["fixture"]]
+                    save(out/"command.json",{"argv":command,"canonical_api":"dev.godot_lock/run_validation","graphical":True,"headless":False,"one_owned_child":True,
+                        "timeout_after_lock_seconds":spec["timeout_after_lock_seconds"],"owned_output":env["CINDER_L3_PORTRAIT_OUTPUT"],"fixture_sha256":spec["fixture_sha256"]})
+                    actual_popen = dev.subprocess.Popen
+                    def tracked(argv,*pos,**kw):
+                        literal.require(argv == command and not owned and kw.get("cwd") == ROOT and kw.get("env") == context.environ and kw.get("pass_fds") == (lock_fd,),
+                            "Exactly one planned graphical canonical child/context/lock required")
+                        child = actual_popen(argv,*pos,**kw); owned.append(child); return child
+                    result["engine_launch_attempted"] = True; save(out/"result.json",result)
+                    try:
+                        dev.subprocess.Popen = tracked
+                        result["canonical_api_return"] = dev.run_validation(command,context,lock_fd,spec["timeout_after_lock_seconds"],detect_godot_errors=True)
+                    finally:
+                        dev.subprocess.Popen = actual_popen
+                        for child in owned:
+                            if child.poll() is None: dev.stop_validation(child)
+                            child.wait(timeout=5)
+                        result["owned_children"] = [{"pid":child.pid,"closed":child.poll() is not None,"popen_return":child.poll()} for child in owned]
+                        save(out/"result.json",result)
+                    literal.require(len(owned) == 1 and owned[0].poll() is not None,"Actual owned child must close")
+                    raw.flush(); observation = literal.observe(out,ROOT,spec,(out/"raw.log").read_text(),result["canonical_api_return"],owned[0].poll())
+                    result["native_observation"] = observation; save(out/"native-observation.json",observation); retain_native(out,observation)
+                    literal.require(snapshot(spec,readiness,out,"sources-after-child") == baseline,"Input drift through graphical child")
+                    save(out/"engine-after-child.json",engine(spec))
+                    literal.require(observation["functional_pass"],"Actual portrait rows/PNG/footer/API/Popen failed or incomplete")
+                    engine_raw = (out/"engine.log").read_text(errors="replace") if (out/"engine.log").exists() else ""
+                    diagnostics = [line for line in ((out/"raw.log").read_text()+"\n"+engine_raw).splitlines() if DIAGNOSTIC.search(line)]
+                    result["diagnostics"] = diagnostics
+                    literal.require(not diagnostics,"Actual diagnostic remains NONCLEAN; no auto retry or warning filter")
+            finally:
+                if queue["acquired"]: queue["lock_context_released"] = True; save(out/"queue.json",queue)
+            result["passed"] = True; code = 0
+        except KeyboardInterrupt:
+            result["error"] = "Interrupted; only this actual owned child may be closed"; code = 130
+        except Exception as error:
+            result["error"] = str(error); print("A2-L3 portrait host failure:",error,flush=True)
+        finally:
+            try:
+                final = snapshot(spec,readiness,out,"sources-at-close"); save(out/"engine-at-close.json",engine(spec))
+                if "baseline" in locals(): literal.require(final == baseline,"Final source cohort drift")
+            except Exception as error:
+                result["close_custody_error"] = str(error); result["passed"] = False; code = 2
+            raw.flush(); result.update(closed=True,host_return=code,raw_diagnostics=[line for line in (out/"raw.log").read_text().splitlines() if DIAGNOSTIC.search(line)])
+            save(out/"result.json",result); save(out/"queue.json",queue)
+            print("A2-L3 portrait host CLOSED code="+str(code),flush=True)
+    signal.signal(signal.SIGTERM,old_term); indexed(out); return code
+
+
+if __name__ == "__main__": raise SystemExit(main())

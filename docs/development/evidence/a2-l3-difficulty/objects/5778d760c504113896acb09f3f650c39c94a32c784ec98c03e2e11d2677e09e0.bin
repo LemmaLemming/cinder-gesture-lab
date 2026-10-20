@@ -1,0 +1,17 @@
+--- comparison.2e8c7030.gd.txt
++++ comparison.capsule-contract.gd.txt
+@@ -131,7 +131,13 @@
+ 	var expected: String = "reach" if arm == "reach-control" else "place"
+ 	if not _expect(level.get("_boss_next_action") == expected and scheduler.call("encounter_profile").get("id") == "challenge" and not level.is_restore_candidate(), "actual fresh birth has expected cursor and Challenge; fixture never sets cursor"): await _finish(); return
+ 	var body: CollisionShape3D = hero.get_node("BodyCollision")
+-	if not _expect(body.shape is CapsuleShape3D and body.position == Vector3(0,Scheduler.CAPSULE_CENTER_Y,0) and (body.shape as CapsuleShape3D).height == Scheduler.CAPSULE_HEIGHT and (body.shape as CapsuleShape3D).radius == Scheduler.CAPSULE_RADIUS, "actual born Player capsule matches preconstruction supported-Y formula"): await _finish(); return
++	_write_exact("capsule-birth", {
++		"shape_is_capsule":body.shape is CapsuleShape3D,
++		"position":body.position,"expected_position":Vector3(0,Scheduler.CAPSULE_CENTER_Y,0),
++		"height":(body.shape as CapsuleShape3D).height if body.shape is CapsuleShape3D else null,"expected_height":Scheduler.CAPSULE_HEIGHT,
++		"radius":(body.shape as CapsuleShape3D).radius if body.shape is CapsuleShape3D else null,"expected_radius":Scheduler.CAPSULE_RADIUS
++	})
++	if not _expect(body.shape is CapsuleShape3D and body.position == Vector3(0,Scheduler.CAPSULE_CENTER_Y,0) and is_equal_approx((body.shape as CapsuleShape3D).height, Scheduler.CAPSULE_HEIGHT) and is_equal_approx((body.shape as CapsuleShape3D).radius, Scheduler.CAPSULE_RADIUS), "actual born Player capsule matches preconstruction supported-Y formula"): await _finish(); return
+ 	if not _expect(boss.get("hp") == 30.0 and boss.get("boss_phase") == 1 and not boss.get("transition_pending") and boss.position == Vector3(0,0,-35), "original full B02 and geometry anchor; no live HP/phase/position transplant"): await _finish(); return
+ 	var policy: RefCounted = level.get("_crossing")
+ 	if not _expect(policy.call("current_beat") == "boss_phase_one" and policy.get("defeated_ids").is_empty() and policy.get("crossed_contacts").is_empty(), "disclosed preconstruction TEST focus has no fabricated predecessor history"): await _finish(); return

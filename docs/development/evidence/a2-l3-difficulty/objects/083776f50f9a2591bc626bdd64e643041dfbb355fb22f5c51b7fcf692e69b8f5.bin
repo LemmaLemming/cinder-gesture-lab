@@ -1,0 +1,51 @@
+--- tests/acts/act2/a2_l3_difficulty_comparison.gd
++++ INERT/comparison.gd.txt
+@@ -368,7 +368,7 @@
+ 			first_proof=level.get("_mechanism_proofs")[tool_id].duplicate(true)
+ 			first_clock=_clock()
+ 	if int(tool_state.cycle)==1: phase_seen[String(tool_state.phase)]=true
+-	var current: Dictionary = {"clock_s":_clock(),"player_clock_s":hero.get_world_action_clock(),"position":hero.global_position,"response":hero.get_threat_response_state(),"hp":hero.hp,"shells":hero.shells,"invulnerability_left_s":hero.get("_invulnerable"),"boss_hp":boss.get("hp"),"boss_phase":boss.get("boss_phase"),"cursor":level.get("_boss_next_action"),"native_union_ids":[],"bank_contacts":{},"runtime_error":level.get("runtime_error"),"framing_error":row.current_containment_error}
++	var current: Dictionary = {"clock_s":_clock(),"player_clock_s":hero.get_world_action_clock(),"position":hero.global_position,"response":hero.get_threat_response_state(),"hp":hero.hp,"shells":hero.shells,"invulnerability_left_s":hero.get("_invulnerable"),"boss_hp":boss.get("hp"),"boss_phase":boss.get("boss_phase"),"cursor":level.get("_boss_next_action"),"native_union_ids":[],"bank_contacts":{},"runtime_error":level.get("runtime_error"),"framing_error":row.current_containment_error,"published_framing_error":row.published_current_containment_error}
+ 	for lease: Dictionary in native: current.native_union_ids.append(lease.id)
+ 	for id: String in level.get("_clouds"):
+ 		var bank: Node = level.get("_clouds")[id]
+@@ -384,7 +384,7 @@
+ 	trace.append(current)
+ 	last_sample=current
+ 	if trace.size()>=MAX_TRACE_ROWS: _flush_trace()
+-	var signature: String = str([tool_state.status,tool_state.phase,tool_state.cycle,current.native_union_ids,current.boss_phase,row.due_lock_ids,level.get("_admission_errors"),row.current_containment_error])
++	var signature: String = str([tool_state.status,tool_state.phase,tool_state.cycle,current.native_union_ids,current.boss_phase,row.due_lock_ids,level.get("_admission_errors"),row.current_containment_error,row.published_current_containment_error])
+ 	if signature!=last_signature:
+ 		last_signature=signature
+ 		_write_exact("boundary-%04d"%artifacts.size(),row)
+@@ -409,8 +409,9 @@
+ 	for lease: Dictionary in union:
+ 		if _clock()>=float(lease.lock_from_s) and _clock()<=float(lease.active_until_s): due.append(String(lease.id))
+ 	var points: Array = level.call("_camera_framing_points") # private original pure query; no wrapper diagnostic mutation.
++	var published_points: Array = level.call("test_published_camera_framing_points")
+ 	var camera: Camera3D = game.get("camera")
+-	return {"label":label,"clock_s":_clock(),"player_clock_s":hero.get_world_action_clock(),"ordering":"109 after native100 before House110; 3000 after House110, not exact callback nor next render","response":hero.get_threat_response_state(),"body_transform":hero.global_transform,"body_velocity":hero.velocity,"committed_dash":hero.get_committed_dash_state(),"native_controls":controls,"native_held_consumers":held,"native_union":union,"due_lock_ids":due,"original_guard_proofs":level.get("_mechanism_proofs").duplicate(true),"bank_guard_proofs":level.get("_bank_proofs").duplicate(true),"views":level.get("_views").duplicate(true),"bank_views":level.get("_bank_views").duplicate(true),"retained_forecast_points":level.get("_forecast_points").duplicate(true),"actual_parent_point_union":points,"mandatory_player_points":game.call("player_camera_framing_points"),"plan":game.call("camera_framing_plan",points,hero.global_position+Vector3.UP*.65),"current_containment_error":game.call("camera_framing_error",points),"plan_spec":game.call("_camera_framing_spec",.055),"containment_spec":game.call("_camera_framing_spec",.02),"camera":{"transform":camera.global_transform,"size":camera.size,"projection":camera.projection,"keep_aspect":camera.keep_aspect,"near":camera.near,"far":camera.far,"h_offset":camera.h_offset,"v_offset":camera.v_offset,"viewport_size":camera.get_viewport().get_visible_rect().size},"input":game.call("get_input_observation_state"),"admission_errors":level.get("_admission_errors").duplicate(true),"runtime_error":level.get("runtime_error"),"floors":level.call("floor_regions"),"boss_ready_s":level.get("_boss_ready_s"),"boss_hp":boss.get("hp"),"boss_phase":boss.get("boss_phase"),"boss_pending":boss.get("transition_pending"),"boss_action":boss.get("tool_action"),"cursor":level.get("_boss_next_action")}
++	return {"label":label,"clock_s":_clock(),"player_clock_s":hero.get_world_action_clock(),"ordering":"109 after native100 before House110; 3000 after House110, not exact callback nor next render","response":hero.get_threat_response_state(),"body_transform":hero.global_transform,"body_velocity":hero.velocity,"committed_dash":hero.get_committed_dash_state(),"native_controls":controls,"native_held_consumers":held,"native_union":union,"due_lock_ids":due,"original_guard_proofs":level.get("_mechanism_proofs").duplicate(true),"bank_guard_proofs":level.get("_bank_proofs").duplicate(true),"views":level.get("_views").duplicate(true),"bank_views":level.get("_bank_views").duplicate(true),"retained_forecast_points":level.get("_forecast_points").duplicate(true),"actual_parent_point_union":points,"published_parent_point_union":published_points,"published_current_containment_error":game.call("camera_framing_error",published_points),"mandatory_player_points":game.call("player_camera_framing_points"),"plan":game.call("camera_framing_plan",points,hero.global_position+Vector3.UP*.65),"current_containment_error":game.call("camera_framing_error",points),"plan_spec":game.call("_camera_framing_spec",.055),"containment_spec":game.call("_camera_framing_spec",.02),"camera":{"transform":camera.global_transform,"size":camera.size,"projection":camera.projection,"keep_aspect":camera.keep_aspect,"near":camera.near,"far":camera.far,"h_offset":camera.h_offset,"v_offset":camera.v_offset,"viewport_size":camera.get_viewport().get_visible_rect().size},"input":game.call("get_input_observation_state"),"admission_errors":level.get("_admission_errors").duplicate(true),"runtime_error":level.get("runtime_error"),"floors":level.call("floor_regions"),"boss_ready_s":level.get("_boss_ready_s"),"boss_hp":boss.get("hp"),"boss_phase":boss.get("boss_phase"),"boss_pending":boss.get("transition_pending"),"boss_action":boss.get("tool_action"),"cursor":level.get("_boss_next_action")}
+ func _union() -> Array:
+ 	# Public pure source_control_state, never reservations()/reservation_state()
+ 	# which can prune and emit. Include all actual scheduler owner bindings.
+@@ -462,11 +463,14 @@
+ 		if points.size()>224: _latch("actual required parent point budget exceeded")
+ 		for point: Variant in points:
+ 			if not point is Vector3 or not point.is_finite(): _latch("invalid actual required parent corner")
+-		var error: String=game.call("camera_framing_error",points)
+-		# Observe, never invoke/install a guard. Strict trial stop includes an
+-		# actual forecast-union containment refusal before admission; no camera
+-		# settling exception or second attempt is credited by this fixture.
+-		if not points.is_empty() and not error.is_empty(): _latch("observed current required optical union refused: "+error)
++		# The unchanged parent aggregate also contains non-running forecasts:
++		# House refuses start until those fit, while Game plans them afterwards.
++		# Retain all aggregate budget/finite and boundary plan/error diagnostics;
++		# only actually published running points require current containment.
++		# No wait, camera mutation, guard exception or retry is introduced.
++		var published_points: Array=level.call("test_published_camera_framing_points")
++		var error: String=game.call("camera_framing_error",published_points)
++		if not published_points.is_empty() and not error.is_empty(): _latch("observed current published optical union refused: "+error)
+ 	return fault.is_empty()
+ func _same_station_and_stats() -> bool:
+ 	var old: Array=baseline.summary.get("station",[])

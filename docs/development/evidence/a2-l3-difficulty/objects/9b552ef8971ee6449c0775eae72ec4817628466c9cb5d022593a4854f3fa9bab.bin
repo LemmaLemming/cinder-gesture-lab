@@ -1,0 +1,111 @@
+"""Freeze one targeted component pair; no live fixture/UID/dev/engine/Git work."""
+from pathlib import Path
+import ast
+import json
+import os
+import re
+import stat
+import native_inspect as check
+
+HERE=Path(__file__).resolve().parent
+ROOT=HERE.parents[1]
+BASE=".cinder/a2-l3-place-comparison-host-v3-20261020/"
+SUBJECT="scripts/acts/act2/ruined_house.gd"
+FIXTURE="tests/acts/act2/a2_l3_difficulty_comparison.gd"
+PINS="tests/acts/act2/fixtures/a2_l3_difficulty_comparison_pins.json"
+MAPPING={FIXTURE:BASE+"inert/comparison.gd.txt",
+         "tests/acts/act2/fixtures/a2_l3_difficulty_focus_game.gd":BASE+"inert/focus_game.gd.txt",
+         "tests/acts/act2/fixtures/a2_l3_difficulty_focus_house.gd":BASE+"inert/focus_house.gd.txt",
+         "tests/acts/act2/fixtures/a2_l3_difficulty_focus_policy.gd":BASE+"inert/focus_policy.gd.txt",
+         PINS:BASE+"inert/comparison-pins.json"}
+
+
+def record(name):
+    path=ROOT/name; exists=os.path.lexists(path); st=path.lstat() if exists else None
+    check.require(not exists or (stat.S_ISREG(st.st_mode) and not stat.S_ISLNK(st.st_mode)),"Named regular or absent source required: "+name)
+    data=check.stable(path)[1] if exists else None
+    return {"exists":exists,"regular":exists,"symlink":False,"sha256":check.digest(data) if data is not None else None,
+            "bytes":len(data) if data is not None else None,"mode":format(stat.S_IMODE(st.st_mode),"04o") if st else None}
+
+
+def put(name,value): (HERE/name).write_text(json.dumps(value,indent=2,allow_nan=False)+"\n")
+
+
+def main():
+    control=check.strict((ROOT/MAPPING[PINS]).read_bytes())
+    check.require(check.digest((ROOT/MAPPING[PINS]).read_bytes())=="57ec7a35a734962779f18094d870965d85e00879a471a5eb35e0ce54d648ac65","Exact immutable comparison control required")
+    check.require(check.digest((ROOT/MAPPING[FIXTURE]).read_bytes())=="1f528ade84c23c109810d9af927055a54e354ca7f9ee19d1a5031afb2758972c","Exact fixed611-line comparator required")
+    for target,inert in MAPPING.items():
+        check.require(not os.path.lexists(ROOT/target),"No live future fixture/control selection during preparation")
+        if target.endswith(".gd"): check.require(not os.path.lexists(ROOT/(target+".uid")),"Genuine future UID absence required")
+    for uri,sha in control["files"].items():
+        name=uri.removeprefix("res://"); actual=record(MAPPING.get(name,name))
+        check.require(actual["sha256"]==sha,"Do not repin changed control dependency/helper: "+name)
+    original=record(SUBJECT); candidate=record(BASE+"inert/ruined_house.candidate.gd.txt")
+    check.require(original["sha256"]=="728358c5e5864066bcc5eb4821f4e55a39561f9763962478e7338a5dea69baef" and original["mode"]=="0644","Original accepted House must remain exact")
+    check.require(candidate["sha256"]=="01954a3f861ab4ebe605191f0c87a57a972b73742cff3c5b1e06125ac1deed71","Exact Root five-line fresh selector candidate required")
+    check.require(record("scripts/combat/authored_enemy_sequence.gd")["sha256"]=="9aed90b797bdef3388a82b63f40390e2b779f2fec671ed3914a33b1ff42950a3","Original independent9aed baseline required")
+    cache_name=".godot/global_script_class_cache.cfg"
+    classes={m.group(1):m.group(2) for m in re.finditer(r'"class": &"([^"]+)".*?"path": "res://([^"]+)"',(ROOT/cache_name).read_text(),re.S)}
+    pending=[FIXTURE,"scenes/acts/act2/a2_l3.tscn"]; seen=set(); edges=[]; unresolved=[]
+    while pending:
+        name=pending.pop(0)
+        if name in seen: continue
+        seen.add(name); physical=ROOT/MAPPING.get(name,name)
+        if not name.endswith((".gd",".tscn",".tres")): continue
+        text=physical.read_text()
+        if name.endswith(".gd"):
+            targets=set(re.findall(r'''(?:preload|load)\(\s*["']res://([^"']+)["']\s*\)''',text))
+            targets.update(re.findall(r'''^\s*extends\s+["']res://([^"']+)["']''',text,re.M))
+        else: targets=set(re.findall(r'''path\s*=\s*["']res://([^"']+)["']''',text))
+        for target in sorted(targets):
+            if target in MAPPING or (ROOT/target).is_file(): edges.append({"from":name,"to":target,"reason":"literal actual preload/extends/scene resource"}); pending.append(target)
+            else: unresolved.append({"from":name,"target":target})
+        for klass,target in sorted(classes.items()):
+            if target!=name and re.search(r"\b"+re.escape(klass)+r"\b",text): edges.append({"from":name,"to":target,"reason":"global class "+klass}); pending.append(target)
+    check.require(not unresolved,"Bounded static input unresolved")
+    check.require("[autoload]" not in (ROOT/"project.godot").read_text(),"Unexpected autoload needs bounded review")
+    put("DEPENDENCY_GRAPH.json",{"roots":[FIXTURE,"scenes/acts/act2/a2_l3.tscn"],"source_aliases":MAPPING,"resources":sorted(seen),"edges":edges,"unresolved":unresolved,
+        "method":"Exact future4 GD text aliases plus actual target scene; recursive actual preload/extends/global-class references.33 hash-only canonical controls pinned separately; no claim their unrelated bodies execute.",
+        "limits":"Bounded targeted source/cache/UID cohort, not a global import or UID census. No Store, Save, earned prefix or portrait workload in this declared component."})
+    names=set(seen)|{uri.removeprefix("res://") for uri in control["files"]}|set(MAPPING)|set(MAPPING.values())
+    names|={name+".uid" for name in names.copy() if name.endswith(".gd")}
+    names|={SUBJECT,SUBJECT+".uid",".cinder/local.json","project.godot",cache_name,".godot/uid_cache.bin","scripts/dev/dev.py",
+            "data/design/player_equipment.json","data/design/difficulty_profiles.json","data/campaign/act2/a2_l1_difficulty_arrangements.json","data/campaign/act2/a2_l2_difficulty_arrangements.json",
+            "scripts/combat/authored_enemy_sequence.gd","scripts/combat/authored_enemy_sequence.gd.uid",BASE+"inert/ruined_house.original.gd.txt",BASE+"inert/ruined_house.candidate.gd.txt",BASE+"inert/PLACE_CURSOR.patch",BASE+"inert/ROOT_SOURCE_DECISION.json",BASE+"inert/NOTES.md"}
+    names.update(['.cinder/a2-l3-capsule-test-repair-20261016/READINESS.json', '.cinder/a2-l3-capsule-test-repair-20261016/REVIEW.json', '.cinder/a2-l3-capsule-test-repair-20261016/CAPSULE_CONTRACT.patch', '.cinder/a2-l3-capsule-test-repair-20261016/comparison.capsule-contract.gd.txt', '.cinder/a2-l3-root-place-pair-actual-20261016.json', '.cinder/a2-l3-place-pair-host-review-20261016/ACTUAL_REVIEW.json', '.cinder/a2-l3-place-comparison-host-prepare-20261016/run-pair-20261016T111319.482097Z-66da76fd/original/case/native-report.json', '.cinder/a2-l3-place-comparison-host-prepare-20261016/run-pair-20261016T111319.482097Z-66da76fd/restore-receipt.json'])
+    names.update(['.cinder/resume-house-forecast-review-20261020/INDEX.json', '.cinder/resume-house-forecast-review-20261020/REVIEW.json', '.cinder/resume-house-forecast-review-20261020/SOURCE_DELTA.json', '.cinder/resume-house-forecast-review-20261020/comparison.patch', '.cinder/resume-house-forecast-review-20261020/focus_house.patch', '.cinder/resume-house-forecast-review-20261020/comparison-pins.patch', '.cinder/a2-l3-place-comparison-host-v2-20261016/run-pair-20261016T112225.182734Z-d1fd0f83/original/case/native-report.json', '.cinder/a2-l3-place-comparison-host-v2-20261016/run-pair-20261016T112225.182734Z-d1fd0f83/restore-receipt.json'])
+    expected={}
+    for name in sorted(names):
+        if name in MAPPING:
+            expected[name]=dict(record(MAPPING[name]),mode="0644")
+        else: expected[name]=record(name)
+    candidate_runtime=dict(original,sha256=candidate["sha256"],bytes=candidate["bytes"])
+    binary=".tools/Godot.app/Contents/MacOS/Godot"; engine={"path":str(ROOT/binary),"record":record(binary)}
+    check.require(engine["record"]["sha256"]=="c7cccbf8fb143e34e02fd6521e09be2c2b974f0d5db080b19071c9c570718ccf","Exact existing c7 engine required")
+    own=["run.py","native_inspect.py","prepare_inputs.py","host_tests.py","HOST_TESTS.json","README.md","DEPENDENCY_GRAPH.json","PROVENANCE.json","GUARD_REUSE.json","INPUT_SPEC.json","READINESS.json"]
+    spec={"schema":1,"status":"FROZEN_SOURCE_ONLY_UNSELECTED_UNEXECUTED","integration_root":str(ROOT),"subject":SUBJECT,
+          "subject_variants":{"original":original,"candidate":candidate_runtime},"candidate_source":BASE+"inert/ruined_house.candidate.gd.txt",
+          "fixture":FIXTURE,"fixture_sha256":"1f528ade84c23c109810d9af927055a54e354ca7f9ee19d1a5031afb2758972c","pins_path":PINS,
+          "pins_sha256":"57ec7a35a734962779f18094d870965d85e00879a471a5eb35e0ce54d648ac65","native_control_sources":control["files"],
+          "promotion_text_mapping":MAPPING,"expected":expected,"self_files":[BASE+name for name in own],"engine_expected":engine,
+          "timeout_after_lock_seconds":180,"native_latch_watchdog_seconds":180,"maximum_phases":2,"order":["original","candidate"],
+          "report_contract":"Strict duplicate-free finiteJSON; consecutive native rows/count/firstFailure/boolcomplete/success/fault; actualFAIL/footer/API+ownedPopen0; immutable39 source maps; every Exact diagnostic hash/size/path retained opaque, native union/proof/path/hold/cadence checks not reimplemented. No fake PASS stdout (fixture does not print it).",
+          "mutation_contract":"Only canonical House728→019 inside one dev.godot_lock after actual original child closes successful/clean. Replacement temporary ready then exact prior metadata guard. Finally knowncandidate guardedrestore; exactoriginal no-op; unknown bytes/mode/type retained and left in situ. Ownchildrenclosed before every write. SIGKILL/power loss cannot execute Pythonfinally; durable original beforeimage retained for Root recovery.",
+          "scope":"ONE fixed originalReach then freshPlace source-scoped component experiment, with exact unchanged fixture/helpers/control. No retry/replacement/search/extra kit/guard/timing/geometry/source patch beyond selected5-line initialization. No Store/appdata workload beyond normal native engine behavior; default sandbox unless concrete write failure. No campaign/earned-route/portrait/performance/policy acceptance."}
+    put("INPUT_SPEC.json",spec)
+    put("PROVENANCE.json",{"status":"SOURCE_ONLY_UNSELECTED_UNEXECUTED","Act1_request":"2f99e0b2-46a7-494f-822b-616f35c15faf","immutable_writer_source":"997a unchanged, separate Root actual196/0 clean completion reported; independent actual audit delegated elsewhere, not re-audited/replayed here",
+         "inert_fixture":"1f528ade exact published-live/idle-forecast TEST distinction; originalbe56/117failed and2e8c/91failed retained","control":"f817d6ed exact33native+3helper selectors","candidate":"01954a3f exact Root-reviewed5-line fresh-only cursor initialization; original728 remainslive",
+         "guard_reuse":"GUARD_REUSE.json proves exact reviewed cost-v2 no-overwrite method bodies; original restoration bytes captured immutable, no unknown overwrite",
+         "independent_baseline":"Original Authored9aed/Schedulerc28; withdrawn4b cost pair remains separate. No composed candidates or timings.",
+         "source_resources":len(seen),"edges":len(edges),"fixed_slots":len(expected),"futureGDandcontrol_absent":True,"future4UIDs_absent":True,
+         "unit_tests":check.strict((HERE/"HOST_TESTS.json").read_bytes()),"engine_dev_or_Git_imported":False,"canonical_runtime_or_worker_write":False})
+    for name in ["run.py","native_inspect.py","prepare_inputs.py","host_tests.py"]: ast.parse((HERE/name).read_text(),filename=name)
+    put("READINESS.json",{"schema":1,"status":"FINAL_FROZEN_SOURCE_READY_FOR_ROOT_REVIEW_BEFORE_ANY_SELECTION","frozen_files":{BASE+name:check.digest((HERE/name).read_bytes()) for name in own if name!="READINESS.json"},
+        "fixed_slots":len(expected),"resource_count":len(seen),"edge_count":len(edges),"futureGDandcontrol_selected":False,"future4UIDs_absent":True,
+        "Python_ASTs":4,"host_only_tests":check.strict((HERE/"HOST_TESTS.json").read_bytes()),"engine_import_parse_seal_native":False,
+        "preconditions":"Root full exact review, select4GD+control text bytes0644 with4UIDs absent, closed host-only seal reviewed, then one original-first/candidate-second canonical queued pair. Original must close successful/clean before candidate. No changed test code or live source by preparer."})
+    print(json.dumps({"status":"FINAL_FROZEN_SOURCE_UNSELECTED_UNEXECUTED","slots":len(expected),"resources":len(seen),"edges":len(edges),"run_sha256":check.digest((HERE/"run.py").read_bytes()),"spec_sha256":check.digest((HERE/"INPUT_SPEC.json").read_bytes()),"readiness_sha256":check.digest((HERE/"READINESS.json").read_bytes())}))
+
+
+if __name__=="__main__": main()

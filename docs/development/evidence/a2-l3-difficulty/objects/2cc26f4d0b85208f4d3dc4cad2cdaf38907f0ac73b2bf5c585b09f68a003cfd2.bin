@@ -1,0 +1,436 @@
+extends SceneTree
+## INERT TEXT ONLY. No execution/import/implementation authority.
+## Root must separately review/materialize this text before any native job.
+## Candidate019 genuine fresh profiles and Save/Continue/Retry; actual196 legacy reader.
+## No route/earned predecessor claim; only outer TEST metadata for fresh capture.
+const Shell = preload("res://scripts/campaign/shell.gd")
+const Registry = preload("res://scripts/campaign/registry.gd")
+const Attempts = preload("res://scripts/campaign/attempts.gd")
+const Store = preload("res://scripts/campaign/save_store.gd")
+const Exact = preload("res://scripts/campaign/exact_json.gd")
+const Equipment = preload("res://scripts/equipment.gd")
+const LEVEL_ID: String = "A2-L3"
+const SCENE_PATH: String = "res://scenes/acts/act2/a2_l3.tscn"
+const CASE: String = "candidate-persistence"
+const LEGACY_DIR: String = "res://.cinder/a2-l3-original-writer-host-v2-20261016/run-native-20261016T105426.785091Z-d87b5a2a/writer-output/public-save"
+const EXPECTED_STAGES: Array[String] = ["fresh-initial", "fresh-save", "fresh-current", "fresh-retry", "legacy-import", "legacy-current", "legacy-retry"]
+const ACCEPTED_COMMIT: String = "01f7e7bbfadf74d044d5686c9f485073e965eb4a"
+const COMPANIONS: Array[String] = ["campaign.json", "campaign.json.bak", "settings.json", "settings.json.bak", "preferences.json", "preferences.json.bak"]
+const SOURCE_PINS: Dictionary = {
+  "res://scenes/acts/act2/a2_l3.tscn": "d4dbb7a42a75d6b017d46e406ae4c3a0a1063bc2abb3dffa25d7d0cceea5f32b",
+  "res://scripts/acts/act2/ruined_house.gd": "01954a3f861ab4ebe605191f0c87a57a972b73742cff3c5b1e06125ac1deed71",
+  "res://scripts/acts/act2/ruined_house_sequence.gd": "f73c1d5ec34f6829100b2cec2c3a84cf1e1a2cc4501a892fef56f9fa001f5975",
+  "res://scripts/acts/act2/ruined_house_snapshot_rules.gd": "a60586abbb5745aaa317842b862f5eb17d2b930437ea903a5eebd8ba5895cdfd",
+  "res://scripts/acts/act2/ruined_house_smoke_rules.gd": "39009e7ee45ff0c849ed6e810c61034b352c509d7a51551fe36f320b3daa83db",
+  "res://scripts/acts/act2/handling_machine_boss_actor.gd": "685308db29c7df0b117e6b4755406a42916c31f22cbd707f6b0c3f9afadc8964",
+  "res://scripts/acts/act2/weybridge.gd": "767430baacc6b6a32547e1ec87e81b9fe48ad24e53939c18876fa63317d85145",
+  "res://scripts/acts/act2/horsell_common.gd": "5f58885685d5b5727d286c57c45794bef0afc810424214636155283f60f43ad1",
+  "res://scripts/combat/threat_scheduler.gd": "c28ea9f4cd6c1ff9aedbc9cfc45a28826c589c095b9193b565f45d23c3df903d",
+  "res://scripts/campaign/level.gd": "27fdab6686d8ba4b8282c48af84c0c3f63d8c8fa7620ae462a4642ec225100c1",
+  "res://scripts/campaign/shell.gd": "f8df3b798544b79d66985f5e468f13ade5485bccc6050b54c9d9d242b3211a0f",
+  "res://scripts/campaign/save_store.gd": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0",
+  "res://scripts/campaign/attempts.gd": "6701abec6181beb3934490e468b00868c14e69eb229f708d562b98efe32a43a0",
+  "res://scripts/campaign/registry.gd": "2b29babb103d121d8f4d185b0d56cb094e9693f099a10731ac6363ead9ee4fe2",
+  "res://scripts/campaign/exact_json.gd": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+  "res://scripts/campaign/snapshot_codec.gd": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+  "res://data/campaign/registry.json": "db8bd30ceb754a10fa434d01d415ebb428c84912f8d34d84829e03f9ebb5ff19",
+  "res://scripts/game.gd": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26",
+  "res://scripts/player.gd": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+  "res://scenes/player.tscn": "68cf79442eb217cb0e2afcc4099080ba79c3f3b2c548655195d0864f4fc8bfac",
+  "res://scripts/equipment.gd": "2f721f0e7af0d1034ae9f92c37b4af3c3223171d0e5d2c120e42c00ae9155ab0",
+  "res://scripts/settings/game_settings.gd": "60d76e75d66f757d5601903ff92007b3da55a77d5c79e1ba7dbb3da2925bb162",
+  "res://scripts/ui/campaign_menu.gd": "bef10eaa96e1e94a2f7f4dc1c9502ed00f57696c3b3e3a33fa3856eae11d73c1",
+  "res://scripts/hud.gd": "3a76c06a97da117b2fbd43824d88f3ef5150e6ad0045b5e27766b8d70542897b",
+  "res://scripts/combat/lane_mechanism.gd": "bcf6558d4ae57c4bf8714ae6fe6b1896b3c7c0be3b6a8a9f3178451653bd031d",
+  "res://scripts/combat/smoke_bank.gd": "698a70275c438be088fe8abeb7a35083444879364a3acda3ae91194fe4c67ae9",
+  "res://.cinder/a2-l3-original-writer-host-v2-20261016/run-native-20261016T105426.785091Z-d87b5a2a/writer-output/public-save/attempts.exact.json": "7c6e4221d553efbe3638f163eeea6e6c31720387c28a2abb556eb10bcbd3b3ba",
+  "res://.cinder/a2-l3-original-writer-host-v2-20261016/run-native-20261016T105426.785091Z-d87b5a2a/writer-output/public-save/campaign.json": "7d40330ab630d9fe68cc352f12026cbcc85911e49a839730b585dd12345163d7",
+  "res://.cinder/a2-l3-original-writer-host-v2-20261016/run-native-20261016T105426.785091Z-d87b5a2a/writer-output/public-save/campaign.json.bak": "82810194e3989217425a4d5878a429939f718ed10f22e0011ba7c72c97728267",
+  "res://.cinder/a2-l3-original-writer-host-v2-20261016/run-native-20261016T105426.785091Z-d87b5a2a/writer-output/public-save/checkpoint.exact.json": "6165a8a125b57e45a15e3c17af704093efe7fd4f96646973f3af489ac8183779",
+  "res://.cinder/a2-l3-original-writer-host-v2-20261016/run-native-20261016T105426.785091Z-d87b5a2a/writer-output/public-save/manifest.json": "2fedb388f428e8850d942c44ddb16f16215dd293bc4b41b599c0d79e5921c76e",
+  "res://.cinder/a2-l3-original-writer-host-v2-20261016/run-native-20261016T105426.785091Z-d87b5a2a/writer-output/public-save/preferences.json": "edd537ce9745ca27cedd5cd96d7aa180286314101e7887890ea843467cbf0666",
+  "res://.cinder/a2-l3-original-writer-host-v2-20261016/run-native-20261016T105426.785091Z-d87b5a2a/writer-output/public-save/snapshot.exact.json": "6165a8a125b57e45a15e3c17af704093efe7fd4f96646973f3af489ac8183779"
+}
+
+var shell: CinderCampaignShell
+var candidate: Dictionary = {}
+var assertions: Array[Dictionary] = []
+var first_failure: Dictionary = {}
+var stages: Array[Dictionary] = []
+var source_pre: Dictionary = {}
+var source_post: Dictionary = {}
+var output_root: String = ""
+var owns_output_root: bool = false
+var user_root: String = ""
+var expected_fixture_hash: String = ""
+var fixture_hash: String = ""
+var fixture_path: String = ""
+var started_ms: int = 0
+var deadline_ms: int = 0
+var finished: bool = false
+var setup_metadata: Dictionary = {}
+var actual_fresh_wire: String = ""
+var original_payload_wire: String = ""
+var user_base: String = ""
+var fresh_captures: Array[Dictionary] = []
+var legacy_snapshot_wire: String = ""
+var legacy_attempts_wire: String = ""
+var pulse_records: Array[Dictionary] = []
+var assertion_errors: Array[String] = []
+var partial_files: Array[Dictionary] = []
+
+func _initialize() -> void:
+	started_ms = Time.get_ticks_msec()
+	deadline_ms = started_ms + 120000
+	root.size = Vector2i(540, 1170)
+	_run.call_deferred()
+
+func _run() -> void:
+	var ok: bool = _arguments() and _check_sources(source_pre)
+	if ok: ok = _create_roots()
+	if ok: ok = await _produce()
+	await _finish(ok)
+
+func _arguments() -> bool:
+	var seen: Dictionary = {}
+	for argument: String in OS.get_cmdline_user_args():
+		var key: String = argument.get_slice("=", 0)
+		if key not in ["--case", "--output-root", "--fixture-sha256"] or seen.has(key):
+			return _expect(false, "only unique declared selectors are accepted: " + argument)
+		seen[key] = true
+		if key == "--case" and argument != "--case=" + CASE: return _expect(false, "one focused candidate persistence case only")
+		if key == "--output-root": output_root = argument.trim_prefix("--output-root=").trim_suffix("/")
+		if key == "--fixture-sha256": expected_fixture_hash = argument.trim_prefix("--fixture-sha256=")
+	if not _expect(seen.size() == 3 and output_root.begins_with("res://.cinder/") and not ".." in output_root and _hash_string(expected_fixture_hash), "explicit case, new ignored output root and executable-text hash required"): return false
+	fixture_path = get_script().resource_path
+	fixture_hash = FileAccess.get_sha256(fixture_path)
+	return _expect(fixture_hash == expected_fixture_hash and not fixture_hash.is_empty(), "actual materialized writer bytes match externally supplied reviewed hash")
+
+func _check_sources(destination: Dictionary) -> bool:
+	var all_match: bool = true
+	for path: String in SOURCE_PINS:
+		var actual: String = FileAccess.get_sha256(path)
+		destination[path] = actual
+		if actual != SOURCE_PINS[path]: all_match = false
+	return _expect(all_match, "all named candidate runtime and literal original196 artifact bytes retain selected hashes")
+
+func _create_roots() -> bool:
+	var absolute: String = ProjectSettings.globalize_path(output_root)
+	if not _expect(not FileAccess.file_exists(output_root) and not DirAccess.dir_exists_absolute(absolute), "evidence destination is new; never overwrite an earlier job"): return false
+	if not _expect(DirAccess.make_dir_recursive_absolute(absolute) == OK, "create only new ignored output directory"): return false
+	owns_output_root = true
+	user_base = "user://a2-l3-candidate-persistence-%d-%d/" % [OS.get_process_id(), Time.get_ticks_usec()]
+	if not _expect(not DirAccess.dir_exists_absolute(ProjectSettings.globalize_path(user_base)), "isolated candidate job user directory is new"): return false
+	user_root = user_base + "fresh/"
+	return _expect(DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(user_root)) == OK, "create isolated fresh branch directory")
+
+func _new_shell() -> bool:
+	var raw: Variant = JSON.parse_string(FileAccess.get_file_as_string(Registry.DATA_PATH))
+	if not _expect(raw is Dictionary, "read actual unchanged canonical registry"): return false
+	shell = Shell.new() as CinderCampaignShell
+	if not _expect(shell.configure_runtime(raw, user_root + "campaign.json", user_root + "settings.json", user_root + "preferences.json"), "existing configure_runtime isolates registry/save/settings/preferences"): return false
+	root.add_child(shell)
+	if not await _settle(): return false
+	return _expect(paused and shell.campaign_error.is_empty() and shell.menu.page_name() == "title", "fresh public Shell settles at Title without auto-resume")
+
+func _produce() -> bool:
+	if not await _new_shell(): return false
+	if not _expect(shell.attempts.state().story == null and not is_instance_valid(shell.active_level), "initial Shell has no fabricated Story/current unit"): return false
+	for profile: String in ["standard", "assisted", "challenge"]:
+		shell.menu.difficulty_preference_requested.emit(profile)
+		if not await _settle(): return false
+		if not _expect(shell.get_difficulty_preference() == profile, "public preference before genuine fresh birth: " + profile): return false
+		candidate = shell.call("_prepare", LEVEL_ID, Equipment.STARTER)
+		if not _expect(not candidate.is_empty(), "real fresh _prepare: " + profile + ": " + shell.campaign_error): return false
+		for frame: int in range(8): await process_frame
+		if not _expect(paused and not candidate.level.is_restore_candidate(), "actual fresh constructor, never restore: " + profile): return false
+		var actual: Dictionary = shell.call("_capture_fresh_candidate", candidate, shell.call("_fresh_shell_state"))
+		var cursor: String = "place" if profile == "challenge" else "reach"
+		if not _pristine(actual, profile, cursor): return false
+		var wire: String = _wire(actual, "actual fresh " + profile)
+		if wire.is_empty() or not _write_new_bytes(output_root + "/fresh-" + profile + ".exact.json", wire.to_utf8_buffer()): return false
+		fresh_captures.append({"profile": profile, "cursor": cursor, "path": output_root + "/fresh-" + profile + ".exact.json", "sha256": wire.sha256_text(), "bytes": wire.to_utf8_buffer().size()})
+		if profile == "challenge": actual_fresh_wire = wire
+		shell.call("_dispose", candidate)
+		candidate.clear()
+	if actual_fresh_wire.is_empty(): return _expect(false, "actual Challenge whole capture retained")
+	var parsed: Dictionary = Exact.parse(actual_fresh_wire)
+	if not _expect(parsed.get("accepted", false) and parsed.value is Dictionary, "native parse of actual fresh Challenge capture"): return false
+	var actual: Dictionary = parsed.value
+	var model: CinderCampaignAttempts = Attempts.new(shell.registry)
+	model.snapshot_validator = Callable(shell, "_snapshot_problem")
+	var payload: Dictionary = model.state()
+	var route: Array[String] = shell.registry.main_route()
+	var index: int = route.find(LEVEL_ID)
+	if not _expect(index > 0, "canonical route supplies disclosed TEST predecessor metadata only"): return false
+	payload.completed_main = route.slice(0, index)
+	payload.story = {"kind": "story", "level_id": LEVEL_ID, "snapshot": actual.duplicate(true), "checkpoint": actual.duplicate(true)}
+	setup_metadata = {"test_only": true, "completed_main": payload.completed_main.duplicate(), "unlocked_equipment": payload.unlocked_equipment.duplicate(), "local_source": "real _prepare + _capture_fresh_candidate", "no_earned_route_claim": true, "no_extra_equipment_grant": true, "legacy_origin": LEGACY_DIR}
+	if not _expect(model.state_error(payload).is_empty(), "genuine whole capture with only outer TEST predecessor metadata validates"): return false
+	var store: CinderSaveStore = Store.new(user_root + "campaign.json")
+	store.payload_validator = Callable(model, "saved_payload_error")
+	if not _expect(store.write_payload(payload), "public Store writes actual fresh candidate unit: " + store.last_error): return false
+	original_payload_wire = _wire(payload, "initial candidate complete Attempts")
+	if original_payload_wire.is_empty() or not _archive_stage("fresh-initial", original_payload_wire, actual_fresh_wire, actual_fresh_wire): return false
+	if not await _release_shell() or not await _new_shell(): return false
+	if not _expect(_wire(shell.attempts.state(), "candidate Title Attempts") == original_payload_wire, "fresh Title loads exact candidate Attempts"): return false
+	shell.menu.continue_story_requested.emit()
+	if not await _settle(): return false
+	if not _current_exact(actual_fresh_wire, "candidate first Continue"): return false
+	shell.request_pause()
+	if not await _settle(): return false
+	if not _expect(shell.menu.page_name() == "pause" and _wire(shell.attempts.state(), "candidate public Save Attempts") == original_payload_wire, "real paused Save preserves complete candidate whole history"): return false
+	if not _archive_stage("fresh-save", original_payload_wire, actual_fresh_wire, actual_fresh_wire): return false
+	if not await _release_shell() or not await _new_shell(): return false
+	shell.menu.difficulty_preference_requested.emit("standard")
+	if not await _settle(): return false
+	if not _expect(shell.get_difficulty_preference() == "standard", "opposite future Standard selected publicly before saved Challenge Continue"): return false
+	shell.menu.continue_story_requested.emit()
+	if not await _settle(): return false
+	if not _current_exact(actual_fresh_wire, "fresh Shell Continue ignores future preference for saved Place/cooldown"): return false
+	if not await _pulse_and_retry("fresh", "place", actual_fresh_wire, original_payload_wire): return false
+	if not await _release_shell(): return false
+	# Literal original196 archived Store bytes; no legacy producer or fabricated local.
+	user_root = user_base + "legacy/"
+	if not _expect(not DirAccess.dir_exists_absolute(ProjectSettings.globalize_path(user_root)) and DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(user_root)) == OK, "new isolated legacy reader directory"): return false
+	var old: Dictionary = _read_legacy()
+	if old.is_empty(): return false
+	legacy_snapshot_wire = String(old.snapshot_wire)
+	legacy_attempts_wire = String(old.attempts_wire)
+	for name: String in COMPANIONS:
+		var source: String = LEGACY_DIR + "/" + name
+		if FileAccess.file_exists(source):
+			if not _write_new_bytes(user_root + name, FileAccess.get_file_as_bytes(source)): return false
+	if not await _new_shell(): return false
+	if not _expect(_wire(shell.attempts.state(), "actual legacy Title Attempts") == legacy_attempts_wire, "candidate runtime loads exact original196 whole Attempts from literal raw Store"): return false
+	if not _archive_stage("legacy-import", legacy_attempts_wire, legacy_snapshot_wire, legacy_snapshot_wire): return false
+	shell.menu.difficulty_preference_requested.emit("standard")
+	if not await _settle(): return false
+	if not _expect(shell.get_difficulty_preference() == "standard", "opposite future preference selected for literal old Challenge Reach"): return false
+	shell.menu.continue_story_requested.emit()
+	if not await _settle(): return false
+	if not _current_exact(legacy_snapshot_wire, "candidate Continue retains original196 Reach and whole unit"): return false
+	return await _pulse_and_retry("legacy", "reach", legacy_snapshot_wire, legacy_attempts_wire)
+
+func _current_exact(expected: String, label: String) -> bool:
+	return _expect(paused and is_instance_valid(shell.active_level) and shell.menu.page_name() == "resume" and _wire(shell.capture_campaign_snapshot(), label) == expected, label)
+
+func _read_legacy() -> Dictionary:
+	var manifest: Variant = JSON.parse_string(FileAccess.get_file_as_string(LEGACY_DIR + "/manifest.json"))
+	if not _expect(manifest is Dictionary and manifest.get("raw_files") is Array and manifest.raw_files.size() == COMPANIONS.size(), "actual196 plain manifest supplies all six literal raw presence slots"): return {}
+	for index: int in range(COMPANIONS.size()):
+		var row: Dictionary = manifest.raw_files[index]
+		var source: String = LEGACY_DIR + "/" + COMPANIONS[index]
+		if not _expect(row.get("name") == COMPANIONS[index] and row.get("present") is bool and FileAccess.file_exists(source) == row.present and not DirAccess.dir_exists_absolute(ProjectSettings.globalize_path(source)), "original196 literal raw presence/type agrees with actual manifest: " + COMPANIONS[index]): return {}
+		if row.present and not _expect(FileAccess.get_sha256(source) == row.sha256, "actual196 raw companion hash agrees with original manifest: " + COMPANIONS[index]): return {}
+	var attempts_text: String = FileAccess.get_file_as_string(LEGACY_DIR + "/attempts.exact.json")
+	var snapshot_text: String = FileAccess.get_file_as_string(LEGACY_DIR + "/snapshot.exact.json")
+	var checkpoint_text: String = FileAccess.get_file_as_string(LEGACY_DIR + "/checkpoint.exact.json")
+	var parsed: Dictionary = Exact.parse(attempts_text)
+	var unit: Dictionary = Exact.parse(snapshot_text)
+	if not _expect(parsed.get("accepted", false) and parsed.get("value") is Dictionary and unit.get("accepted", false) and unit.get("value") is Dictionary, "native Exact codec reads only actual196 archived complete units"): return {}
+	if not _expect(Exact.stringify(parsed.value) == attempts_text and Exact.stringify(unit.value) == snapshot_text and checkpoint_text == snapshot_text and Exact.stringify(parsed.value.story.snapshot) == snapshot_text and Exact.stringify(parsed.value.story.checkpoint) == checkpoint_text, "literal original196 Attempts/current/checkpoint exactly join without reconstruction"): return {}
+	if not _pristine(unit.value, "challenge", "reach"): return {}
+	return {"attempts_wire": attempts_text, "snapshot_wire": snapshot_text}
+
+func _pulse_and_retry(prefix: String, cursor: String, checkpoint_wire: String, whole_wire: String) -> bool:
+	var before: Dictionary = shell.attempts.state()
+	var before_current: Dictionary = shell.capture_campaign_snapshot()
+	if not _expect(_wire(before, prefix + " pre-pulse whole Attempts") == whole_wire and _wire(before_current, prefix + " pre-pulse current") == checkpoint_wire, prefix + " begins with genuine saved current/checkpoint"): return false
+	var scheduler: Node = shell.active_level.get("_scheduler")
+	var start_clock: float = scheduler.call("get_clock")
+	shell.menu.resume_requested.emit()
+	if not _expect(not paused, prefix + " actual public Resume starts native simulation"): return false
+	for tick: int in range(4):
+		if Time.get_ticks_msec() >= deadline_ms: return _expect(false, "bounded native pulse deadline")
+		await physics_frame
+		if paused: return _expect(false, prefix + " pulse paused unexpectedly")
+	# Public Pause drains the real final tick at the existing deferred barrier.
+	shell.request_pause()
+	if not await _settle(): return false
+	var current: Dictionary = shell.capture_campaign_snapshot()
+	var current_wire: String = _wire(current, prefix + " actual paused current")
+	if current_wire.is_empty(): return false
+	var clock: float = current.level.local.scheduler.clock_s
+	if not _expect(clock > start_clock and clock - start_clock <= 0.25 and current_wire != checkpoint_wire, prefix + " a few actual native physics ticks create a distinct current"): return false
+	if not _expect(current.level.local.boss_next_action == cursor and float(current.level.local.boss_ready_s) == float(before_current.level.local.boss_ready_s) and current.shell.difficulty_at_entry == "challenge" and current.level.local.profile_id == "challenge", prefix + " saved cursor/original cooldown/profile survive native pulse and opposite future preference"): return false
+	if not _expect(current.player.world_actions.sequence == 0 and current.player.resources.hp == before_current.player.resources.hp and current.player.resources.shells == before_current.player.resources.shells and current.level.local.sequence == before_current.level.local.sequence, prefix + " pulse used no input, HP/stage/history edits or route progression"): return false
+	var after: Dictionary = shell.attempts.state()
+	if not _expect(_wire(after.story.snapshot, prefix + " saved current") == current_wire and _wire(after.story.checkpoint, prefix + " retained checkpoint") == checkpoint_wire and _protected(after) == _protected(before), prefix + " public Pause records current while retaining exact checkpoint/protected whole history"): return false
+	var current_payload: String = _wire(after, prefix + " actual changed whole Attempts")
+	if not _archive_stage(prefix + "-current", current_payload, current_wire, checkpoint_wire): return false
+	pulse_records.append({"branch": prefix, "actual_clock_before_s": start_clock, "actual_clock_after_s": clock, "no_actions": true, "cursor": cursor, "cooldown_before_s": before_current.level.local.boss_ready_s, "cooldown_after_s": current.level.local.boss_ready_s, "checkpoint_sha256": checkpoint_wire.sha256_text(), "changed_current_sha256": current_wire.sha256_text(), "future_preference": shell.get_difficulty_preference()})
+	var old_level: WeakRef = weakref(shell.active_level)
+	shell.menu.retry_requested.emit()
+	if not await _settle(): return false
+	if not _expect(old_level.get_ref() == null, prefix + " public Retry normally disposes actual changed live level"): return false
+	if not _current_exact(checkpoint_wire, prefix + " real public Retry restores earlier actual whole checkpoint"): return false
+	if not _expect(_wire(shell.attempts.state(), prefix + " retried whole Attempts") == whole_wire, prefix + " public Retry preserves exact original protected history and checkpoint"): return false
+	return _archive_stage(prefix + "-retry", whole_wire, checkpoint_wire, checkpoint_wire)
+
+func _protected(payload: Dictionary) -> String:
+	var copy: Dictionary = payload.duplicate(true)
+	copy.story.erase("snapshot")
+	return _wire(copy, "whole Attempts except its current snapshot only")
+
+func _pristine(snapshot: Dictionary, profile: String, cursor: String) -> bool:
+	if not _expect(snapshot.has_all(["level", "player", "shell", "level_id", "scene_path", "equipment_ids"]) and snapshot.level_id == LEVEL_ID and snapshot.scene_path == SCENE_PATH, "complete actual L3 entrance identity"): return false
+	var local: Dictionary = snapshot.level.local
+	if not _expect(local.size() == 19 and local.profile_id == profile and snapshot.shell.difficulty_at_entry == profile and local.boss_next_action == cursor and float(local.boss_ready_s) == 0.0, "actual closed19 entrance retains selected cursor/profile and no admitted boss cooldown"): return false
+	if not _expect(local.sequence.stage_index == 0 and local.sequence.defeated_ids.is_empty() and local.sequence.crossed_contacts.is_empty() and not snapshot.level.progress.completed and snapshot.level.progress.checkpoint_id.is_empty(), "untouched road entrance has no earned boss/prefix/contact/completion history"): return false
+	if not _expect(float(local.scheduler.clock_s) == 0.0 and local.scheduler.profile.id == profile and local.scheduler.reservations.is_empty() and float(local.scenic_clock) == 0.0 and int(local.last_action_sequence) == 0, "original actual epoch is pristine with zero clocks/leases/actions"): return false
+	for packet: Dictionary in local.mechanisms.values():
+		if not _expect(packet.status == "idle" and packet.cycle == 0 and packet.exchange.is_empty(), "all actual original tools remain unstarted"): return false
+	for packet: Dictionary in local.banks.values():
+		if not _expect(packet.status == "idle" and packet.cycle == 0 and packet.exchange.is_empty(), "all actual original smoke banks remain unstarted"): return false
+	for id: String in local.targets:
+		var actor: Dictionary = local.targets[id].actor if id == "handling_machine" else local.targets[id]
+		if not _expect(float(actor.hp) == 30.0, "original entrance target retains native initial HP: " + id): return false
+	var boss: Dictionary = local.targets.handling_machine
+	return _expect(boss.boss_phase == 1 and not boss.transition_pending and boss.tool_action == "reach" and local.rays.records.apron_scout.cycle == 0 and float(local.rays.actors.apron_scout.hp) == 30.0 and int(snapshot.player.world_actions.sequence) == 0 and snapshot.player.resources.hp == snapshot.player.resources.max_hp and snapshot.player.resources.shells == snapshot.player.resources.max_shells and not snapshot.player.resources.dead, "actual initial boss/ray/Player remain untouched")
+
+func _archive_stage(label: String, expected_payload: String, expected_snapshot: String, expected_checkpoint: String) -> bool:
+	var destination: String = output_root + "/" + label
+	if not _expect(not DirAccess.dir_exists_absolute(ProjectSettings.globalize_path(destination)), "new branch directory: " + label): return false
+	if not _expect(DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(destination)) == OK, "create branch directory: " + label): return false
+	var store: CinderSaveStore = Store.new(user_root + "campaign.json")
+	var model: CinderCampaignAttempts = Attempts.new(shell.registry)
+	store.payload_validator = Callable(model, "saved_payload_error")
+	var payload: Dictionary = store.read_payload()
+	if not _expect(not payload.is_empty() and not store.loaded_backup and _wire(payload, label + " literal Store payload") == expected_payload, "primary Store decodes to the exact whole Attempts: " + label): return false
+	var row: Dictionary = {"label": label, "user_root": user_root, "generation": store.generation, "exact_attempts": expected_payload, "exact_snapshot": _wire(payload.story.snapshot, label + " current"), "exact_checkpoint": _wire(payload.story.checkpoint, label + " checkpoint"), "raw_files": []}
+	if not _expect(row.exact_snapshot == expected_snapshot and row.exact_checkpoint == expected_checkpoint, "current/checkpoint join separate actual captures: " + label): return false
+	for name: String in COMPANIONS:
+		var source: String = user_root + name
+		var item: Dictionary = {"name": name, "original_path": source, "present": FileAccess.file_exists(source)}
+		if item.present:
+			var bytes: PackedByteArray = FileAccess.get_file_as_bytes(source)
+			if not _expect(not bytes.is_empty() and bytes.size() <= Store.MAX_FILE_BYTES, "literal companion bytes bounded: " + name): return false
+			var copied: String = destination + "/" + name
+			if not _write_new_bytes(copied, bytes): return false
+			item["path"] = copied
+			item["bytes"] = bytes.size()
+			item["sha256"] = _sha256(bytes)
+			if not _expect(FileAccess.get_file_as_bytes(source) == bytes, "source companion stable through exact byte copy: " + name): return false
+		else:
+			if not _expect(not DirAccess.dir_exists_absolute(ProjectSettings.globalize_path(source)), "absent companion is not a directory: " + name): return false
+		row.raw_files.append(item)
+	if not _write_new_bytes(destination + "/attempts.exact.json", expected_payload.to_utf8_buffer()): return false
+	if not _write_new_bytes(destination + "/snapshot.exact.json", expected_snapshot.to_utf8_buffer()): return false
+	if not _write_new_bytes(destination + "/checkpoint.exact.json", String(row.exact_checkpoint).to_utf8_buffer()): return false
+	if not _write_new_bytes(destination + "/manifest.json", JSON.stringify(row, "\t").to_utf8_buffer()): return false
+	stages.append(row)
+	return true
+
+func _wire(value: Variant, label: String) -> String:
+	var encoded: String = Exact.stringify(value)
+	if not _expect(not encoded.is_empty(), "nonempty exact wire: " + label): return ""
+	var parsed: Dictionary = Exact.parse(encoded)
+	if not _expect(parsed.get("accepted", false) and Exact.stringify(parsed.get("value")) == encoded, "typed exact round trip: " + label): return ""
+	return encoded
+
+func _write_new_bytes(path: String, bytes: PackedByteArray) -> bool:
+	if not _expect(not FileAccess.file_exists(path), "write never overwrites evidence: " + path): return false
+	var file: FileAccess = FileAccess.open(path, FileAccess.WRITE)
+	if not _expect(file != null, "open new evidence: " + path): return false
+	file.store_buffer(bytes)
+	file.flush()
+	var error: Error = file.get_error()
+	file.close()
+	return _expect(error == OK and FileAccess.get_file_as_bytes(path) == bytes, "literal evidence bytes verified: " + path)
+
+func _settle() -> bool:
+	var stable: int = 0
+	while Time.get_ticks_msec() < deadline_ms:
+		await process_frame
+		if not is_instance_valid(shell): return _expect(false, "Shell remains alive during bounded operation")
+		if not shell.campaign_error.is_empty(): return _expect(false, "Shell operation: " + shell.campaign_error)
+		if _idle(): stable += 1
+		else: stable = 0
+		if stable >= 8: return _expect(paused, "operation settles while actual simulation remains paused")
+	return _expect(false, "120s bounded targeted persistence operation deadline")
+
+func _idle() -> bool:
+	return is_instance_valid(shell) and not shell.get("_draining") and not shell.get("_drain_queued") and not shell.get("_registration_inflight") and not shell.get("_registration_pending") and shell.get("_operations").is_empty()
+
+func _release_shell() -> bool:
+	if not is_instance_valid(shell): return true
+	var limit: int = Time.get_ticks_msec() + 2000
+	while not _idle() and Time.get_ticks_msec() < limit: await process_frame
+	if not _expect(_idle(), "cleanup waits for async Shell operation to close; never frees its pending coroutine"): return false
+	var old: WeakRef = weakref(shell)
+	if not candidate.is_empty():
+		shell.call("_dispose", candidate)
+		candidate.clear()
+	if is_instance_valid(shell.active_level): shell.active_level.exit_level()
+	shell.free()
+	shell = null
+	return _expect(old.get_ref() == null, "ordinary attached-level exit releases old Shell subtree")
+
+func _archive_partial_files() -> void:
+	# Preserve whatever original companions really exist after an incomplete run.
+	# This is neither a completed branch nor a recovered/reconstructed Store.
+	if not owns_output_root or user_root.is_empty(): return
+	var destination: String = output_root + "/partial-" + user_root.trim_suffix("/").get_file()
+	if DirAccess.dir_exists_absolute(ProjectSettings.globalize_path(destination)): return
+	if DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(destination)) != OK: return
+	for name: String in COMPANIONS:
+		var source: String = user_root + name
+		var item: Dictionary = {"name": name, "original_path": source, "present": FileAccess.file_exists(source), "scope": "partial original only"}
+		if item.present:
+			var bytes: PackedByteArray = FileAccess.get_file_as_bytes(source)
+			item["bytes"] = bytes.size()
+			item["sha256"] = _sha256(bytes)
+			item["path"] = destination + "/" + name
+			item["copied"] = _write_new_bytes(item.path, bytes)
+		partial_files.append(item)
+
+func _finish(scope_complete: bool) -> void:
+	if finished: return
+	finished = true
+	if not scope_complete: _archive_partial_files()
+	var cleanup_ok: bool = await _release_shell()
+	_check_sources(source_post)
+	_expect(FileAccess.get_sha256(fixture_path) == fixture_hash and fixture_hash == expected_fixture_hash, "writer control bytes unchanged through job")
+	_expect(get_nodes_in_group("enemies").is_empty() and get_nodes_in_group("required_cues").is_empty(), "bounded cleanup leaves no native enemy/required-cue subtree")
+	var complete: bool = scope_complete and cleanup_ok and stages.size() == EXPECTED_STAGES.size() and fresh_captures.size() == 3 and pulse_records.size() == 2 and first_failure.is_empty()
+	var report: Dictionary = {"case": CASE, "complete": complete, "success": complete, "checks": assertions.size(), "failures": _failure_count(), "first_failure": first_failure, "assertions": assertions, "accepted_source_commit": ACCEPTED_COMMIT, "runtime_api": "campaign-shared-74", "source_pre": source_pre, "source_post": source_post, "fixture_path": fixture_path, "fixture_sha256": fixture_hash, "command_args": OS.get_cmdline_args(), "user_args": OS.get_cmdline_user_args(), "engine": Engine.get_version_info(), "executable_path": OS.get_executable_path(), "project_root": ProjectSettings.globalize_path("res://"), "user_base": user_base, "user_root": user_root, "elapsed_ms": Time.get_ticks_msec() - started_ms, "test_setup": setup_metadata, "branches": stages, "partial_original_files": partial_files, "fresh_snapshot_exact": actual_fresh_wire, "fresh_captures": fresh_captures, "legacy_snapshot_exact": legacy_snapshot_wire, "legacy_attempts_exact": legacy_attempts_wire, "pulse_records": pulse_records, "cleanup_complete": cleanup_ok, "assertion_errors": assertion_errors, "scope": "candidate019 real fresh profiles; Challenge Save/fresh Continue/opposite future Standard/brief public Resume/Pause/Retry; immutable original196 Reach reader. No earned route, positive boss cooldown or held-packet claim"}
+	var report_path: String = output_root + "/native.json" if owns_output_root else ""
+	var report_ok: bool = false
+	if not report_path.is_empty() and DirAccess.dir_exists_absolute(ProjectSettings.globalize_path(output_root)) and not FileAccess.file_exists(report_path):
+		var file: FileAccess = FileAccess.open(report_path, FileAccess.WRITE)
+		if file != null:
+			file.store_string(JSON.stringify(report, "\t")); file.flush()
+			report_ok = file.get_error() == OK
+			var report_text: String = JSON.stringify(report, "\t")
+			file.close()
+			report_ok = report_ok and FileAccess.get_file_as_string(report_path) == report_text
+	print("A2-L3 CANDIDATE PERSISTENCE: %d checks, %d failures; complete=%s; report=%s" % [assertions.size(), _failure_count(), str(complete and report_ok).to_lower(), report_path])
+	quit(0 if complete and report_ok else 1)
+
+func _expect(ok: bool, label: String) -> bool:
+	var row: Dictionary = {"index": assertions.size() + 1, "passed": ok, "label": label}
+	assertions.append(row)
+	if not ok:
+		assertion_errors.append(label) # Assertion diagnostics only; external runner owns raw script/resource errors.
+		if first_failure.is_empty(): first_failure = row.duplicate(true)
+		push_error(label)
+	return ok
+
+func _failure_count() -> int:
+	var count: int = 0
+	for row: Dictionary in assertions:
+		if not row.passed: count += 1
+	return count
+
+func _hash_string(value: String) -> bool:
+	if value.length() != 64: return false
+	for i: int in range(value.length()):
+		if not value.substr(i, 1) in "0123456789abcdef": return false
+	return true
+
+func _sha256(bytes: PackedByteArray) -> String:
+	var context := HashingContext.new()
+	context.start(HashingContext.HASH_SHA256)
+	context.update(bytes)
+	return context.finish().hex_encode()

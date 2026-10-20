@@ -1,0 +1,1187 @@
+{
+  "roots": [
+    "tests/acts/act2/a2_l3_difficulty_comparison.gd",
+    "scenes/acts/act2/a2_l3.tscn"
+  ],
+  "source_aliases": {
+    "tests/acts/act2/a2_l3_difficulty_comparison.gd": ".cinder/a2-l3-place-comparison-host-v3-20261020/inert/comparison.gd.txt",
+    "tests/acts/act2/fixtures/a2_l3_difficulty_focus_game.gd": ".cinder/a2-l3-place-comparison-host-v3-20261020/inert/focus_game.gd.txt",
+    "tests/acts/act2/fixtures/a2_l3_difficulty_focus_house.gd": ".cinder/a2-l3-place-comparison-host-v3-20261020/inert/focus_house.gd.txt",
+    "tests/acts/act2/fixtures/a2_l3_difficulty_focus_policy.gd": ".cinder/a2-l3-place-comparison-host-v3-20261020/inert/focus_policy.gd.txt",
+    "tests/acts/act2/fixtures/a2_l3_difficulty_comparison_pins.json": ".cinder/a2-l3-place-comparison-host-v3-20261020/inert/comparison-pins.json"
+  },
+  "resources": [
+    "assets/acts/act2/shaders/smoke_wisp.gdshader",
+    "scenes/acts/act2/a2_l3.tscn",
+    "scenes/lab_arena.tscn",
+    "scenes/player.tscn",
+    "scenes/practice_target.tscn",
+    "scripts/acts/act2/canister_tender_actor.gd",
+    "scripts/acts/act2/canister_tender_visual.gd",
+    "scripts/acts/act2/giant_foot_visual.gd",
+    "scripts/acts/act2/handling_machine_boss_actor.gd",
+    "scripts/acts/act2/handling_machine_boss_visual.gd",
+    "scripts/acts/act2/heath_kit.gd",
+    "scripts/acts/act2/horsell_common.gd",
+    "scripts/acts/act2/horsell_sequence.gd",
+    "scripts/acts/act2/ray_scout_actor.gd",
+    "scripts/acts/act2/ray_scout_exchange.gd",
+    "scripts/acts/act2/ray_scout_visual.gd",
+    "scripts/acts/act2/ruined_house.gd",
+    "scripts/acts/act2/ruined_house_bank_guard.gd",
+    "scripts/acts/act2/ruined_house_floor.gd",
+    "scripts/acts/act2/ruined_house_kit.gd",
+    "scripts/acts/act2/ruined_house_sequence.gd",
+    "scripts/acts/act2/ruined_house_smoke_rules.gd",
+    "scripts/acts/act2/ruined_house_snapshot_rules.gd",
+    "scripts/acts/act2/salvage_handler_actor.gd",
+    "scripts/acts/act2/salvage_handler_visual.gd",
+    "scripts/acts/act2/smoke_bank_visual.gd",
+    "scripts/acts/act2/weybridge.gd",
+    "scripts/acts/act2/weybridge_kit.gd",
+    "scripts/acts/act2/weybridge_scout_actor.gd",
+    "scripts/acts/act2/weybridge_sequence.gd",
+    "scripts/attack_footprint.gd",
+    "scripts/campaign/exact_json.gd",
+    "scripts/campaign/level.gd",
+    "scripts/campaign/snapshot_codec.gd",
+    "scripts/character/player_presentations.gd",
+    "scripts/combat/action_capture.gd",
+    "scripts/combat/authored_echo_cycle_journal.gd",
+    "scripts/combat/authored_echo_renderer.gd",
+    "scripts/combat/authored_echo_terminal_receipt.gd",
+    "scripts/combat/authored_enemy_sequence.gd",
+    "scripts/combat/body_sweep.gd",
+    "scripts/combat/difficulty.gd",
+    "scripts/combat/encounter_arrangement.gd",
+    "scripts/combat/lane_mechanism.gd",
+    "scripts/combat/lunge_motion.gd",
+    "scripts/combat/replay_cursor.gd",
+    "scripts/combat/replay_program.gd",
+    "scripts/combat/replay_sequence.gd",
+    "scripts/combat/replay_witness.gd",
+    "scripts/combat/smoke_bank.gd",
+    "scripts/combat/threat_geometry.gd",
+    "scripts/combat/threat_scheduler.gd",
+    "scripts/cues/cue_mesh.gd",
+    "scripts/cues/interaction_cue.gd",
+    "scripts/cues/threat_cue.gd",
+    "scripts/curling_smoke.gd",
+    "scripts/effects.gd",
+    "scripts/enemy.gd",
+    "scripts/equipment.gd",
+    "scripts/game.gd",
+    "scripts/hud.gd",
+    "scripts/lab_bench.gd",
+    "scripts/pixel_sprite.gd",
+    "scripts/player.gd",
+    "scripts/practice_target.gd",
+    "scripts/presentation/camera_framing.gd",
+    "scripts/shotgun_flare.gd",
+    "scripts/weapon_pickup.gd",
+    "tests/acts/act2/a2_l3_difficulty_comparison.gd",
+    "tests/acts/act2/fixtures/a2_l3_difficulty_focus_game.gd",
+    "tests/acts/act2/fixtures/a2_l3_difficulty_focus_house.gd",
+    "tests/acts/act2/fixtures/a2_l3_difficulty_focus_policy.gd"
+  ],
+  "edges": [
+    {
+      "from": "tests/acts/act2/a2_l3_difficulty_comparison.gd",
+      "to": "scripts/campaign/exact_json.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "tests/acts/act2/a2_l3_difficulty_comparison.gd",
+      "to": "scripts/combat/threat_geometry.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "tests/acts/act2/a2_l3_difficulty_comparison.gd",
+      "to": "scripts/combat/threat_scheduler.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "tests/acts/act2/a2_l3_difficulty_comparison.gd",
+      "to": "tests/acts/act2/fixtures/a2_l3_difficulty_focus_game.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "tests/acts/act2/a2_l3_difficulty_comparison.gd",
+      "to": "scripts/campaign/level.gd",
+      "reason": "global class CinderLevel"
+    },
+    {
+      "from": "tests/acts/act2/a2_l3_difficulty_comparison.gd",
+      "to": "scripts/player.gd",
+      "reason": "global class CinderPlayer"
+    },
+    {
+      "from": "scenes/acts/act2/a2_l3.tscn",
+      "to": "scripts/acts/act2/ruined_house.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/threat_scheduler.gd",
+      "to": "scripts/campaign/exact_json.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/threat_scheduler.gd",
+      "to": "scripts/campaign/snapshot_codec.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/threat_scheduler.gd",
+      "to": "scripts/combat/authored_echo_cycle_journal.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/threat_scheduler.gd",
+      "to": "scripts/combat/authored_echo_terminal_receipt.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/threat_scheduler.gd",
+      "to": "scripts/combat/authored_enemy_sequence.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/threat_scheduler.gd",
+      "to": "scripts/combat/body_sweep.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/threat_scheduler.gd",
+      "to": "scripts/combat/difficulty.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/threat_scheduler.gd",
+      "to": "scripts/combat/lunge_motion.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/threat_scheduler.gd",
+      "to": "scripts/combat/replay_program.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/threat_scheduler.gd",
+      "to": "scripts/combat/replay_sequence.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/threat_scheduler.gd",
+      "to": "scripts/combat/replay_witness.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/threat_scheduler.gd",
+      "to": "scripts/combat/threat_geometry.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/threat_scheduler.gd",
+      "to": "scripts/player.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/threat_scheduler.gd",
+      "to": "scripts/player.gd",
+      "reason": "global class CinderPlayer"
+    },
+    {
+      "from": "tests/acts/act2/fixtures/a2_l3_difficulty_focus_game.gd",
+      "to": "scripts/game.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "tests/acts/act2/fixtures/a2_l3_difficulty_focus_game.gd",
+      "to": "tests/acts/act2/fixtures/a2_l3_difficulty_focus_house.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "tests/acts/act2/fixtures/a2_l3_difficulty_focus_game.gd",
+      "to": "scripts/campaign/level.gd",
+      "reason": "global class CinderLevel"
+    },
+    {
+      "from": "scripts/campaign/level.gd",
+      "to": "scripts/hud.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/campaign/level.gd",
+      "to": "scripts/player.gd",
+      "reason": "global class CinderPlayer"
+    },
+    {
+      "from": "scripts/campaign/level.gd",
+      "to": "scripts/hud.gd",
+      "reason": "global class GameHUD"
+    },
+    {
+      "from": "scripts/campaign/level.gd",
+      "to": "scripts/effects.gd",
+      "reason": "global class PixelEffects"
+    },
+    {
+      "from": "scripts/player.gd",
+      "to": "scripts/campaign/snapshot_codec.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/player.gd",
+      "to": "scripts/equipment.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/player.gd",
+      "to": "scripts/pixel_sprite.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/player.gd",
+      "to": "scripts/pixel_sprite.gd",
+      "reason": "global class LabSprite"
+    },
+    {
+      "from": "scripts/acts/act2/ruined_house.gd",
+      "to": "scripts/acts/act2/canister_tender_actor.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/ruined_house.gd",
+      "to": "scripts/acts/act2/handling_machine_boss_actor.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/ruined_house.gd",
+      "to": "scripts/acts/act2/ruined_house_bank_guard.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/ruined_house.gd",
+      "to": "scripts/acts/act2/ruined_house_floor.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/ruined_house.gd",
+      "to": "scripts/acts/act2/ruined_house_kit.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/ruined_house.gd",
+      "to": "scripts/acts/act2/ruined_house_sequence.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/ruined_house.gd",
+      "to": "scripts/acts/act2/ruined_house_smoke_rules.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/ruined_house.gd",
+      "to": "scripts/acts/act2/ruined_house_snapshot_rules.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/ruined_house.gd",
+      "to": "scripts/acts/act2/smoke_bank_visual.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/ruined_house.gd",
+      "to": "scripts/acts/act2/weybridge.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/ruined_house.gd",
+      "to": "scripts/combat/smoke_bank.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/ruined_house.gd",
+      "to": "scripts/cues/cue_mesh.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/ruined_house.gd",
+      "to": "scripts/campaign/level.gd",
+      "reason": "global class CinderLevel"
+    },
+    {
+      "from": "scripts/acts/act2/ruined_house.gd",
+      "to": "scripts/player.gd",
+      "reason": "global class CinderPlayer"
+    },
+    {
+      "from": "scripts/acts/act2/ruined_house.gd",
+      "to": "scripts/cues/threat_cue.gd",
+      "reason": "global class CinderThreatCue"
+    },
+    {
+      "from": "scripts/acts/act2/ruined_house.gd",
+      "to": "scripts/combat/threat_scheduler.gd",
+      "reason": "global class CinderThreatScheduler"
+    },
+    {
+      "from": "scripts/combat/authored_echo_cycle_journal.gd",
+      "to": "scripts/campaign/snapshot_codec.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/authored_echo_cycle_journal.gd",
+      "to": "scripts/combat/authored_echo_terminal_receipt.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/authored_echo_cycle_journal.gd",
+      "to": "scripts/combat/authored_enemy_sequence.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/authored_echo_cycle_journal.gd",
+      "to": "scripts/combat/replay_program.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/authored_echo_terminal_receipt.gd",
+      "to": "scripts/campaign/exact_json.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/authored_echo_terminal_receipt.gd",
+      "to": "scripts/campaign/snapshot_codec.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/authored_echo_terminal_receipt.gd",
+      "to": "scripts/combat/authored_enemy_sequence.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/authored_echo_terminal_receipt.gd",
+      "to": "scripts/combat/replay_cursor.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/authored_echo_terminal_receipt.gd",
+      "to": "scripts/combat/replay_program.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/authored_enemy_sequence.gd",
+      "to": "scripts/campaign/exact_json.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/authored_enemy_sequence.gd",
+      "to": "scripts/campaign/snapshot_codec.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/authored_enemy_sequence.gd",
+      "to": "scripts/combat/difficulty.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/authored_enemy_sequence.gd",
+      "to": "scripts/combat/threat_geometry.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/lunge_motion.gd",
+      "to": "scripts/campaign/snapshot_codec.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/lunge_motion.gd",
+      "to": "scripts/combat/body_sweep.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/lunge_motion.gd",
+      "to": "scripts/combat/threat_geometry.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/replay_program.gd",
+      "to": "scripts/combat/authored_enemy_sequence.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/replay_program.gd",
+      "to": "scripts/combat/replay_sequence.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/replay_sequence.gd",
+      "to": "scripts/campaign/snapshot_codec.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/replay_sequence.gd",
+      "to": "scripts/combat/action_capture.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/replay_sequence.gd",
+      "to": "scripts/player.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/replay_witness.gd",
+      "to": "scripts/campaign/snapshot_codec.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/replay_witness.gd",
+      "to": "scripts/combat/authored_echo_renderer.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/replay_witness.gd",
+      "to": "scripts/combat/replay_program.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/replay_witness.gd",
+      "to": "scripts/combat/replay_sequence.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/replay_witness.gd",
+      "to": "scripts/combat/threat_geometry.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/replay_witness.gd",
+      "to": "scripts/player.gd",
+      "reason": "global class CinderPlayer"
+    },
+    {
+      "from": "scripts/game.gd",
+      "to": "scenes/lab_arena.tscn",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/game.gd",
+      "to": "scenes/player.tscn",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/game.gd",
+      "to": "scenes/practice_target.tscn",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/game.gd",
+      "to": "scripts/campaign/level.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/game.gd",
+      "to": "scripts/effects.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/game.gd",
+      "to": "scripts/enemy.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/game.gd",
+      "to": "scripts/hud.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/game.gd",
+      "to": "scripts/lab_bench.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/game.gd",
+      "to": "scripts/player.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/game.gd",
+      "to": "scripts/presentation/camera_framing.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/game.gd",
+      "to": "scripts/weapon_pickup.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/game.gd",
+      "to": "scripts/enemy.gd",
+      "reason": "global class AshEnemy"
+    },
+    {
+      "from": "scripts/game.gd",
+      "to": "scripts/campaign/level.gd",
+      "reason": "global class CinderLevel"
+    },
+    {
+      "from": "scripts/game.gd",
+      "to": "scripts/player.gd",
+      "reason": "global class CinderPlayer"
+    },
+    {
+      "from": "scripts/game.gd",
+      "to": "scripts/hud.gd",
+      "reason": "global class GameHUD"
+    },
+    {
+      "from": "scripts/game.gd",
+      "to": "scripts/lab_bench.gd",
+      "reason": "global class LabBench"
+    },
+    {
+      "from": "scripts/game.gd",
+      "to": "scripts/pixel_sprite.gd",
+      "reason": "global class LabSprite"
+    },
+    {
+      "from": "scripts/game.gd",
+      "to": "scripts/effects.gd",
+      "reason": "global class PixelEffects"
+    },
+    {
+      "from": "tests/acts/act2/fixtures/a2_l3_difficulty_focus_house.gd",
+      "to": "scripts/acts/act2/ruined_house.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "tests/acts/act2/fixtures/a2_l3_difficulty_focus_house.gd",
+      "to": "tests/acts/act2/fixtures/a2_l3_difficulty_focus_policy.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/hud.gd",
+      "to": "scripts/player.gd",
+      "reason": "global class CinderPlayer"
+    },
+    {
+      "from": "scripts/effects.gd",
+      "to": "scripts/attack_footprint.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/effects.gd",
+      "to": "scripts/curling_smoke.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/effects.gd",
+      "to": "scripts/shotgun_flare.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/pixel_sprite.gd",
+      "to": "scripts/character/player_presentations.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/pixel_sprite.gd",
+      "to": "scripts/equipment.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/canister_tender_actor.gd",
+      "to": "scripts/acts/act2/canister_tender_visual.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/canister_tender_actor.gd",
+      "to": "scripts/acts/act2/weybridge_scout_actor.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/handling_machine_boss_actor.gd",
+      "to": "scripts/acts/act2/handling_machine_boss_visual.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/handling_machine_boss_actor.gd",
+      "to": "scripts/acts/act2/weybridge_scout_actor.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/ruined_house_kit.gd",
+      "to": "scripts/acts/act2/heath_kit.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/ruined_house_kit.gd",
+      "to": "scripts/acts/act2/weybridge_kit.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/ruined_house_smoke_rules.gd",
+      "to": "scripts/acts/act2/ruined_house_sequence.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/ruined_house_smoke_rules.gd",
+      "to": "scripts/acts/act2/ruined_house_snapshot_rules.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/ruined_house_smoke_rules.gd",
+      "to": "scripts/campaign/level.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/ruined_house_smoke_rules.gd",
+      "to": "scripts/campaign/snapshot_codec.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/ruined_house_smoke_rules.gd",
+      "to": "scripts/combat/smoke_bank.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/ruined_house_smoke_rules.gd",
+      "to": "scripts/campaign/level.gd",
+      "reason": "global class CinderLevel"
+    },
+    {
+      "from": "scripts/acts/act2/ruined_house_snapshot_rules.gd",
+      "to": "scripts/acts/act2/ray_scout_actor.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/ruined_house_snapshot_rules.gd",
+      "to": "scripts/acts/act2/ruined_house_sequence.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/ruined_house_snapshot_rules.gd",
+      "to": "scripts/campaign/snapshot_codec.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/ruined_house_snapshot_rules.gd",
+      "to": "scripts/combat/lane_mechanism.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/smoke_bank_visual.gd",
+      "to": "assets/acts/act2/shaders/smoke_wisp.gdshader",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/smoke_bank_visual.gd",
+      "to": "scripts/acts/act2/heath_kit.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/smoke_bank_visual.gd",
+      "to": "scripts/attack_footprint.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/weybridge.gd",
+      "to": "scripts/acts/act2/giant_foot_visual.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/weybridge.gd",
+      "to": "scripts/acts/act2/horsell_common.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/weybridge.gd",
+      "to": "scripts/acts/act2/salvage_handler_actor.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/weybridge.gd",
+      "to": "scripts/acts/act2/weybridge_kit.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/weybridge.gd",
+      "to": "scripts/acts/act2/weybridge_scout_actor.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/weybridge.gd",
+      "to": "scripts/acts/act2/weybridge_sequence.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/weybridge.gd",
+      "to": "scripts/campaign/exact_json.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/weybridge.gd",
+      "to": "scripts/combat/difficulty.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/weybridge.gd",
+      "to": "scripts/combat/encounter_arrangement.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/weybridge.gd",
+      "to": "scripts/combat/lane_mechanism.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/weybridge.gd",
+      "to": "scripts/equipment.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/weybridge.gd",
+      "to": "scripts/player.gd",
+      "reason": "global class CinderPlayer"
+    },
+    {
+      "from": "scripts/acts/act2/weybridge.gd",
+      "to": "scripts/combat/threat_scheduler.gd",
+      "reason": "global class CinderThreatScheduler"
+    },
+    {
+      "from": "scripts/combat/smoke_bank.gd",
+      "to": "scripts/campaign/snapshot_codec.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/smoke_bank.gd",
+      "to": "scripts/combat/body_sweep.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/smoke_bank.gd",
+      "to": "scripts/combat/difficulty.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/smoke_bank.gd",
+      "to": "scripts/combat/threat_geometry.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/smoke_bank.gd",
+      "to": "scripts/cues/cue_mesh.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/smoke_bank.gd",
+      "to": "scripts/cues/threat_cue.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/smoke_bank.gd",
+      "to": "scripts/player.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/smoke_bank.gd",
+      "to": "scripts/player.gd",
+      "reason": "global class CinderPlayer"
+    },
+    {
+      "from": "scripts/combat/smoke_bank.gd",
+      "to": "scripts/cues/threat_cue.gd",
+      "reason": "global class CinderThreatCue"
+    },
+    {
+      "from": "scripts/combat/smoke_bank.gd",
+      "to": "scripts/combat/threat_scheduler.gd",
+      "reason": "global class CinderThreatScheduler"
+    },
+    {
+      "from": "scripts/cues/cue_mesh.gd",
+      "to": "scripts/attack_footprint.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/cues/cue_mesh.gd",
+      "to": "scripts/combat/threat_geometry.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/cues/cue_mesh.gd",
+      "to": "scripts/combat/threat_geometry.gd",
+      "reason": "global class CinderThreatGeometry"
+    },
+    {
+      "from": "scripts/cues/threat_cue.gd",
+      "to": "scripts/attack_footprint.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/cues/threat_cue.gd",
+      "to": "scripts/campaign/exact_json.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/cues/threat_cue.gd",
+      "to": "scripts/campaign/snapshot_codec.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/cues/threat_cue.gd",
+      "to": "scripts/combat/authored_enemy_sequence.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/cues/threat_cue.gd",
+      "to": "scripts/combat/threat_geometry.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/cues/threat_cue.gd",
+      "to": "scripts/cues/cue_mesh.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/cues/threat_cue.gd",
+      "to": "scripts/player.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/replay_cursor.gd",
+      "to": "scripts/campaign/exact_json.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/replay_cursor.gd",
+      "to": "scripts/campaign/snapshot_codec.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/replay_cursor.gd",
+      "to": "scripts/combat/action_capture.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/replay_cursor.gd",
+      "to": "scripts/combat/authored_enemy_sequence.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/replay_cursor.gd",
+      "to": "scripts/combat/replay_program.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/replay_cursor.gd",
+      "to": "scripts/combat/replay_sequence.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/action_capture.gd",
+      "to": "scripts/campaign/snapshot_codec.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/action_capture.gd",
+      "to": "scripts/player.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/authored_echo_renderer.gd",
+      "to": "scripts/campaign/exact_json.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/authored_echo_renderer.gd",
+      "to": "scripts/campaign/snapshot_codec.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scenes/player.tscn",
+      "to": "scripts/pixel_sprite.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scenes/player.tscn",
+      "to": "scripts/player.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scenes/player.tscn",
+      "to": "scripts/player.gd",
+      "reason": "global class CinderPlayer"
+    },
+    {
+      "from": "scenes/practice_target.tscn",
+      "to": "scripts/practice_target.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scenes/practice_target.tscn",
+      "to": "scripts/practice_target.gd",
+      "reason": "global class PracticeTarget"
+    },
+    {
+      "from": "scripts/enemy.gd",
+      "to": "scripts/attack_footprint.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/enemy.gd",
+      "to": "scripts/campaign/snapshot_codec.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/enemy.gd",
+      "to": "scripts/pixel_sprite.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/enemy.gd",
+      "to": "scripts/pixel_sprite.gd",
+      "reason": "global class LabSprite"
+    },
+    {
+      "from": "scripts/lab_bench.gd",
+      "to": "scripts/player.gd",
+      "reason": "global class CinderPlayer"
+    },
+    {
+      "from": "scripts/weapon_pickup.gd",
+      "to": "scripts/player.gd",
+      "reason": "global class CinderPlayer"
+    },
+    {
+      "from": "scripts/acts/act2/canister_tender_visual.gd",
+      "to": "scripts/acts/act2/ray_scout_visual.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/weybridge_scout_actor.gd",
+      "to": "scripts/acts/act2/ray_scout_actor.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/handling_machine_boss_visual.gd",
+      "to": "scripts/acts/act2/salvage_handler_visual.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/weybridge_kit.gd",
+      "to": "scripts/acts/act2/heath_kit.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/ray_scout_actor.gd",
+      "to": "scripts/acts/act2/ray_scout_visual.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/ray_scout_actor.gd",
+      "to": "scripts/campaign/snapshot_codec.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/ray_scout_actor.gd",
+      "to": "scripts/player.gd",
+      "reason": "global class CinderPlayer"
+    },
+    {
+      "from": "scripts/acts/act2/ray_scout_actor.gd",
+      "to": "scripts/effects.gd",
+      "reason": "global class PixelEffects"
+    },
+    {
+      "from": "scripts/combat/lane_mechanism.gd",
+      "to": "scripts/campaign/snapshot_codec.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/lane_mechanism.gd",
+      "to": "scripts/combat/difficulty.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/lane_mechanism.gd",
+      "to": "scripts/combat/threat_geometry.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/lane_mechanism.gd",
+      "to": "scripts/cues/threat_cue.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/lane_mechanism.gd",
+      "to": "scripts/player.gd",
+      "reason": "global class CinderPlayer"
+    },
+    {
+      "from": "scripts/combat/lane_mechanism.gd",
+      "to": "scripts/cues/threat_cue.gd",
+      "reason": "global class CinderThreatCue"
+    },
+    {
+      "from": "scripts/combat/lane_mechanism.gd",
+      "to": "scripts/combat/threat_scheduler.gd",
+      "reason": "global class CinderThreatScheduler"
+    },
+    {
+      "from": "scripts/acts/act2/giant_foot_visual.gd",
+      "to": "scripts/acts/act2/ray_scout_visual.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/horsell_common.gd",
+      "to": "scripts/acts/act2/heath_kit.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/horsell_common.gd",
+      "to": "scripts/acts/act2/horsell_sequence.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/horsell_common.gd",
+      "to": "scripts/acts/act2/ray_scout_actor.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/horsell_common.gd",
+      "to": "scripts/acts/act2/ray_scout_exchange.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/horsell_common.gd",
+      "to": "scripts/acts/act2/ray_scout_visual.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/horsell_common.gd",
+      "to": "scripts/campaign/exact_json.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/horsell_common.gd",
+      "to": "scripts/campaign/snapshot_codec.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/horsell_common.gd",
+      "to": "scripts/combat/difficulty.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/horsell_common.gd",
+      "to": "scripts/combat/encounter_arrangement.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/horsell_common.gd",
+      "to": "scripts/combat/threat_geometry.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/horsell_common.gd",
+      "to": "scripts/combat/threat_scheduler.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/horsell_common.gd",
+      "to": "scripts/cues/interaction_cue.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/horsell_common.gd",
+      "to": "scripts/game.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/horsell_common.gd",
+      "to": "scripts/campaign/level.gd",
+      "reason": "global class CinderLevel"
+    },
+    {
+      "from": "scripts/acts/act2/salvage_handler_actor.gd",
+      "to": "scripts/acts/act2/salvage_handler_visual.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/salvage_handler_actor.gd",
+      "to": "scripts/acts/act2/weybridge_scout_actor.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/combat/encounter_arrangement.gd",
+      "to": "scripts/campaign/snapshot_codec.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/salvage_handler_visual.gd",
+      "to": "scripts/acts/act2/ray_scout_visual.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/ray_scout_exchange.gd",
+      "to": "scripts/campaign/snapshot_codec.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/ray_scout_exchange.gd",
+      "to": "scripts/combat/difficulty.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/ray_scout_exchange.gd",
+      "to": "scripts/combat/threat_geometry.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/ray_scout_exchange.gd",
+      "to": "scripts/cues/interaction_cue.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/ray_scout_exchange.gd",
+      "to": "scripts/cues/threat_cue.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    },
+    {
+      "from": "scripts/acts/act2/ray_scout_exchange.gd",
+      "to": "scripts/cues/interaction_cue.gd",
+      "reason": "global class CinderInteractionCue"
+    },
+    {
+      "from": "scripts/acts/act2/ray_scout_exchange.gd",
+      "to": "scripts/player.gd",
+      "reason": "global class CinderPlayer"
+    },
+    {
+      "from": "scripts/acts/act2/ray_scout_exchange.gd",
+      "to": "scripts/cues/threat_cue.gd",
+      "reason": "global class CinderThreatCue"
+    },
+    {
+      "from": "scripts/acts/act2/ray_scout_exchange.gd",
+      "to": "scripts/combat/threat_scheduler.gd",
+      "reason": "global class CinderThreatScheduler"
+    },
+    {
+      "from": "scripts/acts/act2/ray_scout_exchange.gd",
+      "to": "scripts/effects.gd",
+      "reason": "global class PixelEffects"
+    },
+    {
+      "from": "scripts/cues/interaction_cue.gd",
+      "to": "scripts/cues/cue_mesh.gd",
+      "reason": "literal actual preload/extends/scene resource"
+    }
+  ],
+  "unresolved": [],
+  "method": "Exact future4 GD text aliases plus actual target scene; recursive actual preload/extends/global-class references.33 hash-only canonical controls pinned separately; no claim their unrelated bodies execute.",
+  "limits": "Bounded targeted source/cache/UID cohort, not a global import or UID census. No Store, Save, earned prefix or portrait workload in this declared component."
+}

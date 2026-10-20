@@ -1,0 +1,24 @@
+extends "res://scripts/acts/act2/ruined_house.gd"
+## INERT TEST TEXT. Proposed promoted helper path below must be Root-reviewed.
+const TestFocusPolicy = preload("res://tests/acts/act2/fixtures/a2_l3_difficulty_focus_policy.gd")
+func _ready() -> void:
+	super._ready()
+	assert(not _entered and not is_instance_valid(hero) and not is_instance_valid(_scheduler))
+	# New TEST policy before enter constructs ANY native recipient. Do not edit
+	# production HouseSequence, invent its earned prefix, or save this component.
+	_crossing = TestFocusPolicy.new()
+func spawn_position() -> Vector3:
+	# Called exactly once by inherited Game reset during fresh Player construction.
+	# Use actual original built floor top; canonical Player capsule feet offset is
+	# .73 - 1.45/2 = .005, pinned and checked against the actual Player at birth.
+	for region: Dictionary in _floors:
+		if region.id == "boss_opening":
+			var collision: CollisionShape3D = region.collision
+			assert(collision.shape is BoxShape3D and collision.global_basis == Basis.IDENTITY)
+			var top: float = collision.global_position.y + (collision.shape as BoxShape3D).size.y * 0.5
+			return Vector3(0.0, top - (Scheduler.CAPSULE_CENTER_Y - Scheduler.CAPSULE_HEIGHT * 0.5), -33.4)
+	assert(false, "Original boss_opening support missing; never guess another spawn")
+	return Vector3.INF
+# No _on_enter_level / cursor / HP / native guard override. Original control
+# retains original Reach. Future Place must come only from Root's actual fresh
+# selector, on its separate pinned build, and is asserted by comparison.gd.

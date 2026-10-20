@@ -1,0 +1,85 @@
+"""Python-only synthetic report/control tests. No engine/native credit."""
+from pathlib import Path
+import json
+import tempfile
+import native_inspect as check
+
+HERE = Path(__file__).resolve().parent
+checks = []
+
+
+def test(label, predicate):
+    assert predicate, label
+    checks.append({"label": label, "passed": True})
+
+
+def fixture(root):
+    out = root / ".cinder/mock-phase"; target = out / "writer-output"; target.mkdir(parents=True)
+    pid = 424242; user = "user://a2-l3-original-entrance-424242-12345/"
+    userbase = root / "MOCK-APP-USERDATA"; userdir = userbase / user.removeprefix("user://").rstrip("/"); userdir.mkdir(parents=True)
+    exact = json.dumps({"api_revision": "exact-json-1", "schema_version": 1, "value": ["dictionary", []]}, separators=(",", ":"))
+    spec = {"native_original_sources": {"res://MOCK-SOURCE": "a" * 64}, "fixture_sha256": "b" * 64,
+            "fixture": ".cinder/MOCK-WRITER.gd", "accepted_source_commit": "MOCK-NOT-GIT", "userdata_base": str(userbase),
+            "engine_expected": {"path": "/MOCK-NOT-EXECUTED/Godot"}}
+    stages = []
+    names = ["campaign.json", "campaign.json.bak", "settings.json", "settings.json.bak", "preferences.json", "preferences.json.bak"]
+    def envelope(generation):
+        return json.dumps({"format_version": 2, "generation": generation, "payload_json": exact, "sha256": check.digest(exact.encode())}).encode()
+    for label, generation in [("initial-store", 1), ("public-save", 2)]:
+        directory = target / label; directory.mkdir()
+        stage = {"label": label, "generation": generation, "exact_attempts": exact,
+                 "exact_snapshot": exact, "exact_checkpoint": exact, "raw_files": []}
+        for name in ["attempts.exact.json", "snapshot.exact.json", "checkpoint.exact.json"]:
+            (directory / name).write_text(exact)
+        for name in names:
+            present = name in ["campaign.json", "preferences.json", "settings.json"] or (generation == 2 and name == "campaign.json.bak")
+            row = {"name": name, "original_path": user + name, "present": present}
+            if present:
+                data = b'{"plain_settings":true}' if name == "settings.json" else envelope(1 if name.endswith(".bak") or name == "preferences.json" else generation)
+                (directory / name).write_bytes(data); (userdir / name).write_bytes(data)
+                row.update({"path": "res://" + str((directory / name).relative_to(root)), "bytes": len(data), "sha256": check.digest(data)})
+            stage["raw_files"].append(row)
+        (directory / "manifest.json").write_text(json.dumps(stage)); stages.append(stage)
+    packet = {"case": "original-challenge-entrance", "assertions": [{"index": 1, "passed": True, "label": "MOCK-ONLY"}],
+              "checks": 1, "failures": 0, "first_failure": {}, "complete": True, "success": True, "cleanup_complete": True,
+              "source_pre": spec["native_original_sources"], "source_post": spec["native_original_sources"],
+              "fixture_sha256": spec["fixture_sha256"], "fixture_path": "res://" + spec["fixture"],
+              "accepted_source_commit": "MOCK-NOT-GIT", "runtime_api": "campaign-shared-74", "project_root": str(root) + "/",
+              "executable_path": spec["engine_expected"]["path"], "user_root": user, "fresh_snapshot_exact": exact, "branches": stages,
+              "user_args": ["--case=original-challenge-entrance", "--fixture-sha256=" + spec["fixture_sha256"],
+                            "--output-root=res://" + str(target.relative_to(root))]}
+    path = target / "native.json"; path.write_text(json.dumps(packet))
+    raw = "A2-L3 ORIGINAL ENTRANCE: 1 checks, 0 failures; complete=true; report=res://" + str(path.relative_to(root)) + "\n"
+    return out, spec, packet, path, raw, pid
+
+
+def main():
+    with tempfile.TemporaryDirectory(prefix="cinder-l3-host-tests-") as directory:
+        root = Path(directory).resolve()
+        out, spec, packet, path, raw, pid = fixture(root)
+        run = lambda text=raw, api=0, returned=0: check.observe(out, root, spec, text, api, pid, returned)
+        test("Synthetic complete report joins archive/raw/plain-settings/ownedPID/strict footer, not a native pass", run()["functional_pass"])
+        for label, mutate in [
+            ("Boolean check count cannot masquerade as int", lambda x: x.update(checks=True)),
+            ("Boolean row index cannot masquerade as int", lambda x: x["assertions"][0].update(index=True)),
+            ("Missing normal cleanup never passes", lambda x: x.update(cleanup_complete=False)),
+            ("Changed original source map refuses", lambda x: x["source_post"].update({"res://MOCK-SOURCE": "c" * 64})),
+        ]:
+            modified = json.loads(json.dumps(packet)); mutate(modified); path.write_text(json.dumps(modified))
+            test(label, not run()["functional_pass"])
+        path.write_text(json.dumps(packet)[:-1] + ',"complete":true}')
+        test("Duplicate native JSON key refuses", not run()["functional_pass"])
+        path.write_text(json.dumps(packet)); test("Mismatched footer refuses", not run(raw.replace("1 checks", "2 checks"))["functional_pass"])
+        result = run(api=0, returned=2)
+        test("Native complete true/API0 with actual owned child2 remains failed and distinctly observed", not result["functional_pass"] and result["joins"]["complete"] is True and result["joins"]["owned_child_return"] == 2)
+        test("API failure with actual owned child0 remains failed", not run(api=1, returned=0)["functional_pass"])
+        primary = out / "writer-output/public-save/campaign.json"; original = primary.read_bytes(); primary.write_bytes(original + b" ")
+        test("Literal raw bytes/hash corruption refuses", not run()["functional_pass"]); primary.write_bytes(original)
+        test("Original literal native report retained unchanged by inspection", path.read_bytes() == json.dumps(packet).encode())
+    report = {"status": "PYTHON_ONLY_SYNTHETIC_CONTROLS_PASSED", "checks": len(checks), "failures": 0, "rows": checks,
+              "limits": "Mock JSON/files only under temporary owned directory. No dev/Godot/engine/import/live fixture/Store/Git/worker/native producer or actual report result. Not a native pass or syntax proof."}
+    (HERE / "HOST_TESTS.json").write_text(json.dumps(report, indent=2) + "\n")
+    print(json.dumps({"host_only_checks": len(checks), "failures": 0, "native_credit": False}))
+
+
+if __name__ == "__main__": main()

@@ -1,0 +1,190 @@
+{
+  "status": "CLOSED_CLEAN550_0_ACTUAL_PERSISTENCE_AND_LEGACY_READER_CUSTODY_CLEAR",
+  "phase": ".cinder/a2-l3-candidate-persistence-prepare-20261020/run-native-20261020T032807.144804Z-5e5ab1ba",
+  "actual": {
+    "checks": 550,
+    "failures": 0,
+    "complete": true,
+    "success": true,
+    "cleanup_complete": true,
+    "API_return": 0,
+    "same_actual_owned_PID": 27695,
+    "same_owned_Popen_return": 0,
+    "host_return": 0,
+    "queue_acquired_and_released": true,
+    "raw_engine_diagnostics": [],
+    "native_report_sha256": "609d804c5d224ec03e09f54f1c99c567235e0a21ef69ca0c453527eace52c230",
+    "raw_sha256": "061702c4e0bcad0e2ff0512f5d4a7e18c5a515aaebe157814fe02fe086016310",
+    "elapsed_ms": 14711
+  },
+  "custody": {
+    "fixed_and_self_named_slots": 182,
+    "source_maps": [
+      "preflight-observed",
+      "sources-before-queue",
+      "sources-at-lock",
+      "sources-after-child",
+      "sources-at-runner-close"
+    ],
+    "all_maps_exact_equal": true,
+    "all_current_named_sources_exact_at_review": true,
+    "source_CAS_joins": 890,
+    "index_files": 284,
+    "index_all_hash_size_mode_exact": true,
+    "index_sha256": "f0a2d3274ace1fa1899ce39eea1598a98cd7c3ac922cd153b66c6504807e5a07",
+    "native_retained_literals": 66,
+    "raw_stage_companion_joins": 26,
+    "current_userdata_final_generations_exact": true,
+    "fixture_and_frozen_host_reader_exact": true,
+    "fixture_UID_absent": true,
+    "engine_c7_actual_records_and_current_binary_exact": true
+  },
+  "fresh_profiles": [
+    {
+      "bytes": 41635,
+      "cursor": "reach",
+      "path": "res://.cinder/a2-l3-candidate-persistence-prepare-20261020/run-native-20261020T032807.144804Z-5e5ab1ba/writer-output/fresh-standard.exact.json",
+      "profile": "standard",
+      "sha256": "e8877ad37b7515fc56db4cb740ca1e1d2ac36dc899574a41b050d3ba4025cc86"
+    },
+    {
+      "bytes": 41639,
+      "cursor": "reach",
+      "path": "res://.cinder/a2-l3-candidate-persistence-prepare-20261020/run-native-20261020T032807.144804Z-5e5ab1ba/writer-output/fresh-assisted.exact.json",
+      "profile": "assisted",
+      "sha256": "a329c2b27e54569b0818d1af316aecc8852b27e6c0d426662b06d3ec5923b8d7"
+    },
+    {
+      "bytes": 41650,
+      "cursor": "place",
+      "path": "res://.cinder/a2-l3-candidate-persistence-prepare-20261020/run-native-20261020T032807.144804Z-5e5ab1ba/writer-output/fresh-challenge.exact.json",
+      "profile": "challenge",
+      "sha256": "4507c42a8feb131d9514fc5f3c10e84ad82608ff872885eca5cf23684d9ab7d3"
+    }
+  ],
+  "stages": [
+    {
+      "label": "fresh-initial",
+      "generation": 1,
+      "current_sha256": "4507c42a8feb131d9514fc5f3c10e84ad82608ff872885eca5cf23684d9ab7d3",
+      "checkpoint_sha256": "4507c42a8feb131d9514fc5f3c10e84ad82608ff872885eca5cf23684d9ab7d3",
+      "attempts_sha256": "fcd3fdbd7b98979e17b0998da5016f57c9411f399395406967a18aa97a42b8c7",
+      "current_equals_checkpoint": true
+    },
+    {
+      "label": "fresh-save",
+      "generation": 2,
+      "current_sha256": "4507c42a8feb131d9514fc5f3c10e84ad82608ff872885eca5cf23684d9ab7d3",
+      "checkpoint_sha256": "4507c42a8feb131d9514fc5f3c10e84ad82608ff872885eca5cf23684d9ab7d3",
+      "attempts_sha256": "fcd3fdbd7b98979e17b0998da5016f57c9411f399395406967a18aa97a42b8c7",
+      "current_equals_checkpoint": true
+    },
+    {
+      "label": "fresh-current",
+      "generation": 3,
+      "current_sha256": "e59d2a8cdf64550e16b55a8846403f494814f533b8c2181f9bd6b91b4820254d",
+      "checkpoint_sha256": "4507c42a8feb131d9514fc5f3c10e84ad82608ff872885eca5cf23684d9ab7d3",
+      "attempts_sha256": "855c2687c425efa307ac0a357d881fc85288121a8a328f25eb283b768a72699a",
+      "current_equals_checkpoint": false
+    },
+    {
+      "label": "fresh-retry",
+      "generation": 4,
+      "current_sha256": "4507c42a8feb131d9514fc5f3c10e84ad82608ff872885eca5cf23684d9ab7d3",
+      "checkpoint_sha256": "4507c42a8feb131d9514fc5f3c10e84ad82608ff872885eca5cf23684d9ab7d3",
+      "attempts_sha256": "fcd3fdbd7b98979e17b0998da5016f57c9411f399395406967a18aa97a42b8c7",
+      "current_equals_checkpoint": true
+    },
+    {
+      "label": "legacy-import",
+      "generation": 2,
+      "current_sha256": "6165a8a125b57e45a15e3c17af704093efe7fd4f96646973f3af489ac8183779",
+      "checkpoint_sha256": "6165a8a125b57e45a15e3c17af704093efe7fd4f96646973f3af489ac8183779",
+      "attempts_sha256": "7c6e4221d553efbe3638f163eeea6e6c31720387c28a2abb556eb10bcbd3b3ba",
+      "current_equals_checkpoint": true
+    },
+    {
+      "label": "legacy-current",
+      "generation": 3,
+      "current_sha256": "381efbaa4bc2bd4f3050d221c41533a99168f173e1ef902897ca26a6379b317b",
+      "checkpoint_sha256": "6165a8a125b57e45a15e3c17af704093efe7fd4f96646973f3af489ac8183779",
+      "attempts_sha256": "618a0c1c43cf595cdaf9c3e749311fc401a4cea0a853af628c2cae51a6f9ff5e",
+      "current_equals_checkpoint": false
+    },
+    {
+      "label": "legacy-retry",
+      "generation": 4,
+      "current_sha256": "6165a8a125b57e45a15e3c17af704093efe7fd4f96646973f3af489ac8183779",
+      "checkpoint_sha256": "6165a8a125b57e45a15e3c17af704093efe7fd4f96646973f3af489ac8183779",
+      "attempts_sha256": "7c6e4221d553efbe3638f163eeea6e6c31720387c28a2abb556eb10bcbd3b3ba",
+      "current_equals_checkpoint": true
+    }
+  ],
+  "actual_pulses": [
+    {
+      "actual_clock_after_s": 0.0666666666666667,
+      "actual_clock_before_s": 0.0,
+      "branch": "fresh",
+      "changed_current_sha256": "e59d2a8cdf64550e16b55a8846403f494814f533b8c2181f9bd6b91b4820254d",
+      "checkpoint_sha256": "4507c42a8feb131d9514fc5f3c10e84ad82608ff872885eca5cf23684d9ab7d3",
+      "cooldown_after_s": 0.0,
+      "cooldown_before_s": 0.0,
+      "cursor": "place",
+      "future_preference": "standard",
+      "no_actions": true
+    },
+    {
+      "actual_clock_after_s": 0.0666666666666667,
+      "actual_clock_before_s": 0.0,
+      "branch": "legacy",
+      "changed_current_sha256": "381efbaa4bc2bd4f3050d221c41533a99168f173e1ef902897ca26a6379b317b",
+      "checkpoint_sha256": "6165a8a125b57e45a15e3c17af704093efe7fd4f96646973f3af489ac8183779",
+      "cooldown_after_s": 0.0,
+      "cooldown_before_s": 0.0,
+      "cursor": "reach",
+      "future_preference": "standard",
+      "no_actions": true
+    }
+  ],
+  "native_protected_history_proof_rows": [
+    {
+      "index": 233,
+      "label": "fresh public Pause records current while retaining exact checkpoint/protected whole history",
+      "passed": true
+    },
+    {
+      "index": 287,
+      "label": "fresh public Retry preserves exact original protected history and checkpoint",
+      "passed": true
+    },
+    {
+      "index": 447,
+      "label": "legacy public Pause records current while retaining exact checkpoint/protected whole history",
+      "passed": true
+    },
+    {
+      "index": 501,
+      "label": "legacy public Retry preserves exact original protected history and checkpoint",
+      "passed": true
+    }
+  ],
+  "legacy_source": "Actual original196 public-save gen2/bak1 raw companions copied literally; actual typed Attempts/current/checkpoint remain opaque to Python and join original196 files exactly. Native Exact codec validates whole units and original Reach. No old producer or reconstruction.",
+  "scope_proven": [
+    "actual fresh Standard and Assisted retain Reach; actual fresh Challenge begins Place",
+    "genuine Challenge Save advances generation1\u21922 while retaining exact whole Attempts/current/checkpoint",
+    "distinct fresh Shell/opposite future Standard Continue preserves saved Challenge Place whole unit",
+    "four genuine physics ticks (~.0667s) via public Resume/Pause produce distinct current, unchanged actual checkpoint and protected whole history",
+    "genuine public Retry discards changed live level and returns exact earlier actual Place checkpoint and whole Attempts generation4",
+    "original196 Challenge Reach whole unit loads under candidate019 and future Standard, then genuine brief Resume/Pause/Retry retains original Reach checkpoint and whole history",
+    "normal disposal/cleanup, immutable original archive, source/control/UID/cache custody and raw Store generations/current+checkpoint are verified"
+  ],
+  "limits": [
+    "Only disclosed outer TEST predecessor metadata wraps genuine candidate captured local/Player state; no earned route/completion/equipment grant claim",
+    "Cooldown scope is actual entrance boss_ready_s0 preserved exactly. Positive admitted boss deadlines and old held-packet persistence are not produced or claimed",
+    "No full route, boss kill, all-kit balance, campaign playthrough or phase2 persistence proof",
+    "No new portrait claim from this headless job; separate actual portrait16/0 remains its own scope",
+    "Original196 is reused immutably, not rerun. Original failed91/1 and117/1 remain separate historical failed cohorts",
+    "Acceptance decision remains Root responsibility; original24 level acceptances are unchanged"
+  ],
+  "operations": "Read/hash strict plain JSON/opaque literal joins for this one closed run, seven stages, two actual pulses, named source maps/index/CAS and final isolated userdata; new private review only. No Godot run, parser/import, source edits, Git, worker or process/lock operation."
+}
