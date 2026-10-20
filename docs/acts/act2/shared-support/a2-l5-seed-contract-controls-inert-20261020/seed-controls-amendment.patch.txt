@@ -1,0 +1,66 @@
+--- preserved940/a2_l5_fixed_response_comparison_store_custody.gd.txt
++++ additive/a2_l5_fixed_response_seed_controls.gd.txt
+@@ -150,0 +151,3 @@
++var host_control_directory: Dictionary = {}
++var host_control_cleanup: Dictionary = {}
++var host_control_comparison: Dictionary = {}
+@@ -212 +215,3 @@
+-	return _write_exact("source-gates.native.json", {"expected": SOURCE_PINS, "actual": source_before})
++	var retained: bool = _write_exact("source-gates.native.json", {"expected": SOURCE_PINS, "actual": source_before})
++	if not _write_host_control(): return false
++	return retained
+@@ -248 +253,18 @@
+-	if not _expect(Geometry.planar(hero.global_position - STATION).length() <= Scheduler.EPSILON and _stable() and bait.last_dash is Dictionary and int(bait.last_dash.sequence) == 3 and bait.boundary == "sentry-entry", "single fixed reused production-offset station and genuine third completed-dash bait; no adjustment"): return false
++	var records: Array[Dictionary] = hero.get_world_action_records()
++	var third: Dictionary = records.back() if not records.is_empty() else {}
++	var bait_dash: Dictionary = bait.last_dash if bait.get("last_dash") is Dictionary else {}
++	var third_completed: bool = records.size() == 3 and third.get("kind") == "dash" and int(third.get("sequence", -1)) == 3 and third.get("landing") is Vector3
++	var bait_sequence: bool = not bait_dash.is_empty() and int(bait_dash.get("sequence", -1)) == 3
++	var clauses: Dictionary = {
++		"exactly_three_completed_public_controller_dashes_seq3": third_completed,
++		"native_stable_grounded_no_action": _stable(),
++		"actual_third_receipt_planar_landing_with_native_EPS": third_completed and Geometry.planar(hero.global_position - third.landing).length() <= Scheduler.EPSILON,
++		"native_bait_completed_sequence3": bait_sequence,
++		"native_bait_boundary_sentry_entry": bait.get("boundary") == "sentry-entry",
++		"original_production_APRON_HERO_BOUNDS": Host.APRON_HERO_BOUNDS.has_point(Geometry.planar(hero.global_position)),
++	}
++	# Record EVERY actual clause before the first refusal. Historical pixels
++	# document a point; the original contract is apron-after-the-three-swipes.
++	if not _write_exact(arm + "-seed-contract.native.json", {"clauses": clauses, "actual_hero_position": hero.global_position, "actual_third_record": third, "actual_bait": bait, "native_epsilon": Scheduler.EPSILON, "original_apron_bounds": Host.APRON_HERO_BOUNDS, "historical_station_only": STATION, "historical_delta_only": hero.global_position - STATION, "historical_planar_delta_only": Geometry.planar(hero.global_position - STATION).length(), "scope": "same authored spawn and exact three public dash directions; no historic-coordinate equality, new tolerance, reposition, extra action or pose search"}): return false
++	for clause: String in clauses:
++		if not _expect(clauses[clause], "fixed three-dash apron setup clause: " + clause): return false
+@@ -530 +552,3 @@
+-	if not _write_exact("component-store-directory.native.json", {"path": store_output, "absolute_path": ProjectSettings.globalize_path(store_output), "created_by_this_invocation": true, "initial_entries": initial_entries}): return false
++	host_control_directory = {"path": store_output, "absolute_path": ProjectSettings.globalize_path(store_output), "created_by_this_invocation": true, "initial_entries": initial_entries}
++	if not _write_exact("component-store-directory.native.json", host_control_directory): return false
++	if not _write_host_control(): return false
+@@ -656,0 +681 @@
++	host_control_cleanup = receipt.duplicate(true)
+@@ -657,0 +683 @@
++	_write_host_control()
+@@ -673 +699 @@
+-	var row: Dictionary = {"arm": arm, "wall_elapsed_ms": Time.get_ticks_msec() - started_ms, "paused": paused, "first_failure": first_failure, "fixed_station": STATION, "tick_log": {"path": output + arm + "-ticks.jsonl", "rows": tick_rows}, "commands": commands, "trace": trace, "snapshots": snapshots, "source_gates": source_before}
++	var row: Dictionary = {"arm": arm, "wall_elapsed_ms": Time.get_ticks_msec() - started_ms, "paused": paused, "first_failure": first_failure, "historical_station_only": STATION, "tick_log": {"path": output + arm + "-ticks.jsonl", "rows": tick_rows}, "commands": commands, "trace": trace, "snapshots": snapshots, "source_gates": source_before}
+@@ -705,0 +732,2 @@
++		host_control_comparison = {"classification": note, "matched_actual_context": matched}
++		_write_host_control()
+@@ -716,0 +745,3 @@
++
++	host_control_comparison = {"classification": note, "matched_actual_context": matched, "old_measured_trace_against_new_foot": conflict, "old_trace_against_matched_ray": ray_conflict, "different_executed_spatial_response": spatially_different}
++	_write_host_control()
+@@ -769,0 +801 @@
++	if output_created: _write_host_control()
+@@ -785,0 +818,13 @@
++
++func _write_host_control() -> bool:
++	if not output_created: return _expect(false, "plain host control requires this invocation's fresh evidence directory")
++	# Exactly this closed finite primitive schema: no native Variant/geometry
++	# conversion, parallel Exact encoder or derived gameplay result.
++	var value: Dictionary = {"api_revision": "a2-l5-fixed-host-control-1", "schema_version": 1, "source_gates": {"expected": SOURCE_PINS.duplicate(true), "actual": source_before.duplicate(true)}, "store_directory": host_control_directory.duplicate(true), "store_cleanup": host_control_cleanup.duplicate(true), "comparison": host_control_comparison.duplicate(true)}
++	var file: FileAccess = FileAccess.open(output + "host-control.plain.json", FileAccess.WRITE)
++	if file == null: return _expect(false, "finite plain host control could not be opened")
++	file.store_string(JSON.stringify(value, "\t", true, true))
++	file.flush()
++	var error: Error = file.get_error()
++	file.close()
++	return _expect(error == OK, "finite native-generated plain host control retained")
