@@ -1,0 +1,31 @@
+# A2-L5 saved-construction compatibility — source-only followup
+
+RESPONSE707cc414. Constructor remains exact5f47cfd1/c26d2ce4; correction74db40f9 and envelope are frozen. Root selects any changed-source followup **after** the fixed comparison. This plan ran no test, produced no save/fixture/helper and supplies no new acceptance credit. Current22/24 difficulty policies/all24 original content acceptances remain independent.
+
+## Retained representative packet: precise gap
+
+**No literal original26 whole Main/checkpoint raw Store packet is identified in the named accepted portable evidence. Selected packets: none.** This is a statement about the inspected acceptance/index custody, not a search or global absence claim about live user data or other archives.
+
+The strongest existing whole-unit evidence is Root235/0, candidate5703fd42 with compatible Shared46/6718844f, indexed by `docs/development/evidence/A2-L5-registration/index.json` (SHA934e6198). Its frozen `tests/act2_l5_registration_smoke.gd` (8f2a5953) actually constructs the full production scene, captures Player/local26/Scheduler/Shell and writes Attempts through format2 Store. The protected checkpoint is explicitly **Standard, local version1, 26 keys, stage0, dormant Sentry, zero clocks/actions/contacts/defeats**. Nine predecessor completions and HP37/zeroammo are disclosed TEST seeds, not an earned checkpoint. Main later contains one genuine routed entrance dash, then actual public Pause and disk Continue/earlier Retry. Its exact moved Main stage, Store generation numbers and raw primary/backup hashes cannot be recovered from an absent raw packet.
+
+The historical path is the source-defined `user://test-act2-l5-registration-<pid>-<ticks>/campaign.json` and `.bak`; no actual instance pathname is invented here. Frozen `_finish` calls inherited `_cleanup_saves`, which deletes those generations and the temporary directory. The portable index retains sources, runners, logs/results, copy custody and genuine UID outputs; it does not name those raw saves or a separate serialized Main/CP export. Thus clean native assertions establish the exercised historical lifecycle, but are not replayable literal bytes for a patched legacy recipient.
+
+Owner89/0 (Shared41, sourcef5a6118f, hosta7d9) independently documents actual whole local26/five-owner/six-floor entrance capture, prospective construction, disk Continue, fatal Resume and protected Retry. Its indexed directory has source/log/result custody; `_cleanup_paths` removes `user://test-a2-l5-loading-<pid>/campaign.json` and `.bak`. No raw generation/export is listed. The captured profile is taken from native local.profile_id; that literal value is not supplied by a retained raw packet, so this plan does not assign a second representative profile. Root235's explicitly Standard checkpoint is the smallest documented historical case, **with the raw-byte gap above**.
+
+## Evidence that cannot fill the gap
+
+- Original182/0 is Standard/Assisted **component** evidence at coincident zero anchors, not production-offset Challenge, whole Main/CP or Store provenance. Parent99 and phase154 retain their native component scopes;107 uses a TEST transition source.
+- Portrait4053 and the four accepted original views establish their production-entry/component/scenery scopes. The exact0b5e1e8a metadata contains frame diagnostics/Hero/actions and entry encounter state, not a whole Attempts/Main/checkpoint raw Store packet. No fresh pixel review occurred here.
+- Constructor format companion0071717b contains deliberately incomplete TEST shape dictionaries, including explicit saved v1/Challenge and ended-profile cases. It is inert, unexecuted and not a historical packet. Corrected940057c3 component saves likewise are not whole local27/Attempts. No genuine old Challenge whole26 or held B05 phase2 checkpoint is established by these records.
+
+## Only directly relevant followup, if Root selects the trial
+
+| Concern | Existing evidence and remaining changed-source gap |
+| --- | --- |
+| Once-only finite construction | 5f47/c26d select/latch the saved full profile and recipe before Scheduler/Scouts/rehearsal/bait/B05, and validate saved/native anchors. Source review only; no native once-configuration result is credited. |
+| Literal old26 and legacy writer | Source absence selects v1 for every saved profile and retains an old26 writer; malformed present construction cannot fall back. Original89/235 prove the old host's lifecycle. Patched whole legacy read/recapture remains unexecuted; exact retained raw representative is absent here. Do not fabricate/convert bytes, relabel Standard as Challenge or require a new producer. |
+| New27 full typed construction | Existing inert format companion covers closed descriptor/profile8/recipe/header/type/refusal and ended-profile selection. New whole local27/Player/Scheduler/Shell/Attempts roundtrip, writer retention and saved-construction isolation from future preference remain unexecuted. A two-owner component capture cannot satisfy this. |
+| Public Continue/Pause/Retry | Original235 actual GUI/Pause/format2/fresh Continue/protected Retry and89's own scope remain accepted. If the constructor trial is retained, Root may reuse one actual whole recipient to check preconstruction selection, Pause save, fresh public Continue with a different future preference, then Retry's protected saved construction and quiet cleanup. No new fixture or execution is assigned by this plan. |
+| Brief native view | Four original inspected images remain valid for their original geometry. Candidate fresh Challenge v2 Foot/current camera-HUD union needs its own brief affected native view if selected; headless framing observations confer no new pixel credit. |
+
+The existing inert format companion is the smallest prepared pure-format check; its synthetic maps must stay labelled. Full native ended-stage10/strict terminal, earned phase checkpoint, full route, all kills, all kits, human balance and mobile/export remain outside this followup. Missing historical raw bytes are an explicit evidence limit, not permission to add a producer, route/pose/kit search or a new human gate. If the fixed comparison rejects the trial, do not expand validation for an unselected policy. Root owns selection/execution and remains first help; stop at this pinned plan.
