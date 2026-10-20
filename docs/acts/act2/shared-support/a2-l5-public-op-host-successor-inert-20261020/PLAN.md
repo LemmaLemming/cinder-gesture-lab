@@ -1,0 +1,29 @@
+# Public L5 writer/reader host successor — inert HOLD with namespace conflict
+
+RESPONSE5bc308fa selects Root's reviewed274e native leaf and fbfff host; independent5343 clears only the three former leaf defects. [Writer namespace](writer/public_construction_followup.gd.txt), [reader namespace](reader/public_construction_followup.gd.txt) and their source-pinned host/control copies are inert. No owner source parser/import/Godot/queue/materialization/runtime/RootGit/userdata/cleanup/adoption/view/public operation occurred. Shared76 is available only; own Shared60 remains historical. All24 originals/23policies remain independent.
+
+## Concrete ambiguity reported before widening
+
+ACK159611d8 reports the namespace conflict to Root. Each allowed leaf copy changes only const INPUT/PINS. Every function body stays byte-identical to274e, yielding writer0145788f and reader2f693bf8 (both48489B), distinct as expected. However unchanged `_literal_legacy` requires the writer report.fixture_sha256 to equal the reader's own script hash. Therefore the reader cannot admit this separately namespaced writer. No hash spoof, rewritten report or shared mutable writer controls is used to bypass it.
+
+Two related unchanged host `verify_writer` predicates also reject separate capsules: writer_run.parent==HERE, and writer report/unit.fixture_sha256==reader spec.fixture_sha256. The host text is identical in the two capsules, so its strict runner hash can remain meaningful, but the parent-path/fixture identities need an explicitly Root-selected cross-operation binding. A finite pinned writer capsule/fixture hash in reader spec/PINS is a possible narrow design; **no leaf functional guard or verify_writer body is changed under the current const-only authorization**. Root must resolve this exact conflict before reader READY. This report adds no human gate and does not authorize weakening custody.
+
+## Prepared finite corrections
+
+The host's stale606 fixture/pins/input hardcode is replaced with two fixed operation namespaces. Exactly three runtime subjects are declared: A7/96817/0644→5f47/100563/0644; absent helper→c26d/6199/0644; visual58b0/18564/0644→af04/20721/0644. Writer selects none and retains A7/helper absence/58b0; reader selects all three under the same canonical lock. Actual beforeimage/exclusive own-inode/child closure/reverse rollback/queue/C7/partial custody/timeout helper bodies remain byte-identical to fbfff. Only validate_spec's finite path/subject/common-map joins and a main comment change.
+
+Each native common map preserves the same43 names, with no London L4 files: writer Visual58b0, reader Visualaf04, all other current exact values identical to reviewed v2. The visual remains both an explicit native check and a third subject. validate_spec joins its operation-selected subject record, rather than incorrectly requiring a simultaneous ordinary expected record. Native source_before/source_after/report/unit still join the selected operation map through unchanged observation logic.
+
+Each operation has its own exact leaf, source-pins,155-row bounded expected map, INPUT_SPEC.HOLD, closed4 RUN_INPUT.HOLD, readiness and identical host source. The finite named cohort reuses nonprivate prior direct dependencies plus43/minimum public sources and corresponding named UID/cache/project/dev/local records; old component fixture/control/reference files are excluded. This is not a global import/UID census or a completed dynamic closure claim. Root must review/seal affected controls before any queue admission; the host never automatically imports/repins. A private fixture UID is explicitly absent.
+
+## Preserved public behavior and prerequisites
+
+No reviewed native function changes: writer naturally constructs an ORIGINAL Standard entrance through the trusted Shell fresh capture/registration bracket, wraps declared TESTprefix9 only around its unchanged whole packet/newStoregen1, then actual Title Continue/Pause/raw primary-backup custody before normal own cleanup. Reader remains literal actual-writer old26 plus natural fresh Challenge27, opposite preferences, four input-free ticks via actual Resume, real Pause/independent current Continue/earlier Retry/whole Story+CP/generation-backup and normal cleanup. No local/HP/pose/clock/proof/CP repair, old235/89 repeat, oldChallenge or later B05 producer.
+
+Both operations remain HOLD pending an actual positive source-qualified component comparison accepted by Root; none is inserted here. Reader additionally requires an actually successful closed writer result/queue/native report/unit and every present raw export with exact custody. Writer_admission={} is explicit; reader root_verified=false with null receipt/export placeholders is explicit. No successful writer path/raw/hash/generation is invented. RUN_INPUT.HOLD has exactly the four native keys but no output path; no RUN_INPUT.json exists or is created now.
+
+## Root application boundary
+
+Future fixed namespaces: `.cinder/a2-l5-public-writer-reviewed-host-prepare-20261020/` and `.cinder/a2-l5-public-reader-reviewed-host-prepare-20261020/`. These are separate future Root capsules, not files materialized by owner. Source-pins and input constants are exact per namespace; writer controls never need rewriting for reader. Copy/seal only after the namespace guard conflict is resolved and Root reviews final source, operation maps, directed expected cohort, source pins/readiness and prerequisites.
+
+No ready execution command is supplied. After corrected scope and prerequisite receipts, Root selects exactly one writer or reader under the existing host; there is no automatic second job. Original frozen274e/fbfff/5343,9feba and all failures remain unchanged. Future native controls/raw exports and normal own cleanup remain Root-owned; no graphical view code is added. Stop at this pinned HOLD/source-conflict handoff. Root first help; no human permission pending.

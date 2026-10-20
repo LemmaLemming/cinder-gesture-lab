@@ -1,0 +1,38 @@
+--- preservedfbfff/run.py.txt
++++ operation-successor/run.py.txt
+@@ -245,0 +246,3 @@
++VISUAL_SLOT = "scripts/acts/act2/dead_london_sentry_visual.gd"
++CAPSULES = {'writer': '.cinder/a2-l5-public-writer-reviewed-host-prepare-20261020', 'reader': '.cinder/a2-l5-public-reader-reviewed-host-prepare-20261020'}
++COMMON_NAMES = frozenset(('res://scenes/main.tscn', 'res://scripts/game.gd', 'res://scripts/player.gd', 'res://scripts/hud.gd', 'res://scripts/equipment.gd', 'res://scripts/acts/act2/dead_london_sentry_encounter.gd', 'res://scripts/acts/act2/dead_london_sentry_presented_encounter.gd', 'res://scripts/acts/act2/dead_london_sentry_actor.gd', 'res://scripts/acts/act2/dead_london_sentry_presented_actor.gd', 'res://scripts/acts/act2/dead_london_sentry_visual.gd', 'res://scripts/acts/act2/dead_london_kit.gd', 'res://scripts/acts/act2/dead_london_bait.gd', 'res://scripts/acts/act2/dead_london_ray_exchange.gd', 'res://scripts/campaign/level.gd', 'res://scripts/campaign/save_store.gd', 'res://scripts/campaign/exact_json.gd', 'res://scripts/campaign/snapshot_codec.gd', 'res://scripts/combat/threat_scheduler.gd', 'res://scripts/combat/threat_geometry.gd', 'res://scripts/combat/body_sweep.gd', 'res://scripts/combat/difficulty.gd', 'res://scripts/combat/lane_mechanism.gd', 'res://data/design/difficulty_profiles.json', 'res://data/design/player_equipment.json', 'res://scenes/acts/act2/dead_london.tscn', 'res://scripts/campaign/shell.gd', 'res://scripts/campaign/attempts.gd', 'res://scripts/campaign/registry.gd', 'res://scripts/ui/campaign_menu.gd', 'res://scripts/settings/game_settings.gd', 'res://scripts/effects.gd', 'res://scenes/player.tscn', 'res://data/campaign/registry.json', 'res://scripts/acts/act2/weybridge_scout_actor.gd', 'res://scripts/acts/act2/ray_scout_exchange.gd', 'res://scripts/acts/act2/giant_foot_visual.gd', 'res://scripts/acts/act2/heath_kit.gd', 'res://scripts/acts/act2/ruined_house_bank_guard.gd', 'res://scripts/cues/interaction_cue.gd', 'res://scripts/cues/threat_cue.gd', 'res://scripts/cues/cue_mesh.gd', 'res://scripts/character/player_presentations.gd', 'res://scripts/pixel_sprite.gd'))
+@@ -264 +267 @@
+-    require(set(spec["subjects"]) == {HOST_SLOT, HELPER_SLOT}, "Exactly two known runtime source slots required")
++    require(set(spec["subjects"]) == {HOST_SLOT, HELPER_SLOT, VISUAL_SLOT}, "Exactly three known runtime source slots required")
+@@ -266 +269,3 @@
+-            and spec["subjects"][HELPER_SLOT]["original"] == ABSENT, "Writer original A7/helper absence required")
++            and spec["subjects"][HELPER_SLOT]["original"] == ABSENT
++            and spec["subjects"][VISUAL_SLOT]["original"] == {"exists": True, "regular": True, "symlink": False, "sha256": "58b0f58c2a8641c7a55727ca616dd8cdf829f57f3f9166e58db4e15ad83ca2d4", "bytes": 18564, "mode": "0644"}
++            and spec["subjects"][VISUAL_SLOT]["candidate"] == {"exists": True, "regular": True, "symlink": False, "sha256": "af04f74dd613d554906a82ca3683da3fd60c512f84a664d34d7003a7207e4b71", "bytes": 20721, "mode": "0644"}, "Writer original A7/helper absence/visual58b0 and exact candidateaf04 required")
+@@ -285,2 +290,7 @@
+-    require(spec["run_input"] == ".cinder/a2-l5-public-construction-followup-prepare-20261020/RUN_INPUT.json",
+-            "Exact native leaf closed4 input path required")
++    capsule = CAPSULES[operation]
++    require(HERE == ROOT / capsule and spec["fixture"] == capsule + "/public_construction_followup.gd"
++            and spec["fixture_inert_source"] == capsule + "/public_construction_followup.gd.txt"
++            and spec["source_pins"] == capsule + "/source-pins.json"
++            and spec["run_input"] == capsule + "/RUN_INPUT.json", "Exact separate operation namespace/fixture/pins/closed4 input paths required")
++    require(pin_value.get("operation") == operation and set(spec["native_common"]) == COMMON_NAMES,
++            "One sealed operation with the same exact43 native common names required")
+@@ -288 +298 @@
+-            "Ephemeral input custody is separate from the fixed source map/two runtime slots")
++            "Ephemeral input custody is separate from the fixed source map/three runtime slots")
+@@ -289,0 +300,3 @@
++        relative = path.removeprefix("res://")
++        selected_record = (spec["subjects"][relative]["original" if operation == "writer" else "candidate"]
++                           if relative in spec["subjects"] else spec["expected"].get(relative, {}))
+@@ -291,2 +304 @@
+-                and spec["expected"].get(path.removeprefix("res://"), {}).get("sha256") == sha,
+-                "Every explicit native common source needs its fixed source record")
++                and selected_record.get("sha256") == sha, "Every native common source joins its exact operation-selected subject or fixed record")
+@@ -623 +635 @@
+-                        # Writer does not replace either runtime source slot.
++                        # Writer does not replace any of the three runtime source slots.

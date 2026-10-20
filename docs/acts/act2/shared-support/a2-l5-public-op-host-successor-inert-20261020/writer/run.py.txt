@@ -1,0 +1,699 @@
+"""INERT TEXT ONLY. Root-only ONE selected L5 writer OR reader; no autorun, policy or release claim."""
+from pathlib import Path
+import argparse
+import contextlib
+import datetime
+import importlib.util
+import json
+import os
+import re
+import signal
+import stat
+import sys
+import hashlib
+import math
+import uuid
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[1]
+def require(ok, reason):
+    if not ok:
+        raise ValueError(reason)
+
+
+def digest(data):
+    return hashlib.sha256(data).hexdigest()
+
+
+def strict(data):
+    def pairs(items):
+        result = {}
+        for key, value in items:
+            require(key not in result, "Duplicate JSON key: " + key)
+            result[key] = value
+        return result
+    def finite(token):
+        value = float(token)
+        require(math.isfinite(value), "Nonfinite JSON exponent")
+        return value
+    return json.loads(data.decode("utf-8", errors="strict"), object_pairs_hook=pairs,
+                      parse_float=finite,
+                      parse_constant=lambda token: (_ for _ in ()).throw(ValueError(token)))
+
+
+def stable(path):
+    path = Path(path)
+    require(path.is_absolute() and path.resolve() == path, "Literal nonsymlink absolute path required")
+    before = path.lstat()
+    require(stat.S_ISREG(before.st_mode), "Regular file required")
+    fd = os.open(path, os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0))
+    with os.fdopen(fd, "rb") as stream:
+        opened = os.fstat(stream.fileno())
+        require((before.st_dev, before.st_ino) == (opened.st_dev, opened.st_ino), "Changed before open")
+        data = stream.read()
+        closed_fd = os.fstat(stream.fileno())
+    second = path.read_bytes()
+    after = path.lstat()
+    key = lambda row: (row.st_dev, row.st_ino, row.st_size, row.st_mode, row.st_mtime_ns)
+    require(key(before) == key(opened) == key(closed_fd) == key(after) and data == second,
+            "Unstable literal two-read observation")
+    return {"path": str(path), "sha256": digest(data), "bytes": len(data),
+            "mode": format(stat.S_IMODE(after.st_mode), "04o"), "stable_two_reads": True}, data
+
+
+DIAGNOSTIC = re.compile(r"^\s*(?:ERROR|WARNING|SCRIPT ERROR):|ObjectDB.*leak|Orphan.*StringName", re.I)
+ABSENT = {"exists": False, "regular": False, "symlink": False, "sha256": None, "bytes": None, "mode": None}
+
+
+def fsync_directory(path):
+    fd = os.open(path, os.O_RDONLY)
+    try: os.fsync(fd)
+    finally: os.close(fd)
+
+
+def save(path, value):
+    data = (json.dumps(value, indent=2, allow_nan=False) + "\n").encode()
+    temporary = path.with_name(path.name + ".owned-" + uuid.uuid4().hex + ".tmp")
+    with temporary.open("xb") as stream:
+        stream.write(data); stream.flush(); os.fsync(stream.fileno())
+    os.replace(temporary, path); fsync_directory(path.parent)
+
+
+def record(path):
+    path = Path(path)
+    require(path.is_absolute() and path.parent.resolve() == path.parent, "No symlink parent allowed")
+    st = path.lstat() if os.path.lexists(path) else None
+    regular = bool(st and stat.S_ISREG(st.st_mode))
+    data = stable(path)[1] if regular else None
+    return {"exists": st is not None, "regular": regular, "symlink": bool(st and stat.S_ISLNK(st.st_mode)),
+            "sha256": digest(data) if data is not None else None, "bytes": len(data) if data is not None else None,
+            "mode": format(stat.S_IMODE(st.st_mode), "04o") if st else None}, data
+
+
+def write_literal(path, data):
+    with path.open("xb") as stream:
+        stream.write(data); stream.flush(); os.fsync(stream.fileno())
+    fsync_directory(path.parent)
+
+
+def engine(spec):
+    path = Path(spec["engine_expected"]["path"])
+    row, _ = record(path)
+    require(row == spec["engine_expected"]["record"] and os.access(path, os.X_OK), "Exact C7 engine bytes/mode/type differ")
+    return dict(row, path=str(path), retained_binary=False)
+
+
+def frozen(spec):
+    require(spec.get("application_state") == "ROOT_REVIEWED_READY" and spec.get("unresolved") == [],
+            "HOLD: corrected native source/pins/closure/receipts are not sealed")
+    ready = strict((HERE / "READINESS.json").read_bytes())
+    require(ready.get("application_state") == "ROOT_REVIEWED_READY", "Root final readiness required")
+    require(spec["integration_root"] == str(ROOT), "Exact canonical Root required")
+    require(type(spec.get("expected")) is dict and spec["expected"], "Final explicit bounded source map missing")
+    for name, expected in ready["frozen_files"].items():
+        require(type(name) is str and not Path(name).is_absolute() and ".." not in Path(name).parts,
+                "Readiness paths must stay relative to this capsule")
+        meta, _ = stable(HERE / name)
+        require({key: meta[key] for key in ["sha256", "bytes", "mode"]} == expected, "Frozen host file changed: " + name)
+
+
+def snapshot(spec, out, label, selected=None):
+    names = sorted(set(spec["expected"]) | set(spec["subjects"]))
+    rows = {}; retention = {}; blobs = out / "source-blobs"; blobs.mkdir(exist_ok=True)
+    for name in names:
+        row, data = record(ROOT / name); rows[name] = row
+        if data is not None:
+            target = blobs / (row["sha256"] + ".bin")
+            if not target.exists(): write_literal(target, data)
+            require(digest(target.read_bytes()) == row["sha256"], "Source CAS differs")
+            retention[name] = dict(row, blob=str(target.relative_to(out)))
+    save(out / (label + ".json"), rows); save(out / (label + "-retention.json"), retention)
+    for name, expected in spec["expected"].items():
+        require(rows[name] == expected, "Named dependency/control/UID/cache source differs: " + name)
+    for name, variants in spec["subjects"].items():
+        if selected is None:
+            require(rows[name] == variants["original"], "Unknown subject left in situ: " + name)
+        else:
+            require(rows[name] == selected[name], "Selected subject source/mode/type differs: " + name)
+    frozen(spec)
+    return rows
+
+
+def replace_subject(path, data, mode, expected_prior, on_created=None, expected_identity=None):
+    """O2 final-prior-check replacement, plus exclusive link for genuine absence."""
+    require(expected_prior == ABSENT or expected_prior["regular"] and not expected_prior["symlink"], "Known regular or absent prior required")
+    temporary = path.with_name(path.name + ".l5-fixed-owned-" + uuid.uuid4().hex + ".tmp")
+    try:
+        write_literal(temporary, data); os.chmod(temporary, int(mode, 8))
+        require(record(path)[0] == expected_prior, "Final prior guard changed; unknown left in situ")
+        if expected_prior != ABSENT:
+            prior_stat = path.lstat()
+            require(expected_identity is not None and expected_identity == {"device": prior_stat.st_dev, "inode": prior_stat.st_ino},
+                    "Final prior inode changed; identical foreign file left in situ")
+        created_stat = temporary.lstat()
+        identity = {"device": created_stat.st_dev, "inode": created_stat.st_ino}
+        if expected_prior == ABSENT:
+            os.link(temporary, path)  # exclusive no-clobber even for identical foreign arrivals
+        else:
+            os.replace(temporary, path)
+        if on_created is not None: on_created(identity)
+        fsync_directory(path.parent)
+    finally:
+        if os.path.lexists(temporary): temporary.unlink()
+
+
+def retain_unknown(path, out, label):
+    row, data = record(path)
+    if data is not None: write_literal(out / (label + ".bin"), data)
+    meta = dict(row, path=str(path), left_in_situ=True)
+    if row["symlink"]: meta["link_target"] = os.readlink(path)
+    save(out / (label + ".json"), meta)
+    return row
+
+
+def restore_subject(path, initial, initial_data, candidate, out, label, owned_closed, created_by_this_run, creation_identity=None):
+    receipt = {"path": str(path), "owned_children_closed": owned_closed, "created_by_this_run": created_by_this_run,
+               "restored_exact_initial": False, "write_attempted": False, "under_canonical_lock": True,
+               "unknown_overwrite_authorized": False}
+    try:
+        current = record(path)[0]
+        if not owned_closed:
+            receipt["status"] = "OWNED_CHILD_NOT_CLOSED_NO_WRITE"
+        elif current == initial:
+            receipt.update(status="ALREADY_EXACT_INITIAL_NO_WRITE", restored_exact_initial=True)
+        elif current == candidate and created_by_this_run:
+            require(type(creation_identity) is dict and set(creation_identity) == {"device", "inode"}
+                    and all(type(value) is int for value in creation_identity.values()), "Actual own inode identity required")
+            require(record(path)[0] == candidate, "Final candidate bytes/mode/type guard changed")
+            current_stat = path.lstat()
+            require(creation_identity == {"device": current_stat.st_dev, "inode": current_stat.st_ino},
+                    "Identical foreign replacement inode left in situ")
+            receipt["write_attempted"] = True
+            if initial == ABSENT:
+                path.unlink(); fsync_directory(path.parent)
+                receipt.update(status="REMOVED_ONLY_EXACT_OWN_CREATED_CANDIDATE", restored_exact_initial=record(path)[0] == ABSENT)
+            else:
+                replace_subject(path, initial_data, initial["mode"], candidate, expected_identity=creation_identity)
+                receipt.update(status="RESTORED_EXACT_INITIAL_BYTES_MODE", restored_exact_initial=record(path)[0] == initial)
+        else:
+            receipt["status"] = "UNKNOWN_OR_UNOWNED_CANDIDATE_LEFT_IN_SITU"
+        if not receipt["restored_exact_initial"]:
+            receipt["observed"] = retain_unknown(path, out, label + "-unexpected")
+    except Exception as error:
+        receipt.update(status="GUARDED_RESTORE_FAILED_NO_UNKNOWN_WRITE", error=str(error))
+        receipt["observed"] = retain_unknown(path, out, label + "-guard-conflict")
+    save(out / (label + "-restore.json"), receipt)
+    return receipt
+
+
+class Tee:
+    def __init__(self, terminal, log): self.terminal, self.log = terminal, log
+    def write(self, value): self.log.write(value); return self.terminal.write(value)
+    def flush(self): self.log.flush(); self.terminal.flush()
+
+
+def load_dev(spec):
+    module = importlib.util.spec_from_file_location("cinder_l5_fixed_dev", ROOT / "scripts/dev/dev.py")
+    require(module is not None and module.loader is not None, "Canonical dev source required")
+    dev = importlib.util.module_from_spec(module); sys.modules[module.name] = dev
+    prior = sys.dont_write_bytecode
+    try: sys.dont_write_bytecode = True; module.loader.exec_module(dev)
+    finally: sys.dont_write_bytecode = prior
+    env = dict(os.environ)
+    env.update(CINDER_GODOT=spec["engine_expected"]["path"], CINDER_CANONICAL_ROOT=str(ROOT), PYTHONDONTWRITEBYTECODE="1")
+    context = dev.ProjectContext(root=ROOT, environ=env)
+    require(context.canonical_root == ROOT and str(dev.resolve_godot(context)) == spec["engine_expected"]["path"], "Canonical context/engine differs")
+    return dev, context
+
+
+def indexed(out):
+    files = {}
+    for path in sorted(out.rglob("*")):
+        if path.is_file() and path != out / "evidence-index.json":
+            meta, _ = stable(path)
+            files[str(path.relative_to(out))] = {key: meta[key] for key in ["sha256", "bytes", "mode"]}
+    save(out / "evidence-index.json", {"created_after_raw_close": True, "files": files})
+
+
+# Only the native producer's finite declared filenames. No recursive artifact discovery.
+FILES = ("campaign.json", "campaign.json.bak", "settings.json", "settings.json.bak", "preferences.json", "preferences.json.bak")
+JSON_NAMES = ("report.json", "construction-unit.json", "admission-legacy26.json", "admission-new27.json",
+              "fresh-registration-legacy26.json", "fresh-registration-new27.json")
+RAW_NAMES = tuple("legacy-" + name + ".raw" for name in FILES)
+NATIVE_NAMES = JSON_NAMES + RAW_NAMES
+HOST_SLOT = "scripts/acts/act2/dead_london.gd"
+HELPER_SLOT = "scripts/acts/act2/dead_london_construction.gd"
+VISUAL_SLOT = "scripts/acts/act2/dead_london_sentry_visual.gd"
+CAPSULES = {'writer': '.cinder/a2-l5-public-writer-reviewed-host-prepare-20261020', 'reader': '.cinder/a2-l5-public-reader-reviewed-host-prepare-20261020'}
+COMMON_NAMES = frozenset(('res://scenes/main.tscn', 'res://scripts/game.gd', 'res://scripts/player.gd', 'res://scripts/hud.gd', 'res://scripts/equipment.gd', 'res://scripts/acts/act2/dead_london_sentry_encounter.gd', 'res://scripts/acts/act2/dead_london_sentry_presented_encounter.gd', 'res://scripts/acts/act2/dead_london_sentry_actor.gd', 'res://scripts/acts/act2/dead_london_sentry_presented_actor.gd', 'res://scripts/acts/act2/dead_london_sentry_visual.gd', 'res://scripts/acts/act2/dead_london_kit.gd', 'res://scripts/acts/act2/dead_london_bait.gd', 'res://scripts/acts/act2/dead_london_ray_exchange.gd', 'res://scripts/campaign/level.gd', 'res://scripts/campaign/save_store.gd', 'res://scripts/campaign/exact_json.gd', 'res://scripts/campaign/snapshot_codec.gd', 'res://scripts/combat/threat_scheduler.gd', 'res://scripts/combat/threat_geometry.gd', 'res://scripts/combat/body_sweep.gd', 'res://scripts/combat/difficulty.gd', 'res://scripts/combat/lane_mechanism.gd', 'res://data/design/difficulty_profiles.json', 'res://data/design/player_equipment.json', 'res://scenes/acts/act2/dead_london.tscn', 'res://scripts/campaign/shell.gd', 'res://scripts/campaign/attempts.gd', 'res://scripts/campaign/registry.gd', 'res://scripts/ui/campaign_menu.gd', 'res://scripts/settings/game_settings.gd', 'res://scripts/effects.gd', 'res://scenes/player.tscn', 'res://data/campaign/registry.json', 'res://scripts/acts/act2/weybridge_scout_actor.gd', 'res://scripts/acts/act2/ray_scout_exchange.gd', 'res://scripts/acts/act2/giant_foot_visual.gd', 'res://scripts/acts/act2/heath_kit.gd', 'res://scripts/acts/act2/ruined_house_bank_guard.gd', 'res://scripts/cues/interaction_cue.gd', 'res://scripts/cues/threat_cue.gd', 'res://scripts/cues/cue_mesh.gd', 'res://scripts/character/player_presentations.gd', 'res://scripts/pixel_sprite.gd'))
+API = "TEST-a2-l5-public-construction-1"
+
+
+def same_meta(meta, expected):
+    return type(expected) is dict and {key: meta[key] for key in ("sha256", "bytes", "mode")} == expected
+
+
+def pinned_external(value):
+    require(type(value) is dict and set(value) == {"path", "record"}, "Exact Root-pinned external receipt required")
+    path = Path(value["path"])
+    meta, literal = stable(path)
+    require(same_meta(meta, value["record"]), "Root-pinned external receipt changed")
+    return meta, literal
+
+
+def validate_spec(spec, operation):
+    frozen(spec)  # HOLD fails before dev import, queue, source selection or engine access.
+    require(spec.get("operation") == operation and operation in ("writer", "reader"), "One sealed selected operation required")
+    require(set(spec["subjects"]) == {HOST_SLOT, HELPER_SLOT, VISUAL_SLOT}, "Exactly three known runtime source slots required")
+    require(spec["subjects"][HOST_SLOT]["original"]["sha256"] == spec["original_host_sha256"]
+            and spec["subjects"][HELPER_SLOT]["original"] == ABSENT
+            and spec["subjects"][VISUAL_SLOT]["original"] == {"exists": True, "regular": True, "symlink": False, "sha256": "58b0f58c2a8641c7a55727ca616dd8cdf829f57f3f9166e58db4e15ad83ca2d4", "bytes": 18564, "mode": "0644"}
+            and spec["subjects"][VISUAL_SLOT]["candidate"] == {"exists": True, "regular": True, "symlink": False, "sha256": "af04f74dd613d554906a82ca3683da3fd60c512f84a664d34d7003a7207e4b71", "bytes": 20721, "mode": "0644"}, "Writer original A7/helper absence/visual58b0 and exact candidateaf04 required")
+    require(spec.get("comparison_accepted_by_root") is True, "Positive fixed comparison not retained by Root")
+    pinned_external(spec["comparison_review"])
+    for key in ("fixture_sha256", "source_pins_sha256"):
+        require(type(spec.get(key)) is str and re.fullmatch(r"[0-9a-f]{64}", spec[key]), "Unresolved corrected native pin: " + key)
+    fixture = ROOT / spec["fixture"]
+    inert = ROOT / spec["fixture_inert_source"]
+    require(fixture.suffix == ".gd" and str(inert).endswith(".gd.txt"), "Exact Root materialized fixture and inert source required")
+    require(record(fixture)[0] == spec["expected"].get(spec["fixture"])
+            and record(inert)[0] == spec["expected"].get(spec["fixture_inert_source"])
+            and digest(stable(fixture)[1]) == digest(stable(inert)[1]) == spec["fixture_sha256"],
+            "Root must materialize the exact corrected reviewed bytes; this host never materializes GD")
+    require(record(ROOT / (spec["fixture"] + ".uid"))[0] == ABSENT, "Private fixture UID must remain absent")
+    pin_meta, pin_bytes = stable(ROOT / spec["source_pins"])
+    require(pin_meta["sha256"] == spec["source_pins_sha256"], "Corrected native source-pins changed")
+    pin_value = strict(pin_bytes)
+    require(type(pin_value) is dict and pin_value.get("runtime_common") == spec["native_common"]
+            and pin_value.get("inert_fixture", {}).get("sha256") == spec["fixture_sha256"],
+            "Native common sources and corrected fixture must match exact reviewed pins")
+    capsule = CAPSULES[operation]
+    require(HERE == ROOT / capsule and spec["fixture"] == capsule + "/public_construction_followup.gd"
+            and spec["fixture_inert_source"] == capsule + "/public_construction_followup.gd.txt"
+            and spec["source_pins"] == capsule + "/source-pins.json"
+            and spec["run_input"] == capsule + "/RUN_INPUT.json", "Exact separate operation namespace/fixture/pins/closed4 input paths required")
+    require(pin_value.get("operation") == operation and set(spec["native_common"]) == COMMON_NAMES,
+            "One sealed operation with the same exact43 native common names required")
+    require(spec["run_input"] not in spec["expected"] and spec["run_input"] not in spec["subjects"],
+            "Ephemeral input custody is separate from the fixed source map/three runtime slots")
+    for path, sha in spec["native_common"].items():
+        relative = path.removeprefix("res://")
+        selected_record = (spec["subjects"][relative]["original" if operation == "writer" else "candidate"]
+                           if relative in spec["subjects"] else spec["expected"].get(relative, {}))
+        require(type(path) is str and path.startswith("res://") and re.fullmatch(r"[0-9a-f]{64}", sha)
+                and selected_record.get("sha256") == sha, "Every native common source joins its exact operation-selected subject or fixed record")
+    require(type(spec["timeout_after_lock_seconds"]) is int and 1 <= spec["timeout_after_lock_seconds"] <= 700,
+            "One bounded owned native job required")
+
+
+def verify_writer(spec, out):
+    if spec["operation"] == "writer":
+        require(spec.get("writer_admission") == {}, "Writer imports no previous packet")
+        return {}
+    admission = spec.get("writer_admission")
+    require(type(admission) is dict and set(admission) == {"root_verified", "result", "queue", "report", "unit", "exports"}
+            and admission["root_verified"] is True, "Reader requires a separately Root-verified successful writer")
+    originals = {}; values = {}
+    for name in ("result", "queue", "report", "unit"):
+        meta, literal = pinned_external(admission[name]); originals[name] = meta; values[name] = strict(literal)
+    result = values["result"]; queue = values["queue"]; report = values["report"]; unit = values["unit"]
+    require(type(result) is dict and result.get("operation") == "writer" and result.get("closed") is True
+            and result.get("passed") is True and result.get("host_return") == 0
+            and result.get("canonical_api_return") == 0 and result.get("native_functional_pass") is True,
+            "Actual successful writer host/API closure required")
+    writer_run = Path(originals["result"]["path"]).parent
+    require(writer_run.parent == HERE and writer_run.name.startswith("run-writer-")
+            and Path(originals["queue"]["path"]) == writer_run / "queue.json"
+            and Path(originals["report"]["path"]) == writer_run / "native" / "report.json"
+            and Path(originals["unit"]["path"]) == writer_run / "native" / "construction-unit.json"
+            and result.get("runner_sha256") == digest(Path(__file__).read_bytes()),
+            "Exact original same-host writer run/runner receipt paths required")
+    require(all(type(result.get(key)) is int for key in ("host_return", "canonical_api_return")),
+            "Writer actual host/API integer statuses required")
+    children = result.get("owned_children")
+    require(type(children) is list and len(children) == 1 and children[0].get("closed") is True
+            and type(children[0].get("pid")) is int and children[0]["pid"] > 0
+            and type(children[0].get("popen_return")) is int and children[0]["popen_return"] == 0,
+            "One actual closed writer child, not PID absence, required")
+    require(type(queue) is dict and queue.get("acquired") is True and queue.get("lock_context_released") is True,
+            "Actual writer canonical queue closure required")
+    require(type(report) is dict and report.get("api_revision") == API and report.get("operation") == "writer"
+            and report.get("complete") is True and report.get("success") is True and report.get("failures") == 0
+            and report.get("normal_cleanup_completed") is True
+            and report.get("host_source_sha256") == spec["original_host_sha256"]
+            and report.get("fixture_sha256") == spec["fixture_sha256"], "Exact original successful native writer report required")
+    require(type(report.get("unit")) is dict and report["unit"].get("accepted") is True
+            and report["unit"].get("path") == originals["unit"]["path"]
+            and report["unit"].get("sha256") == originals["unit"]["sha256"]
+            and report["unit"].get("bytes") == originals["unit"]["bytes"], "Actual writer unit receipt join differs")
+    require(type(unit) is dict and unit.get("api_revision") == API and unit.get("operation") == "writer"
+            and unit.get("complete_before_cleanup") is True and unit.get("cleanup_pending") is True
+            and unit.get("normal_cleanup_completed") is False and unit.get("fixture_sha256") == spec["fixture_sha256"]
+            and unit.get("host_source_sha256") == spec["original_host_sha256"], "Original immutable precleanup unit required")
+    cases = unit.get("cases")
+    require(type(cases) is list and len(cases) == 1 and cases[0].get("id") == "legacy26"
+            and cases[0].get("complete") is True and cases[0].get("stages"), "One completed actual writer case required")
+    last = cases[0]["stages"][-1]
+    require(last.get("label") == "legacy_public_save" and type(last.get("raw_slots")) is dict
+            and set(last["raw_slots"]) == set(FILES), "Actual writer public-save six-slot controls required")
+    slots = last["raw_slots"]
+    require(all(type(slot) is dict and type(slot.get("exists")) is bool for slot in slots.values()),
+            "Native writer slot presence booleans required")
+    exports = {"legacy-" + name + ".raw": slot for name, slot in slots.items() if slot["exists"]}
+    require(type(admission["exports"]) is dict and set(admission["exports"]) == set(exports),
+            "Root must pin every actually present writer export, and no absent invented one")
+    for name, value in admission["exports"].items():
+        meta, _ = pinned_external(value); slot = exports[name]; archive = slot.get("archive")
+        require(Path(meta["path"]).parent == Path(originals["report"]["path"]).parent
+                and Path(meta["path"]).name == name and type(archive) is dict and archive.get("accepted") is True
+                and archive.get("path") == meta["path"] and archive.get("sha256") == slot.get("sha256") == meta["sha256"]
+                and archive.get("bytes") == slot.get("bytes") == meta["bytes"],
+                "Writer literal raw export/native slot/original sibling receipt join differs")
+        originals[name] = meta
+    save(out / "verified-writer-admission.json", {"originals": originals,
+        "scope": "Root-pinned actual writer result/queue/plain controls and literal raw exports; no Exact/native state decoding"})
+    return {"path": originals["report"]["path"], "sha256": originals["report"]["sha256"]}
+
+
+def copy_native(out):
+    """Finite partial artifact retention before any JSON/outcome interpretation."""
+    source = out / "native"; retained = out / "native-retained"
+    require(source.is_dir() and source.resolve() == source, "Own native output root required")
+    retained.mkdir(exist_ok=False)
+    rows = {}; issues = []
+    for name in NATIVE_NAMES:
+        path = source / name
+        if not os.path.lexists(path):
+            rows[name] = {"present": False}; continue
+        try:
+            st = path.lstat()
+            require(stat.S_ISREG(st.st_mode) and st.st_size <= 64 * 1024 * 1024,
+                    "Finite regular native artifact over byte limit or unknown type")
+            meta, literal = stable(path)
+            target = retained / name; write_literal(target, literal); os.chmod(target, int(meta["mode"], 8))
+            copy_meta, copied = stable(target)
+            require(copied == literal and all(copy_meta[key] == meta[key] for key in ("sha256", "bytes", "mode")),
+                    "Literal partial artifact retention differs")
+            rows[name] = dict(meta, present=True, retained_copy=str(target.relative_to(out)), copied_verbatim=True)
+        except Exception as error:
+            issues.append({"name": name, "path": str(path), "error": str(error), "left_in_situ": True})
+            rows[name] = {"present": True, "retention_error": str(error)}
+    receipt = {"source": str(source), "files": rows, "issues": issues,
+               "scope": "Exactly twelve finite names; absent partials are observations, no recursive scan or Variant/Exact decoding"}
+    save(out / "native-artifact-custody.json", receipt)
+    return receipt
+
+
+def observe(out, spec, custody, raw, api_return, child_return):
+    result = {"functional_pass": False, "report_present": False, "policy_acceptance_claimed": False,
+              "observed_artifacts": {}, "partial_controls": {}, "errors": []}
+    values = {}
+    for name, entry in custody.get("files", {}).items():
+        if not entry.get("present") or not entry.get("copied_verbatim"): continue
+        try:
+            meta, literal = stable(out / entry["retained_copy"])
+            require(all(meta[key] == entry[key] for key in ("sha256", "bytes", "mode")), "Retained observation/custody join changed")
+            result["observed_artifacts"][name] = {key: entry[key] for key in ("path", "sha256", "bytes", "mode", "stable_two_reads")}
+            if name in JSON_NAMES:
+                value = strict(literal); require(type(value) is dict, "Native plain JSON object required")
+                values[name] = value
+                if name != "report.json":
+                    result["partial_controls"][name] = {key: value[key] for key in
+                        ("api_revision", "operation", "case", "user_path", "created_by_invocation", "complete_before_cleanup",
+                         "cleanup_pending", "normal_cleanup_completed", "scope") if key in value}
+        except Exception as error:
+            result["errors"].append({"name": name, "error": str(error)})
+    # All present partials have already been retained/observed even if final is absent.
+    try:
+        report = values.get("report.json"); unit = values.get("construction-unit.json")
+        require(type(report) is dict, "Final report absent/invalid; retained partial observations are not an inferred outcome")
+        result["report_present"] = True
+        for key in ("checks", "failures"):
+            require(type(report.get(key)) is int and report[key] >= 0, "Native integer count required: " + key)
+        require(report["checks"] > 0, "Native checks must be nonzero")
+        for key in ("complete", "success", "normal_cleanup_completed", "campaign_or_policy_acceptance_claimed", "portrait_executed"):
+            require(type(report.get(key)) is bool, "Native final boolean required: " + key)
+        require(report.get("api_revision") == API and report.get("operation") == spec["operation"]
+                and report.get("fixture_sha256") == spec["fixture_sha256"]
+                and report.get("host_source_sha256") == (spec["original_host_sha256"] if spec["operation"] == "writer" else spec["candidate_host_sha256"]),
+                "Exact native operation/source/fixture identity differs")
+        result.update({key: report[key] for key in ("checks", "failures", "complete", "success", "normal_cleanup_completed")})
+        require(type(unit) is dict and unit.get("api_revision") == API and unit.get("operation") == spec["operation"]
+                and type(unit.get("complete_before_cleanup")) is bool and unit.get("cleanup_pending") is True
+                and unit.get("normal_cleanup_completed") is False and unit.get("fixture_sha256") == spec["fixture_sha256"]
+                and unit.get("host_source_sha256") == report["host_source_sha256"], "Exact immutable precleanup unit differs")
+        receipt = report.get("unit"); unit_meta = custody["files"]["construction-unit.json"]
+        require(type(receipt) is dict and receipt.get("accepted") is True
+                and receipt.get("path") == unit_meta["path"] and receipt.get("sha256") == unit_meta["sha256"]
+                and receipt.get("bytes") == unit_meta["bytes"], "Report/native unit literal receipt join differs")
+        footer = ("A2-L5 public construction: operation=%s checks=%d failures=%d complete=%s success=%s raw_before_cleanup=true normal_cleanup=%s final_report=true; no policy acceptance"
+                  % (spec["operation"], report["checks"], report["failures"], str(report["complete"]).lower(),
+                     str(report["success"]).lower(), str(report["normal_cleanup_completed"]).lower()))
+        require([line for line in raw.splitlines() if line.startswith("A2-L5 public construction:")] == [footer],
+                "Unique actual native footer/final/report/count join differs")
+        result["literal_footer"] = footer
+        require(type(report.get("rows")) is list and len(report["rows"]) == report["checks"]
+                and all(type(row) is dict and row.get("index") == i + 1 and type(row.get("ok")) is bool
+                        and type(row.get("note")) is str for i, row in enumerate(report["rows"]))
+                and sum(not row["ok"] for row in report["rows"]) == report["failures"], "Actual assertion rows/count join differs")
+        require(report.get("source_before") == report.get("source_after") == unit.get("source_before") == spec["native_common"],
+                "Native exact named common-source controls differ")
+        require(report["campaign_or_policy_acceptance_claimed"] is False and report["portrait_executed"] is False,
+                "This host admits no native policy/portrait claim")
+        require(type(report.get("normal_descendant_cleanup")) is list and type(report.get("user_cleanup")) is list,
+                "Native cleanup observations must be retained separately from precleanup state")
+        # Do not decode Exact sessions, base64 native state, Store payloads or recompute native mechanics.
+        positive = (report["complete"] is True and report["success"] is True and report["failures"] == 0
+                    and report["normal_cleanup_completed"] is True and unit["complete_before_cleanup"] is True)
+        if positive:
+            expected_cases = ["legacy26"] if spec["operation"] == "writer" else ["legacy26", "new27"]
+            require(type(unit.get("cases")) is list and [case.get("id") for case in unit["cases"]] == expected_cases
+                    and all(case.get("complete") is True for case in unit["cases"]), "Exact completed native case identities differ")
+            cleanup = report["normal_descendant_cleanup"]
+            require(cleanup and all(row.get("all_descendants_freed") is True and row.get("gameplay_events") == [] for row in cleanup),
+                    "Native ordinary descendant cleanup/quietness not positively reported")
+            roots = report["user_cleanup"]
+            require(len(roots) == len(expected_cases), "Finite native root count differs")
+            for row in roots:
+                path = row.get("path")
+                require(type(path) is str and re.fullmatch(r"user://test-a2-l5-public-construction-[0-9a-f]{32}/", path)
+                        and row.get("created_by_invocation") is True and row.get("cleanup", {}).get("remaining") == []
+                        and row["cleanup"].get("unknown_retained") is False, "Exact native own-directory cleanup control differs")
+                actual = Path(spec["user_data_root"]) / path.removeprefix("user://").removesuffix("/")
+                require(not os.path.lexists(actual), "Native reported removed own directory is still present")
+            if spec["operation"] == "writer":
+                stages = unit["cases"][0].get("stages", [])
+                require(stages and stages[-1].get("label") == "legacy_public_save", "Writer must retain its actual public save stage")
+                slots = stages[-1].get("raw_slots")
+                require(type(slots) is dict and set(slots) == set(FILES), "Exact six writer presence slots required")
+                for name in FILES:
+                    slot = slots[name]; require(type(slot) is dict and type(slot.get("exists")) is bool, "Native slot presence boolean required")
+                    meta = custody["files"]["legacy-" + name + ".raw"]
+                    if slot["exists"]:
+                        archive = slot.get("archive")
+                        require(meta.get("copied_verbatim") is True and type(archive) is dict and archive.get("accepted") is True
+                                and archive.get("path") == meta["path"] and archive.get("sha256") == slot.get("sha256") == meta["sha256"]
+                                and archive.get("bytes") == slot.get("bytes") == meta["bytes"], "Literal original writer raw export receipt join differs")
+                    else:
+                        require(meta.get("present") is False, "Absent writer slot cannot have an invented raw export")
+        expected_exit = 0 if positive else 2
+        result["expected_native_exit"] = expected_exit
+        result["functional_pass"] = (positive and type(api_return) is int and api_return == 0
+            and type(child_return) is int and child_return == 0 and not custody.get("issues") and not result["errors"])
+    except Exception as error:
+        result["errors"].append({"terminal": str(error)})
+    return result
+
+
+def seal_input(spec, out, legacy_report):
+    path = ROOT / spec["run_input"]
+    require(record(path)[0] == ABSENT, "Existing native RUN_INPUT left untouched")
+    native = out / "native"; native.mkdir(exist_ok=False)
+    value = {"operation": spec["operation"], "output_dir": str(native),
+             "source_pins_sha256": spec["source_pins_sha256"], "legacy_report": legacy_report}
+    data = (json.dumps(value, indent=2, allow_nan=False) + "\n").encode()
+    creation = {}
+    def created(identity):
+        creation.update(identity)
+        save(out / "input-creation.json", {"path": str(path), "identity": identity, "sha256": digest(data), "closed4": value})
+    replace_subject(path, data, "0644", ABSENT, created)
+    row = record(path)[0]
+    require(row["sha256"] == digest(data) and creation, "Own exact closed4 input creation failed")
+    receipt = {"path": str(path), "record": row, "creation_identity": creation, "closed4": value}
+    save(out / "sealed-native-input.json", receipt)
+    return receipt
+
+
+def run_native(dev, context, lock_fd, spec, out, result):
+    user_base = Path(spec["user_data_root"])
+    require(user_base == Path.home() / "Library/Application Support/Godot/app_userdata/Cinder"
+            and user_base.resolve() == user_base, "Exact normal C7 user context required")
+    argv = [spec["engine_expected"]["path"], "--path", str(ROOT), "--headless", "--log-file", str(out / "engine.log"),
+            "--script", "res://" + spec["fixture"]]  # native leaf requires NO user args
+    save(out / "command.json", {"argv": argv, "canonical_api": "dev.godot_lock/run_validation", "one_owned_child": True,
+        "timeout_after_lock_seconds": spec["timeout_after_lock_seconds"], "cwd": str(ROOT), "user_data_root": str(user_base),
+        "native_input": str(ROOT / spec["run_input"]), "native_output": str(out / "native"),
+        "engine_environment": {key: context.environ.get(key) for key in ("CINDER_GODOT", "CINDER_CANONICAL_ROOT", "PYTHONDONTWRITEBYTECODE")}})
+    owned = []; original_popen = dev.subprocess.Popen
+    def tracked(command, *pos, **kw):
+        require(command == argv and not owned and kw.get("cwd") == ROOT and kw.get("env") == context.environ
+                and kw.get("pass_fds") == (lock_fd,), "Exactly one planned owned canonical child/context/lock required")
+        child = original_popen(command, *pos, **kw); owned.append(child)
+        result.update(native_child_launch_state="SPAWNED", owned_children=[{"pid": child.pid, "closed": False, "popen_return": None}])
+        save(out / "result.json", result); return child
+    result.update(engine_launch_attempted=True, native_child_launch_state="ADMISSION_PENDING")
+    save(out / "result.json", result)
+    try:
+        dev.subprocess.Popen = tracked
+        result["canonical_api_return"] = dev.run_validation(argv, context, lock_fd,
+            spec["timeout_after_lock_seconds"], detect_godot_errors=True)
+    finally:
+        dev.subprocess.Popen = original_popen
+        for child in owned:
+            if child.poll() is None: dev.stop_validation(child)  # only this invocation's actual owned handle
+            child.wait(timeout=5)
+        result["owned_children"] = [{"pid": child.pid, "closed": child.poll() is not None, "popen_return": child.poll()} for child in owned]
+        result["native_child_launch_state"] = "CLOSED" if len(owned) == 1 and owned[0].poll() is not None else "NO_CLOSED_CHILD_RECEIPT"
+        save(out / "result.json", result); sys.stdout.flush(); sys.stderr.flush()
+        if result["native_child_launch_state"] == "CLOSED":
+            # Retain every finite partial even when report/unit is absent or outcome is negative.
+            try:
+                custody = copy_native(out)
+            except Exception as error:
+                custody = {"files": {}, "issues": [{"error": str(error)}]}
+                result["native_artifact_custody_error"] = str(error)
+            observation = observe(out, spec, custody, (out / "raw.log").read_text(),
+                                  result["canonical_api_return"], owned[0].poll())
+            result["native_observation"] = observation
+            result["native_functional_pass"] = observation["functional_pass"] and not custody.get("issues")
+            save(out / "native-observation.json", observation); save(out / "result.json", result)
+    require(len(owned) == 1 and owned[0].poll() is not None, "One actual owned child closure required")
+    require(result.get("native_functional_pass") is True, "Native negative/failure/partial/custody refusal; no automatic repeat")
+
+
+def restore_all(spec, out, before, state, owned_closed, beforeimage_base=None):
+    receipts = []
+    beforeimage_base = out if beforeimage_base is None else beforeimage_base
+    for index, (name, variants) in enumerate(reversed(list(spec["subjects"].items()))):
+        row = before[name]
+        require(row["record"] == variants["original"], "Beforeimage must be one exact known initial variant")
+        require(type(state[name].get("created_by_this_run")) is bool, "Literal own-creation Boolean required")
+        data = (beforeimage_base / row["blob"]).read_bytes() if row["record"]["regular"] else None
+        if data is not None: require(digest(data) == row["record"]["sha256"], "Durable beforeimage changed")
+        receipts.append(restore_subject(ROOT / name, row["record"], data, variants["candidate"], out,
+                                        "subject-" + str(index), owned_closed, state[name]["created_by_this_run"],
+                                        state[name].get("creation_identity")))
+    save(out / "restore-receipts.json", receipts)
+    return all(row["restored_exact_initial"] for row in receipts)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("operation", choices=["writer", "reader"])
+    args = parser.parse_args()
+    stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%S.%fZ")
+    out = HERE / ("run-" + args.operation + "-" + stamp + "-" + uuid.uuid4().hex[:8]); out.mkdir(exist_ok=False)
+    result = {"operation": args.operation, "closed": False, "passed": False, "engine_launch_attempted": False,
+        "native_child_launch_state": "NOT_ATTEMPTED", "canonical_api_return": None, "owned_children": [],
+        "native_functional_pass": False, "policy_acceptance_claimed": False, "runner_sha256": digest(Path(__file__).read_bytes())}
+    queue = {"queued": False, "acquired": False, "lock_context_released": False}
+    spec = None; before = {}; state = {}; input_receipt = None; code = 2
+    old_term = signal.getsignal(signal.SIGTERM)
+    signal.signal(signal.SIGTERM, lambda _sig, _frame: (_ for _ in ()).throw(KeyboardInterrupt()))
+    with (out / "raw.log").open("x") as raw, contextlib.redirect_stdout(Tee(sys.stdout, raw)), contextlib.redirect_stderr(Tee(sys.stderr, raw)):
+        try:
+            spec = strict((HERE / "INPUT_SPEC.json").read_bytes()); validate_spec(spec, args.operation)
+            legacy = verify_writer(spec, out)
+            require(record(ROOT / spec["run_input"])[0] == ABSENT, "Foreign RUN_INPUT present before queue")
+            dev, context = load_dev(spec); engine_before = engine(spec); save(out / "engine-before.json", engine_before)
+            snapshot(spec, out, "sources-before-queue")
+            queue.update(queued=True, lock_path=str(dev.shared_lock_path(ROOT))); save(out / "queue.json", queue)
+            with dev.godot_lock(ROOT) as lock_fd:
+                queue["acquired"] = True; save(out / "queue.json", queue)
+                try:
+                    require(engine(spec) == engine_before, "Exact engine changed while queued")
+                    frozen(spec)
+                    legacy = verify_writer(spec, out)  # actual selected writer receipts rechecked at lock
+                    require(record(ROOT / spec["run_input"])[0] == ABSENT, "Foreign RUN_INPUT arrived while queued")
+                    at_entry = snapshot(spec, out, "sources-at-lock")
+                    for index, (name, variants) in enumerate(spec["subjects"].items()):
+                        initial_stat = (ROOT / name).lstat() if os.path.lexists(ROOT / name) else None
+                        meta, data = record(ROOT / name)
+                        require(meta == at_entry[name] == variants["original"], "Original source changed before durable capture")
+                        identity = {"device": initial_stat.st_dev, "inode": initial_stat.st_ino} if initial_stat else None
+                        if initial_stat is not None:
+                            confirmed = (ROOT / name).lstat()
+                            require(identity == {"device": confirmed.st_dev, "inode": confirmed.st_ino}, "Original inode changed during capture")
+                        row = {"record": meta, "blob": None, "initial_identity": identity}
+                        if data is not None:
+                            row["blob"] = "beforeimage-" + str(index) + ".bin"; write_literal(out / row["blob"], data)
+                        before[name] = row
+                        state[name] = {"selection_intent": False, "selection_complete": False,
+                                       "created_by_this_run": False, "creation_identity": None}
+                    save(out / "beforeimages.json", before); save(out / "assembly-state.json", state)
+                    try:
+                        # Writer does not replace any of the three runtime source slots.
+                        if spec["operation"] == "reader":
+                            for name, variants in spec["subjects"].items():
+                                candidate_meta, candidate = record(ROOT / variants["candidate_source"])
+                                require(candidate_meta == spec["expected"][variants["candidate_source"]]
+                                        and digest(candidate) == variants["candidate"]["sha256"], "Pinned inert candidate text changed")
+                                state[name]["selection_intent"] = True; save(out / "assembly-state.json", state)
+                                def created(identity, name=name):
+                                    state[name].update(created_by_this_run=True, creation_identity=identity)
+                                    save(out / "assembly-state.json", state)
+                                replace_subject(ROOT / name, candidate, variants["candidate"]["mode"],
+                                                before[name]["record"], created, before[name]["initial_identity"])
+                                state[name]["selection_complete"] = True; save(out / "assembly-state.json", state)
+                        selected = {name: variants["candidate" if spec["operation"] == "reader" else "original"]
+                                    for name, variants in spec["subjects"].items()}
+                        snapshot(spec, out, "sources-selected", selected)
+                        input_receipt = seal_input(spec, out, legacy)
+                        try:
+                            run_native(dev, context, lock_fd, spec, out, result)
+                        finally:
+                            raw.flush()
+                            snapshot(spec, out, "sources-after-child", selected)
+                            save(out / "engine-after-child.json", engine(spec))
+                            engine_log = (out / "engine.log").read_text(errors="replace") if (out / "engine.log").is_file() else ""
+                            diagnostics = [line for line in ((out / "raw.log").read_text() + "\n" + engine_log).splitlines() if DIAGNOSTIC.search(line)]
+                            result["raw_and_engine_diagnostics"] = diagnostics
+                            if input_receipt is not None:
+                                result["input_after_child_exact"] = record(Path(input_receipt["path"]))[0] == input_receipt["record"]
+                        require(not diagnostics, "Native diagnostics remain NONCLEAN; no repeat")
+                        require(result.get("input_after_child_exact") is True and engine(spec) == engine_before, "Input/engine changed during child")
+                    finally:
+                        owned_closed = ((result["native_child_launch_state"] == "NOT_ATTEMPTED" and result["engine_launch_attempted"] is False)
+                            or (result["native_child_launch_state"] == "CLOSED" and len(result["owned_children"]) == 1
+                                and result["owned_children"][0]["closed"] is True and type(result["owned_children"][0]["popen_return"]) is int))
+                        if input_receipt is not None:
+                            input_restored = restore_subject(Path(input_receipt["path"]), ABSENT, None, input_receipt["record"], out,
+                                "native-input", owned_closed, True, input_receipt["creation_identity"])
+                            result["input_removed_only_exact_own_inode"] = input_restored["restored_exact_initial"]
+                        restored = restore_all(spec, out, before, state, owned_closed)
+                        result["restored_exact_entry"] = restored
+                        require(restored and (input_receipt is None or result.get("input_removed_only_exact_own_inode") is True),
+                                "Exact own rollback refused; unknown bytes/inodes remain in situ")
+                        snapshot(spec, out, "sources-after-restore", {name: row["record"] for name, row in before.items()})
+                finally:
+                    queue["inside_lock_finally_reached"] = True; save(out / "queue.json", queue)
+            queue["lock_context_released"] = True; save(out / "queue.json", queue)
+            result["passed"] = result.get("native_functional_pass") is True; code = 0 if result["passed"] else 2
+        except KeyboardInterrupt:
+            result["error"] = "Interrupted; only actual own-child closure and exact own-inode rollback allowed"; code = 130
+        except Exception as error:
+            result["error"] = str(error); print("L5 public construction host failure:", error, flush=True)
+        finally:
+            if queue["acquired"]: queue["lock_context_released"] = True
+            if spec is not None and result["engine_launch_attempted"]:
+                try: save(out / "engine-at-close.json", engine(spec))
+                except Exception as error: result["engine_close_error"] = str(error); result["passed"] = False; code = 2
+            raw.flush(); result.update(closed=True, host_return=code,
+                scope="One selected whole-construction writer OR reader; no automatic next job/policy/portrait credit")
+            save(out / "result.json", result); save(out / "queue.json", queue)
+            print("A2-L5 public construction host CLOSED operation=" + args.operation + " code=" + str(code), flush=True)
+            raw.flush(); os.fsync(raw.fileno())
+    signal.signal(signal.SIGTERM, old_term); indexed(out); return code
+
+
+if __name__ == "__main__": raise SystemExit(main())
