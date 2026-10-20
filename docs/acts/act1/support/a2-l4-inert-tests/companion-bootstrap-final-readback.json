@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "review": "Narrow final readback: only explicit Callable variables and exact native event observer additions",
+  "created_at_utc": "2026-10-20T03:15:02.154251+00:00",
+  "reviewed_path": "/private/tmp/act1-support-a2-l4-test-companion/focused_constructor_companion.gd.txt",
+  "reviewed_sha256": "a1edffa1eb216c5314ec4056173a95bc5adc1edee4fbcf7990d7edaab1fbe85e",
+  "reviewed_bytes": 38037,
+  "reviewed_lines": 529,
+  "initial_review_preserved": {
+    "path": "companion-bootstrap-review.json",
+    "sha256": "aecde37bf74370c3d5dbebadcd37666c2fc20cc2b77ebf1d0d17080c09374e93",
+    "reviewed_source_sha256": "8247ab16fc1d4a804dde9252e8b9313281b3b146c18be671a09c27c66e0635e1"
+  },
+  "delta_resolution": {
+    "method": "Read final changed regions and compare exact text; in-memory removal of only the nine observer lines and replacement of explicit Callable block reproduces initial reviewed byte SHA. No executable/parser operation.",
+    "reverse_delta_sha256": "8247ab16fc1d4a804dde9252e8b9313281b3b146c18be671a09c27c66e0635e1",
+    "exact_initial_hash_reproduced": true
+  },
+  "checked_final_regions": [
+    {
+      "lines": [
+        394,
+        396
+      ],
+      "result": "Two explicit Callable variables retain the same validity checks. No bootstrap, coroutine, suite-credit, construction or cleanup change."
+    },
+    {
+      "lines": [
+        425,
+        438
+      ],
+      "result": "Player action_resolved callback matches published (String,int,float); Lane hit_resolved and Smoke tick_resolved match (String,int,Dictionary); Ray hit_resolved matches (String,Dictionary). Script resource_path discriminates the same signal name. Callbacks only append through existing _watch_events-gated _event, without changing native state."
+    }
+  ],
+  "signal_source_pins": [
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/player.gd",
+      "bytes": 48906,
+      "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+      "matching_signal_declarations": [
+        {
+          "line": 6,
+          "text": "signal action_resolved(kind: String, hits: int, damage: float)"
+        }
+      ]
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/combat/lane_mechanism.gd",
+      "bytes": 43768,
+      "sha256": "bcf6558d4ae57c4bf8714ae6fe6b1896b3c7c0be3b6a8a9f3178451653bd031d",
+      "matching_signal_declarations": [
+        {
+          "line": 8,
+          "text": "signal hit_resolved(hero_id: String, cycle: int, result: Dictionary)"
+        }
+      ]
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/acts/act2/ray_scout_exchange.gd",
+      "bytes": 63062,
+      "sha256": "6d8e11a29254cad18947655d8e7470d7892b18e856e534859ae6211a897ae7e2",
+      "matching_signal_declarations": [
+        {
+          "line": 16,
+          "text": "signal hit_resolved(actor_id: String, result: Dictionary)"
+        }
+      ]
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/combat/smoke_bank.gd",
+      "bytes": 71522,
+      "sha256": "698a70275c438be088fe8abeb7a35083444879364a3acda3ae91194fe4c67ae9",
+      "matching_signal_declarations": [
+        {
+          "line": 8,
+          "text": "signal tick_resolved(hero_id: String, cycle: int, result: Dictionary)"
+        }
+      ]
+    }
+  ],
+  "findings": [],
+  "status": "No concrete finding in this narrow final delta readback. Initial bounded bootstrap/cleanup review remains byte-preserved and applies through proven exact delta; not parsing/runtime/native success.",
+  "limits": [
+    "No source execution, GDScript parser, engine, producer, portrait or source edits.",
+    "No expanded mechanics/balance/gameplay audit.",
+    "Runtime validity of signal hookup and complete constructor behavior remains unexecuted."
+  ]
+}

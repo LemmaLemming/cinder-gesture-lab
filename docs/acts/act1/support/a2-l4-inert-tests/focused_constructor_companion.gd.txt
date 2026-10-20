@@ -1,0 +1,529 @@
+extends SceneTree
+## TEST ONLY inert draft, unparsed and unexecuted. Root alone may review and
+## materialize after selecting accepted-primary source. No Store writes, earned
+## progress manufacture, gameplay input, route, portrait or constructor repair.
+## Exact c310 submitted four-source unit; later Root revisions refuse bootstrap.
+## Root chooses a unique --report=user://test-a2-l4-constructor-focused-NAME/report.json.
+const SOURCE_SHA256: Dictionary = {
+	"res://scripts/acts/act2/london_approaches.gd": "b81f9e8274bf72dca952fd1da8d41fd73e49059f24e0004ece6ca011d31fb3b4",
+	"res://scripts/acts/act2/london_approaches_snapshot_rules.gd": "d6f70d2eed03299b6627d7e179fa7e980e58ec8f6ad577f6697e1038b8c42229",
+	"res://scripts/acts/act2/london_approaches_smoke_rules.gd": "e54af1c3800b63c10764b7f9b52cb6a29713e5f4923ee591030430193619b2bb",
+	"res://scripts/acts/act2/london_approaches_sequence.gd": "e43236ccdc37827253533bdf999f26db2f4e3d5adfc309f1f70f98247fe8184a",
+	"res://scripts/acts/act2/london_approaches_floor.gd": "38644fceaa2e40c37b26022c429f4423f17fb4533ce6f7aa5242c6d7e1830def",
+	"res://scripts/acts/act2/london_approaches_kit.gd": "9aa9c32e5d2c5804df5dffe7b1fef1098e7c9626e4f349951d0e060680121437",
+	"res://scripts/acts/act2/weybridge.gd": "767430baacc6b6a32547e1ec87e81b9fe48ad24e53939c18876fa63317d85145",
+	"res://scripts/acts/act2/horsell_common.gd": "5f58885685d5b5727d286c57c45794bef0afc810424214636155283f60f43ad1",
+	"res://scripts/campaign/level.gd": "27fdab6686d8ba4b8282c48af84c0c3f63d8c8fa7620ae462a4642ec225100c1",
+	"res://scripts/campaign/shell.gd": "f8df3b798544b79d66985f5e468f13ade5485bccc6050b54c9d9d242b3211a0f",
+	"res://scripts/campaign/attempts.gd": "6701abec6181beb3934490e468b00868c14e69eb229f708d562b98efe32a43a0",
+	"res://scripts/campaign/snapshot_codec.gd": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+	"res://scripts/campaign/exact_json.gd": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+	"res://scripts/combat/difficulty.gd": "e6a0aba9b39697cf59837165ebec858b0dd15c7573f66d79eadc58595ed2e7ae",
+	"res://scripts/combat/threat_scheduler.gd": "c28ea9f4cd6c1ff9aedbc9cfc45a28826c589c095b9193b565f45d23c3df903d",
+	"res://scripts/combat/lane_mechanism.gd": "bcf6558d4ae57c4bf8714ae6fe6b1896b3c7c0be3b6a8a9f3178451653bd031d",
+	"res://scripts/acts/act2/ray_scout_exchange.gd": "6d8e11a29254cad18947655d8e7470d7892b18e856e534859ae6211a897ae7e2",
+	"res://scripts/combat/smoke_bank.gd": "698a70275c438be088fe8abeb7a35083444879364a3acda3ae91194fe4c67ae9",
+	"res://scripts/acts/act2/ray_scout_actor.gd": "dee72b851cb20b234a05552d07eae9cebd7490ee0fad12b3970da51eae132bb7",
+	"res://scripts/acts/act2/weybridge_scout_actor.gd": "7e90bfc541c467162a5a0b0afd6891e8aa6dda9835a4da05362e9301eed78916",
+	"res://scripts/acts/act2/salvage_handler_actor.gd": "42457249e8a30e2d28ad0d03017d16e2f5158092ad3531e528ccf6beb3f70d96",
+	"res://scripts/acts/act2/canister_tender_actor.gd": "c18a4b09ed55761de6f10cfa803d288718db480891ac1da97c9b5a5711e25c29",
+	"res://scripts/acts/act2/ruined_house_bank_guard.gd": "758ead75f9b98ce5afd0ae90077113f40d410f172a2d1b4c3375c249076a3e83",
+	"res://data/design/difficulty_profiles.json": "891baa4d087a1f35da0581c5dc6b888274296686144b3c8f5609249245def41c",
+	"res://scenes/acts/act2/a2_l4.tscn": "d3b02954794352ca7aaed051273b9c564099dca6a5ce64a3092eb774a48d2182",
+	"res://scripts/cues/threat_cue.gd": "c8a7abbbd4c021ec92c45e1e57fc966873110231b781dba00bd1ff3d63f5cc5a",
+	"res://scripts/acts/act2/london_approaches_construction.gd": "2733421a461c2b2f2421ea4a5500aabd370096b043612bb04860e01480ed551e",
+	"res://scripts/game.gd": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26",
+	"res://scenes/main.tscn": "c0c169890eed0afb26b1a09a017d45c90a64aa8ba874a683deb141c4190ee06b",
+	"res://scenes/player.tscn": "68cf79442eb217cb0e2afcc4099080ba79c3f3b2c548655195d0864f4fc8bfac",
+	"res://scripts/player.gd": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+	"res://scripts/effects.gd": "c5b8294b88e999d913a9043fd9f588a2b1f7f942280c71945a92d91d1be5b6d7",
+	"res://scripts/hud.gd": "3a76c06a97da117b2fbd43824d88f3ef5150e6ad0045b5e27766b8d70542897b",
+	"res://scripts/equipment.gd": "2f721f0e7af0d1034ae9f92c37b4af3c3223171d0e5d2c120e42c00ae9155ab0",
+	"res://tests/acts/act2/fixtures/a2_l1_profile_seed_game.gd": "17d23892d1b80c8bd7a95e8ccd3adf2b6e5a75561d26416fe8816debf732bf3e"
+}
+
+const LEVEL_SCENE: String = "res://scenes/acts/act2/a2_l4.tscn"
+const CONSTRUCTION_PATH: String = "res://scripts/acts/act2/london_approaches_construction.gd"
+const SEQUENCE_PATH: String = "res://scripts/acts/act2/london_approaches_sequence.gd"
+const EXACT_PATH: String = "res://scripts/campaign/exact_json.gd"
+const PROFILE_SEED_PATH: String = "res://tests/acts/act2/fixtures/a2_l1_profile_seed_game.gd"
+const LEGACY_ATTEMPTS_PATH: String = "res://docs/acts/act2/evidence/A2-L4/gun-view-instrumented-continuation/native-artifacts/earned-late.attempts.exact.json"
+const LEGACY_ATTEMPTS_SHA: String = "5bc745d550ad0ad2d6db7d0cb69def0156440a9e57120bac97906337b458bbbb"
+const PROFILES: Array[String] = ["assisted", "standard", "challenge"]
+const TIMEOUT_S: float = 90.0
+
+var _construction: Script
+var _sequence: Script
+var _exact: Script
+var _seed: Script
+var _main: PackedScene
+var _game: Node
+var _owned_levels: Array[WeakRef] = []
+var _rows: Array[Dictionary] = []
+var _limits: Array[String] = [
+	"Pure format dictionaries are not native packets or campaign acceptance.",
+	"No archived old16 Challenge whole packet is present in the bounded inventory; its native restore is unexecuted.",
+	"Saved canonical new17 Challenge is covered by pure selection only; no genuine native donor is fabricated.",
+	"No committed-clear descriptor test is manufactured from an unearned pristine sequence.",
+	"Direct Game/Player/Level constructor seam; no Shell Continue/Retry/Store transaction, combat, portrait or policy credit.",
+]
+var _failures: int = 0
+var _checks: int = 0
+var _finished: bool = false
+var _format_complete: bool = false
+var _native_complete: bool = false
+var _legacy_complete: bool = false
+var _report_path: String = ""
+var _report_owned: bool = false
+var _source_observations: Array[Dictionary] = []
+var _captured: Dictionary = {}
+var _entry_observations: Array[Dictionary] = []
+var _events: Array[String] = []
+var _watch_events: bool = false
+var _observe_entries: bool = false
+var _start_ms: int = 0
+
+
+func _initialize() -> void:
+	_start_ms = Time.get_ticks_msec()
+	_run.call_deferred()
+
+
+func _run() -> void:
+	# No candidate preload is allowed above this point. Missing/unpromoted
+	# sources are a nonzero bootstrap refusal, never an empty-suite PASS.
+	if not _options(): _finish(false); return
+	_watchdog()
+	if not _source_gate(): _finish(false); return
+	_exact = load(EXACT_PATH) as Script
+	_construction = load(CONSTRUCTION_PATH) as Script
+	_sequence = load(SEQUENCE_PATH) as Script
+	_seed = load(PROFILE_SEED_PATH) as Script
+	_main = load("res://scenes/main.tscn") as PackedScene
+	if not _expect(_exact != null and _construction != null and _sequence != null and _seed != null and _main != null, "bootstrap", "exact source unit dynamically loads after raw-byte guard"):
+		_finish(false); return
+	root.size = Vector2i(540, 1170)
+	paused = true
+	node_added.connect(_observe_node_added)
+	_format_complete = _format_cases()
+	if not _format_complete: _finish(false); return
+	for profile: String in PROFILES:
+		if not await _fresh_case(profile): _finish(false); return
+		if _finished: return
+	for profile: String in PROFILES:
+		var opposite: String = "standard" if profile == "challenge" else "challenge"
+		if not await _restore_case(_captured[profile], opposite, "genuine fresh new17 " + profile, false):
+			_finish(false); return
+		if _finished: return
+	if not await _malformed_native_case(): _finish(false); return
+	if _finished: return
+	_native_complete = true
+	# One exact archived Standard donor is read-only and optional. It is not
+	# relabelled as Challenge and is never made into a Store producer.
+	if FileAccess.file_exists(LEGACY_ATTEMPTS_PATH):
+		if not await _legacy_case(): _finish(false); return
+	else:
+		_limits.append("Named literal legacy Standard Attempts file is unavailable; native legacy restoration remains unexecuted. No producer requested.")
+	_finish(true)
+
+
+func _options() -> bool:
+	for argument: String in OS.get_cmdline_user_args():
+		if argument.begins_with("--report=") and _report_path.is_empty(): _report_path = argument.trim_prefix("--report=")
+		else: return _expect(false, "bootstrap", "only one --report=user://test-a2-l4-constructor-focused-UNIQUE/report.json is supported")
+	if not _report_path.begins_with("user://test-a2-l4-constructor-focused-") or not _report_path.ends_with("/report.json") or _report_path.contains(".."):
+		return _expect(false, "bootstrap", "require a separate unique TEST report directory")
+	if FileAccess.file_exists(_report_path): return _expect(false, "bootstrap", "refuse to overwrite any prior report")
+	var error: Error = DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(_report_path.get_base_dir()))
+	_report_owned = error == OK
+	return _expect(_report_owned, "bootstrap", "create only owned TEST report directory")
+
+
+func _source_gate() -> bool:
+	var clean: bool = true
+	for path: String in SOURCE_SHA256:
+		var observed: String = FileAccess.get_sha256(path) if FileAccess.file_exists(path) else ""
+		_source_observations.append({"path": path, "expected_sha256": SOURCE_SHA256[path], "observed_sha256": observed})
+		if not _expect(observed == SOURCE_SHA256[path], "source", "selected prospective source bytes " + path): clean = false
+	return clean
+
+
+func _format_local(profile_id: String, descriptor: Variant = null, include: bool = false) -> Dictionary:
+	# Structurally closed selector-only input. Its Sequence is genuinely new
+	# and pristine; empty component dictionaries are deliberately NOT native
+	# states. This helper is never passed to Level/Player/native validators.
+	var profile: Dictionary = _construction.fresh(profile_id).profile
+	var local: Dictionary = {
+		"sequence": _sequence.new().snapshot_state(),
+		"scheduler": {"profile": profile.duplicate(true), "encounter_id": _construction.LEVEL_EPOCH},
+		"rays": {}, "targets": {}, "mechanisms": {}, "views": {},
+		"profile_id": profile_id, "world_revision": 1, "scenic_clock": 0.0,
+		"last_action_sequence": 0, "contact_seen": "", "pending_checkpoints": [],
+		"completion_pending": false, "exit_requested": false, "banks": {}, "bank_views": {},
+	}
+	if include: local["arrangement"] = descriptor
+	return local
+
+
+func _positions_equal(actual: Dictionary, expected: Dictionary) -> bool:
+	if actual.size() != expected.size(): return false
+	for id: String in expected:
+		if not actual.has(id) or not actual[id] is Vector3 or actual[id] != expected[id]: return false
+	return true
+
+
+func _expected_positions(exchanged: bool) -> Dictionary:
+	var positions: Dictionary = _sequence.ACTORS.duplicate(true)
+	if exchanged:
+		var scout: Vector3 = _sequence.ACTORS.putney_scout
+		var handler: Vector3 = _sequence.ACTORS.putney_handler
+		positions.putney_scout = Vector3(handler.x, scout.y, handler.z)
+		positions.putney_handler = Vector3(scout.x, handler.y, scout.z)
+	return positions
+
+
+func _format_cases() -> bool:
+	var before: int = _failures
+	for profile_id: String in PROFILES:
+		var fresh: Dictionary = _construction.fresh(profile_id)
+		_expect(fresh.error.is_empty() and not fresh.legacy and fresh.profile_id == profile_id and _positions_equal(fresh.positions, _expected_positions(profile_id == "challenge")), "format-only", "fresh finite selection " + profile_id)
+		_expect(_exact.stringify(fresh.profile) == _exact.stringify(fresh.descriptor.profile) and fresh.profile.size() == 8, "format-only", "fresh selection retains exact full eight-field profile " + profile_id)
+		var legacy: Dictionary = _construction.saved(_format_local(profile_id))
+		_expect(legacy.error.is_empty() and legacy.legacy and legacy.descriptor.is_empty() and _positions_equal(legacy.positions, _expected_positions(false)), "format-only", "literal old16 stays canonical, including old Challenge: " + profile_id)
+		var canonical_descriptor: Dictionary = fresh.descriptor.duplicate(true)
+		canonical_descriptor.recipe_id = _construction.CANONICAL_RECIPE
+		var canonical: Dictionary = _construction.saved(_format_local(profile_id, canonical_descriptor, true))
+		_expect(canonical.error.is_empty() and not canonical.legacy and _positions_equal(canonical.positions, _expected_positions(false)), "format-only", "saved canonical recipe is retained independently of fresh choice " + profile_id)
+		var saved_fresh: Dictionary = _construction.saved(_format_local(profile_id, fresh.descriptor.duplicate(true), true))
+		_expect(saved_fresh.error.is_empty() and _positions_equal(saved_fresh.positions, fresh.positions) and _exact.stringify(saved_fresh.descriptor) == _exact.stringify(fresh.descriptor), "format-only", "saved finite fresh recipe/profile preserved " + profile_id)
+		var bad_exchange: Dictionary = fresh.descriptor.duplicate(true)
+		bad_exchange.recipe_id = _construction.EXCHANGED_RECIPE
+		if profile_id != "challenge": _refuse(_format_local(profile_id, bad_exchange, true), "exchanged " + profile_id + " is unsupported")
+	_refuse({}, "empty outer local")
+	var base: Dictionary = _format_local("challenge", _construction.fresh("challenge").descriptor.duplicate(true), true)
+	var bad: Dictionary = base.duplicate(true)
+	bad.erase("banks"); _refuse(bad, "missing old field")
+	bad = base.duplicate(true); bad["arbitrary_positions"] = {}; _refuse(bad, "extra local field")
+	bad = base.duplicate(true); bad.arrangement = null; _refuse(bad, "present null descriptor is not legacy absence")
+	bad = base.duplicate(true); bad.arrangement = {}; _refuse(bad, "empty descriptor is not legacy absence")
+	bad = base.duplicate(true); bad.arrangement.schema_version = 1.0; _refuse(bad, "new schema requires integer type")
+	bad = base.duplicate(true); bad.arrangement.api_revision += "-unknown"; _refuse(bad, "unknown descriptor API")
+	bad = base.duplicate(true); bad.arrangement.recipe_id = "unlisted"; _refuse(bad, "unknown recipe")
+	bad = base.duplicate(true); bad.arrangement["angle"] = 0.0; _refuse(bad, "descriptor cannot encode arbitrary angle")
+	bad = base.duplicate(true); bad.arrangement.profile.erase("name"); _refuse(bad, "full profile cannot omit field")
+	bad = base.duplicate(true); bad.arrangement.profile.name += " changed"; _refuse(bad, "full profile semantic drift")
+	bad = base.duplicate(true); bad.arrangement.profile.reserved_threat_budget = _different_numeric_type(bad.arrangement.profile.reserved_threat_budget); _refuse(bad, "exact descriptor numeric type drift at unchanged value")
+	bad = base.duplicate(true); bad.scheduler.profile.name += " changed"; _refuse(bad, "saved Scheduler full profile mismatch")
+	bad = base.duplicate(true); bad.scheduler.profile.reserved_threat_budget = _different_numeric_type(bad.scheduler.profile.reserved_threat_budget); _refuse(bad, "exact live Scheduler numeric type mismatch at unchanged value")
+	bad = base.duplicate(true); bad.scheduler.encounter_id = "other-epoch"; _refuse(bad, "saved Scheduler epoch mismatch")
+	bad = base.duplicate(true); bad.profile_id = "standard"; _refuse(bad, "saved descriptor/profile ID mismatch")
+	bad = base.duplicate(true); bad.scheduler.profile = {}; bad.scheduler.encounter_id = ""; bad.scheduler.reservations = []; _refuse(bad, "empty Scheduler cannot retire a pristine unearned sequence")
+	var selected: Dictionary = _construction.saved(base)
+	_expect(_construction.binding(base, selected).is_empty(), "format-only", "retained selection agrees with its same source dictionary")
+	var drift: Dictionary = selected.duplicate(true)
+	drift.positions.putney_scout += Vector3(0.01, 0, 0)
+	_expect(not _construction.binding(base, drift).is_empty(), "format-only", "arbitrary retained actor root rejects")
+	drift = selected.duplicate(true); drift.descriptor.recipe_id = _construction.CANONICAL_RECIPE
+	_expect(not _construction.binding(base, drift).is_empty(), "format-only", "saved construction cannot be rebound to different recipe")
+	return _failures == before
+
+
+func _different_numeric_type(value: Variant) -> Variant:
+	return float(value) if typeof(value) == TYPE_INT else int(value)
+
+
+func _refuse(local: Dictionary, label: String) -> void:
+	var before: String = _exact.stringify(local)
+	var answer: Dictionary = _construction.saved(local)
+	_expect(not String(answer.error).is_empty() and answer.positions.is_empty(), "format-only-negative", label)
+	_expect(_exact.stringify(local) == before, "format-only-negative", "pure refusal preserves its supplied dictionary: " + label)
+
+
+func _new_game(profile_id: String) -> bool:
+	if _finished or is_instance_valid(_game): return false
+	_game = _main.instantiate()
+	_game.set_script(_seed)
+	_game.set("test_profile_id", profile_id)
+	_game.set("level_scene_path", LEVEL_SCENE)
+	_entry_observations.clear()
+	_observe_entries = true
+	root.add_child(_game)
+	# Game's documented initial reset constructs synchronously. Pause before
+	# yielding; no input, physics step, resource or transform edit is made.
+	paused = true
+	_observe_entries = false
+	var level: CinderLevel = _game.get("active_level") as CinderLevel
+	if is_instance_valid(level): _owned_levels.append(weakref(level))
+	return _expect(is_instance_valid(level) and String(_game.get("level_load_error")).is_empty() and String(level.get("runtime_error")).is_empty(), "native-constructor", "actual Game and fresh L4 entry constructed: " + profile_id)
+
+
+func _fresh_case(profile_id: String) -> bool:
+	if not _new_game(profile_id): return false
+	if not await _settle(): return false
+	var level: CinderLevel = _game.get("active_level") as CinderLevel
+	var hero: CinderPlayer = _game.get("player") as CinderPlayer
+	var player: Dictionary = hero.snapshot_state()
+	var local: Dictionary = level.snapshot_state()
+	if not _expect(not player.is_empty() and not local.is_empty(), "native-fresh", "actual pristine Player/level capture " + profile_id + ": " + hero.last_snapshot_error + " / " + level.last_snapshot_error): return false
+	var selected: Dictionary = _construction.fresh(profile_id)
+	if not _native_receipt(level, selected, "fresh " + profile_id): return false
+	_expect(local.local.size() == 17 and local.local.has("arrangement") and _exact.stringify(local.local.arrangement) == _exact.stringify(selected.descriptor), "native-fresh", "new writer retains complete exact descriptor " + profile_id)
+	_expect(_exact.stringify(local.local.sequence) == _exact.stringify(_sequence.new().snapshot_state()) and not local.progress.completed and local.progress.checkpoint_ids.is_empty() and player.world_actions.sequence == 0 and player.world_actions.history.is_empty(), "native-fresh", "genuinely pristine sequence/actions/progress, no fabricated route " + profile_id)
+	_expect(_entry_observations.size() == 9, "native-fresh", "observed exactly nine actor tree entries " + profile_id)
+	for observation: Dictionary in _entry_observations:
+		_expect(observation.frozen_before_entry and observation.unconfigured_at_entry and observation.selected_root_at_entry and observation.full_profile_already_selected, "native-order-observation", "freeze and selected root precede actual actor entry/configure: " + String(observation.id))
+	_captured[profile_id] = {"player": player.duplicate(true), "level": local.duplicate(true)}
+	# Mutated transport is NEGATIVE only. Keep the actual recipients untouched.
+	var wrong_root: Dictionary = local.duplicate(true)
+	wrong_root.local.targets.putney_handler.root_position[0] += 0.01
+	_expect(not level.snapshot_error_with_player(wrong_root, player).is_empty(), "native-negative", "actual native actor/root validator rejects a forged saved root " + profile_id)
+	_expect(_exact.stringify(level.snapshot_state()) == _exact.stringify(local) and _exact.stringify(hero.snapshot_state()) == _exact.stringify(player), "native-negative", "failed pure whole preflight preserves actual complete tuple " + profile_id)
+	# An intentional second constructor attempt must refuse, retain its error,
+	# preserve all recipient IDs and dispose through ordinary exit. No repair.
+	var ids: Dictionary = _native_ids(level)
+	var player_before: String = _exact.stringify(player)
+	level.call("_l4_construct", selected)
+	_expect(not String(level.get("runtime_error")).is_empty() and _native_ids(level) == ids and _exact.stringify(hero.snapshot_state()) == player_before, "native-negative", "once-configure refuses second construction without replacement or Player mutation " + profile_id)
+	_cleanup_game()
+	return _failures == 0
+
+
+func _restore_case(tuple: Dictionary, newer_preference: String, label: String, legacy: bool) -> bool:
+	if not _new_game(newer_preference): return false
+	# The initial view's separate fresh recipient is retired normally. The
+	# saved candidate is a NEW level, never a relocated/reconfigured donor.
+	var fresh: CinderLevel = _game.get("active_level") as CinderLevel
+	var fresh_ref: WeakRef = weakref(fresh)
+	fresh.exit_level()
+	fresh.free()
+	_game.set("active_level", null)
+	_expect(fresh_ref.get_ref() == null, "native-cleanup", "fresh bootstrap recipient retires before saved candidate " + label)
+	var scene: PackedScene = load(LEVEL_SCENE) as PackedScene
+	var candidate: CinderLevel = scene.instantiate() as CinderLevel
+	var world: Node3D = _game.get("world") as Node3D
+	world.add_child(candidate)
+	_game.set("active_level", candidate)
+	_owned_levels.append(weakref(candidate))
+	var hero: CinderPlayer = _game.get("player") as CinderPlayer
+	var effects: PixelEffects = _game.get("fx") as PixelEffects
+	if not await _settle(): return false
+	var source_wire: String = _exact.stringify(tuple)
+	_events.clear(); _watch_events = true
+	_entry_observations.clear(); _observe_entries = true
+	var entered: bool = candidate.enter_restore_candidate(hero, effects, _game, tuple.level, tuple.player)
+	_observe_entries = false
+	if not _expect(entered, "native-saved", "saved choice precedes native construction under opposite preference " + label + ": " + candidate.last_snapshot_error): return false
+	var selected: Dictionary = _construction.saved(tuple.level.local)
+	if not _native_receipt(candidate, selected, label): return false
+	_expect(selected.legacy == legacy and String(_game.call("get_difficulty_preference")) == newer_preference, "native-saved", "saved construction identity survives newer preference " + label)
+	for observation: Dictionary in _entry_observations:
+		_expect(observation.frozen_before_entry and observation.unconfigured_at_entry and observation.selected_root_at_entry and observation.full_profile_already_selected, "native-order-observation", "saved freeze/root/full profile precedes actor entry " + label + "/" + String(observation.id))
+	_expect(_entry_observations.size() == 9, "native-saved", "saved candidate creates nine distinct native actors " + label)
+	if not _expect(hero.snapshot_error(tuple.player).is_empty() and candidate.snapshot_error_with_player(tuple.level, tuple.player).is_empty(), "native-saved", "whole native Player/local prevalidation " + label + ": " + candidate.last_snapshot_error): return false
+	# Exact public Player first, then Level quiet commit; no direct field edit.
+	if not _expect(hero.restore_state(tuple.player) and candidate.restore_state(tuple.level), "native-saved", "Player-first exact quiet restoration " + label + ": " + candidate.last_snapshot_error): return false
+	var recaptured: Dictionary = {"player": hero.snapshot_state(), "level": candidate.snapshot_state()}
+	_expect(_exact.stringify(recaptured) == source_wire and not recaptured.player.is_empty() and not recaptured.level.is_empty(), "native-saved", "exact actual tuple recapture preserves format, HP/history/clocks/leases " + label)
+	_expect((recaptured.level.local.size() == 16 and not recaptured.level.local.has("arrangement")) if legacy else (recaptured.level.local.size() == 17 and recaptured.level.local.has("arrangement")), "native-saved", "literal writer format survives recapture " + label)
+	_expect(_events.is_empty() and _exact.stringify(tuple) == source_wire and paused and candidate.is_restore_candidate(), "native-saved", "paused quiet restoration emits no observed action/damage/gear/progression and leaves input source unchanged " + label)
+	_watch_events = false
+	_cleanup_game()
+	return _failures == 0
+
+
+func _malformed_native_case() -> bool:
+	var tuple: Dictionary = _captured.challenge.duplicate(true)
+	tuple.level.local.arrangement.schema_version = 1.0
+	if not _new_game("standard"): return false
+	var fresh: CinderLevel = _game.get("active_level") as CinderLevel
+	fresh.exit_level(); fresh.free(); _game.set("active_level", null)
+	var scene: PackedScene = load(LEVEL_SCENE) as PackedScene
+	var candidate: CinderLevel = scene.instantiate() as CinderLevel
+	(_game.get("world") as Node3D).add_child(candidate)
+	_game.set("active_level", candidate)
+	_owned_levels.append(weakref(candidate))
+	var hero: CinderPlayer = _game.get("player") as CinderPlayer
+	var before: String = _exact.stringify(hero.snapshot_state())
+	_events.clear(); _watch_events = true
+	var accepted: bool = candidate.enter_restore_candidate(hero, _game.get("fx") as PixelEffects, _game, tuple.level, tuple.player)
+	_expect(not accepted and not candidate.last_snapshot_error.is_empty() and not bool(candidate.get("_l4_construction_started")) and (candidate.get("_actors") as Dictionary).is_empty() and not is_instance_valid(candidate.get("_scheduler")), "native-negative", "malformed new descriptor refuses before any native constructor")
+	_expect(_events.is_empty() and _exact.stringify(hero.snapshot_state()) == before, "native-negative", "construction refusal emits no observed mechanical/progression event or Player mutation")
+	_watch_events = false
+	_cleanup_game()
+	return _failures == 0
+
+
+func _legacy_case() -> bool:
+	if not _expect(FileAccess.get_sha256(LEGACY_ATTEMPTS_PATH) == LEGACY_ATTEMPTS_SHA, "legacy-input", "read exact named literal Standard Attempts artifact; never rewritten"): return false
+	var raw: String = FileAccess.get_file_as_string(LEGACY_ATTEMPTS_PATH)
+	var decoded: Dictionary = _exact.parse(raw)
+	if not _expect(decoded.get("accepted", false) and decoded.get("value") is Dictionary, "legacy-input", "literal archived Attempts exact decode: " + String(decoded.get("reason", ""))): return false
+	var state: Dictionary = decoded.value
+	if not _expect(state.get("story") is Dictionary and state.story.get("checkpoint") is Dictionary, "legacy-input", "named archive contains actual earlier checkpoint"): return false
+	var unit: Dictionary = state.story.checkpoint
+	if not _expect(unit.get("level_id") == "A2-L4" and unit.get("player") is Dictionary and unit.get("level") is Dictionary and unit.level.get("local") is Dictionary and unit.level.local.size() == 16 and not unit.level.local.has("arrangement") and unit.level.local.profile_id == "standard" and unit.level.local.sequence.stage_index == 7 and unit.level.local.sequence.defeated_ids.size() == 7, "legacy-input", "genuine old16 Standard earlier Putney checkpoint, not invented Challenge/progress"): return false
+	if not await _restore_case({"player": unit.player.duplicate(true), "level": unit.level.duplicate(true)}, "challenge", "literal archived old16 Standard checkpoint", true): return false
+	var clear: Dictionary = state.story.get("snapshot", {})
+	if not _expect(clear.get("level_id") == "A2-L4" and clear.get("player") is Dictionary and clear.get("level") is Dictionary and clear.level.get("local") is Dictionary and clear.level.local.size() == 16 and clear.level.local.profile_id == "standard" and clear.level.local.sequence.stage_index == 8 and clear.level.local.sequence.defeated_ids.size() == 9 and clear.level.local.scheduler.profile.is_empty() and clear.level.local.scheduler.encounter_id.is_empty(), "legacy-input", "same unchanged archive contains genuine committed quiet clear with retired Scheduler"): return false
+	_legacy_complete = await _restore_case({"player": clear.player.duplicate(true), "level": clear.level.duplicate(true)}, "challenge", "literal archived old16 Standard quiet clear", true)
+	_expect(FileAccess.get_file_as_string(LEGACY_ATTEMPTS_PATH) == raw and FileAccess.get_sha256(LEGACY_ATTEMPTS_PATH) == LEGACY_ATTEMPTS_SHA, "legacy-input", "exact literal archive bytes preserved")
+	return _legacy_complete and _failures == 0
+
+
+func _native_receipt(level: CinderLevel, selected: Dictionary, label: String) -> bool:
+	var before: int = _failures
+	var retained: Dictionary = level.get("_l4_construction")
+	_expect(retained.is_read_only() and (retained.profile as Dictionary).is_read_only() and (retained.positions as Dictionary).is_read_only(), "native-constructor", "frozen retained selection " + label)
+	_expect(_positions_equal(retained.positions, selected.positions) and _exact.stringify(retained.profile) == _exact.stringify(selected.profile) and String(level.get("_profile_id")) == selected.profile_id, "native-constructor", "actual frozen map/exact eight-field profile " + label)
+	var scheduler: Node = level.get("_scheduler")
+	_expect(is_instance_valid(scheduler) and _exact.stringify(scheduler.call("encounter_profile")) == _exact.stringify(selected.profile), "native-constructor", "native Scheduler joins exact selected full profile before actor configure " + label)
+	var actors: Dictionary = level.get("_actors")
+	_expect(actors.size() == 9 and (level.get("_mechanisms") as Dictionary).size() == 4 and (level.get("_clouds") as Dictionary).size() == 2, "native-constructor", "all original native recipients retained " + label)
+	for id: String in selected.positions:
+		var actor: Node3D = actors.get(id) as Node3D
+		_expect(is_instance_valid(actor) and actor.get_parent() == level and actor.global_position == selected.positions[id] and actor.get("_authored_root_position") == selected.positions[id] and bool(actor.get("_configured")), "native-constructor", "native actor root and own immutable configure receipt " + label + "/" + id)
+	var tools: Dictionary = level.get("_mechanisms")
+	for id: String in tools:
+		var tool: Node3D = tools[id]
+		var target: String = id.trim_prefix("tool_")
+		var configuration: Dictionary = tool.get("_configuration")
+		var at: Vector3 = selected.positions[target]
+		_expect(tool.global_position == at and configuration.opening_position == at and configuration.geometry == {"kind": "lane", "from": at, "to": at + Vector3.BACK * 3.8, "radius": 0.31}, "native-constructor", "tool source/opening/native lane follows same selected root " + label + "/" + id)
+	var exchange: Node = level.get("_exchange")
+	var ray_anchors: Dictionary = exchange.get("_anchors")
+	var presentation_guard: Callable = exchange.get("_presentation_guard")
+	var context_provider: Callable = exchange.get("_context_provider")
+	_expect(bool(exchange.get("_guard_required")) and bool(exchange.get("_provider_required")) and presentation_guard.is_valid() and context_provider.is_valid(), "native-constructor", "original Ray context/presentation guards remain bound " + label)
+	for id: String in _sequence.RAYS:
+		_expect(ray_anchors.get(id) == selected.positions[id] and (exchange.get("_actors") as Dictionary).get(id) == actors[id], "native-constructor", "Ray immutable anchor and actual actor binding " + label + "/" + id)
+	var banks: Dictionary = level.get("_clouds")
+	var bank_to_tender: Dictionary = {"flood_bank": "flood_tender", "villa_bank": "villa_tender"}
+	for id: String in bank_to_tender:
+		var bank: Node3D = banks[id]
+		var configuration: Dictionary = bank.get("_configuration")
+		_expect(bank.global_position == _sequence.CLOUDS[id] and configuration.opening_position == selected.positions[bank_to_tender[id]] and configuration.geometry == {"kind": "circle", "origin": _sequence.CLOUDS[id], "radius": 1.05}, "native-constructor", "bank native source/radius and actual Tender opening retained " + label + "/" + id)
+	return _failures == before
+
+
+func _native_ids(level: CinderLevel) -> Dictionary:
+	var result: Dictionary = {}
+	for key: String in ["_actors", "_mechanisms", "_clouds"]:
+		for id: String in level.get(key):
+			var node: Node = (level.get(key) as Dictionary)[id]
+			result[key + ":" + id] = node.get_instance_id()
+	for key: String in ["_scheduler", "_exchange", "_bank_guard"]:
+		var node: Node = level.get(key)
+		result[key] = node.get_instance_id() if is_instance_valid(node) else 0
+	return result
+
+
+func _observe_node_added(node: Node) -> void:
+	if node is CinderLevel:
+		node.checkpoint_requested.connect(func(_id: String, _checkpoint: String, _kind: String) -> void: _event("checkpoint"))
+		node.completion_requested.connect(func(_id: String, _completion: String) -> void: _event("completion"))
+		node.contact_exit_requested.connect(func(_id: String, _exit: String) -> void: _event("exit"))
+	if node is CinderPlayer:
+		node.world_action_executed.connect(func(_record: Dictionary) -> void: _event("world-action"))
+		node.died.connect(func() -> void: _event("player-death"))
+		node.fired.connect(func(_kind: String) -> void: _event("player-fired"))
+		node.equipment_changed.connect(func(_id: String) -> void: _event("gear-changed"))
+		node.action_resolved.connect(func(_kind: String, _hits: int, _damage: float) -> void: _event("action-resolved"))
+	var source: Script = node.get_script() as Script
+	var source_path: String = source.resource_path if source != null else ""
+	if source_path == "res://scripts/combat/lane_mechanism.gd":
+		node.connect("hit_resolved", func(_hero_id: String, _cycle: int, _result: Dictionary) -> void: _event("lane-hit"))
+	elif source_path == "res://scripts/acts/act2/ray_scout_exchange.gd":
+		node.connect("hit_resolved", func(_actor_id: String, _result: Dictionary) -> void: _event("ray-hit"))
+	elif source_path == "res://scripts/combat/smoke_bank.gd":
+		node.connect("tick_resolved", func(_hero_id: String, _cycle: int, _result: Dictionary) -> void: _event("bank-tick"))
+	if node.has_signal("defeated"): node.connect("defeated", func(_id: String) -> void: _event("target-defeat"))
+	if not _observe_entries or not String(node.name).begins_with("LondonApproaches_") or not node is Node3D: return
+	var parent: CinderLevel = node.get_parent() as CinderLevel
+	if not is_instance_valid(parent): return
+	var id: String = String(node.name).trim_prefix("LondonApproaches_")
+	var receipt: Dictionary = parent.get("_l4_construction")
+	var scheduler: Node = parent.get("_scheduler")
+	var positions: Dictionary = receipt.get("positions", {})
+	_entry_observations.append({
+		"id": id,
+		"frozen_before_entry": receipt.is_read_only() and (positions as Dictionary).is_read_only(),
+		"unconfigured_at_entry": not bool(node.get("_configured")),
+		"selected_root_at_entry": positions.has(id) and (node as Node3D).global_position == positions[id],
+		"full_profile_already_selected": receipt.get("profile") is Dictionary and receipt.profile.size() == 8 and is_instance_valid(scheduler) and _exact.stringify(scheduler.call("encounter_profile")) == _exact.stringify(receipt.profile),
+	})
+
+
+func _event(label: String) -> void:
+	if _watch_events: _events.append(label)
+
+
+func _settle() -> bool:
+	for frame: int in range(2):
+		await process_frame
+		if _finished: return false
+	return true
+
+
+func _cleanup_game() -> void:
+	_observe_entries = false
+	_watch_events = false
+	if is_instance_valid(_game):
+		var level: CinderLevel = _game.get("active_level") as CinderLevel
+		if is_instance_valid(level): level.exit_level()
+		_game.free()
+	_game = null
+	for reference: WeakRef in _owned_levels:
+		_expect(reference.get_ref() == null, "native-cleanup", "normal attached exit/free releases each owned native recipient")
+	_owned_levels.clear()
+
+
+func _watchdog() -> void:
+	await create_timer(TIMEOUT_S, true, false, true).timeout
+	if _finished: return
+	_expect(false, "watchdog", "bounded companion incomplete at wall-clock deadline; no success credit")
+	_finish(false)
+
+
+func _expect(condition: bool, scope: String, detail: String) -> bool:
+	_checks += 1
+	if not condition: _failures += 1
+	_rows.append({"scope": scope, "detail": detail, "passed": condition})
+	if not condition: push_error("A2-L4 focused constructor: " + scope + ": " + detail)
+	return condition
+
+
+func _finish(reached_end: bool) -> void:
+	if _finished: return
+	_finished = true
+	_cleanup_game()
+	if node_added.is_connected(_observe_node_added): node_added.disconnect(_observe_node_added)
+	paused = false
+	var complete: bool = reached_end and _format_complete and _native_complete
+	var success: bool = complete and _failures == 0
+	var report: Dictionary = {
+		"api_revision": "inert-a2-l4-constructor-companion-1", "source_only_origin": true,
+		"companion_source_sha256": FileAccess.get_sha256(get_script().resource_path),
+		"checks": _checks, "failures": _failures, "reached_end": reached_end,
+		"mandatory_suite_complete": complete, "bounded_mandatory_checks_pass": success,
+		"pure_format_suite_complete": _format_complete,
+		"native_fresh_new_restore_suite_complete": _native_complete,
+		"native_literal_standard_checkpoint_and_clear_checked": _legacy_complete,
+		"native_literal_challenge_restore_checked": false,
+		"native_saved_canonical_challenge_checked": false,
+		"overall_campaign_or_policy_acceptance_claimed": false,
+		"wall_ms": Time.get_ticks_msec() - _start_ms, "limits": _limits,
+		"source_observations": _source_observations, "results": _rows,
+	}
+	var persisted: bool = false
+	if _report_owned:
+		var wire: String = JSON.stringify(report, "\t") + "\n"
+		var file: FileAccess = FileAccess.open(_report_path, FileAccess.WRITE)
+		if file != null:
+			file.store_string(wire)
+			file.flush()
+			var io_ok: bool = file.get_error() == OK
+			file.close()
+			persisted = io_ok and FileAccess.get_file_as_string(_report_path) == wire
+	if not persisted: push_error("A2-L4 companion result was not safely persisted; no PASS")
+	print("A2-L4 constructor companion: checks=%d failures=%d mandatory_complete=%s legacy_standard=%s persisted=%s; no combat, Shell transport or policy acceptance" % [_checks, _failures, str(complete), str(_legacy_complete), str(persisted)])
+	quit(0 if success and persisted else 1)
