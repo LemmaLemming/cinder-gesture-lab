@@ -1,0 +1,150 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-20",
+  "reviewer": "/root/resume_house_forecast_review",
+  "review_kind": "FULL_INERT_HOST_SOURCE_QA_ONLY",
+  "status": "BLOCKED_BY_ONE_HOST_METADATA_ASSUMPTION",
+  "scope": "Exact five-file 65ed L4 save/view inert host capsule, exact f7 native leaf and named supporting sources; no execution or binary decoding.",
+  "input_files": [
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l4-save-view-host-inert-20261020/.gdignore",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "mode": "0644"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l4-save-view-host-inert-20261020/run.py.txt",
+      "sha256": "65ed1329b1f6a75d0388436a49c4a099e3400be905e1bfeb30c383414787324f",
+      "bytes": 47945,
+      "mode": "0644"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l4-save-view-host-inert-20261020/INPUT_SPEC.HOLD.json",
+      "sha256": "07301515f25efd239f68e3f7c004858bc4ae0d094bfa234c9b74aeb6c29a311e",
+      "bytes": 17710,
+      "mode": "0644"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l4-save-view-host-inert-20261020/PLAN.md",
+      "sha256": "ceea0738da5760c5ff894325d33a881c9d53e43f7b975d9caacd04248c4869cd",
+      "bytes": 4993,
+      "mode": "0644"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l4-save-view-host-inert-20261020/INDEX.json",
+      "sha256": "ca98d5c5657e6b5d920514add5ef40e7000b8ed0d5c35d98e05fe969ba172ae3",
+      "bytes": 2380,
+      "mode": "0644"
+    }
+  ],
+  "supporting_source_pins": {
+    "native_leaf": {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l4-save-view-ray-script-prepare-20261020/saved_construction_view.gd.txt",
+      "sha256": "f7fbf9079a0d020277268e3bd61516850da8bb342c0dece67e666d5a29ba6580",
+      "bytes": 94228,
+      "mode": "0644"
+    },
+    "settings": {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/settings/game_settings.gd",
+      "sha256": "60d76e75d66f757d5601903ff92007b3da55a77d5c79e1ba7dbb3da2925bb162",
+      "bytes": 13348,
+      "mode": "0644"
+    },
+    "guard_base": {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l5-generation-assignment-host-prepare-20261020/run.py",
+      "sha256": "9966c6e424f1cd114287b8de1e8f8158da5e847dd2baa997b1d49c982f7244bf",
+      "bytes": 40859,
+      "mode": "0644"
+    },
+    "input_closure": {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l4-save-view-input-closure-review-20261020/REVIEW.json",
+      "sha256": "180c69151e40512c515cdaa2f23bc76a864116c60c8c88ed42cb6c4d8664dbeb",
+      "bytes": 87944,
+      "mode": "0644"
+    },
+    "native_correction_review": {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l4-save-view-source-review-20261020/CORRECTION_ADDENDUM.json",
+      "sha256": "5023b5231c2c7d027b4ab415d91ee54b998f096d0d0bb6ed5b9efbe4509b9fd6",
+      "bytes": 3647,
+      "mode": "0644"
+    }
+  },
+  "sole_concrete_blocker": {
+    "id": "SETTINGS_PRESENCE_AND_WIRE_FAMILY",
+    "classification": "TEST host metadata/control defect; not an observed native or production failure",
+    "host_lines": [
+      380,
+      382,
+      417,
+      422,
+      468,
+      474,
+      475
+    ],
+    "problem": "65ed requires settings.json among current Store slots and applies the strict SaveStore format2 envelope reader to every present settings slot and every SHA-only history CAS.",
+    "source_proof": [
+      "The exact f7 flow creates a fresh namespace/stores directory, writes campaign through SaveStore and preferences through its real store, but never requests settings_changed/save_settings/update.",
+      "GameSettings.load_settings lines97-107 explicitly leaves a missing settings file absent; normal Shell load/apply does not persist it.",
+      "GameSettings._write_atomic lines179-218 writes the canonical settings dictionary as plain JSON at line196, not a format2 SaveStore envelope. It does not produce a normal settings.json.bak."
+    ],
+    "impact": "An otherwise positive exact f7 run would be refused by the settings.json mandatory-presence check. A valid settings JSON, if present, would be misclassified as a malformed SaveStore envelope.",
+    "minimal_additive_correction_authorized_by_root": [
+      "Require campaign.json, campaign.json.bak and preferences.json only; retain truthful presence/absence custody for all six named slots. Settings and settings backup remain optional; do not force any settings write.",
+      "Keep strict format2 closed-four-key, generation, payload-string and checksum validation for named campaign and preferences slots.",
+      "Retain present named settings bytes with strict finite plain JSON custody, without inventing a SaveStore generation/schema.",
+      "For SHA-only historical CAS with no direct native family attribution, ANY Store marker (format_version/generation/payload_json/sha256) invokes the full unchanged strict SaveStore envelope/checksum reader; otherwise retain as unattributed non-Store finite JSON without a settings-schema/generation claim.",
+      "Preserve all full native public lifecycle assertions and opaque Exact/binary handling. In this exact normal f7 flow the present CAS values are campaign/preferences format2."
+    ],
+    "dispatch": "Root assigned the original host preparer /root/act3_l5_retention_review to a new additive v2; original65ed and this receipt remain unchanged.",
+    "v2_reviewed_by_this_receipt": false
+  },
+  "clear_findings": {
+    "all_17_copied_guard_function_bodies_exact_9966": {
+      "require": true,
+      "digest": true,
+      "strict": true,
+      "stable": true,
+      "fsync_directory": true,
+      "save": true,
+      "record": true,
+      "write_literal": true,
+      "engine": true,
+      "frozen": true,
+      "snapshot": true,
+      "replace_subject": true,
+      "retain_unknown": true,
+      "restore_subject": true,
+      "load_dev": true,
+      "indexed": true,
+      "restore_all": true
+    },
+    "comparison_method": "Literal source-line function bodies, stopping before following top-level code; no Python parser, imports, host execution or AST.",
+    "queue_and_owned_process": "Canonical dev.godot_lock/run_validation; exact engine/context/argv; one owned Popen handle; durable spawn/closure and own-child termination only; no foreign process or lock intervention.",
+    "source_install_restore": "Four exact L4 subjects; original three regular0664 plus helper absence; source beforeimages and owned-created inode recorded; child closure precedes rollback; retain/abort on unknown foreign inode without deletion; restore-only recovery requires actual durable owned closure or never-attempted state.",
+    "hold_and_scope": "HOLD flags, expected/source_controls/reviews null and missing final readiness prevent execution before final Root sealing.181 continuing fixed inputs, four separately pinned candidate assembly texts and four target records are represented;16 obsolete private prior-capsule paths are excluded. No global closure claim.",
+    "finite_partial_retention": "Known report, one PNG, eight binary/JSON checkpoint pairs, at most126 SHA-named raw CAS and six named current store slots are attempted before outcome parsing even on missing/malformed/negative report. Unknown files, links and excess CAS remain untouched and prevent positive custody. Actual stable bytes/hash/size/mode retained; no recursive discovery or native binary decoding.",
+    "eight_checkpoint_order": [
+      "before_owned_Shell_cleanup",
+      "before_public_earlier_Retry",
+      "before_public_fresh_Replay",
+      "before_owned_Shell_cleanup",
+      "before_public_earlier_Retry",
+      "before_owned_Shell_cleanup",
+      "final_or_failure_before_ANY_cleanup",
+      "final_actual_after_normal_cleanup_and_source_checks"
+    ],
+    "checkpoint_order_basis": "Exact _run/_lifecycle/_fresh_replay/_dispose_shell/_finish_deferred flow; three inter-stage disposal records, two earlier Retry records, one fresh Replay record, then two final records. First seven cleanup_pending true; final false and complete only with successful native report/footer.",
+    "cas_bound": "Thirteen native _record calls plus eight flushes, each reading six finite slots, give126 maximum retention attempts; deduplicated hashes mean126 is a ceiling, not required file count.",
+    "actual_cleanup": "Exactly six native final rows: three inter_stage_Shell, brief_view_Game, NativeTickProbe, runtime_settings. Final _dispose_shell adds no duplicate because _shell is already null. Weakref release/probe release/audio-layout and FPS restoration remain native assertions.",
+    "report_and_receipts": "Native report/scope keys, complete/success/checks/failures/evidence_error,8summary metadata, native raw byte/hash/readback/roundtrip receipts and footer are joined to actual copied originals; Root API/Popen/host statuses stay separate. Host does not synthesize native check rows.",
+    "one_png": "Exact one540x1170 PNG custody and native pixel_readback_exact joined to actual bytes/hash/IHDR; actual_pixel_acceptance must remain false. Host records no visual acceptance; Root must inspect actual image after any run.",
+    "failure_handling": "First-failure native result and raw partials remain visible; no retry-for-green. Negative, incomplete, source-drift, cleanup or custody errors cannot become a positive host result."
+  },
+  "readiness": "Original65ed remains HOLD. After the single observer metadata correction, Root must independently read the additive source and seal exact executable/input controls before authorizing one targeted job. This source review is not a native result.",
+  "acceptance_limits": [
+    "No engine, parser/import, host, queued job, native simulation, source assembly, executable materialization, Git or canonical/tracked/runtime modification performed by this review.",
+    "No Exact/Variant/geometry decoding; native binary contents remain opaque.",
+    "No L4 saved construction, public Continue/Retry, portrait or cleanup success is inferred before an actual complete run and actual image inspection.",
+    "Preserve all24 original content acceptances and current22 policies. This review does not reopen original/full-route/all-enemy/earned-exit/all-kit/human/mobile gates or alter prior447 and failed fixed-comparison evidence."
+  ]
+}

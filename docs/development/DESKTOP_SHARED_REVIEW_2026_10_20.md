@@ -1,6 +1,6 @@
 # Desktop shared-system review — 20 October 2026
 
-Current policy pointer: [O2’s Shared75 amendment](ACT2_O2_DIFFICULTY.md) and [O3’s retained purposes](ACT3_O3_DIFFICULTY_RETENTION.md) bring coverage to22/24; A2-L4/L5 remain. This later documentation update adds no shared-feature/native evidence to the checkpoint below.
+Current policy pointer: [L4's Shared76 amendment](ACT2_L4_DIFFICULTY.md), [O2's Shared75 amendment](ACT2_O2_DIFFICULTY.md) and [O3's retained purposes](ACT3_O3_DIFFICULTY_RETENTION.md) bring coverage to23/24; only A2-L5 remains. L4 adds its separately scoped447/59/258 and brief visual evidence; this later pointer does not change the historical shared-feature checkpoint below.
 
 This is the historical `caaaa143` shared-feature checkpoint. Later policy decisions are tracked in [current coverage](DIFFICULTY_COVERAGE.md).
 

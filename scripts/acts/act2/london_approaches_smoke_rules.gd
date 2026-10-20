@@ -1,14 +1,16 @@
 extends RefCounted
-## Pure coherence for the complete L4 local16 aggregate, adapted from the
+## Pure coherence for literal L4 local16 or new local17 with arrangement, adapted from the
 ## frozen L3 bank/outer-history contract without boss state or checkpoints.
 ## Caller first validates saved Player, Scheduler, nine actors, three Rays,
 ## four lanes (complete conditional pending2) and two native SmokeBanks via
 ## snapshot_error(..., staged_scheduler, saved_player), plus native custody
 ## and original admission equipment/cadence/floor/range/LOS/camera support.
 ## No nodes, clocks, state mutation, requests, restores or events occur here.
-## KnownRules receives a copy with BOTH banks and bank_views removed.
+## KnownRules receives known14 with banks, bank_views and arrangement removed,
+## plus the validated descriptor (null only for literal legacy omission).
 
 const Sequence: Script = preload("res://scripts/acts/act2/london_approaches_sequence.gd")
+const Construction: Script = preload("res://scripts/acts/act2/london_approaches_construction.gd")
 const KnownRules: Script = preload("res://scripts/acts/act2/london_approaches_snapshot_rules.gd")
 const Codec: Script = preload("res://scripts/campaign/snapshot_codec.gd")
 const Bank: Script = preload("res://scripts/combat/smoke_bank.gd")
@@ -25,13 +27,15 @@ const PROGRESS_KEYS: Array[String] = ["completed", "completion_id", "contact_exi
 
 static func smoke_state_error(state: Dictionary) -> String:
 	var error: String = Codec.value_error(state)
-	if error.is_empty(): error = Codec.keys_error(state, LOCAL_KEYS)
 	if not error.is_empty(): return "L4 full local envelope: " + error
+	var construction: Dictionary = Construction.saved(state)
+	if not construction.error.is_empty(): return "L4 full local envelope: " + construction.error
 	if not state.banks is Dictionary or not state.bank_views is Dictionary or not Codec.keys_error(state.banks, BANK_IDS).is_empty(): return "L4 requires both complete independent bank snapshots"
 	var known: Dictionary = state.duplicate()
 	known.erase("banks")
 	known.erase("bank_views")
-	error = KnownRules.known_state_error(known)
+	known.erase("arrangement")
+	error = KnownRules.known_state_error(known, null if construction.legacy else construction.descriptor)
 	if not error.is_empty(): return error
 	var stage: int = int(state.sequence.stage_index)
 	var ended: bool = state.scheduler.encounter_id.is_empty()
@@ -132,7 +136,9 @@ static func progress_error(outer: Dictionary) -> String:
 	if outer.api_revision != Level.API_REVISION or not Codec.is_integer(outer.schema_version, Level.SNAPSHOT_SCHEMA_VERSION, Level.SNAPSHOT_SCHEMA_VERSION) or outer.level_id != "A2-L4" or outer.scene_path != "res://scenes/acts/act2/a2_l4.tscn" or not Codec.is_integer(outer.local_snapshot_version, 1, 1) or not outer.local is Dictionary or not outer.progress is Dictionary: return "L4 progression must retain its authored CinderLevel identity"
 	var local: Dictionary = outer.local
 	var progress: Dictionary = outer.progress
-	if not Codec.keys_error(local, LOCAL_KEYS).is_empty() or not local.sequence is Dictionary or not local.pending_checkpoints is Array or not local.completion_pending is bool or not local.exit_requested is bool or not Codec.keys_error(progress, PROGRESS_KEYS).is_empty() or not progress.completed is bool or not progress.checkpoint_ids is Dictionary: return "L4 progression needs the closed local/history dictionaries"
+	var construction: Dictionary = Construction.saved(local)
+	if not construction.error.is_empty(): return "L4 progression construction envelope: " + construction.error
+	if not local.sequence is Dictionary or not local.pending_checkpoints is Array or not local.completion_pending is bool or not local.exit_requested is bool or not Codec.keys_error(progress, PROGRESS_KEYS).is_empty() or not progress.completed is bool or not progress.checkpoint_ids is Dictionary: return "L4 progression needs the closed local/history dictionaries"
 	for key: String in ["completion_id", "contact_exit_id", "checkpoint_id", "checkpoint_kind"]:
 		if not progress[key] is String: return "L4 progression ID/kind must be a string"
 	error = Sequence.new().snapshot_error(local.sequence)

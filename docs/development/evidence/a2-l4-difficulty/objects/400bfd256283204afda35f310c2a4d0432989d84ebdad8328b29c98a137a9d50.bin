@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "unit_ids": [
+    "village_scout",
+    "yard_handler",
+    "apron_handler",
+    "crossing_scout",
+    "shelter_scout",
+    "shelter_handler"
+  ],
+  "recipes": [
+    {
+      "recipe_id": "A2-L2/assisted-canonical@v1",
+      "profile": "assisted",
+      "order": [
+        "village_scout",
+        "yard_handler",
+        "apron_handler",
+        "crossing_scout",
+        "shelter_scout",
+        "shelter_handler"
+      ]
+    },
+    {
+      "recipe_id": "A2-L2/standard-canonical@v1",
+      "profile": "standard",
+      "order": [
+        "village_scout",
+        "yard_handler",
+        "apron_handler",
+        "crossing_scout",
+        "shelter_scout",
+        "shelter_handler"
+      ]
+    },
+    {
+      "recipe_id": "A2-L2/challenge-canonical-legacy@v1",
+      "profile": "challenge",
+      "order": [
+        "village_scout",
+        "yard_handler",
+        "apron_handler",
+        "crossing_scout",
+        "shelter_scout",
+        "shelter_handler"
+      ]
+    },
+    {
+      "recipe_id": "A2-L2/challenge-near-handler@v2",
+      "profile": "challenge",
+      "order": [
+        "village_scout",
+        "yard_handler",
+        "apron_handler",
+        "crossing_scout",
+        "shelter_handler",
+        "shelter_scout"
+      ]
+    }
+  ],
+  "current": {
+    "assisted": "A2-L2/assisted-canonical@v1",
+    "standard": "A2-L2/standard-canonical@v1",
+    "challenge": "A2-L2/challenge-near-handler@v2"
+  }
+}

@@ -1,0 +1,108 @@
+"""Literal L4 constructor report reader; no native Variant or gameplay reproof."""
+from pathlib import Path
+import hashlib
+import json
+import math
+import os
+import re
+import stat
+
+
+def require(ok, reason):
+    if not ok:
+        raise ValueError(reason)
+
+
+def digest(data):
+    return hashlib.sha256(data).hexdigest()
+
+
+def strict(data):
+    def pairs(items):
+        result = {}
+        for key, value in items:
+            require(key not in result, "Duplicate JSON key: " + key)
+            result[key] = value
+        return result
+    def finite(token):
+        value = float(token)
+        require(math.isfinite(value), "Nonfinite JSON exponent")
+        return value
+    return json.loads(data.decode("utf-8", errors="strict"), object_pairs_hook=pairs,
+                      parse_float=finite,
+                      parse_constant=lambda token: (_ for _ in ()).throw(ValueError(token)))
+
+
+def stable(path):
+    path = Path(path)
+    require(path.is_absolute() and path.resolve() == path, "Literal nonsymlink absolute path required")
+    before = path.lstat()
+    require(stat.S_ISREG(before.st_mode), "Regular file required")
+    fd = os.open(path, os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0))
+    with os.fdopen(fd, "rb") as stream:
+        opened = os.fstat(stream.fileno())
+        require((before.st_dev, before.st_ino) == (opened.st_dev, opened.st_ino), "Changed before open")
+        data = stream.read()
+        closed_fd = os.fstat(stream.fileno())
+    second = path.read_bytes()
+    after = path.lstat()
+    key = lambda row: (row.st_dev, row.st_ino, row.st_size, row.st_mode, row.st_mtime_ns)
+    require(key(before) == key(opened) == key(closed_fd) == key(after) and data == second,
+            "Unstable literal two-read observation")
+    return {"path": str(path), "sha256": digest(data), "bytes": len(data),
+            "mode": format(stat.S_IMODE(after.st_mode), "04o"), "stable_two_reads": True}, data
+
+
+def observe(report_path, spec, raw, api_return, child_return):
+    result = {"functional_pass": False, "report_present": False}
+    try:
+        meta, literal = stable(report_path)
+        result.update(report_present=True, original_report=meta)
+        packet = strict(literal)
+        require(type(packet) is dict and packet.get("api_revision") == "inert-a2-l4-constructor-companion-1"
+                and packet.get("source_only_origin") is True
+                and packet.get("companion_source_sha256") == spec["fixture_sha256"], "Report API/source identity differs")
+        rows = packet.get("results")
+        require(type(rows) is list and bool(rows), "Actual assertion rows required")
+        require(all(type(row) is dict and set(row) == {"scope", "detail", "passed"}
+                    and type(row["scope"]) is str and type(row["detail"]) is str
+                    and type(row["passed"]) is bool for row in rows), "Actual row/control types differ")
+        failed = [dict(index=index, **row) for index, row in enumerate(rows, 1) if not row["passed"]]
+        result["first_failure_derived_from_actual_rows"] = failed[0] if failed else {}
+        require(type(packet.get("checks")) is int and packet["checks"] == len(rows)
+                and type(packet.get("failures")) is int and packet["failures"] == len(failed), "Native count/rows differ")
+        flags = ["reached_end", "mandatory_suite_complete", "bounded_mandatory_checks_pass",
+                 "pure_format_suite_complete", "native_fresh_new_restore_suite_complete",
+                 "native_literal_standard_checkpoint_and_clear_checked"]
+        require(all(type(packet.get(key)) is bool for key in flags), "Native completion flag types differ")
+        require(packet.get("native_literal_challenge_restore_checked") is False
+                and packet.get("native_saved_canonical_challenge_checked") is False
+                and packet.get("overall_campaign_or_policy_acceptance_claimed") is False,
+                "Untested/acceptance scope must remain explicit")
+        require(type(packet.get("wall_ms")) is int and packet["wall_ms"] >= 0
+                and type(packet.get("limits")) is list
+                and all(type(item) is str for item in packet["limits"]), "Actual timing/limits types differ")
+        sources = packet.get("source_observations")
+        require(type(sources) is list and len(sources) == len(spec["native_sources"]), "Actual35 source observations required")
+        observed = {}
+        for row in sources:
+            require(type(row) is dict and set(row) == {"path", "expected_sha256", "observed_sha256"}
+                    and row["path"] not in observed and row["expected_sha256"] == row["observed_sha256"],
+                    "Actual source gate row differs")
+            observed[row["path"]] = row["observed_sha256"]
+        require(observed == spec["native_sources"], "Actual source35 set differs")
+        footer = ("A2-L4 constructor companion: checks=%d failures=%d mandatory_complete=%s legacy_standard=%s persisted=true; "
+                  "no combat, Shell transport or policy acceptance") % (
+            len(rows), len(failed), str(packet["mandatory_suite_complete"]).lower(),
+            str(packet["native_literal_standard_checkpoint_and_clear_checked"]).lower())
+        require([line for line in raw.splitlines() if line.startswith("A2-L4 constructor companion:")] == [footer],
+                "Unique actual persisted footer/count/flag join differs")
+        result.update(checks=len(rows), failures=len(failed), native_flags={key: packet[key] for key in flags},
+                      source35=observed, limits=packet["limits"], literal_footer=footer,
+                      scope="Actual construction/format and direct quiet Player/Level restore only. No Shell/Store/gameplay/policy credit.")
+        result["functional_pass"] = (all(packet[key] is True for key in flags) and not failed
+                                     and type(api_return) is int and api_return == 0
+                                     and type(child_return) is int and child_return == 0)
+    except Exception as error:
+        result["error"] = str(error)
+    return result

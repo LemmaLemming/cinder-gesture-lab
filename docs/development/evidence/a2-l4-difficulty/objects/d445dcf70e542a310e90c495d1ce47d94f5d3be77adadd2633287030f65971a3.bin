@@ -1,0 +1,63 @@
+"""Only new helper-absence guard checks, on disposable mock paths; no Godot."""
+from pathlib import Path
+import hashlib
+import json
+import os
+import tempfile
+import types
+
+HERE = Path(__file__).resolve().parent
+host = types.ModuleType("l4_absence_guard_host")
+host.__file__ = str(HERE / "run.py")
+exec(compile((HERE / "run.py").read_bytes(), host.__file__, "exec"), host.__dict__)
+rows = []
+with tempfile.TemporaryDirectory(prefix="cinder-l4-absence-", dir="/private/tmp") as temporary:
+    base = Path(temporary)
+    candidate_bytes = b"exact-new-helper\n"
+    for label in ["own-exact", "open-child", "unowned-identical", "unknown-bytes", "unknown-mode", "foreign-symlink", "identical-foreign-inode"]:
+        directory = base / label; directory.mkdir(); out = directory / "evidence"; out.mkdir()
+        subject = directory / "subject.gd"
+        ownership = {"created": False, "identity": None}
+        host.replace_subject(subject, candidate_bytes, "0644", host.ABSENT,
+                             lambda identity: ownership.update(created=True, identity=identity))
+        candidate = host.record(subject)[0]
+        if label == "unknown-bytes": subject.write_bytes(b"foreign\n")
+        if label == "unknown-mode": subject.chmod(0o600)
+        if label == "foreign-symlink":
+            subject.unlink(); subject.symlink_to("do-not-read-target")
+        if label == "identical-foreign-inode":
+            replacement = directory / "foreign-identical.tmp"
+            replacement.write_bytes(candidate_bytes); replacement.chmod(0o644)
+            replacement.replace(subject)
+        before = host.record(subject)[0]
+        receipt = host.restore_subject(subject, host.ABSENT, None, candidate, out, "mock",
+                                       label != "open-child", ownership["created"] and label != "unowned-identical", ownership["identity"])
+        after = host.record(subject)[0]
+        expected_removed = label == "own-exact"
+        ok = (after == host.ABSENT and receipt["restored_exact_initial"]) if expected_removed else (
+            after == before and not receipt["restored_exact_initial"] and not receipt["write_attempted"])
+        if label == "foreign-symlink": ok = ok and os.readlink(subject) == "do-not-read-target"
+        assert ok, label
+        rows.append({"case": label, "passed": True, "removed": expected_removed, "status": receipt["status"]})
+    # Simulate a foreign arrival after final absent check but before exclusive create.
+    directory = base / "foreign-arrival"; directory.mkdir(); subject = directory / "subject.gd"
+    actual_link = host.os.link; ownership = {"created": False}
+    def arriving(source, target):
+        Path(target).write_bytes(b"foreign-arrival\n")
+        return actual_link(source, target)
+    try:
+        host.os.link = arriving
+        try:
+            host.replace_subject(subject, candidate_bytes, "0644", host.ABSENT,
+                                 lambda identity: ownership.update(created=True))
+            raise AssertionError("Exclusive creation should refuse foreign arrival")
+        except FileExistsError:
+            assert subject.read_bytes() == b"foreign-arrival\n" and ownership["created"] is False
+    finally:
+        host.os.link = actual_link
+    rows.append({"case": "foreign-arrival", "passed": True, "removed": False,
+                 "status": "EXCLUSIVE_LINK_REFUSED_FOREIGN_ARRIVAL"})
+print(json.dumps({"scope": "Eight new-absence guard cases on disposable Python mock paths only; no native/parser/import/dev/queue/Git/runtime action.",
+                  "host_source_sha256": hashlib.sha256((HERE / "run.py").read_bytes()).hexdigest(),
+                  "reader_source_sha256": hashlib.sha256((HERE / "native_inspect.py").read_bytes()).hexdigest(),
+                  "passed": True, "checks": len(rows), "results": rows}, indent=2))

@@ -1,0 +1,45 @@
+--- .cinder/a2-l4-save-view-host-inert-20261020/run.py.txt
++++ .cinder/a2-l4-save-view-host-v2-inert-20261020/run.py.txt
+@@ -418,10 +418,17 @@
+         if not re.fullmatch(r"raw-Store-[0-9a-f]{64}\.txt", name) or not entry.get("copied_verbatim"): continue
+         try:
+             meta, literal = retained(out, custody, name)
+             require(name == "raw-Store-" + meta["sha256"] + ".txt", "Native Store CAS name/hash mismatch")
+-            header = raw_store_header(literal)
+-            result["raw_Store_CAS"].append({"original": meta, "plain_header": header, "Exact_payload_decoded": False})
++            # SHA-only history names carry no settings/campaign/prefs attribution.
++            # Any reserved Store marker requires the unchanged strict closed4
++            # Store2/header/checksum validator; partial/malformed Store never
++            # falls back to non-Store JSON. All other finite JSON stays untyped.
++            wire = strict(literal)
++            item = {"original": meta, "classification": "unattributed_non_Store_finite_JSON", "Exact_payload_decoded": False}
++            if type(wire) is dict and set(wire) & {"format_version", "generation", "payload_json", "sha256"}:
++                item.update(classification="strict_Store2", plain_header=raw_store_header(literal))
++            result["raw_Store_CAS"].append(item)
+         except Exception as error: result["errors"].append({"name": name, "error": str(error)})
+     # Preserve partial observations even when report is missing, malformed or negative.
+     save(out / "native-observation.json", result)
+     try:
+@@ -470,10 +477,20 @@
+             if not slot.get("present"): continue
+             smeta, literal = retained(out, custody, relative); casname = "raw-Store-" + smeta["sha256"] + ".txt"
+             cmeta, cas = retained(out, custody, casname)
+             require(cas == literal and cmeta["bytes"] == smeta["bytes"], "Actual current Store/raw CAS full-byte join differs")
+-            joins.append({"slot": name, "actual_original": smeta, "raw_CAS_original": cmeta, "plain_header": raw_store_header(literal)})
+-        require({row["slot"] for row in joins} >= {"campaign.json", "campaign.json.bak", "settings.json", "preferences.json"}, "Actual public current raw Store slots incomplete")
++            item = {"slot": name, "actual_original": smeta, "raw_CAS_original": cmeta}
++            if name in ("settings.json", "settings.json.bak"):
++                # Settings load/apply may preserve absence and their optional
++                # persisted bytes are ordinary JSON, not SaveStore envelopes.
++                # No settings schema, generation or historical CAS family is
++                # inferred here; the native public assertions remain authority.
++                strict(literal)
++                item["classification"] = "named_optional_settings_finite_JSON"
++            else:
++                item.update(classification="named_strict_Store2", plain_header=raw_store_header(literal))
++            joins.append(item)
++        require({row["slot"] for row in joins} >= {"campaign.json", "campaign.json.bak", "preferences.json"}, "Actual public campaign primary/backup and preferences primary incomplete")
+         result["current_Store_raw_CAS_joins"] = joins
+         portrait = packet["portrait"]; pmeta, png = retained(out, custody, PNG_NAME)
+         require(type(portrait) is dict and set(portrait) == {"path", "sha256", "bytes", "width", "height", "pixel_readback_exact", "actual_pixel_acceptance"}
+                 and portrait["path"] == report_uri.removesuffix("report.json") + PNG_NAME

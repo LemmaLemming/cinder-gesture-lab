@@ -1,0 +1,78 @@
+"""Read-only verification of the exact432-file L4 local-copy proposal; no native/Git/state decode."""
+from pathlib import Path
+import argparse
+import hashlib
+import json
+import os
+import stat
+
+HERE = Path(__file__).resolve().parent
+MANIFEST_SHA256 = "8ec33c7e7ed431b314329ffd57e0d3050455ba0c9907d97490fa2bd0bee17771"
+PUBLIC_PREFIX = "docs/development/evidence/a2-l4-difficulty/"
+
+
+def require(ok, reason):
+    if not ok:
+        raise ValueError(reason)
+
+
+def record(path):
+    require(path.is_absolute() and path.resolve() == path, "Literal nonsymlink path required: " + str(path))
+    before = path.lstat()
+    require(stat.S_ISREG(before.st_mode), "Regular file required: " + str(path))
+    digest = hashlib.sha256()
+    count = 0
+    with path.open("rb") as stream:
+        opened = os.fstat(stream.fileno())
+        require((opened.st_dev, opened.st_ino) == (before.st_dev, before.st_ino), "File changed before read")
+        for block in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(block)
+            count += len(block)
+        closed = os.fstat(stream.fileno())
+    after = path.lstat()
+    key = lambda row: (row.st_dev, row.st_ino, row.st_size, row.st_mode, row.st_mtime_ns)
+    require(key(before) == key(opened) == key(closed) == key(after), "File changed during verification")
+    return {"sha256": digest.hexdigest(), "bytes": count, "mode": format(stat.S_IMODE(after.st_mode), "04o")}
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--destination", type=Path, help="Existing copied publication directory; omit to verify private publication/.")
+    args = parser.parse_args()
+    manifest_path = HERE / "copy-manifest.json"
+    require(record(manifest_path)["sha256"] == MANIFEST_SHA256, "Frozen copy manifest differs")
+    manifest = json.loads(manifest_path.read_text())
+    target = (args.destination or (HERE / "publication")).absolute()
+    require(target.resolve() == target and target.is_dir(), "Existing literal destination directory required")
+    expected = set()
+    total = 0
+    for row in manifest["files"]:
+        require(row["destination"].startswith(PUBLIC_PREFIX), "Unexpected public destination prefix")
+        relative = row["destination"][len(PUBLIC_PREFIX):]
+        require(relative and ".." not in Path(relative).parts and not Path(relative).is_absolute(), "Closed publication-relative path required")
+        require(row["private_source"] == str(HERE / "publication" / relative), "Private source path/manifest join differs")
+        require(relative not in expected, "Duplicate publication-relative path")
+        expected.add(relative)
+        actual = record(target / relative)
+        require(actual == {key: row[key] for key in ("sha256", "bytes", "mode")} and actual["mode"] == "0644",
+                "SHA/bytes/mode mismatch: " + relative)
+        total += actual["bytes"]
+    observed = set()
+    for directory, dirs, names in os.walk(target, followlinks=False):
+        current = Path(directory)
+        for name in dirs:
+            require(not (current / name).is_symlink(), "Unknown symlink directory in publication")
+        for name in names:
+            path = current / name
+            require(not path.is_symlink() and path.is_file(), "Unknown nonregular file in publication")
+            observed.add(str(path.relative_to(target)))
+    require(observed == expected, "Missing or unknown destination file; no file was changed")
+    require(len(expected) == manifest["file_count"] == 432 and total == manifest["bytes"] == 313227139,
+            "Frozen publication count/size differs")
+    print(json.dumps({"verified_files": len(expected), "verified_bytes": total, "root": str(target),
+                      "manifest_sha256": MANIFEST_SHA256, "exact_tree": True,
+                      "read_only": True, "native_or_Exact_decoding": False}, indent=2))
+
+
+if __name__ == "__main__":
+    main()

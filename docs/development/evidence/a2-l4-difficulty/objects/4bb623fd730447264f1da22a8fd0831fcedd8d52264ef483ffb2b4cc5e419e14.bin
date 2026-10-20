@@ -1,0 +1,269 @@
+{
+  "schema": "cinder.bounded-source-review.v1",
+  "created_utc": "2026-10-20T06:04:36.438363+00:00",
+  "status": "BLOCKED_ONE_EXACT_TEST_SOURCE_PREDICATE",
+  "scope": "Source-only review of the frozen Act 1 L4 save/view followup. No native, parser, import, queue, Git, runtime or worker operation; no acceptance decision.",
+  "request": ".cinder/agent-chat/cinder-campaign/act1/messages/2eceb914-c72e-4fde-87eb-5898bc4cdf9f-REQUEST.json",
+  "owner_commit": "8ebc5f052f5092371b3f6f59c29838d7ce5d9304",
+  "package": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/docs/acts/act1/support/a2-l4-inert-comparison/save-view-followup",
+  "index_sha256": "3ac2dd297cdfdb28cfc234ae6496a10b6b555bff75d61f2f4f0fffde3d6f65b2",
+  "source": {
+    "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/docs/acts/act1/support/a2-l4-inert-comparison/save-view-followup/saved_construction_view.gd.txt",
+    "sha256": "b6802f5578e55e2a42a61335034bcc5652a1e0e44dfd68ef732fc4c37b7b8613",
+    "bytes": 94222,
+    "lines": 1191,
+    "full_source_read": true
+  },
+  "support_read": [
+    {
+      "name": "PLAN.md",
+      "full_read": true
+    },
+    {
+      "name": "lifecycle-source-review.json",
+      "sha256": "a9bb7cf06b7305e268e87dd0ec42fa814ec8d03bc5a44823ce97cd7a197fe88a",
+      "full_read": true
+    },
+    {
+      "name": "custody-source-review.json",
+      "sha256": "aa7b4958ce7d539a98d4e8854f5bb628403fdba89f2352650bb84454bbd3d838",
+      "full_read": true
+    },
+    {
+      "name": "source-proof.json",
+      "sha256": "42044534ab15aa7f4f1b482a41a9494ca670810264b95ee79d048ae3530ffbef",
+      "full_read": true
+    },
+    {
+      "name": ".cinder/a2-l4-validation-recipient-source-review-20261020/REVIEW.json",
+      "sha256": "ee6c5ae0da2e8264819ef91fb32678c91d4893ead556b770e4ccff42379a649d"
+    },
+    {
+      "name": "integration responses b90c3efb-0097-4ac8-bf5e-ccfe2db9b9b2 and d15f7ffe-0a32-4af6-adb2-bf002d1698c2",
+      "full_read": true
+    }
+  ],
+  "findings": [
+    {
+      "id": "F1",
+      "priority": 1,
+      "classification": "Exact TEST expectation contradicts selected native actor Script",
+      "source_line": 954,
+      "predicate": "actor.get_script().resource_path != \"res://scripts/acts/act2/ray_scout_actor.gd\"",
+      "evidence": [
+        "Selected candidate-london_approaches.gd.txt lines 88-100 constructs all non-Tender/non-Handler actors with WeybridgeScoutActor and records the same Ray nodes in _ray_actors.",
+        "scripts/acts/act2/weybridge.gd line 6 preloads res://scripts/acts/act2/weybridge_scout_actor.gd. That source extends the base ray_scout_actor.gd; neither adapter nor base configure replaces the Script.",
+        "The candidate therefore has the exact derived Script resource, rather than the base Script resource expected at line 954.",
+        "Lines 882-889 fail any actually mapped ineligible recipient even when no retirement callback is emitted."
+      ],
+      "impact": "The frozen fixture rejects a genuine pristine selected validation recipient before the promised public session lifecycle can satisfy this check. This is a source contradiction, not a claimed native failure.",
+      "minimal_correction": {
+        "replace_once": "actor.get_script().resource_path != \"res://scripts/acts/act2/ray_scout_actor.gd\"",
+        "with": "actor.get_script().resource_path != \"res://scripts/acts/act2/weybridge_scout_actor.gd\"",
+        "line": 954,
+        "do_not_change": [
+          "SOURCE_SHA256 base Ray entry at line 24",
+          "SOURCE_SHA256 derived entry at line 25",
+          "actual actor identity equality",
+          "actor_id check",
+          "frozen Script identities",
+          "all provenance, lifecycle, HP, profile, lease, private-record and exact cleanup-payload checks"
+        ]
+      },
+      "scope": "One exact literal in a new private Root test copy only; preserve frozen b680 source and all owner package originals. No generic subclass tolerance, production/API change or signal suppression.",
+      "existing_pin_coverage": {
+        "source_sha256_line": 25,
+        "path": "scripts/acts/act2/weybridge_scout_actor.gd",
+        "sha256": "7e90bfc541c467162a5a0b0afd6891e8aa6dda9835a4da05362e9301eed78916",
+        "bytes": 1129,
+        "actual_mode": "0600",
+        "already_in_prior_201_fixed": true,
+        "uid_slot_already_covered": true,
+        "new_pin_required": false
+      }
+    }
+  ],
+  "bounded_metadata_crosscheck": {
+    "reviewer": "/root/resume_house_forecast_review; separate bounded read-only receipt delivered 2026-10-20",
+    "package_paths": 28,
+    "listed_files": 27,
+    "all_listed_sha_bytes_and_mode_0644_match": true,
+    "source_map_rows": 44,
+    "source_map_equals_source_controls_rows": true,
+    "prior_fixed_slots": 201,
+    "runtime_subject_slots": 4,
+    "total_cohort_slots": 205,
+    "all_prior_fixed_and_original_runtime_slots_exact": true,
+    "current_drift": 0,
+    "all_44_sources_covered_by_prior_cohort": true,
+    "seven_public_persistence_framing_rows_add_cohort_files": 0,
+    "selected_four_equal_root_spec": true,
+    "note": "Candidate selection hashes describe future bounded assembly, separately from the currently rolled-back original runtime modes/absence. No global census."
+  },
+  "selected_candidate_four": [
+    {
+      "path": "scripts/acts/act2/london_approaches.gd",
+      "sha256": "b81f9e8274bf72dca952fd1da8d41fd73e49059f24e0004ece6ca011d31fb3b4",
+      "bytes": 61944,
+      "candidate_mode": "0664",
+      "current_runtime": "original f8edbdf3a34a5dc3bf424471958c8a19d803cae764e73e256ea30c55c03b1ad0, 59165 bytes, 0664"
+    },
+    {
+      "path": "scripts/acts/act2/london_approaches_snapshot_rules.gd",
+      "sha256": "d6f70d2eed03299b6627d7e179fa7e980e58ec8f6ad577f6697e1038b8c42229",
+      "bytes": 15778,
+      "candidate_mode": "0664",
+      "current_runtime": "original restored, 15175 bytes, 0664"
+    },
+    {
+      "path": "scripts/acts/act2/london_approaches_smoke_rules.gd",
+      "sha256": "e54af1c3800b63c10764b7f9b52cb6a29713e5f4923ee591030430193619b2bb",
+      "bytes": 14717,
+      "candidate_mode": "0664",
+      "current_runtime": "original restored, 14235 bytes, 0664"
+    },
+    {
+      "path": "scripts/acts/act2/london_approaches_construction.gd",
+      "sha256": "2733421a461c2b2f2421ea4a5500aabd370096b043612bb04860e01480ed551e",
+      "bytes": 10604,
+      "candidate_mode": "0644",
+      "current_runtime": "absent, as original"
+    }
+  ],
+  "host_spec_subjects_exact": {
+    "scripts/acts/act2/london_approaches.gd": {
+      "original": {
+        "exists": true,
+        "regular": true,
+        "symlink": false,
+        "sha256": "f8edbdf3a34a5dc3bf424471958c8a19d803cae764e73e256ea30c55c03b1ad0",
+        "bytes": 59165,
+        "mode": "0664"
+      },
+      "candidate": {
+        "exists": true,
+        "regular": true,
+        "symlink": false,
+        "sha256": "b81f9e8274bf72dca952fd1da8d41fd73e49059f24e0004ece6ca011d31fb3b4",
+        "bytes": 61944,
+        "mode": "0664"
+      },
+      "original_source": ".cinder/a2-l4-constructor-format-host-prepare-20261020/inputs/original-london_approaches.gd.txt",
+      "candidate_source": ".cinder/a2-l4-constructor-format-host-prepare-20261020/inputs/candidate-london_approaches.gd.txt"
+    },
+    "scripts/acts/act2/london_approaches_snapshot_rules.gd": {
+      "original": {
+        "exists": true,
+        "regular": true,
+        "symlink": false,
+        "sha256": "85c470289212aaabc86c842e4d464768d7e6993ed59aac99146cde64803613b4",
+        "bytes": 15175,
+        "mode": "0664"
+      },
+      "candidate": {
+        "exists": true,
+        "regular": true,
+        "symlink": false,
+        "sha256": "d6f70d2eed03299b6627d7e179fa7e980e58ec8f6ad577f6697e1038b8c42229",
+        "bytes": 15778,
+        "mode": "0664"
+      },
+      "original_source": ".cinder/a2-l4-constructor-format-host-prepare-20261020/inputs/original-london_approaches_snapshot_rules.gd.txt",
+      "candidate_source": ".cinder/a2-l4-constructor-format-host-prepare-20261020/inputs/candidate-london_approaches_snapshot_rules.gd.txt"
+    },
+    "scripts/acts/act2/london_approaches_smoke_rules.gd": {
+      "original": {
+        "exists": true,
+        "regular": true,
+        "symlink": false,
+        "sha256": "8c0264f7a83a208c59563e76ca1f5e286bbfd73e0f7a344558d881be3d1fa904",
+        "bytes": 14235,
+        "mode": "0664"
+      },
+      "candidate": {
+        "exists": true,
+        "regular": true,
+        "symlink": false,
+        "sha256": "e54af1c3800b63c10764b7f9b52cb6a29713e5f4923ee591030430193619b2bb",
+        "bytes": 14717,
+        "mode": "0664"
+      },
+      "original_source": ".cinder/a2-l4-constructor-format-host-prepare-20261020/inputs/original-london_approaches_smoke_rules.gd.txt",
+      "candidate_source": ".cinder/a2-l4-constructor-format-host-prepare-20261020/inputs/candidate-london_approaches_smoke_rules.gd.txt"
+    },
+    "scripts/acts/act2/london_approaches_construction.gd": {
+      "original": {
+        "exists": false,
+        "regular": false,
+        "symlink": false,
+        "sha256": null,
+        "bytes": null,
+        "mode": null
+      },
+      "candidate": {
+        "exists": true,
+        "regular": true,
+        "symlink": false,
+        "sha256": "2733421a461c2b2f2421ea4a5500aabd370096b043612bb04860e01480ed551e",
+        "bytes": 10604,
+        "mode": "0644"
+      },
+      "original_source": null,
+      "candidate_source": ".cinder/a2-l4-constructor-format-host-prepare-20261020/inputs/candidate-london_approaches_construction.gd.txt"
+    }
+  },
+  "source_assessment": [
+    {
+      "area": "Validation provenance and disposal wrapper",
+      "lines": "162-171, 862-990, 992-1057",
+      "result": "Conditionally supported after F1",
+      "detail": "Actual _validation_candidates[A2-L4] map membership and all seven exact native references are frozen before unchanged synchronous super._dispose. Mapped ineligible recipients fail without requiring a callback. Known three Ray membership and full frozen payloads remain exact; no map-missing, partial-recipient, installation or registration fallback."
+    },
+    {
+      "area": "Retirement callback guards",
+      "lines": "992-1054",
+      "result": "Conditionally supported after F1",
+      "detail": "Same wrapper span/native actors/scripts/world, disarmed entered=false/busy=true/restore=true/not-ready state, whole installed/candidate Player snapshots, profile/construction binding, native records/states, full HP and empty reservations/proof history are compared. Actual callback IDs/counts are recorded; no speculative exactly-three-emission gate is added."
+    },
+    {
+      "area": "Genuine old16/current/earlier-checkpoint and fresh17 sessions",
+      "lines": "302-418",
+      "result": "Source flow supported; unexecuted here",
+      "detail": "Exact old16 Standard literal current stage8 and earlier stage7 checkpoint remain actual old-format content in a new TEST Store transport. Fresh17 Challenge is produced by actual public Replay with an entrance checkpoint; no historical old Challenge or new late-stage Challenge producer is claimed. Opposite future preference does not override captured run profile."
+    },
+    {
+      "area": "Title, migration, Replay, Save, Retry and current Continue",
+      "lines": "330-489",
+      "result": "Source flow supported; unexecuted here",
+      "detail": "First Title computes actual canonical implemented-ID migration while preserving whole Story/current/checkpoint (selected fixture 5 to 13 unlocked IDs, +1 generation). Replay expects +2 and preserves recaptured Story; Pause Save and Retry expect their actual +1 transitions. Independent Title loads the actual current attempt using public resume_requested/load_active; Continue Story would leave Replay and is not substituted here. No GUI button hit-test claim."
+    },
+    {
+      "area": "Late raw preservation and normal cleanup",
+      "lines": "587-723, 1124-1191",
+      "result": "Source flow supported; unexecuted here",
+      "detail": "Every observed Store slot retains actual raw UTF-8/hash, and serial provisional full native pure-data snapshots remain immutable. Cleanup covers native Level/FX/Shell/probe/subtree release and globals restoration before final raw/report success; retained TEST Store evidence is not falsely described as deleted user files. Unknown handles, readback/roundtrip failure, failed rows or incomplete cleanup prevent exit 0."
+    },
+    {
+      "area": "Brief first-warning component image",
+      "lines": "726-857, 1059-1122",
+      "result": "Source flow supported; unexecuted here",
+      "detail": "One 540x1170 selected Challenge candidate, neutral setup, fixed station with native derived standing Y, first actual Handler warning only, and one post-native-tick frame_post_draw barrier. Native warning lease/cycle/clock, Player wire, camera and source guards remain frozen; one PNG readback is retained and actual_pixel_acceptance remains false. Root must actually inspect any future image."
+    },
+    {
+      "area": "Finite native component and scope",
+      "lines": "248-281, 1059-1191",
+      "result": "Source flow supported; unexecuted here",
+      "detail": "Published three RUNNING component proof branches and finite <=224 projection points preserve prior helper/factory strings. The save/view companion does not repeat original-versus-candidate comparison, claim full routes, earn exits, defeat all enemies, generate old Challenge, or provide all-kit/balance/performance evidence."
+    }
+  ],
+  "preserved_evidence_and_limits": [
+    "Original constructor 447 and corrected comparison 59 are prior valid evidence reused unchanged, not rerun or recounted by this review.",
+    "Failed c0b7 and all original failed/canceled/unexecuted evidence remain unchanged.",
+    "The three original owner source reviews remain historical originals; their no-findings statements do not resolve F1.",
+    "All 24 original level acceptances and 22 currently acknowledged policies are preserved; this review does not accept the remaining L4/L5 amendments.",
+    "No native execution, PNG observation, parser result, new producer seam, route/full-playthrough result, balance result or performance result is supplied here.",
+    "After Root applies the exact one-literal correction in a new private copy, independently re-read that copy and its new pins before any Root-owned materialization. Future native/render outcomes must be recorded separately."
+  ],
+  "material_blocker_count": 1,
+  "goal_complete": false
+}

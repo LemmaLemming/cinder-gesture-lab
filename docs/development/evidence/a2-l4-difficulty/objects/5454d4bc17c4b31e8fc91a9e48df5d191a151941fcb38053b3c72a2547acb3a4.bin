@@ -1,0 +1,691 @@
+"""INERT Root-only one queued graphical L4 public save/view host. No automatic rerun or pixel/policy acceptance."""
+from pathlib import Path
+import argparse
+import contextlib
+import datetime
+import importlib.util
+import json
+import os
+import re
+import signal
+import stat
+import sys
+import hashlib
+import math
+import uuid
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[1]
+def require(ok, reason):
+    if not ok:
+        raise ValueError(reason)
+
+
+def digest(data):
+    return hashlib.sha256(data).hexdigest()
+
+
+def strict(data):
+    def pairs(items):
+        result = {}
+        for key, value in items:
+            require(key not in result, "Duplicate JSON key: " + key)
+            result[key] = value
+        return result
+    def finite(token):
+        value = float(token)
+        require(math.isfinite(value), "Nonfinite JSON exponent")
+        return value
+    return json.loads(data.decode("utf-8", errors="strict"), object_pairs_hook=pairs,
+                      parse_float=finite,
+                      parse_constant=lambda token: (_ for _ in ()).throw(ValueError(token)))
+
+
+def stable(path):
+    path = Path(path)
+    require(path.is_absolute() and path.resolve() == path, "Literal nonsymlink absolute path required")
+    before = path.lstat()
+    require(stat.S_ISREG(before.st_mode), "Regular file required")
+    fd = os.open(path, os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0))
+    with os.fdopen(fd, "rb") as stream:
+        opened = os.fstat(stream.fileno())
+        require((before.st_dev, before.st_ino) == (opened.st_dev, opened.st_ino), "Changed before open")
+        data = stream.read()
+        closed_fd = os.fstat(stream.fileno())
+    second = path.read_bytes()
+    after = path.lstat()
+    key = lambda row: (row.st_dev, row.st_ino, row.st_size, row.st_mode, row.st_mtime_ns)
+    require(key(before) == key(opened) == key(closed_fd) == key(after) and data == second,
+            "Unstable literal two-read observation")
+    return {"path": str(path), "sha256": digest(data), "bytes": len(data),
+            "mode": format(stat.S_IMODE(after.st_mode), "04o"), "stable_two_reads": True}, data
+
+
+DIAGNOSTIC = re.compile(r"^\s*(?:ERROR|WARNING|SCRIPT ERROR):|ObjectDB.*leak|Orphan.*StringName", re.I)
+ABSENT = {"exists": False, "regular": False, "symlink": False, "sha256": None, "bytes": None, "mode": None}
+
+
+def fsync_directory(path):
+    fd = os.open(path, os.O_RDONLY)
+    try: os.fsync(fd)
+    finally: os.close(fd)
+
+
+def save(path, value):
+    data = (json.dumps(value, indent=2, allow_nan=False) + "\n").encode()
+    temporary = path.with_name(path.name + ".owned-" + uuid.uuid4().hex + ".tmp")
+    with temporary.open("xb") as stream:
+        stream.write(data); stream.flush(); os.fsync(stream.fileno())
+    os.replace(temporary, path); fsync_directory(path.parent)
+
+
+def record(path):
+    path = Path(path)
+    require(path.is_absolute() and path.parent.resolve() == path.parent, "No symlink parent allowed")
+    st = path.lstat() if os.path.lexists(path) else None
+    regular = bool(st and stat.S_ISREG(st.st_mode))
+    data = stable(path)[1] if regular else None
+    return {"exists": st is not None, "regular": regular, "symlink": bool(st and stat.S_ISLNK(st.st_mode)),
+            "sha256": digest(data) if data is not None else None, "bytes": len(data) if data is not None else None,
+            "mode": format(stat.S_IMODE(st.st_mode), "04o") if st else None}, data
+
+
+def write_literal(path, data):
+    with path.open("xb") as stream:
+        stream.write(data); stream.flush(); os.fsync(stream.fileno())
+    fsync_directory(path.parent)
+
+
+def engine(spec):
+    path = Path(spec["engine_expected"]["path"])
+    row, _ = record(path)
+    require(row == spec["engine_expected"]["record"] and os.access(path, os.X_OK), "Exact C7 engine bytes/mode/type differ")
+    return dict(row, path=str(path), retained_binary=False)
+
+
+def frozen(spec):
+    ready = strict((HERE / "READINESS.json").read_bytes())
+    require(spec["integration_root"] == str(ROOT), "Exact canonical Root required")
+    for name, expected in ready["frozen_files"].items():
+        meta, _ = stable(HERE / name)
+        require({key: meta[key] for key in ["sha256", "bytes", "mode"]} == expected, "Frozen host source changed: " + name)
+
+
+def snapshot(spec, out, label, selected=None):
+    names = sorted(set(spec["expected"]) | set(spec["subjects"]))
+    rows = {}; retention = {}; blobs = out / "source-blobs"; blobs.mkdir(exist_ok=True)
+    for name in names:
+        row, data = record(ROOT / name); rows[name] = row
+        if data is not None:
+            target = blobs / (row["sha256"] + ".bin")
+            if not target.exists(): write_literal(target, data)
+            require(digest(target.read_bytes()) == row["sha256"], "Source CAS differs")
+            retention[name] = dict(row, blob=str(target.relative_to(out)))
+    save(out / (label + ".json"), rows); save(out / (label + "-retention.json"), retention)
+    for name, expected in spec["expected"].items():
+        require(rows[name] == expected, "Named dependency/control/UID/cache source differs: " + name)
+    for name, variants in spec["subjects"].items():
+        if selected is None:
+            require(rows[name] == variants["original"], "Unknown subject left in situ: " + name)
+        else:
+            require(rows[name] == selected[name], "Selected subject source/mode/type differs: " + name)
+    frozen(spec)
+    return rows
+
+
+def replace_subject(path, data, mode, expected_prior, on_created=None, expected_identity=None):
+    """O2 final-prior-check replacement, plus exclusive link for genuine absence."""
+    require(expected_prior == ABSENT or expected_prior["regular"] and not expected_prior["symlink"], "Known regular or absent prior required")
+    temporary = path.with_name(path.name + ".l5-fixed-owned-" + uuid.uuid4().hex + ".tmp")
+    try:
+        write_literal(temporary, data); os.chmod(temporary, int(mode, 8))
+        require(record(path)[0] == expected_prior, "Final prior guard changed; unknown left in situ")
+        if expected_prior != ABSENT:
+            prior_stat = path.lstat()
+            require(expected_identity is not None and expected_identity == {"device": prior_stat.st_dev, "inode": prior_stat.st_ino},
+                    "Final prior inode changed; identical foreign file left in situ")
+        created_stat = temporary.lstat()
+        identity = {"device": created_stat.st_dev, "inode": created_stat.st_ino}
+        if expected_prior == ABSENT:
+            os.link(temporary, path)  # exclusive no-clobber even for identical foreign arrivals
+        else:
+            os.replace(temporary, path)
+        if on_created is not None: on_created(identity)
+        fsync_directory(path.parent)
+    finally:
+        if os.path.lexists(temporary): temporary.unlink()
+
+
+def retain_unknown(path, out, label):
+    row, data = record(path)
+    if data is not None: write_literal(out / (label + ".bin"), data)
+    meta = dict(row, path=str(path), left_in_situ=True)
+    if row["symlink"]: meta["link_target"] = os.readlink(path)
+    save(out / (label + ".json"), meta)
+    return row
+
+
+def restore_subject(path, initial, initial_data, candidate, out, label, owned_closed, created_by_this_run, creation_identity=None):
+    receipt = {"path": str(path), "owned_children_closed": owned_closed, "created_by_this_run": created_by_this_run,
+               "restored_exact_initial": False, "write_attempted": False, "under_canonical_lock": True,
+               "unknown_overwrite_authorized": False}
+    try:
+        current = record(path)[0]
+        if not owned_closed:
+            receipt["status"] = "OWNED_CHILD_NOT_CLOSED_NO_WRITE"
+        elif current == initial:
+            receipt.update(status="ALREADY_EXACT_INITIAL_NO_WRITE", restored_exact_initial=True)
+        elif current == candidate and created_by_this_run:
+            require(type(creation_identity) is dict and set(creation_identity) == {"device", "inode"}
+                    and all(type(value) is int for value in creation_identity.values()), "Actual own inode identity required")
+            require(record(path)[0] == candidate, "Final candidate bytes/mode/type guard changed")
+            current_stat = path.lstat()
+            require(creation_identity == {"device": current_stat.st_dev, "inode": current_stat.st_ino},
+                    "Identical foreign replacement inode left in situ")
+            receipt["write_attempted"] = True
+            if initial == ABSENT:
+                path.unlink(); fsync_directory(path.parent)
+                receipt.update(status="REMOVED_ONLY_EXACT_OWN_CREATED_CANDIDATE", restored_exact_initial=record(path)[0] == ABSENT)
+            else:
+                replace_subject(path, initial_data, initial["mode"], candidate, expected_identity=creation_identity)
+                receipt.update(status="RESTORED_EXACT_INITIAL_BYTES_MODE", restored_exact_initial=record(path)[0] == initial)
+        else:
+            receipt["status"] = "UNKNOWN_OR_UNOWNED_CANDIDATE_LEFT_IN_SITU"
+        if not receipt["restored_exact_initial"]:
+            receipt["observed"] = retain_unknown(path, out, label + "-unexpected")
+    except Exception as error:
+        receipt.update(status="GUARDED_RESTORE_FAILED_NO_UNKNOWN_WRITE", error=str(error))
+        receipt["observed"] = retain_unknown(path, out, label + "-guard-conflict")
+    save(out / (label + "-restore.json"), receipt)
+    return receipt
+
+
+class Tee:
+    def __init__(self, terminal, log): self.terminal, self.log = terminal, log
+    def write(self, value): self.log.write(value); return self.terminal.write(value)
+    def flush(self): self.log.flush(); self.terminal.flush()
+
+
+def load_dev(spec):
+    module = importlib.util.spec_from_file_location("cinder_l5_fixed_dev", ROOT / "scripts/dev/dev.py")
+    require(module is not None and module.loader is not None, "Canonical dev source required")
+    dev = importlib.util.module_from_spec(module); sys.modules[module.name] = dev
+    prior = sys.dont_write_bytecode
+    try: sys.dont_write_bytecode = True; module.loader.exec_module(dev)
+    finally: sys.dont_write_bytecode = prior
+    env = dict(os.environ)
+    env.update(CINDER_GODOT=spec["engine_expected"]["path"], CINDER_CANONICAL_ROOT=str(ROOT), PYTHONDONTWRITEBYTECODE="1")
+    context = dev.ProjectContext(root=ROOT, environ=env)
+    require(context.canonical_root == ROOT and str(dev.resolve_godot(context)) == spec["engine_expected"]["path"], "Canonical context/engine differs")
+    return dev, context
+
+
+def indexed(out):
+    files = {}
+    for path in sorted(out.rglob("*")):
+        if path.is_file() and path != out / "evidence-index.json":
+            meta, _ = stable(path)
+            files[str(path.relative_to(out))] = {key: meta[key] for key in ["sha256", "bytes", "mode"]}
+    save(out / "evidence-index.json", {"created_after_raw_close": True, "files": files})
+
+
+
+# Native producer families are finite. Exact source flow has at most eight
+# checkpoint boundaries; each binary remains opaque to this host.
+SLOTS = ("scripts/acts/act2/london_approaches.gd", "scripts/acts/act2/london_approaches_snapshot_rules.gd",
+         "scripts/acts/act2/london_approaches_smoke_rules.gd", "scripts/acts/act2/london_approaches_construction.gd")
+STORE_NAMES = ("campaign.json", "campaign.json.bak", "settings.json", "settings.json.bak", "preferences.json", "preferences.json.bak")
+CHECKPOINT_LABELS = ("before_owned_Shell_cleanup", "before_public_earlier_Retry", "before_public_fresh_Replay",
+                     "before_owned_Shell_cleanup", "before_public_earlier_Retry", "before_owned_Shell_cleanup",
+                     "final_or_failure_before_ANY_cleanup", "final_actual_after_normal_cleanup_and_source_checks")
+PNG_NAME = "candidate-first-handler-warning.png"
+NATIVE_SCOPE = "Public old16/new17 saved-construction lifecycle plus one candidate component first-warning image; Root separately inspects pixels. No newcampaign/policyacceptance/legacyChallengepacket/lateproducer/447or59replay"
+MAX_CHECKPOINTS = 8
+# Thirteen _record + eight _flush_raw calls, each retaining only six slots;
+# this bound covers all generated raw versions without a global user-dir scan.
+MAX_STORE_CAS = 126
+MAX_ARTIFACT_BYTES = 128 * 1024 * 1024
+
+
+def pin_external(value):
+    require(type(value) is dict and set(value) == {"path", "record"}, "Exact separately Root-pinned receipt required")
+    meta, literal = stable(Path(value["path"]))
+    require(type(value["record"]) is dict and {k: meta[k] for k in ("sha256", "bytes", "mode")} == value["record"],
+            "Pinned independent review/source-control receipt differs")
+    return meta, literal
+
+
+def validate_spec(spec):
+    frozen(spec)  # HOLD must fail before dev import, queue, runtime writes or engine.
+    require(spec.get("application_state") == "ROOT_REVIEWED_READY" and spec.get("independent_leaf_review_clear") is True
+            and spec.get("independent_host_review_clear") is True and spec.get("named_source_closure_reviewed") is True,
+            "Final corrected leaf, host QA and named dependency pins remain HOLD")
+    require(type(spec.get("expected")) is dict and set(spec["subjects"]) == set(SLOTS), "Exactly four reviewed L4 runtime source slots required")
+    require(spec["subjects"][SLOTS[3]]["original"] == ABSENT, "Construction helper must begin absent")
+    require(all(spec["subjects"][name]["original"].get("mode") == "0664" for name in SLOTS[:3]), "Original three L4 modes0664 required")
+    require(spec.get("native_watchdog_seconds") == 150 and spec.get("timeout_after_lock_seconds") == 180,
+            "Unchanged native150s watchdog and Root180s bound required")
+    require(spec.get("graphical_argv_extra") == [] and spec.get("preserve_native_user_artifacts") is True,
+            "Exact prior O2 graphical argv; no invented renderer flags or deletion of native artifacts")
+    require(type(spec.get("fixture_sha256")) is str and re.fullmatch(r"[0-9a-f]{64}", spec["fixture_sha256"]), "Corrected final fixture hash unresolved")
+    for key in ("fixture", "fixture_inert_source"):
+        require(type(spec.get(key)) is str and record(ROOT / spec[key])[0] == spec["expected"].get(spec[key]), "Exact materialized fixture/source record required")
+    require(spec["fixture"].endswith(".gd") and spec["fixture_inert_source"].endswith(".gd.txt")
+            and stable(ROOT / spec["fixture"])[1] == stable(ROOT / spec["fixture_inert_source"])[1]
+            and digest(stable(ROOT / spec["fixture"])[1]) == spec["fixture_sha256"], "Root alone materializes the corrected reviewed GD bytes")
+    require(record(ROOT / (spec["fixture"] + ".uid"))[0] == ABSENT, "Private fixture UID must remain absent")
+    pin_external(spec["independent_leaf_review"]); pin_external(spec["independent_host_review"])
+    _, closure_raw = pin_external(spec["input_closure_review"])
+    closure = strict(closure_raw)
+    ongoing = closure["old_private_paths_separate_from_new_runtime"]["ongoing_fixed_controls_observed"]
+    require(type(ongoing) is dict and len(ongoing) == 181
+            and all(spec["expected"].get(name) == prior for name, prior in ongoing.items()),
+            "Reuse exact181 ongoing named controls; old sixteen private fixtures are historical only")
+    controls_meta, controls_raw = pin_external(spec["source_controls"])
+    controls = strict(controls_raw)
+    require(type(controls) is dict and type(controls.get("rows")) is list and len(controls["rows"]) == 44, "Exact44 selected native controls required; not a closure claim")
+    named = {row["future_runtime_path"]: row["sha256"] for row in controls["rows"]}
+    require(named == spec["native_sources"] and len(named) == 44, "Final native map differs from separately pinned44 source controls")
+    for path, sha in named.items():
+        require(type(path) is str and path.startswith("res://") and re.fullmatch(r"[0-9a-f]{64}", sha), "Exact literal native control required")
+        name = path.removeprefix("res://")
+        selected = spec["subjects"][name]["candidate"] if name in spec["subjects"] else spec["expected"].get(name)
+        require(type(selected) is dict and selected.get("sha256") == sha, "Native source must join selected/frozen Root map: " + name)
+    require(spec.get("legacy_sha256") == "5bc745d550ad0ad2d6db7d0cb69def0156440a9e57120bac97906337b458bbbb"
+            and spec["expected"].get(spec["legacy_path"], {}).get("sha256") == spec["legacy_sha256"], "Exact literal old16 whole Attempts input required")
+    for key in ("reused_constructor_review", "reused_comparison_review"):
+        pin_external(spec[key])  # Reuse447/59. No new comparison or legacy producer.
+
+
+def artifact_name(name):
+    if name in ("report.json", PNG_NAME): return True
+    m = re.fullmatch(r"evidence-([0-9]{2})\.(bin|json)", name)
+    if m: return 1 <= int(m[1]) <= MAX_CHECKPOINTS
+    return re.fullmatch(r"raw-Store-[0-9a-f]{64}\.txt", name) is not None
+
+
+def copy_native(out, native_root):
+    """Copy every present declared partial before parsing any outcome. Never delete originals."""
+    retained = out / "native-retained"
+    retained.mkdir(exist_ok=False)
+    rows = {}; issues = []; observed = []
+    receipt = {"source": str(native_root), "present": os.path.lexists(native_root), "files": rows,
+               "issues": issues, "originals_left_unchanged": True,
+               "scope": "One fresh selected user namespace; finite checkpoint/Store/image families and six current slots. Opaque binary retention, no Variant/Exact decoder."}
+    if not os.path.lexists(native_root):
+        save(out / "native-artifact-custody.json", receipt); return receipt
+    require(native_root.resolve() == native_root and native_root.is_dir() and not native_root.is_symlink(),
+            "Unknown user output root left in situ")
+    ds = native_root.lstat()
+    receipt["observed_directory_identity"] = {"device": ds.st_dev, "inode": ds.st_ino, "mode": format(stat.S_IMODE(ds.st_mode), "04o")}
+    observed = sorted(p.name for p in native_root.iterdir())
+    receipt["observed_top_level_names"] = observed
+    receipt["origin_caveat"] = "Host selected UUID and twice observed initial absence; absent final native creation/report receipt does not prove all origin ownership. Originals are never removed."
+    cas_names = [name for name in observed if re.fullmatch(r"raw-Store-[0-9a-f]{64}\.txt", name)]
+    if len(cas_names) > MAX_STORE_CAS: issues.append({"error": "Native Store CAS family exceeded finite source bound", "count": len(cas_names), "left_in_situ": True})
+    names = [name for name in observed if artifact_name(name) and name not in cas_names] + cas_names[:MAX_STORE_CAS]
+    if len(cas_names) > MAX_STORE_CAS:
+        receipt["over_budget_Store_CAS_left_in_situ"] = cas_names[MAX_STORE_CAS:]
+    for name in observed:
+        if name != "stores" and not artifact_name(name): issues.append({"path": str(native_root / name), "error": "Unknown native output left in situ", "left_in_situ": True})
+    # Even when final report is absent/invalid, retain known finite partials.
+    for name in names:
+        path = native_root / name
+        try:
+            require(path.lstat().st_size <= MAX_ARTIFACT_BYTES, "Native artifact exceeds source128MiB bound")
+            meta, literal = stable(path)
+            target = retained / name; write_literal(target, literal); os.chmod(target, int(meta["mode"], 8))
+            copied_meta, copied = stable(target)
+            require(copied == literal and all(copied_meta[k] == meta[k] for k in ("sha256", "bytes", "mode")), "Native literal retained copy differs")
+            rows[name] = dict(meta, present=True, copied_verbatim=True, retained_copy=str(target.relative_to(out)))
+        except Exception as error:
+            rows[name] = {"path": str(path), "present": True, "retention_error": str(error)}
+            issues.append({"path": str(path), "error": str(error), "left_in_situ": True})
+    for name in ["report.json", PNG_NAME] + ["evidence-%02d.%s" % (n, ext) for n in range(1, MAX_CHECKPOINTS + 1) for ext in ("bin", "json")]:
+        rows.setdefault(name, {"present": False})
+    stores = native_root / "stores"
+    if os.path.lexists(stores):
+        if stores.resolve() != stores or not stores.is_dir() or stores.is_symlink():
+            issues.append({"path": str(stores), "error": "Unknown Store directory left in situ", "left_in_situ": True})
+        else:
+            actual = sorted(p.name for p in stores.iterdir()); receipt["observed_store_slot_names"] = actual
+            if not set(actual) <= set(STORE_NAMES): issues.append({"path": str(stores), "error": "Unknown Store slot left in situ", "names": actual, "left_in_situ": True})
+            for name in STORE_NAMES:
+                path = stores / name; relative = "stores/" + name
+                if not os.path.lexists(path): rows[relative] = {"present": False}; continue
+                try:
+                    require(path.lstat().st_size <= MAX_ARTIFACT_BYTES, "Current Store slot exceeds source bound")
+                    meta, literal = stable(path); (retained / "stores").mkdir(exist_ok=True)
+                    target = retained / relative; write_literal(target, literal); os.chmod(target, int(meta["mode"], 8))
+                    cmeta, copy = stable(target)
+                    require(copy == literal and all(cmeta[k] == meta[k] for k in ("sha256", "bytes", "mode")), "Current Store slot literal copy differs")
+                    rows[relative] = dict(meta, present=True, copied_verbatim=True, retained_copy=str(target.relative_to(out)))
+                except Exception as error:
+                    rows[relative] = {"present": True, "retention_error": str(error)}
+                    issues.append({"path": str(path), "error": str(error), "left_in_situ": True})
+    else:
+        for name in STORE_NAMES: rows["stores/" + name] = {"present": False}
+    save(out / "native-artifact-custody.json", receipt)
+    return receipt
+
+
+def retained(out, custody, name):
+    row = custody["files"].get(name)
+    require(type(row) is dict and row.get("present") is True and row.get("copied_verbatim") is True, "Required actual artifact absent/unretained: " + name)
+    meta, literal = stable(out / row["retained_copy"])
+    require(all(meta[k] == row[k] for k in ("sha256", "bytes", "mode")), "Retained metadata changed: " + name)
+    return row, literal
+
+
+def raw_store_header(literal):
+    value = strict(literal)
+    require(type(value) is dict and set(value) == {"format_version", "generation", "payload_json", "sha256"}
+            and type(value["format_version"]) is int and value["format_version"] == 2
+            and type(value["generation"]) is int and 1 <= value["generation"] <= 9007199254740991
+            and type(value["payload_json"]) is str and type(value["sha256"]) is str
+            and digest(value["payload_json"].encode()) == value["sha256"], "Literal raw Store finite header/checksum differs")
+    return {"format_version": value["format_version"], "generation": value["generation"], "payload_sha256": value["sha256"]}
+
+
+def native_raw_receipt(value, expected_path, meta):
+    require(type(value) is dict and value.get("accepted") is True and value.get("path") == expected_path
+            and type(value.get("bytes")) is int and value["bytes"] == meta["bytes"] > 0
+            and value.get("sha256") == value.get("readback_sha256") == meta["sha256"]
+            and value.get("native_binary_roundtrip_exact") is True and type(value.get("encoding")) is str,
+            "Opaque native checkpoint receipt/hash/size/readback join differs")
+
+
+def observe(out, spec, custody, raw, api_return, child_return, report_uri):
+    result = {"functional_pass": False, "report_present": False, "policy_acceptance_claimed": False,
+              "pixel_acceptance_claimed": False, "partial_summaries": [], "raw_Store_CAS": [], "errors": []}
+    summaries = {}
+    # Partial plain receipts are observed only after literal copies exist.
+    for n in range(1, MAX_CHECKPOINTS + 1):
+        name = "evidence-%02d.json" % n
+        if not custody["files"].get(name, {}).get("copied_verbatim"): continue
+        try:
+            smeta, literal = retained(out, custody, name); summary = strict(literal)
+            require(type(summary) is dict and set(summary) == {"scope", "label", "cleanup_pending", "checks", "failures", "complete", "receipt", "evidence_error"}, "Exact finite native summary schema required")
+            require(type(summary["checks"]) is int and summary["checks"] >= 0 and type(summary["failures"]) is int and summary["failures"] >= 0
+                    and type(summary["cleanup_pending"]) is bool and type(summary["complete"]) is bool
+                    and type(summary["label"]) is str and type(summary["evidence_error"]) is str, "Native summary scalar controls differ")
+            bname = "evidence-%02d.bin" % n; bmeta, _ = retained(out, custody, bname)
+            native_raw_receipt(summary["receipt"], report_uri.removesuffix("report.json") + bname, bmeta)
+            summaries[n] = summary
+            result["partial_summaries"].append({"serial": n, "summary": {k: summary[k] for k in ("label", "cleanup_pending", "checks", "failures", "complete", "evidence_error")}, "summary_original": smeta, "opaque_binary_original": bmeta})
+        except Exception as error: result["errors"].append({"name": name, "error": str(error)})
+    for name, entry in custody.get("files", {}).items():
+        if not re.fullmatch(r"raw-Store-[0-9a-f]{64}\.txt", name) or not entry.get("copied_verbatim"): continue
+        try:
+            meta, literal = retained(out, custody, name)
+            require(name == "raw-Store-" + meta["sha256"] + ".txt", "Native Store CAS name/hash mismatch")
+            # SHA-only history names carry no settings/campaign/prefs attribution.
+            # Any reserved Store marker requires the unchanged strict closed4
+            # Store2/header/checksum validator; partial/malformed Store never
+            # falls back to non-Store JSON. All other finite JSON stays untyped.
+            wire = strict(literal)
+            item = {"original": meta, "classification": "unattributed_non_Store_finite_JSON", "Exact_payload_decoded": False}
+            if type(wire) is dict and set(wire) & {"format_version", "generation", "payload_json", "sha256"}:
+                item.update(classification="strict_Store2", plain_header=raw_store_header(literal))
+            result["raw_Store_CAS"].append(item)
+        except Exception as error: result["errors"].append({"name": name, "error": str(error)})
+    # Preserve partial observations even when report is missing, malformed or negative.
+    save(out / "native-observation.json", result)
+    try:
+        meta, literal = retained(out, custody, "report.json"); packet = strict(literal)
+        result.update(report_present=True, original_report=meta)
+        require(type(packet) is dict and set(packet) == {"scope", "complete", "success", "checks", "failures", "evidence_error", "immutable_raw_checkpoints", "actual_cleanup", "portrait", "source_sha256"}, "Exact plain final native report schema required")
+        require(type(packet["checks"]) is int and packet["checks"] > 0 and type(packet["failures"]) is int and packet["failures"] >= 0
+                and type(packet["complete"]) is bool and type(packet["success"]) is bool and type(packet["evidence_error"]) is str,
+                "Actual native counts/completion flags required")
+        footer = "A2-L4 public save/view: checks=%d failures=%d complete=%s persisted=true; no policy/pixel acceptance" % (packet["checks"], packet["failures"], str(packet["complete"]).lower())
+        require([line for line in raw.splitlines() if line.startswith("A2-L4 public save/view:")] == [footer], "Unique actual native footer/report counts/persisted join differs")
+        result.update(checks=packet["checks"], failures=packet["failures"], complete=packet["complete"], native_success=packet["success"], evidence_error=packet["evidence_error"], footer=footer, native_scope=packet["scope"])
+        save(out / "native-observation.json", result)
+        require(packet["scope"] == NATIVE_SCOPE and packet["source_sha256"] == spec["fixture_sha256"], "Native scope or exact final leaf hash differs")
+        require(packet["complete"] is True and packet["success"] is True and packet["failures"] == 0 and packet["evidence_error"] == "", "Native failure/incomplete/persistence drift is nonpositive")
+        require(not custody["issues"] and not result["errors"], "Partial artifact/receipt/Store custody error remains")
+        checkpoints = packet["immutable_raw_checkpoints"]
+        require(type(checkpoints) is list and len(checkpoints) == MAX_CHECKPOINTS and set(summaries) == set(range(1, MAX_CHECKPOINTS + 1)), "Exactly eight actual complete-flow checkpoints required")
+        for n, receipt in enumerate(checkpoints, 1):
+            bname = "evidence-%02d.bin" % n; sname = "evidence-%02d.json" % n
+            bmeta, _ = retained(out, custody, bname); smeta, _ = retained(out, custody, sname)
+            native_raw_receipt(receipt, report_uri.removesuffix("report.json") + bname, bmeta)
+            require(receipt.get("summary_path") == report_uri.removesuffix("report.json") + sname
+                    and receipt.get("summary_sha256") == smeta["sha256"] and receipt.get("summary_persisted") is True,
+                    "Final checkpoint/plain summary original readback join differs")
+            summary = summaries[n]
+            require(summary["label"] == CHECKPOINT_LABELS[n-1] and summary["failures"] == 0 and summary["evidence_error"] == ""
+                    and summary["cleanup_pending"] is (n != MAX_CHECKPOINTS), "Native checkpoint order/cleanup/failure provenance differs")
+        last = summaries[MAX_CHECKPOINTS]
+        require(last["label"] == "final_actual_after_normal_cleanup_and_source_checks" and last["cleanup_pending"] is False
+                and last["complete"] is True and last["checks"] == packet["checks"], "Final actual post-cleanup/source checks required; provisional raw is never success")
+        cleanup = packet["actual_cleanup"]
+        require(type(cleanup) is list and all(type(row) is dict for row in cleanup), "Actual native cleanup rows required")
+        expected_counts = {"inter_stage_Shell": 3, "brief_view_Game": 1, "NativeTickProbe": 1, "runtime_settings": 1}
+        require({name: sum(row.get("label") == name for row in cleanup) for name in expected_counts} == expected_counts
+                and len(cleanup) == sum(expected_counts.values()), "Exact normal public Shell/view/probe/settings cleanup categories required")
+        for row in cleanup:
+            if row["label"] in ("inter_stage_Shell", "brief_view_Game"):
+                require(type(row.get("captured_descendants")) is int and row["captured_descendants"] > 0 and row.get("all_captured_descendants_released") is True, "Normal actor/source/Hero/HUD subtree weakrefs not all released")
+            elif row["label"] == "NativeTickProbe": require(row.get("released") is True, "Native observer probe not released")
+            else: require(row.get("audio_layout_restored") is True and row.get("fps_restored") is True, "Native runtime audio/FPS restoration missing")
+        result["actual_cleanup"] = cleanup
+        joins = []
+        for name in STORE_NAMES:
+            relative = "stores/" + name; slot = custody["files"].get(relative, {})
+            if not slot.get("present"): continue
+            smeta, literal = retained(out, custody, relative); casname = "raw-Store-" + smeta["sha256"] + ".txt"
+            cmeta, cas = retained(out, custody, casname)
+            require(cas == literal and cmeta["bytes"] == smeta["bytes"], "Actual current Store/raw CAS full-byte join differs")
+            item = {"slot": name, "actual_original": smeta, "raw_CAS_original": cmeta}
+            if name in ("settings.json", "settings.json.bak"):
+                # Settings load/apply may preserve absence and their optional
+                # persisted bytes are ordinary JSON, not SaveStore envelopes.
+                # No settings schema, generation or historical CAS family is
+                # inferred here; the native public assertions remain authority.
+                strict(literal)
+                item["classification"] = "named_optional_settings_finite_JSON"
+            else:
+                item.update(classification="named_strict_Store2", plain_header=raw_store_header(literal))
+            joins.append(item)
+        require({row["slot"] for row in joins} >= {"campaign.json", "campaign.json.bak", "preferences.json"}, "Actual public campaign primary/backup and preferences primary incomplete")
+        result["current_Store_raw_CAS_joins"] = joins
+        portrait = packet["portrait"]; pmeta, png = retained(out, custody, PNG_NAME)
+        require(type(portrait) is dict and set(portrait) == {"path", "sha256", "bytes", "width", "height", "pixel_readback_exact", "actual_pixel_acceptance"}
+                and portrait["path"] == report_uri.removesuffix("report.json") + PNG_NAME
+                and portrait["sha256"] == pmeta["sha256"] and type(portrait["bytes"]) is int and portrait["bytes"] == pmeta["bytes"]
+                and portrait["width"] == 540 and portrait["height"] == 1170 and portrait["pixel_readback_exact"] is True
+                and portrait["actual_pixel_acceptance"] is False, "Actual single PNG/native readback/hash receipt differs")
+        require(len(png) >= 24 and png[:8] == b"\x89PNG\r\n\x1a\n" and png[12:16] == b"IHDR"
+                and int.from_bytes(png[16:20], "big") == 540 and int.from_bytes(png[20:24], "big") == 1170,
+                "Actual PNG header does not retain540x1170; no Python pixel/geometry decoder")
+        result["portrait"] = {"original": pmeta, "native_pixel_readback_exact": True, "PNG_header_540x1170": True, "Root_actual_pixel_inspection_pending": True}
+        result["functional_pass"] = type(api_return) is int and api_return == 0 and type(child_return) is int and child_return == 0
+    except Exception as error: result["error"] = str(error)
+    return result
+
+
+def run_native(dev, context, lock_fd, spec, out, result):
+    user_base = Path(spec["user_data_root"])
+    require(user_base == Path.home() / "Library/Application Support/Godot/app_userdata/Cinder" and user_base.resolve() == user_base,
+            "Actual normal C7 user context required")
+    native_root = user_base / ("test-a2-l4-save-view-" + uuid.uuid4().hex)
+    require(not os.path.lexists(native_root), "Fresh native namespace must be absent; host never creates or deletes it")
+    report_uri = "user://" + native_root.name + "/report.json"
+    output_arg = "--report=" + report_uri
+    argv = [spec["engine_expected"]["path"], "--path", str(ROOT), "--log-file", str(out / "engine.log"),
+            "--script", "res://" + spec["fixture"], "--", output_arg]
+    save(out / "command.json", {"argv": argv, "native_output": str(native_root), "report_uri": report_uri, "user_argument": output_arg,
+        "initial_namespace_absent": True, "timeout_after_lock_seconds": 180, "native_watchdog_seconds": 150,
+        "canonical_api": "dev.godot_lock/run_validation", "one_owned_child": True, "user_data_root": str(user_base), "cwd": str(ROOT),
+        "native_originals_preserved": True,
+        "engine_environment": {key: context.environ.get(key) for key in ["CINDER_GODOT", "CINDER_CANONICAL_ROOT", "PYTHONDONTWRITEBYTECODE"]}})
+    owned = []; actual_popen = dev.subprocess.Popen
+    def tracked(command, *pos, **kw):
+        require(command == argv and not owned and kw.get("cwd") == ROOT and kw.get("env") == context.environ
+                and kw.get("pass_fds") == (lock_fd,), "Exactly one planned graphical canonical child/context/lock required")
+        require(not os.path.lexists(native_root), "Native namespace appeared before launch; unknown is never overwritten/deleted")
+        child = actual_popen(command, *pos, **kw); owned.append(child)
+        result.update(native_child_launch_state="SPAWNED", owned_children=[{"pid": child.pid, "closed": False, "popen_return": None}])
+        save(out / "result.json", result); return child
+    result.update(engine_launch_attempted=True, native_child_launch_state="ADMISSION_PENDING")
+    save(out / "result.json", result)
+    try:
+        dev.subprocess.Popen = tracked
+        result["canonical_api_return"] = dev.run_validation(argv, context, lock_fd, 180, detect_godot_errors=True)
+    finally:
+        dev.subprocess.Popen = actual_popen
+        for child in owned:
+            if child.poll() is None: dev.stop_validation(child)  # This invocation's own child only.
+            child.wait(timeout=5)
+        result["owned_children"] = [{"pid": child.pid, "closed": child.poll() is not None, "popen_return": child.poll()} for child in owned]
+        result["native_child_launch_state"] = "CLOSED" if len(owned) == 1 and owned[0].poll() is not None else "NO_CLOSED_CHILD_RECEIPT"
+        save(out / "result.json", result)
+        sys.stdout.flush(); sys.stderr.flush()
+        if result["native_child_launch_state"] == "CLOSED":
+            try:
+                custody = copy_native(out, native_root)
+                observation = observe(out, spec, custody, (out / "raw.log").read_text(), result["canonical_api_return"], owned[0].poll(), report_uri)
+                result["native_observation"] = observation; save(out / "native-observation.json", observation)
+                result["native_functional_pass"] = observation["functional_pass"]
+            except Exception as error:
+                result["native_artifact_custody_error"] = str(error); result["native_functional_pass"] = False
+            save(out / "result.json", result)
+    require(len(owned) == 1 and owned[0].poll() is not None, "One actual owned child must close")
+    require(result.get("native_functional_pass") is True, "Actual native public save/view failure/incomplete/custody refusal; no automatic rerun")
+
+def restore_all(spec, out, before, state, owned_closed, beforeimage_base=None):
+    receipts = []
+    beforeimage_base = out if beforeimage_base is None else beforeimage_base
+    for index, (name, variants) in enumerate(reversed(list(spec["subjects"].items()))):
+        row = before[name]
+        require(row["record"] == variants["original"], "Beforeimage must be one exact known initial variant")
+        require(type(state[name].get("created_by_this_run")) is bool, "Literal own-creation Boolean required")
+        data = (beforeimage_base / row["blob"]).read_bytes() if row["record"]["regular"] else None
+        if data is not None: require(digest(data) == row["record"]["sha256"], "Durable beforeimage changed")
+        receipts.append(restore_subject(ROOT / name, row["record"], data, variants["candidate"], out,
+                                        "subject-" + str(index), owned_closed, state[name]["created_by_this_run"],
+                                        state[name].get("creation_identity")))
+    save(out / "restore-receipts.json", receipts)
+    return all(row["restored_exact_initial"] for row in receipts)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("phase", choices=["native", "recover"])
+    parser.add_argument("--run-dir", type=Path)
+    args = parser.parse_args()
+    stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%S.%fZ")
+    out = HERE / ("run-" + args.phase + "-" + stamp + "-" + uuid.uuid4().hex[:8]); out.mkdir(exist_ok=False)
+    result = {"phase": args.phase, "closed": False, "passed": False, "engine_launch_attempted": False,
+              "native_child_launch_state": "NOT_ATTEMPTED", "canonical_api_return": None,
+              "owned_children": [], "native_functional_pass": False, "policy_acceptance_claimed": False}
+    queue = {"queued": False, "acquired": False, "lock_context_released": False}; code = 2
+    spec = None; before = None; state = {}; at_entry = None
+    old_term = signal.getsignal(signal.SIGTERM)
+    signal.signal(signal.SIGTERM, lambda _sig, _frame: (_ for _ in ()).throw(KeyboardInterrupt()))
+    with (out / "raw.log").open("x") as raw, contextlib.redirect_stdout(Tee(sys.stdout, raw)), contextlib.redirect_stderr(Tee(sys.stderr, raw)):
+        try:
+            spec = strict((HERE / "INPUT_SPEC.json").read_bytes()); frozen(spec)
+            validate_spec(spec)
+            require((args.phase == "recover") == (args.run_dir is not None), "Only recovery takes exact old run directory")
+            dev, context = load_dev(spec); engine_before = engine(spec); save(out / "engine-before.json", engine_before)
+            if args.phase == "native": snapshot(spec, out, "sources-before-queue")
+            queue.update(queued=True, lock_path=str(dev.shared_lock_path(ROOT))); save(out / "queue.json", queue)
+            with dev.godot_lock(ROOT) as lock_fd:
+                queue["acquired"] = True; save(out / "queue.json", queue)
+                try:
+                    require(engine(spec) == engine_before, "Engine changed while queued")
+                    if args.phase == "recover":
+                        prior = args.run_dir.absolute()
+                        require(prior.parent == HERE and prior.name.startswith("run-native-") and prior.resolve() == prior,
+                                      "Exact same-capsule prior native run required")
+                        prior_result = strict((prior / "result.json").read_bytes())
+                        launch = prior_result.get("native_child_launch_state")
+                        children = prior_result.get("owned_children", [])
+                        require((launch == "NOT_ATTEMPTED" and prior_result.get("engine_launch_attempted") is False and children == [])
+                                or (launch == "CLOSED" and len(children) == 1 and children[0].get("closed") is True
+                                    and type(children[0].get("popen_return")) is int),
+                                "Actual durable own-child closure receipt required; PID absence alone cannot authorize recovery")
+                        before = strict((prior / "beforeimages.json").read_bytes())
+                        state = strict((prior / "assembly-state.json").read_bytes())
+                        require(set(before) == set(state) == set(spec["subjects"]), "Exact four-source recovery custody required")
+                        # Recovery retains original beforeimages in their original run.
+                        ok = restore_all(spec, out, before, state, True, prior)
+                        save(out / "recovery.json", {"prior_run": str(prior), "canonical_lock_acquired": True,
+                                                   "no_engine_launch": True, "restored_exact_prior_entry": ok})
+                        require(ok, "Unknown source left in situ during recovery")
+                    else:
+                        at_entry = snapshot(spec, out, "sources-at-lock")
+                        before = {}; state = {}
+                        for index, (name, variants) in enumerate(spec["subjects"].items()):
+                            initial_stat = (ROOT / name).lstat() if os.path.lexists(ROOT / name) else None
+                            meta, data = record(ROOT / name)
+                            require(meta == at_entry[name] == variants["original"], "Original source changed before durable capture")
+                            initial_identity = {"device": initial_stat.st_dev, "inode": initial_stat.st_ino} if initial_stat else None
+                            if initial_stat is not None:
+                                confirmed = (ROOT / name).lstat()
+                                require(initial_identity == {"device": confirmed.st_dev, "inode": confirmed.st_ino}, "Original changed during durable capture")
+                            row = {"record": meta, "blob": None, "initial_identity": initial_identity}
+                            if data is not None:
+                                row["blob"] = "beforeimage-" + str(index) + ".bin"; write_literal(out / row["blob"], data)
+                            before[name] = row
+                            state[name] = {"selection_intent": False, "selection_complete": False,
+                                           "created_by_this_run": False, "creation_identity": None}
+                        save(out / "beforeimages.json", before); save(out / "assembly-state.json", state)
+                        save(out / "result.json", result)
+                        try:
+                            for name, variants in spec["subjects"].items():
+                                initial = before[name]["record"]
+                                candidate_meta, candidate = record(ROOT / variants["candidate_source"])
+                                require(candidate_meta == spec["expected"][variants["candidate_source"]]
+                                              and digest(candidate) == variants["candidate"]["sha256"], "Pinned candidate text changed")
+                                state[name]["selection_intent"] = True; save(out / "assembly-state.json", state)
+                                def created(identity, name=name):
+                                    state[name].update(created_by_this_run=True, creation_identity=identity)
+                                    save(out / "assembly-state.json", state)
+                                replace_subject(ROOT / name, candidate, variants["candidate"]["mode"], initial, created, before[name]["initial_identity"])
+                                state[name]["selection_complete"] = True; save(out / "assembly-state.json", state)
+                            selected = {name: variants["candidate"] for name, variants in spec["subjects"].items()}
+                            snapshot(spec, out, "sources-candidate-selected", selected)
+                            try:
+                                run_native(dev, context, lock_fd, spec, out, result)
+                            finally:
+                                raw.flush()
+                                snapshot(spec, out, "sources-after-child", selected)
+                                save(out / "engine-after-child.json", engine(spec))
+                                engine_log = (out / "engine.log").read_text(errors="replace") if (out / "engine.log").is_file() else ""
+                                diagnostics = [line for line in ((out / "raw.log").read_text() + "\n" + engine_log).splitlines() if DIAGNOSTIC.search(line)]
+                                result["raw_and_engine_diagnostics"] = diagnostics
+                            require(not diagnostics, "Native diagnostic remains NONCLEAN; no retry")
+                            require(engine(spec) == engine_before, "Engine identity changed")
+                        finally:
+                            owned_closed = (result["native_child_launch_state"] == "NOT_ATTEMPTED" and result["engine_launch_attempted"] is False) or (result["native_child_launch_state"] == "CLOSED" and len(result["owned_children"]) == 1 and result["owned_children"][0]["closed"] is True and type(result["owned_children"][0]["popen_return"]) is int)
+                            restored = restore_all(spec, out, before, state, owned_closed)
+                            result["restored_exact_entry"] = restored
+                            require(restored, "Exact entry restoration failed; unknown bytes/modes/symlinks left in situ")
+                            snapshot(spec, out, "sources-after-restore", {name: row["record"] for name, row in before.items()})
+                finally:
+                    queue["inside_lock_finally_reached"] = True; save(out / "queue.json", queue)
+            queue["lock_context_released"] = True; save(out / "queue.json", queue)
+            result["passed"] = (args.phase == "recover") or result.get("native_functional_pass") is True; code = 0 if result["passed"] else 2
+        except KeyboardInterrupt:
+            result["error"] = "Interrupted; only actual owned child closure and guarded rollback allowed"; code = 130
+        except Exception as error:
+            result["error"] = str(error); print("L4 public save/view host failure:", error, flush=True)
+        finally:
+            # Reaching this outer finally means the context manager has exited,
+            # even when a body exception bypassed the normal statement above.
+            if queue["acquired"]: queue["lock_context_released"] = True
+            if spec is not None:
+                try: save(out / "engine-at-close.json", engine(spec))
+                except Exception as error: result["engine_close_error"] = str(error); result["passed"] = False; code = 2
+            raw.flush(); result.update(closed=True, host_return=code, scope=spec["scope"] if spec else "Failed source bootstrap")
+            save(out / "result.json", result); save(out / "queue.json", queue)
+            print("A2-L4 public save/view host CLOSED code=" + str(code), flush=True)
+            raw.flush(); os.fsync(raw.fileno())
+    signal.signal(signal.SIGTERM, old_term); indexed(out); return code
+
+
+if __name__ == "__main__": raise SystemExit(main())

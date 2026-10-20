@@ -1,0 +1,404 @@
+"""Root-only one queued fixed L4 original/candidate comparison; no retries or policy acceptance."""
+from pathlib import Path
+import argparse
+import contextlib
+import datetime
+import importlib.util
+import json
+import os
+import re
+import signal
+import stat
+import sys
+import types
+import uuid
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[1]
+check = types.ModuleType("cinder_l4_fixed_native_inspect")
+exec(compile((HERE / "native_inspect.py").read_bytes(), str(HERE / "native_inspect.py"), "exec"), check.__dict__)
+DIAGNOSTIC = re.compile(r"^\s*(?:ERROR|WARNING|SCRIPT ERROR):|ObjectDB.*leak|Orphan.*StringName", re.I)
+ABSENT = {"exists": False, "regular": False, "symlink": False, "sha256": None, "bytes": None, "mode": None}
+
+
+def fsync_directory(path):
+    fd = os.open(path, os.O_RDONLY)
+    try: os.fsync(fd)
+    finally: os.close(fd)
+
+
+def save(path, value):
+    data = (json.dumps(value, indent=2, allow_nan=False) + "\n").encode()
+    temporary = path.with_name(path.name + ".owned-" + uuid.uuid4().hex + ".tmp")
+    with temporary.open("xb") as stream:
+        stream.write(data); stream.flush(); os.fsync(stream.fileno())
+    os.replace(temporary, path); fsync_directory(path.parent)
+
+
+def record(path):
+    path = Path(path)
+    check.require(path.is_absolute() and path.parent.resolve() == path.parent, "No symlink parent allowed")
+    st = path.lstat() if os.path.lexists(path) else None
+    regular = bool(st and stat.S_ISREG(st.st_mode))
+    data = check.stable(path)[1] if regular else None
+    return {"exists": st is not None, "regular": regular, "symlink": bool(st and stat.S_ISLNK(st.st_mode)),
+            "sha256": check.digest(data) if data is not None else None, "bytes": len(data) if data is not None else None,
+            "mode": format(stat.S_IMODE(st.st_mode), "04o") if st else None}, data
+
+
+def write_literal(path, data):
+    with path.open("xb") as stream:
+        stream.write(data); stream.flush(); os.fsync(stream.fileno())
+    fsync_directory(path.parent)
+
+
+def engine(spec):
+    path = Path(spec["engine_expected"]["path"])
+    row, _ = record(path)
+    check.require(row == spec["engine_expected"]["record"] and os.access(path, os.X_OK), "Exact C7 engine bytes/mode/type differ")
+    return dict(row, path=str(path), retained_binary=False)
+
+
+def frozen(spec):
+    ready = check.strict((HERE / "READINESS.json").read_bytes())
+    check.require(spec["integration_root"] == str(ROOT), "Exact canonical Root required")
+    for name, expected in ready["frozen_files"].items():
+        meta, _ = check.stable(HERE / name)
+        check.require({key: meta[key] for key in ["sha256", "bytes", "mode"]} == expected, "Frozen host source changed: " + name)
+
+
+def snapshot(spec, out, label, selected=None):
+    names = sorted(set(spec["expected"]) | set(spec["subjects"]))
+    rows = {}; retention = {}; blobs = out / "source-blobs"; blobs.mkdir(exist_ok=True)
+    for name in names:
+        row, data = record(ROOT / name); rows[name] = row
+        if data is not None:
+            target = blobs / (row["sha256"] + ".bin")
+            if not target.exists(): write_literal(target, data)
+            check.require(check.digest(target.read_bytes()) == row["sha256"], "Source CAS differs")
+            retention[name] = dict(row, blob=str(target.relative_to(out)))
+    save(out / (label + ".json"), rows); save(out / (label + "-retention.json"), retention)
+    for name, expected in spec["expected"].items():
+        check.require(rows[name] == expected, "Named dependency/control/UID/cache source differs: " + name)
+    for name, variants in spec["subjects"].items():
+        if selected is None:
+            check.require(rows[name] in [variants["original"], variants["candidate"]], "Unknown subject left in situ: " + name)
+        else:
+            check.require(rows[name] == selected[name], "Selected subject source/mode/type differs: " + name)
+    frozen(spec)
+    return rows
+
+
+def replace_subject(path, data, mode, expected_prior, on_created=None):
+    """O2 final-prior-check replacement, plus exclusive link for genuine absence."""
+    check.require(expected_prior == ABSENT or expected_prior["regular"] and not expected_prior["symlink"], "Known regular or absent prior required")
+    temporary = path.with_name(path.name + ".l4-constructor-owned-" + uuid.uuid4().hex + ".tmp")
+    try:
+        write_literal(temporary, data); os.chmod(temporary, int(mode, 8))
+        check.require(record(path)[0] == expected_prior, "Final prior guard changed; unknown left in situ")
+        if expected_prior == ABSENT:
+            # Atomic no-clobber create: a foreign arrival, even identical, is not ours.
+            created_stat = temporary.lstat()
+            identity = {"device": created_stat.st_dev, "inode": created_stat.st_ino}
+            os.link(temporary, path)
+            if on_created is not None: on_created(identity)
+        else:
+            os.replace(temporary, path)
+        fsync_directory(path.parent)
+    finally:
+        if os.path.lexists(temporary): temporary.unlink()
+
+
+def retain_unknown(path, out, label):
+    row, data = record(path)
+    if data is not None: write_literal(out / (label + ".bin"), data)
+    meta = dict(row, path=str(path), left_in_situ=True)
+    if row["symlink"]: meta["link_target"] = os.readlink(path)
+    save(out / (label + ".json"), meta)
+    return row
+
+
+def restore_subject(path, initial, initial_data, candidate, out, label, owned_closed, created_by_this_run, creation_identity=None):
+    receipt = {"path": str(path), "owned_children_closed": owned_closed, "created_by_this_run": created_by_this_run,
+               "restored_exact_initial": False, "write_attempted": False, "under_canonical_lock": True,
+               "unknown_overwrite_authorized": False}
+    try:
+        current = record(path)[0]
+        if not owned_closed:
+            receipt["status"] = "OWNED_CHILD_NOT_CLOSED_NO_WRITE"
+        elif current == initial:
+            receipt.update(status="ALREADY_EXACT_INITIAL_NO_WRITE", restored_exact_initial=True)
+        elif current == candidate and initial == ABSENT and created_by_this_run:
+            # Only an actual successful exclusive creation by this run permits removal.
+            check.require(type(creation_identity) is dict and set(creation_identity) == {"device", "inode"}
+                          and all(type(value) is int for value in creation_identity.values()), "Actual own inode identity required")
+            check.require(record(path)[0] == candidate, "Final absent-restore candidate guard changed")
+            current_stat = path.lstat()
+            check.require(creation_identity == {"device": current_stat.st_dev, "inode": current_stat.st_ino},
+                          "Identical foreign replacement inode left in situ")
+            receipt["write_attempted"] = True; path.unlink(); fsync_directory(path.parent)
+            receipt.update(status="REMOVED_ONLY_EXACT_OWN_CREATED_CANDIDATE", restored_exact_initial=record(path)[0] == ABSENT)
+        elif current == candidate and initial["regular"] and not initial["symlink"]:
+            receipt["write_attempted"] = True
+            replace_subject(path, initial_data, initial["mode"], candidate)
+            receipt.update(status="RESTORED_EXACT_INITIAL_BYTES_MODE", restored_exact_initial=record(path)[0] == initial)
+        else:
+            receipt["status"] = "UNKNOWN_OR_UNOWNED_CANDIDATE_LEFT_IN_SITU"
+        if not receipt["restored_exact_initial"]:
+            receipt["observed"] = retain_unknown(path, out, label + "-unexpected")
+    except Exception as error:
+        receipt.update(status="GUARDED_RESTORE_FAILED_NO_UNKNOWN_WRITE", error=str(error))
+        receipt["observed"] = retain_unknown(path, out, label + "-guard-conflict")
+    save(out / (label + "-restore.json"), receipt)
+    return receipt
+
+
+class Tee:
+    def __init__(self, terminal, log): self.terminal, self.log = terminal, log
+    def write(self, value): self.log.write(value); return self.terminal.write(value)
+    def flush(self): self.log.flush(); self.terminal.flush()
+
+
+def load_dev(spec):
+    module = importlib.util.spec_from_file_location("cinder_l4_fixed_dev", ROOT / "scripts/dev/dev.py")
+    check.require(module is not None and module.loader is not None, "Canonical dev source required")
+    dev = importlib.util.module_from_spec(module); sys.modules[module.name] = dev
+    prior = sys.dont_write_bytecode
+    try: sys.dont_write_bytecode = True; module.loader.exec_module(dev)
+    finally: sys.dont_write_bytecode = prior
+    env = dict(os.environ)
+    env.update(CINDER_GODOT=spec["engine_expected"]["path"], CINDER_CANONICAL_ROOT=str(ROOT), PYTHONDONTWRITEBYTECODE="1")
+    context = dev.ProjectContext(root=ROOT, environ=env)
+    check.require(context.canonical_root == ROOT and str(dev.resolve_godot(context)) == spec["engine_expected"]["path"], "Canonical context/engine differs")
+    return dev, context
+
+
+def indexed(out):
+    files = {}
+    for path in sorted(out.rglob("*")):
+        if path.is_file() and path != out / "evidence-index.json":
+            meta, _ = check.stable(path)
+            files[str(path.relative_to(out))] = {key: meta[key] for key in ["sha256", "bytes", "mode"]}
+    save(out / "evidence-index.json", {"created_after_raw_close": True, "files": files})
+
+
+def run_native(dev, context, lock_fd, spec, out, result):
+    token = out.name.removeprefix("run-native-")
+    relative = "test-a2-l4-fixed-comparison-" + token + "/report.json"
+    user_base = Path(spec["user_data_root"])
+    check.require(user_base == Path.home() / "Library/Application Support/Godot/app_userdata/Cinder"
+                  and user_base.resolve() == user_base, "Reviewed normal macOS user context required")
+    native_report = user_base / relative
+    check.require(not os.path.lexists(native_report.parent), "Unique native TEST output directory must be absent")
+    argv = [spec["engine_expected"]["path"], "--path", str(ROOT), "--headless", "--log-file", str(out / "engine.log"),
+            "--script", "res://" + spec["fixture"], "--", "--report=user://" + relative]
+    save(out / "command.json", {"argv": argv, "native_report_path": str(native_report),
+                               "user_argument": "--report=user://" + relative, "timeout_after_lock_seconds": 120,
+                               "canonical_api": "dev.godot_lock/run_validation", "one_owned_child": True})
+    owned = []; actual_popen = dev.subprocess.Popen
+    def tracked(command, *pos, **kw):
+        check.require(command == argv and not owned and kw.get("cwd") == ROOT and kw.get("env") == context.environ
+                      and kw.get("pass_fds") == (lock_fd,), "Exactly one planned canonical owned child/context/lock required")
+        child = actual_popen(command, *pos, **kw); owned.append(child)
+        result.update(native_child_launch_state="SPAWNED", owned_children=[{"pid": child.pid, "closed": False, "popen_return": None}])
+        save(out / "result.json", result)
+        return child
+    result.update(engine_launch_attempted=True, native_child_launch_state="ADMISSION_PENDING")
+    save(out / "result.json", result)
+    try:
+        dev.subprocess.Popen = tracked
+        result["canonical_api_return"] = dev.run_validation(argv, context, lock_fd, 120, detect_godot_errors=True)
+    finally:
+        dev.subprocess.Popen = actual_popen
+        for child in owned:
+            if child.poll() is None: dev.stop_validation(child)
+            child.wait(timeout=5)
+        result["owned_children"] = [{"pid": child.pid, "closed": child.poll() is not None, "popen_return": child.poll()} for child in owned]
+        result["native_child_launch_state"] = "CLOSED" if len(owned) == 1 and owned[0].poll() is not None else "NO_CLOSED_CHILD_RECEIPT"
+        save(out / "result.json", result)
+    check.require(len(owned) == 1 and owned[0].poll() is not None, "One actual owned child must close")
+    sys.stdout.flush(); sys.stderr.flush()
+    raw = (out / "raw.log").read_text()
+    # Retain every present member of the exact bounded native artifact set
+    # BEFORE provisional or final outcome parsing. Final absence cannot hide
+    # pre-cleanup evidence. Binary bytes remain opaque and immutable.
+    artifacts = {}; presence = {}; retention_errors = []
+    native_names = [("native-report.json", native_report, 1024 * 1024),
+                    ("native-trace.bin", native_report.parent / "native-trace.bin", 128 * 1024 * 1024),
+                    ("pre-cleanup-01.bin", native_report.parent / "pre-cleanup-01.bin", 128 * 1024 * 1024),
+                    ("pre-cleanup-01.json", native_report.parent / "pre-cleanup-01.json", 1024 * 1024),
+                    ("pre-cleanup-02.bin", native_report.parent / "pre-cleanup-02.bin", 128 * 1024 * 1024),
+                    ("pre-cleanup-02.json", native_report.parent / "pre-cleanup-02.json", 1024 * 1024)]
+    for name, path, limit in native_names:
+        present = os.path.lexists(path)
+        presence[name] = {"path": str(path), "present": present, "status": "ABSENT" if not present else "PRESENT_UNRETAINED"}
+        if not present: continue
+        try:
+            observed_stat = path.lstat()
+            presence[name].update(observed_mode=format(stat.S_IMODE(observed_stat.st_mode), "04o"),
+                                  observed_bytes=observed_stat.st_size,
+                                  regular=stat.S_ISREG(observed_stat.st_mode),
+                                  symlink=stat.S_ISLNK(observed_stat.st_mode))
+            check.require(observed_stat.st_size <= limit, "Actual native artifact exceeds finite bound: " + name)
+            meta, literal = check.stable(path)
+            write_literal(out / name, literal)
+            artifacts[name] = dict(meta, retained_copy=name, copied_verbatim=True,
+                                   source_wire_argument="user://" + str(path.relative_to(user_base)))
+            presence[name]["status"] = "RETAINED_VERBATIM"
+        except Exception as error:
+            presence[name].update(status="PRESENT_RETENTION_FAILED", error=str(error))
+            retention_errors.append({"artifact": name, "error": str(error)})
+    save(out / "native-artifact-custody.json", {"artifacts": artifacts, "presence": presence, "errors": retention_errors,
+                                                "opaque_binary_retention_only": True,
+                                                "fixed_native_names_only": True})
+    observation = check.observe(native_report, spec, raw, result["canonical_api_return"], owned[0].poll())
+    result["native_observation"] = observation; save(out / "native-observation.json", observation)
+    result["native_functional_pass"] = observation["functional_pass"]
+    result["native_terminal_recorded"] = observation["terminal_recorded"]
+    # Join copies to an independent two-read observation even when final
+    # output is absent/failed; provisional flags never grant final success.
+    for name, retained in artifacts.items():
+        retained_meta = {key: retained[key] for key in ["path", "sha256", "bytes", "mode", "stable_two_reads"]}
+        check.require(observation.get("observed_artifacts", {}).get(name) == retained_meta,
+                      "Retained native artifact changed before outcome observation: " + name)
+    check.require(not retention_errors, "Present native artifact retention failed; partial files retained without retry")
+    check.require(observation["terminal_recorded"], "Actual final report/raw/pre-cleanup/footer/API/Popen failed or incomplete; provisional evidence retained without outcome inference or retry")
+
+
+def restore_all(spec, out, before, state, owned_closed, beforeimage_base=None):
+    receipts = []
+    beforeimage_base = out if beforeimage_base is None else beforeimage_base
+    for index, (name, variants) in enumerate(reversed(list(spec["subjects"].items()))):
+        row = before[name]
+        check.require(row["record"] in [variants["original"], variants["candidate"]], "Beforeimage must be one exact known initial variant")
+        check.require(type(state[name].get("created_by_this_run")) is bool, "Literal own-creation Boolean required")
+        data = (beforeimage_base / row["blob"]).read_bytes() if row["record"]["regular"] else None
+        if data is not None: check.require(check.digest(data) == row["record"]["sha256"], "Durable beforeimage changed")
+        receipts.append(restore_subject(ROOT / name, row["record"], data, variants["candidate"], out,
+                                        "subject-" + str(index), owned_closed, state[name]["created_by_this_run"],
+                                        state[name].get("creation_identity")))
+    save(out / "restore-receipts.json", receipts)
+    return all(row["restored_exact_initial"] for row in receipts)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("phase", choices=["native", "recover"])
+    parser.add_argument("--run-dir", type=Path)
+    args = parser.parse_args()
+    stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%S.%fZ")
+    out = HERE / ("run-" + args.phase + "-" + stamp + "-" + uuid.uuid4().hex[:8]); out.mkdir(exist_ok=False)
+    result = {"phase": args.phase, "closed": False, "passed": False, "engine_launch_attempted": False,
+              "native_child_launch_state": "NOT_ATTEMPTED", "canonical_api_return": None,
+              "owned_children": [], "native_functional_pass": False, "policy_acceptance_claimed": False}
+    queue = {"queued": False, "acquired": False, "lock_context_released": False}; code = 2
+    spec = None; before = None; state = {}; at_entry = None
+    old_term = signal.getsignal(signal.SIGTERM)
+    signal.signal(signal.SIGTERM, lambda _sig, _frame: (_ for _ in ()).throw(KeyboardInterrupt()))
+    with (out / "raw.log").open("x") as raw, contextlib.redirect_stdout(Tee(sys.stdout, raw)), contextlib.redirect_stderr(Tee(sys.stderr, raw)):
+        try:
+            spec = check.strict((HERE / "INPUT_SPEC.json").read_bytes()); frozen(spec)
+            check.require((args.phase == "recover") == (args.run_dir is not None), "Only recovery takes exact old run directory")
+            dev, context = load_dev(spec); engine_before = engine(spec); save(out / "engine-before.json", engine_before)
+            if args.phase == "native": snapshot(spec, out, "sources-before-queue")
+            queue.update(queued=True, lock_path=str(dev.shared_lock_path(ROOT))); save(out / "queue.json", queue)
+            with dev.godot_lock(ROOT) as lock_fd:
+                queue["acquired"] = True; save(out / "queue.json", queue)
+                try:
+                    check.require(engine(spec) == engine_before, "Engine changed while queued")
+                    if args.phase == "recover":
+                        prior = args.run_dir.absolute()
+                        check.require(prior.parent == HERE and prior.name.startswith("run-native-") and prior.resolve() == prior,
+                                      "Exact same-capsule prior native run required")
+                        prior_result = check.strict((prior / "result.json").read_bytes())
+                        launch = prior_result.get("native_child_launch_state")
+                        children = prior_result.get("owned_children", [])
+                        check.require(launch in ["NOT_ATTEMPTED", "SPAWNED", "CLOSED"]
+                                      and (launch == "NOT_ATTEMPTED" or len(children) == 1),
+                                      "Unknown launch gap: Root must independently resolve custody; no automatic recovery writes")
+                        for child in children:
+                            if child.get("closed") is True and type(child.get("popen_return")) is int: continue
+                            try: os.kill(child["pid"], 0)
+                            except ProcessLookupError: continue
+                            raise ValueError("Recorded PID exists or custody unavailable; never kill or restore around it")
+                        before = check.strict((prior / "beforeimages.json").read_bytes())
+                        state = check.strict((prior / "assembly-state.json").read_bytes())
+                        check.require(set(before) == set(state) == set(spec["subjects"]), "Exact four-source recovery custody required")
+                        # Recovery retains original beforeimages in their original run.
+                        ok = restore_all(spec, out, before, state, True, prior)
+                        save(out / "recovery.json", {"prior_run": str(prior), "canonical_lock_acquired": True,
+                                                   "no_engine_launch": True, "restored_exact_prior_entry": ok})
+                        check.require(ok, "Unknown source left in situ during recovery")
+                    else:
+                        at_entry = snapshot(spec, out, "sources-at-lock")
+                        before = {}; state = {}
+                        for index, (name, variants) in enumerate(spec["subjects"].items()):
+                            meta, data = record(ROOT / name)
+                            row = {"record": meta, "blob": None}
+                            if data is not None:
+                                row["blob"] = "beforeimage-" + str(index) + ".bin"; write_literal(out / row["blob"], data)
+                            before[name] = row
+                            state[name] = {"selection_intent": False, "selection_complete": False,
+                                           "created_by_this_run": False, "creation_identity": None}
+                        save(out / "beforeimages.json", before); save(out / "assembly-state.json", state)
+                        save(out / "result.json", result)
+                        try:
+                            for name, variants in spec["subjects"].items():
+                                initial = before[name]["record"]
+                                if initial == variants["candidate"]: continue
+                                candidate_meta, candidate = record(ROOT / variants["candidate_source"])
+                                check.require(candidate_meta == spec["expected"][variants["candidate_source"]]
+                                              and check.digest(candidate) == variants["candidate"]["sha256"], "Pinned candidate text changed")
+                                state[name]["selection_intent"] = True; save(out / "assembly-state.json", state)
+                                def created(identity, name=name):
+                                    state[name].update(created_by_this_run=True, creation_identity=identity)
+                                    save(out / "assembly-state.json", state)
+                                replace_subject(ROOT / name, candidate, variants["candidate"]["mode"], initial, created)
+                                state[name]["selection_complete"] = True; save(out / "assembly-state.json", state)
+                            selected = {name: variants["candidate"] for name, variants in spec["subjects"].items()}
+                            snapshot(spec, out, "sources-candidate-selected", selected)
+                            try:
+                                run_native(dev, context, lock_fd, spec, out, result)
+                            finally:
+                                raw.flush()
+                                snapshot(spec, out, "sources-after-child", selected)
+                                save(out / "engine-after-child.json", engine(spec))
+                                engine_log = (out / "engine.log").read_text(errors="replace") if (out / "engine.log").is_file() else ""
+                                diagnostics = [line for line in ((out / "raw.log").read_text() + "\n" + engine_log).splitlines() if DIAGNOSTIC.search(line)]
+                                result["raw_and_engine_diagnostics"] = diagnostics
+                            check.require(not diagnostics, "Native diagnostic remains NONCLEAN; no retry")
+                            check.require(engine(spec) == engine_before, "Engine identity changed")
+                        finally:
+                            owned_closed = result["native_child_launch_state"] in ["NOT_ATTEMPTED", "CLOSED"]
+                            restored = restore_all(spec, out, before, state, owned_closed)
+                            result["restored_exact_entry"] = restored
+                            check.require(restored, "Exact entry restoration failed; unknown bytes/modes/symlinks left in situ")
+                            snapshot(spec, out, "sources-after-restore", {name: row["record"] for name, row in before.items()})
+                finally:
+                    queue["inside_lock_finally_reached"] = True; save(out / "queue.json", queue)
+            queue["lock_context_released"] = True; save(out / "queue.json", queue)
+            if args.phase == "recover":
+                result["passed"] = True; code = 0
+            else:
+                result["passed"] = result["native_functional_pass"]
+                code = 0 if result["native_functional_pass"] else 2
+                result["terminal_disposition"] = result["native_observation"]["terminal_disposition"]
+        except KeyboardInterrupt:
+            result["error"] = "Interrupted; only actual owned child closure and guarded rollback allowed"; code = 130
+        except Exception as error:
+            result["error"] = str(error); print("L4 fixed comparison host failure:", error, flush=True)
+        finally:
+            # Reaching this outer finally means the context manager has exited,
+            # even when a body exception bypassed the normal statement above.
+            if queue["acquired"]: queue["lock_context_released"] = True
+            if spec is not None:
+                try: save(out / "engine-at-close.json", engine(spec))
+                except Exception as error: result["engine_close_error"] = str(error); result["passed"] = False; code = 2
+            raw.flush(); result.update(closed=True, host_return=code, scope=spec["scope"] if spec else "Failed source bootstrap")
+            save(out / "result.json", result); save(out / "queue.json", queue)
+            print("A2-L4 fixed comparison host CLOSED code=" + str(code), flush=True)
+            raw.flush(); os.fsync(raw.fileno())
+    signal.signal(signal.SIGTERM, old_term); indexed(out); return code
+
+
+if __name__ == "__main__": raise SystemExit(main())

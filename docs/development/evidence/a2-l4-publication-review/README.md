@@ -1,0 +1,11 @@
+# London Approaches local publication review
+
+Root accepts the exact four-source Putney amendment as Shared76 on20 October2026. All24 original content acceptances remain. Difficulty coverage becomes23/24:15 authored policies and eight bounded retentions; only A2-L5 remains. See [the policy](../../ACT2_L4_DIFFICULTY.md).
+
+The independently reviewed [432-file evidence copy](../a2-l4-difficulty/README.md) is313,227,139 bytes, including411 deduplicated exact objects. The [frozen copy manifest](copy-manifest.json) matches both private and final local trees SHA/size/0644. Original modes remain in the custody maps; container modes do not replace them. The capsule index intentionally preserves its historical private-proposal label. This separate Root receipt and accepted policy establish local publication without rewriting the frozen evidence. No public GitHub upload occurred.
+
+[Independent portable review](portable-review.md) joins946 actual indexed origins and853 source/native aliases across four phases, all prior687 origins/620 aliases/303 objects,2390 portable references, the Root pixel judgement and separate actual258 audit. Constructor447/0, corrected fixed comparison59/0 and public save/view258/0 remain narrowly scoped. Failed c0b7 and source-only b680/65ed defects stay distinct. The actual original response escapes and attacks; the candidate holds and attacks. Original stationary hold is only an unexecuted counterfactual.
+
+[Local integration](LOCAL_INTEGRATION_RECEIPT.json) selected exactly four tested runtime sources under the canonical Godot queue and released it. Original modes are retained; the new helper is0644 and has no generated UID. No engine was run:447/59/258 had already executed these exact candidate bytes. Shared76 is a publication label. Runtime controller, equipment, Scheduler and outer/world save contracts remain unchanged. New local17 is incompatible with old readers; do not strip its saved descriptor or merge a stale codec. Worker availability and actual74/60 adoption remain separate.
+
+The host/local-copy source text and read-only verifier are retained inertly for review, together with the prepared current-document manifest. Original failed/canceled/unexecuted evidence and full-playthrough/art/performance limits remain. No route, every-enemy, all-kit, mobile/export/release or human approval gate is introduced.

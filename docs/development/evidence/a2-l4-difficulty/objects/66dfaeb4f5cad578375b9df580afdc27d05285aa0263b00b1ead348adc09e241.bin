@@ -1,0 +1,11 @@
+--- owner-b680
++++ Root-exact-native-Weybridge
+@@ -951,7 +951,7 @@
+ 	span["rays"] = {}; span["expected_states"] = {}
+ 	for id: String in canonical_ids:
+ 		var actor: Node3D = rays.get(id) as Node3D
+-		if not is_instance_valid(actor) or actor != actors.get(id) or actor.get_script().resource_path != "res://scripts/acts/act2/ray_scout_actor.gd" or actor.get("actor_id") != id: return "Unknown/substituted Ray member: " + id
++		if not is_instance_valid(actor) or actor != actors.get(id) or actor.get_script().resource_path != "res://scripts/acts/act2/weybridge_scout_actor.gd" or actor.get("actor_id") != id: return "Unknown/substituted Ray member: " + id
+ 		var state: Dictionary = exchange.call("state",id)
+ 		var record: Dictionary = records.get(id,{})
+ 		if state.get("actor_id") != id or state.get("status") != "idle" or state.get("phase") != "clear" or state.get("cycle") != 0 or state.get("remaining_s") != 0.0 or state.get("armed") != false or state.get("reservation_id") != "" or state.get("hit_consumed") != false or state.get("last_cancel_reason") != "" or state.get("proof_available") != false: return "Nonpristine native Ray public state: " + id

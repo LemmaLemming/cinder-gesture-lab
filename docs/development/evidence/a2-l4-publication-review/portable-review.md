@@ -1,0 +1,11 @@
+# L4 portable publication review — 20 October 2026
+
+**The exact local-copy proposal is clear; no material blocker found.** The manifest is `copy-manifest.json` (SHA8ec33c7e…), paired with PLANf3f12f9e…. All432 publication files match their unique manifest rows:313,227,139 bytes, physical0644, with no symlinks, traversal, duplicate, extra or missing files. All411 CAS objects, their preferred literal original sources,13 readable aliases and2,390 portable object references join correctly. Paths resolve from the catalogue root; absolute original paths remain provenance.
+
+The four manifests match all946 actual indexed origins and853 reconstructed original source/native aliases. The old687 origins,620 aliases and every full row of the303-object/25,112,221-byte baseline remain unchanged. Original private PLAN/phase wrappers are also retained literally, so old pending text remains historical. Original modes remain separate from CAS container0644.
+
+Scopes stay accurate: constructor447 has no public Shell/combat/portrait credit; failedc0b7 remains Host2/API1/Popen−15 with absent native finals and no inferred outcome; fixed59 keeps its original stationary hold as an unexecuted counterfactual. Actual258 retains the public old16 Standard/new17 Challenge lifecycle, eight opaque checkpoint/summary pairs,35 native custody rows (33 present), six cleanup rows and11 Store2 histories. The source-onlyb680/65ed defects and actualf7/5454 corrections remain separate.
+
+Root’s literal first-warning pixel receipt, its exact PNG/report/fixture hashes, and the independented0bad actual audit have portable named/readable/CAS joins. The README limits pixel credit to that one TEST component and retains cropped-edge/full-route/all-kit/full-level-art limits. No old16Challenge/laterproducer/full-route or campaign-completion claim is added. Policy/count changes and four runtime source integration remain Root decisions.
+
+Root may copy only the432 named entries and verify the destination hashes/sizes/modes before its scoped commit. No native retest is indicated. `REVIEW.json` pins the proposal and detailed joins. This review performed no Godot/native/parser/import, decoder, prepared verifier/host execution, Git, runtime/tracked/coordination/worker mutation or image edit; only the two private review files were written.

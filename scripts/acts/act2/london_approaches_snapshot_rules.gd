@@ -4,10 +4,12 @@ extends RefCounted
 ## Parent first validates actual saved Player, Scheduler, nine native actors,
 ## Ray aggregate and all four published lane snapshots, including pending2.
 ## Parent retains native bindings/custody, primary cadence and floor/range/LOS
-## checks. Pass a copy with banks AND bank_views removed. No node queries,
+## checks. Pass known14 with banks, bank_views and arrangement removed; the
+## optional arrangement is null only for literal legacy omission. No node queries,
 ## state mutations, leases, clocks, restore calls or gameplay events occur here.
 
 const Sequence: Script = preload("res://scripts/acts/act2/london_approaches_sequence.gd")
+const Construction: Script = preload("res://scripts/acts/act2/london_approaches_construction.gd")
 const Codec: Script = preload("res://scripts/campaign/snapshot_codec.gd")
 const Actor: Script = preload("res://scripts/acts/act2/ray_scout_actor.gd")
 const Mechanism: Script = preload("res://scripts/combat/lane_mechanism.gd")
@@ -24,7 +26,7 @@ const MECHANISM_KEYS: Array[String] = ["api_revision", "schema_version", "mechan
 const VIEW_KEYS: Array[String] = ["reservation_id", "landing", "attack_position", "target_id", "primary_time_s", "response_complete_s", "equipment_ids"]
 
 
-static func known_state_error(state: Dictionary) -> String:
+static func known_state_error(state: Dictionary, arrangement: Variant = null) -> String:
 	var error: String = Codec.value_error(state)
 	if error.is_empty(): error = Codec.keys_error(state, KNOWN_KEYS)
 	if not error.is_empty(): return "L4 known envelope: " + error
@@ -54,6 +56,11 @@ static func known_state_error(state: Dictionary) -> String:
 		if beat != "clear" or state.completion_pending or not state.scheduler.profile.is_empty() or not state.scheduler.reservations.is_empty(): return "Ended L4 Scheduler must follow committed quiet clear"
 	elif state.scheduler.encounter_id != LEVEL_EPOCH or state.scheduler.profile.get("id") != state.profile_id:
 		return "L4 live or cloud-tail Scheduler must retain the original fixed epoch/profile"
+	# The same finite selector used before native configure owns all nine roots.
+	# New descriptors join their full profile; null preserves the legacy reader.
+	var construction: Dictionary = Construction.select_known(state, arrangement)
+	if not construction.error.is_empty(): return construction.error
+	var positions: Dictionary = construction.positions
 	if not Codec.is_number(state.rays.get("clock_s")) or float(state.rays.clock_s) != float(state.scheduler.clock_s): return "L4 Ray transport must share the exact Scheduler clock"
 	var targets: Dictionary = {}
 	for id: String in TARGET_IDS:
@@ -63,7 +70,7 @@ static func known_state_error(state: Dictionary) -> String:
 		if not state.rays.actors[id] is Dictionary or not state.rays.records[id] is Dictionary: return "L4 requires every prevalidated Scout actor/cycle"
 		targets[id] = state.rays.actors[id]
 	for id: String in Sequence.ACTORS:
-		error = _target_error(id, targets[id])
+		error = _target_error(id, targets[id], positions[id])
 		if not error.is_empty(): return error
 		var actor: Dictionary = targets[id]
 		if (float(actor.hp) <= 0.0) != state.sequence.defeated_ids.has(id): return "L4 actor HP differs from its earned defeat prefix: " + id
@@ -104,8 +111,8 @@ static func known_state_error(state: Dictionary) -> String:
 	return ""
 
 
-static func _target_error(id: String, actor: Dictionary) -> String:
-	if not Codec.keys_error(actor, ACTOR_KEYS).is_empty() or actor.api_revision != Actor.SNAPSHOT_API_REVISION or not Codec.is_integer(actor.schema_version, Actor.SNAPSHOT_SCHEMA_VERSION, Actor.SNAPSHOT_SCHEMA_VERSION) or actor.actor_id != id or not Codec.is_number(actor.max_hp) or float(actor.max_hp) != 30.0 or not Codec.in_range(actor.hp, 0.0, 30.0) or actor.phase not in Actor.PHASES or not Codec.in_range(actor.phase_progress, 0.0, 1.0) or not Codec.is_vector3(actor.root_position) or actor.root_position != Codec.vector3(Sequence.ACTORS[id]) or not Codec.is_vector3(actor.direction) or not Codec.is_number(actor.body_yaw):
+static func _target_error(id: String, actor: Dictionary, expected_position: Vector3) -> String:
+	if not Codec.keys_error(actor, ACTOR_KEYS).is_empty() or actor.api_revision != Actor.SNAPSHOT_API_REVISION or not Codec.is_integer(actor.schema_version, Actor.SNAPSHOT_SCHEMA_VERSION, Actor.SNAPSHOT_SCHEMA_VERSION) or actor.actor_id != id or not Codec.is_number(actor.max_hp) or float(actor.max_hp) != 30.0 or not Codec.in_range(actor.hp, 0.0, 30.0) or actor.phase not in Actor.PHASES or not Codec.in_range(actor.phase_progress, 0.0, 1.0) or not Codec.is_vector3(actor.root_position) or actor.root_position != Codec.vector3(expected_position) or not Codec.is_vector3(actor.direction) or not Codec.is_number(actor.body_yaw):
 		return "L4 target must preserve its finite HP30/root/actor schema: " + id
 	if (actor.phase == "defeated") != (float(actor.hp) <= 0.0): return "L4 target spent phase must match its actual HP: " + id
 	if not RAY_IDS.has(id) and (actor.direction != [0.0, 0.0, 1.0] or float(actor.body_yaw) != 0.0): return "L4 fixed non-Ray target retains original +Z/zero-yaw pose: " + id

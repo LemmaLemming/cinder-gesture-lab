@@ -1,0 +1,316 @@
+"""Literal fixed-comparison summary/opaque trace reader; no native Variant or geometry decoder."""
+from pathlib import Path
+import hashlib
+import json
+import math
+import os
+import re
+import stat
+
+
+def require(ok, reason):
+    if not ok:
+        raise ValueError(reason)
+
+
+def digest(data):
+    return hashlib.sha256(data).hexdigest()
+
+
+def strict(data):
+    def pairs(items):
+        result = {}
+        for key, value in items:
+            require(key not in result, "Duplicate JSON key: " + key)
+            result[key] = value
+        return result
+    def finite(token):
+        value = float(token)
+        require(math.isfinite(value), "Nonfinite JSON exponent")
+        return value
+    return json.loads(data.decode("utf-8", errors="strict"), object_pairs_hook=pairs,
+                      parse_float=finite,
+                      parse_constant=lambda token: (_ for _ in ()).throw(ValueError(token)))
+
+
+def stable(path):
+    path = Path(path)
+    require(path.is_absolute() and path.resolve() == path, "Literal nonsymlink absolute path required")
+    before = path.lstat()
+    require(stat.S_ISREG(before.st_mode), "Regular file required")
+    fd = os.open(path, os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0))
+    with os.fdopen(fd, "rb") as stream:
+        opened = os.fstat(stream.fileno())
+        require((before.st_dev, before.st_ino) == (opened.st_dev, opened.st_ino), "Changed before open")
+        data = stream.read()
+        closed_fd = os.fstat(stream.fileno())
+    second = path.read_bytes()
+    after = path.lstat()
+    key = lambda row: (row.st_dev, row.st_ino, row.st_size, row.st_mode, row.st_mtime_ns)
+    require(key(before) == key(opened) == key(closed_fd) == key(after) and data == second,
+            "Unstable literal two-read observation")
+    return {"path": str(path), "sha256": digest(data), "bytes": len(data),
+            "mode": format(stat.S_IMODE(after.st_mode), "04o"), "stable_two_reads": True}, data
+
+
+def _known_artifacts(report_path):
+    """Observe only the six finite native paths; absence never hides siblings."""
+    report_path = Path(report_path)
+    names = [("pre-cleanup-01.bin", report_path.parent / "pre-cleanup-01.bin", 128 * 1024 * 1024),
+             ("pre-cleanup-01.json", report_path.parent / "pre-cleanup-01.json", 1024 * 1024),
+             ("pre-cleanup-02.bin", report_path.parent / "pre-cleanup-02.bin", 128 * 1024 * 1024),
+             ("pre-cleanup-02.json", report_path.parent / "pre-cleanup-02.json", 1024 * 1024),
+             ("native-report.json", report_path, 1024 * 1024),
+             ("native-trace.bin", report_path.parent / "native-trace.bin", 128 * 1024 * 1024)]
+    observed = {}; literals = {}; presence = {}; errors = []
+    for name, path, limit in names:
+        presence[name] = os.path.lexists(path)
+        if not presence[name]:
+            continue
+        try:
+            require(path.lstat().st_size <= limit, "Native artifact exceeds finite bound: " + name)
+            observed[name], literals[name] = stable(path)
+        except Exception as error:
+            errors.append({"artifact": name, "path": str(path), "error": str(error)})
+    return observed, literals, presence, errors
+
+
+def _wire(path, spec):
+    path = Path(path)
+    require(path.is_absolute(), "Exact absolute owned native artifact path required")
+    return "user://" + str(path.relative_to(Path(spec["user_data_root"])))
+
+
+def _accepted_raw(receipt, path, metadata, spec):
+    """Validate native persistence claims and opaque bytes, never native geometry."""
+    require(type(receipt) is dict and receipt.get("accepted") is True
+            and receipt.get("native_binary_roundtrip_exact") is True
+            and type(receipt.get("bytes")) is int and 0 < receipt["bytes"] <= 128 * 1024 * 1024
+            and type(receipt.get("sha256")) is str
+            and re.fullmatch(r"[0-9a-f]{64}", receipt["sha256"]) is not None
+            and receipt.get("readback_sha256") == receipt["sha256"]
+            and type(receipt.get("encoding")) is str,
+            "Native opaque trace persistence/roundtrip receipt failed or incomplete")
+    require(receipt.get("path") == _wire(path, spec), "Trace must be exact known path in the owned report directory")
+    require(type(metadata) is dict and metadata["sha256"] == receipt["sha256"]
+            and metadata["bytes"] == receipt["bytes"],
+            "Literal opaque native trace hash/size differs from native receipt")
+    # The receipt has no filesystem mode. Actual mode remains separately in metadata.
+    return True
+
+
+def observe_provisional(report_path, spec, observed, literals, presence):
+    """Inspect known01/02 JSON independently of final report availability."""
+    result = []
+    for serial in [1, 2]:
+        stem = "pre-cleanup-%02d" % serial
+        summary_name = stem + ".json"; binary_name = stem + ".bin"
+        row = {"serial": serial, "stem": stem, "summary_present": presence[summary_name],
+               "binary_present": presence[binary_name], "summary_valid": False,
+               "accepted": False, "provisional_only": True,
+               "cleanup_or_policy_acceptance_claimed_by_host": False, "errors": []}
+        if summary_name in observed:
+            row["original_summary"] = observed[summary_name]
+        if binary_name in observed:
+            row["original_binary"] = observed[binary_name]
+        if summary_name not in literals:
+            if presence[summary_name]:
+                row["errors"].append("Present provisional summary lacks a stable bounded byte observation")
+            elif presence[binary_name]:
+                row["errors"].append("Opaque provisional binary exists without its JSON summary; no inferred outcome")
+            result.append(row)
+            continue
+        try:
+            packet = strict(literals[summary_name])
+            row["literal_summary"] = packet
+            require(type(packet) is dict and packet.get("api_revision") == "TEST-a2-l4-pre-cleanup-summary-1",
+                    "Provisional summary API differs")
+            allowed = {"original_to_candidate_boundary", "final_finish"} if serial == 1 else {"final_finish"}
+            require(type(packet.get("boundary")) is str and packet["boundary"] in allowed,
+                    "Provisional boundary/name/serial differs")
+            require(packet.get("cleanup_pending") is True and packet.get("normal_cleanup_completed") is False
+                    and packet.get("campaign_or_policy_acceptance_claimed") is False,
+                    "Provisional cleanup-pending/no-cleanup/no-policy flags differ")
+            require(all(type(packet.get(key)) is bool for key in ["original_actual_success", "candidate_actual_success"]),
+                    "Provisional native outcome flags must be literal booleans")
+            require(type(packet.get("checks")) is int and packet["checks"] >= 0
+                    and type(packet.get("failures")) is int and 0 <= packet["failures"] <= packet["checks"],
+                    "Provisional native count types differ")
+            require(type(packet.get("actual_verdict_at_boundary")) is str
+                    and type(packet.get("actual_reason_at_boundary")) is str,
+                    "Provisional actual verdict/reason must remain literal strings")
+            receipt = packet.get("raw_native_trace")
+            require(type(receipt) is dict and type(receipt.get("accepted")) is bool
+                    and receipt.get("boundary") == packet["boundary"],
+                    "Provisional raw receipt acceptance/boundary differs")
+            row.update(summary_valid=True, boundary=packet["boundary"], checks=packet["checks"],
+                       failures=packet["failures"], original_actual_success=packet["original_actual_success"],
+                       candidate_actual_success=packet["candidate_actual_success"],
+                       actual_verdict_at_boundary=packet["actual_verdict_at_boundary"],
+                       actual_reason_at_boundary=packet["actual_reason_at_boundary"],
+                       raw_native_trace=receipt, raw_receipt_accepted=receipt["accepted"],
+                       source_identity_scope="Provisional JSON has no fixture hash; source identity/cleanup/final outcome are not inferred from opaque binary")
+            if receipt["accepted"]:
+                _accepted_raw(receipt, Path(report_path).parent / binary_name, observed.get(binary_name), spec)
+                row["accepted"] = True
+            else:
+                row["errors"].append("Native provisional raw receipt is failed; preserved without acceptance")
+        except Exception as error:
+            row["errors"].append(str(error))
+        result.append(row)
+    return result
+
+
+def _precleanup_chain(packet, provisional, observed, report_path, spec):
+    receipts = packet["immutable_precleanup_receipts"]
+    require(1 <= len(receipts) <= 2, "A final report requires one or two immutable boundary receipts")
+    boundaries = ["final_finish"] if len(receipts) == 1 else ["original_to_candidate_boundary", "final_finish"]
+    require(len(receipts) == (2 if packet["original_actual_success"] else 1),
+            "Completed original must retain its interarm boundary plus final receipt; no invented boundary")
+    joins = []
+    for index, (receipt, boundary) in enumerate(zip(receipts, boundaries)):
+        serial = index + 1; stem = "pre-cleanup-%02d" % serial
+        source = provisional[index]
+        require(type(receipt) is dict and receipt.get("boundary") == boundary
+                and source.get("boundary") == boundary and source["summary_valid"] and source["accepted"],
+                "Immutable receipt does not join an accepted exact known provisional boundary")
+        summary = receipt.get("summary")
+        expected_path = Path(report_path).parent / (stem + ".json")
+        require(type(summary) is dict and summary.get("accepted") is True
+                and summary.get("path") == _wire(expected_path, spec)
+                and summary.get("sha256") == observed[stem + ".json"]["sha256"],
+                "Immutable receipt summary path/hash/acceptance differs from actual JSON bytes")
+        # Native adds this metadata only AFTER serializing the provisional JSON.
+        before_summary = {key: value for key, value in receipt.items() if key != "summary"}
+        require(before_summary == source["raw_native_trace"],
+                "Immutable raw receipt differs from the earlier serialized provisional receipt")
+        _accepted_raw(receipt, Path(report_path).parent / (stem + ".bin"), observed.get(stem + ".bin"), spec)
+        require(source["checks"] <= packet["checks"] and source["failures"] <= packet["failures"],
+                "Final counters cannot precede their actual provisional observation")
+        if boundary == "original_to_candidate_boundary":
+            require(source["original_actual_success"] and not source["candidate_actual_success"],
+                    "Interarm boundary must follow genuine original completion and precede candidate completion")
+        joins.append({"serial": serial, "boundary": boundary,
+                      "summary": observed[stem + ".json"], "opaque_binary": observed[stem + ".bin"],
+                      "immutable_receipt_matches_earlier_summary": True})
+    if len(receipts) == 1:
+        require(not provisional[1]["summary_present"] and not provisional[1]["binary_present"],
+                "Unexpected second provisional artifact contradicts one-boundary final report")
+    else:
+        require(provisional[0]["checks"] <= provisional[1]["checks"]
+                and provisional[0]["failures"] <= provisional[1]["failures"],
+                "Immutable boundary counters are out of order")
+    last = provisional[len(receipts) - 1]
+    require(last["actual_verdict_at_boundary"] == packet["verdict"]
+            and last["actual_reason_at_boundary"] == packet["reason"]
+            and last["original_actual_success"] == packet["original_actual_success"]
+            and last["candidate_actual_success"] == packet["candidate_actual_success"],
+            "Final mechanical fields differ from their immutable final_finish observation")
+    return joins
+
+
+def observe(report_path, spec, raw, api_return, child_return):
+    observed, literals, presence, artifact_errors = _known_artifacts(report_path)
+    provisional = observe_provisional(report_path, spec, observed, literals, presence)
+    result = {"functional_pass": False, "terminal_recorded": False, "report_present": presence["native-report.json"],
+              "native_trace_decoded_by_python": False, "observed_artifacts": observed,
+              "artifact_presence": presence, "artifact_errors": artifact_errors,
+              "provisional_observations": provisional}
+    try:
+        require("native-report.json" in literals, "Final native report absent or not a stable bounded observation; provisional evidence remains independent")
+        result["original_report"] = observed["native-report.json"]
+        packet = strict(literals["native-report.json"])
+        require(type(packet) is dict and packet.get("api_revision") == "TEST-a2-l4-fixed-comparison-1"
+                and packet.get("inert_source_origin") is True
+                and packet.get("source_sha256") == spec["fixture_sha256"]
+                and packet.get("embedded_host_sha256") == spec["embedded_host_sha256"]
+                and packet.get("embedded_game_sha256") == spec["embedded_game_sha256"],
+                "Report API/exact fixture/embedded source identity differs")
+        flags = ["original_actual_success", "candidate_actual_success", "fixed_response_difference_supported",
+                 "normal_cleanup_completed", "precleanup_all_ok"]
+        require(all(type(packet.get(key)) is bool for key in flags), "Native outcome/cleanup flags must be literal booleans")
+        require(packet.get("original_stationary_counterfactual_executed") is False
+                and packet.get("campaign_or_policy_acceptance_claimed") is False,
+                "Unexecuted original counterfactual and no policy claim must remain explicit")
+        require(type(packet.get("checks")) is int and packet["checks"] >= 0
+                and type(packet.get("failures")) is int and 0 <= packet["failures"] <= packet["checks"]
+                and type(packet.get("wall_ms")) is int and packet["wall_ms"] >= 0,
+                "Native summary count/timing types differ")
+        require(all(type(packet.get(key)) is str for key in ["native_evidence_error", "lifecycle_error", "verdict", "reason"]),
+                "Native reason/evidence/lifecycle fields differ")
+        require(type(packet.get("immutable_precleanup_receipts")) is list
+                and len(packet["immutable_precleanup_receipts"]) <= 2,
+                "At most two literal immutable precleanup receipts required")
+        result.update(checks=packet["checks"], failures=packet["failures"],
+                      native_flags={key: packet[key] for key in flags}, verdict=packet["verdict"], reason=packet["reason"],
+                      native_evidence_error=packet["native_evidence_error"], lifecycle_error=packet["lifecycle_error"],
+                      immutable_precleanup_receipts=packet["immutable_precleanup_receipts"],
+                      first_failure_summary={"verdict": packet["verdict"], "reason": packet["reason"],
+                                             "failures": packet["failures"], "lifecycle_error": packet["lifecycle_error"]},
+                      detailed_rows_location="Opaque native-trace.bin checks_detail; not decoded or synthesized by this host")
+        receipt = packet.get("raw_native_trace")
+        require(type(receipt) is dict and type(receipt.get("accepted")) is bool,
+                "Final native raw receipt must retain literal acceptance Boolean")
+        difference = packet["fixed_response_difference_supported"]
+        lines = [line for line in raw.splitlines() if line.startswith("A2-L4 fixed comparison:")]
+        require(len(lines) == 1, "One actual native outcome footer required")
+        pattern = (r"A2-L4 fixed comparison: verdict=(.*?) original_actual=(true|false) candidate_actual=(true|false) "
+                   r"fixed_difference=(true|false) checks=([0-9]+) failures=([0-9]+) "
+                   r"summary_persisted=(true|false) raw_persisted=(true|false); no campaign/policy acceptance")
+        match = re.fullmatch(pattern, lines[0])
+        require(match is not None, "Actual native footer shape differs")
+        verdict, original, candidate, fixed, checks, failures, persisted, raw_persisted = match.groups()
+        require(verdict == packet["verdict"] and (original == "true") == packet["original_actual_success"]
+                and (candidate == "true") == packet["candidate_actual_success"]
+                and (fixed == "true") == difference and int(checks) == packet["checks"]
+                and int(failures) == packet["failures"] and (raw_persisted == "true") == receipt["accepted"],
+                "Actual footer/count/outcome/raw receipt join differs")
+        summary_persisted = persisted == "true"
+        expected_native_return = (0 if difference and summary_persisted else
+                                  2 if summary_persisted and receipt["accepted"] and packet["precleanup_all_ok"]
+                                  and packet["native_evidence_error"] == "" and packet["failures"] == 0 else 1)
+        result.update(literal_footer=lines[0], summary_persisted=summary_persisted,
+                      final_raw_receipt=receipt, expected_native_return=expected_native_return)
+        require(type(api_return) is int and type(child_return) is int
+                and api_return == child_return == expected_native_return,
+                "Canonical API/owned Popen/native outcome return codes disagree")
+        if "native-trace.bin" in observed:
+            result["original_native_trace"] = observed["native-trace.bin"]
+        require(summary_persisted, "Final summary did not persist; no terminal or functional result")
+        _accepted_raw(receipt, Path(report_path).parent / "native-trace.bin", observed.get("native-trace.bin"), spec)
+        result["native_trace_receipt"] = receipt
+        require(not artifact_errors, "Known native artifact read/custody error remains")
+        result["precleanup_joins"] = _precleanup_chain(packet, provisional, observed, report_path, spec)
+        require(packet["checks"] >= len(spec["native_sources"]) + 1 and packet["failures"] == 0
+                and packet["native_evidence_error"] == "" and packet["lifecycle_error"] == ""
+                and packet["precleanup_all_ok"] is True and packet["normal_cleanup_completed"] is True,
+                "Native assertion/evidence/lifecycle/precleanup/normal cleanup failure retained; no success or repeat")
+        require(not packet["candidate_actual_success"] or packet["original_actual_success"],
+                "Candidate cannot complete ahead of original")
+        positive = "supported_fixed_response_difference"
+        negatives = {"inconclusive", "equivalent_or_inconclusive", "refused", "refused_or_inconclusive",
+                     "unsafe", "invalid_TEST_scope", "incomplete_timeout"}
+        require(packet["verdict"] in negatives | {positive}, "Unknown/incomplete verdict is not a terminal observation")
+        if difference:
+            require(packet["verdict"] == positive and packet["original_actual_success"]
+                    and packet["candidate_actual_success"] and len(result["precleanup_joins"]) == 2,
+                    "Positive result lacks both genuine native components and immutable accepted boundaries")
+            disposition = "SUPPORTED_FIXED_RESPONSE_DIFFERENCE"
+        else:
+            require(packet["verdict"] != positive and not packet["candidate_actual_success"],
+                    "Nonpositive result cannot claim completed supported candidate")
+            if packet["verdict"] == "equivalent_or_inconclusive":
+                require(packet["original_actual_success"], "Equivalent original-only endpoint requires completed original")
+                disposition = "ORIGINAL_ONLY_EQUIVALENT_OR_INCONCLUSIVE_CANDIDATE_NOT_RUN"
+            elif packet["verdict"] in {"unsafe", "invalid_TEST_scope"}:
+                disposition = "ACTUAL_NONPOSITIVE_FAILURE_NO_ACCEPTANCE"
+            elif packet["original_actual_success"]:
+                disposition = "ORIGINAL_COMPLETED_CANDIDATE_NOT_PROVED"
+            else:
+                disposition = "ORIGINAL_NOT_COMPLETED_CANDIDATE_NOT_PROVED"
+        result.update(terminal_recorded=True, functional_pass=difference, terminal_disposition=disposition,
+                      source_gate_scope="Exact pinned fixture executes37 gates into retained native checks_detail before dynamic loads; this host does not decode native rows",
+                      scope="One fixed TEST Putney native comparison; provisional observations never certify cleanup, source identity or acceptance; no Shell/Store, route, portrait or policy credit")
+    except Exception as error:
+        result["error"] = str(error)
+    return result

@@ -1,0 +1,13 @@
+# Deferred finish — additive inert TEST correction
+
+Integration [RESPONSE0746aedd](authority-response.json), acknowledged by [9e94ea38](owner-ack.json), assigns this one lifecycle correction. The original [c0b7 comparison](../published-framing-correction/fixed_comparison_published_framing.gd.txt), earlier [bf57](../fixed_comparison.gd.txt), their notes and evidence remain byte exact. The [corrected source](fixed_comparison_deferred_finish.gd.txt) is unparsed and unexecuted.
+
+The actual c0b7 run failed because `_finish` immediately freed the probe while `tick_finished` was emitting. The original phase closed Host2/API1; its owned child PID13212 returned−15 after the wrapper detected the script error. No summary or native trace was persisted. That stack establishes no response result, count or useful gameplay difference. The [failure custody record](original-failure-custody.json) pins the original command, source, logs, missing-artifact observation and exact rollback receipts. The small original command, raw/engine logs and result remain in `failed-c0b7/` as exact copies.
+
+The correction latches and pauses immediately, then defers cleanup and report work until the emitting callback returns. Before either inter-component retirement or final resource cleanup, it preserves the complete observed trace, checks, flags and actual requested verdict in immutable provisional artifacts. Those artifacts do not certify cleanup or acceptance. Normal cleanup and the final actual report follow. Failed persistence or cleanup prevents a positive result; later writes cannot erase an earlier failure.
+
+Only TEST lifecycle and evidence ordering change. The 37 source controls, embedded helpers, fixed station, kit, controls, timing, proofs, current published framing, counterfactual, combat assertions, stopping rules and separate response horizons remain. No search, success-forcing change, new horizon or matrix is added. Root independently reviews and executes only the changed TEST through the normal queue and remains first help.
+
+This handoff includes source, exact diff, proof, pins and bounded source-review/validation records. It adds no engine, parser, import, native, portrait, producer, runtime/shared/other-act change or new policy credit. All24 original content acceptances and current20 difficulty policies are preserved.
+
+See the [lifecycle proof](lifecycle-proof.md), [exact patch](deferred-finish.patch.txt), [mechanical preservation review](final-mechanical-review.json), [lifecycle review](final-lifecycle-review.json) and [validation receipt](validation.json). Patch whitespace diagnostics are limited to literal unified-diff context prefixes and are classified in the receipt; no source whitespace is changed to hide them.

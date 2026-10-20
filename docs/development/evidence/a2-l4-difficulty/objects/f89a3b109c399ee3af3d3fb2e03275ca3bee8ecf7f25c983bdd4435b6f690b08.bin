@@ -1,0 +1,44 @@
+# L4 save/view followup source review
+
+Status: **blocked by one exact TEST predicate**. This is a source-only review; no fixture was run and no level or difficulty policy is accepted here.
+
+I read all 1,191 lines of the frozen `saved_construction_view.gd.txt` (`b6802f5578e55e2a42a61335034bcc5652a1e0e44dfd68ef732fc4c37b7b8613`, 94,222 bytes), the plan, all three owner source reviews, and the two Root observer-authority responses. The owner package/index and prior source-cohort crosscheck are recorded separately in REVIEW.json.
+
+## F1 — exact Ray Script expectation rejects the selected native adapter
+
+At **line 954**, `_validation_freeze_error` requires `actor.get_script().resource_path` to equal `res://scripts/acts/act2/ray_scout_actor.gd`. The selected `b81f` London constructor (lines 88–100) creates these actual Ray nodes with `WeybridgeScoutActor`. `weybridge.gd:6` preloads `res://scripts/acts/act2/weybridge_scout_actor.gd`; that adapter extends the base Ray script and does not replace its Script during configuration. Its actual Script therefore has the derived resource path.
+
+The mismatch makes every such mapped pristine recipient ineligible. Lines 882–889 explicitly fail a mapped ineligible recipient even if no cleanup callback occurs. This conclusion follows from selected source; it is not an inferred or reported native failure.
+
+Root may make exactly this one replacement in a **new private test copy**, preserving the owner’s frozen b680 source and all 28 package paths:
+
+```diff
+-actor.get_script().resource_path != "res://scripts/acts/act2/ray_scout_actor.gd"
++actor.get_script().resource_path != "res://scripts/acts/act2/weybridge_scout_actor.gd"
+```
+
+There is exactly one occurrence of the predicate. Keep the base source-map entry at line 24, the derived entry at line 25, and all same-node/actor-ID/frozen-Script/provenance/lifecycle/HP/profile/lease/private-record/exact-payload checks. This needs no subclass tolerance, production change, new API or signal suppression.
+
+**No new source pin is needed.** SOURCE44 already pins the adapter at line 25 to `7e90bfc541c467162a5a0b0afd6891e8aa6dda9835a4da05362e9301eed78916` (1,129 bytes, actual mode 0600). Its source and UID slot already belong to the previous 201 fixed slots plus four runtime subjects (205 total).
+
+## Remaining source assessment
+
+No second concrete source blocker was found in the full read. These conclusions remain conditional on F1 being corrected and on actual future native results:
+
+- **Pristine validation retirement:** the wrapper observes the exact actual candidate map before unchanged synchronous disposal. A mapped but partial or nonpristine recipient fails even with zero callbacks. Callback admission keeps the same native identities, disarmed lifecycle, full HP/resources, empty leases/proof history, native records, and the exact payloads of only the known three Rays. It records actual callback IDs/counts; it does not invent a required emission count.
+- **Session and persistence flows:** genuine old16 Standard stage8/current and stage7/checkpoint contents enter a fresh TEST Store transport. Fresh17 Challenge is created through actual public Replay with its entrance checkpoint. First Title preserves whole Story/current/checkpoint while migrating canonical unlock availability (selected fixture 5 to 13, generation +1); Replay uses +2 and Save/Retry +1 with actual backup relationships. Opposite future preference preserves the captured run profile. There is no old-Challenge or late-stage new-Challenge producer claim.
+- **Independent current Continue:** `resume_requested` is the supported active-attempt public load path (`load_active`). In this Replay case, changing it to Continue Story would leave the side attempt. The source does not claim a GUI hit test.
+- **Raw custody and cleanup:** serial provisional native snapshots and all actual Store-slot raw bytes/hashes are retained before terminal success. Unknown handles, malformed/readback/roundtrip errors, failed checks and incomplete cleanup prevent a positive result. Normal cleanup concerns the actual native Level/FX/Shell/probe/subtree and global state; retained TEST Store evidence is not described as deleted.
+- **Brief view:** one selected Challenge candidate uses the fixed station, native standing Y, neutral setup and first actual Handler warning. It holds the completed native tick across one `frame_post_draw` barrier, verifies native state/camera guards, and retains one 540×1170 PNG. `actual_pixel_acceptance=false` correctly leaves actual visual inspection to Root. The companion does not repeat the original/candidate comparison or claim routes, all-enemy kills, earned exits or all-kit playthroughs.
+
+## Bounded pin crosscheck
+
+The parent’s separate bounded receipt confirms all 27 index-listed files (28 paths including index) match SHA/bytes/0644 and the index SHA is `3ac2dd297cdfdb28cfc234ae6496a10b6b555bff75d61f2f4f0fffde3d6f65b2`. SOURCE44 equals the 44 control rows; all are already in the prior 205-slot cohort. The seven public persistence/framing additions add zero cohort files. All 201 fixed slots plus the four currently rolled-back original runtime slots are exact, including named cache/UID slots, with zero drift.
+
+The selected future four remain `b81f9e82` London, `d6f70d2e` snapshot rules, `e54af1c3` smoke rules and `2733421a` construction helper. Candidate-selection pins and candidate modes are separate from the currently restored original runtime files/helper absence. REVIEW.json retains the exact host-spec subject records.
+
+## Evidence and next condition
+
+Reuse original 447 constructor and corrected 59 comparison evidence unchanged. Preserve failed c0b7 and all original failures/cancellations/unexecuted records, the original owner reviews, all 24 original content acceptances and the 22 current policies. This review supplies no native pass count, actual image inspection, new native producer, full-playthrough, balance or performance result.
+
+The only source condition is an independently re-read new private copy containing the exact one-literal correction and new pins. Root owns subsequent bounded materialization, native execution, image inspection and acceptance. No other-act or human gate is introduced.

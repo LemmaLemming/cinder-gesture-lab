@@ -1,0 +1,24 @@
+{
+  "at": "2026-10-20T06:03:38.143507+00:00",
+  "state": "INERT_LITERAL_CORRECTION_WAITING_FINAL_INDEPENDENT_SOURCE_REVIEW",
+  "owner_commit": "8ebc5f052f5092371b3f6f59c29838d7ce5d9304",
+  "original_sha256": "b6802f5578e55e2a42a61335034bcc5652a1e0e44dfd68ef732fc4c37b7b8613",
+  "candidate_sha256": "f7fbf9079a0d020277268e3bd61516850da8bb342c0dece67e666d5a29ba6580",
+  "candidate_bytes": 94228,
+  "only_delta": "One exact TEST native Ray Script expected path, base->actual Weybridge adapter; same instances/ScriptID/sourcehash/provenance/lifecycle/payload/HP/resource/queue/cleanup guards unchanged",
+  "actual_script_source": {
+    "future_runtime_path": "res://scripts/acts/act2/weybridge_scout_actor.gd",
+    "sha256": "7e90bfc541c467162a5a0b0afd6891e8aa6dda9835a4da05362e9301eed78916",
+    "bytes": 1129,
+    "source_kind": "canonical observed physical and HEAD bytes",
+    "source_path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/acts/act2/weybridge_scout_actor.gd",
+    "git_head": "ec884b3b87069d0467ada918766bab8cad1f7c15",
+    "git_blob": "6e8f0bf76061755a5526110c6fbfc184ffeab1fc",
+    "physical_equals_git": true
+  },
+  "already_native_SOURCE44_pinned": true,
+  "prior_host201_expected_contains_script_and_UID": true,
+  "production_runtime_changes": false,
+  "no_GD_parser_queue_engine_or_acceptance": true,
+  "patch": "--- owner-b680\n+++ Root-exact-native-Weybridge\n@@ -951,7 +951,7 @@\n \tspan[\"rays\"] = {}; span[\"expected_states\"] = {}\n \tfor id: String in canonical_ids:\n \t\tvar actor: Node3D = rays.get(id) as Node3D\n-\t\tif not is_instance_valid(actor) or actor != actors.get(id) or actor.get_script().resource_path != \"res://scripts/acts/act2/ray_scout_actor.gd\" or actor.get(\"actor_id\") != id: return \"Unknown/substituted Ray member: \" + id\n+\t\tif not is_instance_valid(actor) or actor != actors.get(id) or actor.get_script().resource_path != \"res://scripts/acts/act2/weybridge_scout_actor.gd\" or actor.get(\"actor_id\") != id: return \"Unknown/substituted Ray member: \" + id\n \t\tvar state: Dictionary = exchange.call(\"state\",id)\n \t\tvar record: Dictionary = records.get(id,{})\n \t\tif state.get(\"actor_id\") != id or state.get(\"status\") != \"idle\" or state.get(\"phase\") != \"clear\" or state.get(\"cycle\") != 0 or state.get(\"remaining_s\") != 0.0 or state.get(\"armed\") != false or state.get(\"reservation_id\") != \"\" or state.get(\"hit_consumed\") != false or state.get(\"last_cancel_reason\") != \"\" or state.get(\"proof_available\") != false: return \"Nonpristine native Ray public state: \" + id\n"
+}

@@ -1,0 +1,429 @@
+--- a/scripts/acts/act2/london_approaches.gd
++++ b/scripts/acts/act2/london_approaches.gd
+@@ -10,6 +10,7 @@
+ const SmokeSnapshotRules: Script = preload("res://scripts/acts/act2/london_approaches_smoke_rules.gd")
+ const KnownSnapshotRules: Script = preload("res://scripts/acts/act2/london_approaches_snapshot_rules.gd")
+ const LondonSequence: Script = preload("res://scripts/acts/act2/london_approaches_sequence.gd")
++const LondonConstruction: Script = preload("res://scripts/acts/act2/london_approaches_construction.gd")
+ const LondonFloor: Script = preload("res://scripts/acts/act2/london_approaches_floor.gd")
+ const LondonKit: Script = preload("res://scripts/acts/act2/london_approaches_kit.gd")
+ const TenderActor: Script = preload("res://scripts/acts/act2/canister_tender_actor.gd")
+@@ -24,6 +25,9 @@
+ var _bank_guard: Node
+ var _smoke_api_ready: bool = false
+ var _forecast_points: Dictionary = {}
++# Frozen construction authority only; never HP, progress, clocks or a lease.
++var _l4_construction: Dictionary = {}
++var _l4_construction_started: bool = false
+ 
+ func _ready() -> void:
+ 	_art_preview = false
+@@ -37,20 +41,55 @@
+ 		if is_instance_valid(mesh): _bank_visuals.append(mesh)
+ 	set_physics_process(false)
+ 
++func restore_candidate_construction_required() -> bool:
++	# Saved old/new attempts can require different immutable native roots.
++	return true
++
++func _on_enter_restore_candidate(local: Dictionary, _saved_player: Dictionary) -> String:
++	# Pure saved selection precedes every recipient configure/bind. The current
++	# public preference has no authority over this paused saved candidate.
++	var selected: Dictionary = LondonConstruction.saved(local)
++	if not String(selected.error).is_empty(): return selected.error
++	_l4_construct(selected)
++	return runtime_error
++
+ func _on_enter_level() -> void:
+ 	if is_instance_valid(shared_shell) and shared_shell.has_method("get_difficulty_preference"):
+ 		_profile_id = shared_shell.call("get_difficulty_preference")
++	var selected: Dictionary = LondonConstruction.fresh(_profile_id)
++	if not String(selected.error).is_empty(): runtime_error = selected.error; return
++	_l4_construct(selected)
++
++func _l4_construct(selected: Dictionary) -> void:
++	if _l4_construction_started or is_instance_valid(_scheduler) or not _actors.is_empty() or not _mechanisms.is_empty() or not _clouds.is_empty():
++		runtime_error = "L4 native recipients can only be configured once"
++		return
++	_l4_construction_started = true
++	# _ready builds only map-independent floor/scenery. Actor-owned rigs are
++	# created below after their root is selected, before native configure.
++	_l4_construction = selected.duplicate(true)
++	(_l4_construction.profile as Dictionary).make_read_only()
++	(_l4_construction.positions as Dictionary).make_read_only()
++	if not _l4_construction.legacy:
++		(_l4_construction.descriptor.profile as Dictionary).make_read_only()
++	(_l4_construction.descriptor as Dictionary).make_read_only()
++	_l4_construction.make_read_only()
++	_profile_id = _l4_construction.profile_id
+ 	_scheduler = Scheduler.new()
+ 	_scheduler.name = "LondonApproachesThreatScheduler"
+ 	add_child(_scheduler)
+ 	if not _scheduler.call("begin_encounter", _profile_id, LONDON_EPOCH, WORLD_REVISION):
+ 		runtime_error = _scheduler.get("last_error")
+ 		return
+-	for id: String in LondonSequence.ACTORS:
++	var profile_exact: String = ExactJson.stringify(_l4_construction.profile)
++	if profile_exact.is_empty() or ExactJson.stringify(_scheduler.call("encounter_profile")) != profile_exact:
++		runtime_error = "L4 actual entry Scheduler profile differs from frozen construction"
++		return
++	for id: String in _l4_construction.positions:
+ 		var actor_script: Script = TenderActor if LondonSequence.TENDERS.has(id) else (HandlerActor if LondonSequence.HANDLERS.has(id) else WeybridgeScoutActor)
+ 		var actor: Node3D = actor_script.new() as Node3D
+ 		actor.name = "LondonApproaches_" + id
+-		actor.position = LondonSequence.ACTORS[id]
++		actor.position = _l4_construction.positions[id]
+ 		add_child(actor)
+ 		if not actor.call("configure", hero, effects, id):
+ 			runtime_error = "Cannot bind actual L4 actor " + id
+@@ -105,7 +144,7 @@
+ 		bank.name = id
+ 		bank.position = LondonSequence.CLOUDS[id]
+ 		add_child(bank)
+-		if not bank.call("configure", id, Geometry.circle(bank.position, 1.05), LondonSequence.ACTORS[BANK_TO_TENDER[id]]) or not bank.call("bind", _scheduler, {"hero": hero}):
++		if not bank.call("configure", id, Geometry.circle(bank.position, 1.05), _l4_construction.positions[BANK_TO_TENDER[id]]) or not bank.call("bind", _scheduler, {"hero": hero}):
+ 			runtime_error = "Cannot bind actual L4 smoke bank " + id + ": " + String(bank.get("last_error"))
+ 			return false
+ 		_clouds[id] = bank
+@@ -128,7 +167,7 @@
+ 
+ func _bank_state(id: String) -> Dictionary:
+ 	var state: Dictionary = _clouds[id].call("state")
+-	state["opening_position"] = state.exchange.get("opening_position", LondonSequence.ACTORS[BANK_TO_TENDER[id]])
++	state["opening_position"] = state.exchange.get("opening_position", _l4_construction.positions[BANK_TO_TENDER[id]])
+ 	state["remaining_s"] = 0.0
+ 	if state.status == "running":
+ 		var deadline: String = {"warning": "lock_from_s", "lock": "active_from_s", "active": "active_until_s", "recovery": "recovery_until_s"}[state.phase]
+@@ -328,9 +367,11 @@
+ 	return node
+ 
+ func _actor_custody_error() -> String:
+-	for id: String in LondonSequence.ACTORS:
++	if not _l4_construction_started or _l4_construction.is_empty(): return "L4 requires its immutable native construction"
++	for id: String in _l4_construction.positions:
+ 		var actor: Variant = _actors.get(id)
+ 		if not is_instance_valid(actor) or not actor is Node3D or not actor.is_inside_tree() or actor.is_queued_for_deletion(): return "L4 actual actor custody lost: " + id
++		if not actor.global_position.is_equal_approx(_l4_construction.positions[id]): return "L4 actual actor differs from its immutable selected native slot: " + id
+ 	return ""
+ 
+ func _physics_process(delta: float) -> void:
+@@ -742,7 +783,7 @@
+ 		if not error.is_empty(): return error
+ 	for id: String in KnownSnapshotRules.TOOL_IDS:
+ 		var tool: Variant = _mechanisms.get(id)
+-		if not is_instance_valid(tool) or not tool is Node3D or not tool.is_inside_tree() or tool.is_queued_for_deletion() or not tool.global_position.is_equal_approx(LondonSequence.ACTORS[_tool_target(id)]): return "L4 actual tool must retain its original anchored native position: " + id
++		if not is_instance_valid(tool) or not tool is Node3D or not tool.is_inside_tree() or tool.is_queued_for_deletion() or not tool.global_position.is_equal_approx(_l4_construction.positions[_tool_target(id)]): return "L4 actual tool must retain its original anchored native position: " + id
+ 		if not state.mechanisms[id] is Dictionary: return "Known L4 tool requires its public dictionary"
+ 		error = _mechanisms[id].call("snapshot_error", state.mechanisms[id], bindings, state.scheduler)
+ 		if not error.is_empty(): return error
+@@ -752,7 +793,7 @@
+ 			var actor: Dictionary = state.targets[target_id]
+ 			if saved.exchange.source_position != actor.root_position or saved.exchange.opening_position != actor.root_position or saved.exchange.profile_id != state.profile_id or int(saved.exchange.world_revision) != WORLD_REVISION:
+ 				return "Known L4 executed tool retains its exact actual source/opening/profile/revision"
+-	error = KnownSnapshotRules.known_state_error(state)
++	error = KnownSnapshotRules.known_state_error(state, null if _l4_construction.legacy else _l4_construction.descriptor)
+ 	if not error.is_empty(): return error
+ 	for id: String in state.views:
+ 		var view: Dictionary = state.views[id]
+@@ -851,19 +892,24 @@
+ 		if banks[id].is_empty(): return {"error": "L4 bank capture failed " + id + ": " + String(_clouds[id].get("last_snapshot_error"))}
+ 	state["banks"] = banks
+ 	state["bank_views"] = _bank_views.duplicate(true)
++	# Genuine legacy construction keeps the literal old16 writer. Fresh/new
++	# construction adds its retained descriptor, including after epoch end.
++	if not _l4_construction.legacy:
++		state["arrangement"] = _l4_construction.descriptor.duplicate(true)
+ 	return state
+ 
+ func _known_pack(state: Dictionary) -> Dictionary:
+ 	var known: Dictionary = state.duplicate()
+ 	known.erase("banks")
+ 	known.erase("bank_views")
++	known.erase("arrangement")
+ 	return known
+ 
+ func _whole_snapshot_error(state: Dictionary, saved_player: Dictionary = {}) -> String:
+ 	if not _smoke_api_ready or _clouds.size() != BANK_TO_TENDER.size() or _cloud_art.size() != BANK_TO_TENDER.size(): return "L4 requires its actual supported bank/source/art bindings"
+ 	if not is_instance_valid(_bank_guard) or _bank_guard.get_script() != BankGuard or _bank_guard.get_parent() != self or not _bank_guard.call("binding_matches", Callable(self, "_guard_banks_before_contact")): return "L4 requires its original active native pre-contact presentation guard"
+ 	var error: String = Codec.value_error(state)
+-	if error.is_empty(): error = Codec.keys_error(state, SmokeSnapshotRules.LOCAL_KEYS)
++	if error.is_empty(): error = LondonConstruction.binding(state, _l4_construction)
+ 	if not error.is_empty(): return error
+ 	if not state.banks is Dictionary or not state.bank_views is Dictionary or not Codec.keys_error(state.banks, SmokeSnapshotRules.BANK_IDS).is_empty(): return "L4 requires two complete bank snapshots and their view dictionary"
+ 	if not is_instance_valid(hero): return "L4 requires its actual shared Hero"
+--- a/scripts/acts/act2/london_approaches_snapshot_rules.gd
++++ b/scripts/acts/act2/london_approaches_snapshot_rules.gd
+@@ -4,10 +4,12 @@
+ ## Parent first validates actual saved Player, Scheduler, nine native actors,
+ ## Ray aggregate and all four published lane snapshots, including pending2.
+ ## Parent retains native bindings/custody, primary cadence and floor/range/LOS
+-## checks. Pass a copy with banks AND bank_views removed. No node queries,
++## checks. Pass known14 with banks, bank_views and arrangement removed; the
++## optional arrangement is null only for literal legacy omission. No node queries,
+ ## state mutations, leases, clocks, restore calls or gameplay events occur here.
+ 
+ const Sequence: Script = preload("res://scripts/acts/act2/london_approaches_sequence.gd")
++const Construction: Script = preload("res://scripts/acts/act2/london_approaches_construction.gd")
+ const Codec: Script = preload("res://scripts/campaign/snapshot_codec.gd")
+ const Actor: Script = preload("res://scripts/acts/act2/ray_scout_actor.gd")
+ const Mechanism: Script = preload("res://scripts/combat/lane_mechanism.gd")
+@@ -24,7 +26,7 @@
+ const VIEW_KEYS: Array[String] = ["reservation_id", "landing", "attack_position", "target_id", "primary_time_s", "response_complete_s", "equipment_ids"]
+ 
+ 
+-static func known_state_error(state: Dictionary) -> String:
++static func known_state_error(state: Dictionary, arrangement: Variant = null) -> String:
+ 	var error: String = Codec.value_error(state)
+ 	if error.is_empty(): error = Codec.keys_error(state, KNOWN_KEYS)
+ 	if not error.is_empty(): return "L4 known envelope: " + error
+@@ -54,6 +56,11 @@
+ 		if beat != "clear" or state.completion_pending or not state.scheduler.profile.is_empty() or not state.scheduler.reservations.is_empty(): return "Ended L4 Scheduler must follow committed quiet clear"
+ 	elif state.scheduler.encounter_id != LEVEL_EPOCH or state.scheduler.profile.get("id") != state.profile_id:
+ 		return "L4 live or cloud-tail Scheduler must retain the original fixed epoch/profile"
++	# The same finite selector used before native configure owns all nine roots.
++	# New descriptors join their full profile; null preserves the legacy reader.
++	var construction: Dictionary = Construction.select_known(state, arrangement)
++	if not construction.error.is_empty(): return construction.error
++	var positions: Dictionary = construction.positions
+ 	if not Codec.is_number(state.rays.get("clock_s")) or float(state.rays.clock_s) != float(state.scheduler.clock_s): return "L4 Ray transport must share the exact Scheduler clock"
+ 	var targets: Dictionary = {}
+ 	for id: String in TARGET_IDS:
+@@ -63,7 +70,7 @@
+ 		if not state.rays.actors[id] is Dictionary or not state.rays.records[id] is Dictionary: return "L4 requires every prevalidated Scout actor/cycle"
+ 		targets[id] = state.rays.actors[id]
+ 	for id: String in Sequence.ACTORS:
+-		error = _target_error(id, targets[id])
++		error = _target_error(id, targets[id], positions[id])
+ 		if not error.is_empty(): return error
+ 		var actor: Dictionary = targets[id]
+ 		if (float(actor.hp) <= 0.0) != state.sequence.defeated_ids.has(id): return "L4 actor HP differs from its earned defeat prefix: " + id
+@@ -104,8 +111,8 @@
+ 	return ""
+ 
+ 
+-static func _target_error(id: String, actor: Dictionary) -> String:
+-	if not Codec.keys_error(actor, ACTOR_KEYS).is_empty() or actor.api_revision != Actor.SNAPSHOT_API_REVISION or not Codec.is_integer(actor.schema_version, Actor.SNAPSHOT_SCHEMA_VERSION, Actor.SNAPSHOT_SCHEMA_VERSION) or actor.actor_id != id or not Codec.is_number(actor.max_hp) or float(actor.max_hp) != 30.0 or not Codec.in_range(actor.hp, 0.0, 30.0) or actor.phase not in Actor.PHASES or not Codec.in_range(actor.phase_progress, 0.0, 1.0) or not Codec.is_vector3(actor.root_position) or actor.root_position != Codec.vector3(Sequence.ACTORS[id]) or not Codec.is_vector3(actor.direction) or not Codec.is_number(actor.body_yaw):
++static func _target_error(id: String, actor: Dictionary, expected_position: Vector3) -> String:
++	if not Codec.keys_error(actor, ACTOR_KEYS).is_empty() or actor.api_revision != Actor.SNAPSHOT_API_REVISION or not Codec.is_integer(actor.schema_version, Actor.SNAPSHOT_SCHEMA_VERSION, Actor.SNAPSHOT_SCHEMA_VERSION) or actor.actor_id != id or not Codec.is_number(actor.max_hp) or float(actor.max_hp) != 30.0 or not Codec.in_range(actor.hp, 0.0, 30.0) or actor.phase not in Actor.PHASES or not Codec.in_range(actor.phase_progress, 0.0, 1.0) or not Codec.is_vector3(actor.root_position) or actor.root_position != Codec.vector3(expected_position) or not Codec.is_vector3(actor.direction) or not Codec.is_number(actor.body_yaw):
+ 		return "L4 target must preserve its finite HP30/root/actor schema: " + id
+ 	if (actor.phase == "defeated") != (float(actor.hp) <= 0.0): return "L4 target spent phase must match its actual HP: " + id
+ 	if not RAY_IDS.has(id) and (actor.direction != [0.0, 0.0, 1.0] or float(actor.body_yaw) != 0.0): return "L4 fixed non-Ray target retains original +Z/zero-yaw pose: " + id
+--- a/scripts/acts/act2/london_approaches_smoke_rules.gd
++++ b/scripts/acts/act2/london_approaches_smoke_rules.gd
+@@ -1,14 +1,16 @@
+ extends RefCounted
+-## Pure coherence for the complete L4 local16 aggregate, adapted from the
++## Pure coherence for literal L4 local16 or new local17 with arrangement, adapted from the
+ ## frozen L3 bank/outer-history contract without boss state or checkpoints.
+ ## Caller first validates saved Player, Scheduler, nine actors, three Rays,
+ ## four lanes (complete conditional pending2) and two native SmokeBanks via
+ ## snapshot_error(..., staged_scheduler, saved_player), plus native custody
+ ## and original admission equipment/cadence/floor/range/LOS/camera support.
+ ## No nodes, clocks, state mutation, requests, restores or events occur here.
+-## KnownRules receives a copy with BOTH banks and bank_views removed.
++## KnownRules receives known14 with banks, bank_views and arrangement removed,
++## plus the validated descriptor (null only for literal legacy omission).
+ 
+ const Sequence: Script = preload("res://scripts/acts/act2/london_approaches_sequence.gd")
++const Construction: Script = preload("res://scripts/acts/act2/london_approaches_construction.gd")
+ const KnownRules: Script = preload("res://scripts/acts/act2/london_approaches_snapshot_rules.gd")
+ const Codec: Script = preload("res://scripts/campaign/snapshot_codec.gd")
+ const Bank: Script = preload("res://scripts/combat/smoke_bank.gd")
+@@ -25,13 +27,15 @@
+ 
+ static func smoke_state_error(state: Dictionary) -> String:
+ 	var error: String = Codec.value_error(state)
+-	if error.is_empty(): error = Codec.keys_error(state, LOCAL_KEYS)
+ 	if not error.is_empty(): return "L4 full local envelope: " + error
++	var construction: Dictionary = Construction.saved(state)
++	if not construction.error.is_empty(): return "L4 full local envelope: " + construction.error
+ 	if not state.banks is Dictionary or not state.bank_views is Dictionary or not Codec.keys_error(state.banks, BANK_IDS).is_empty(): return "L4 requires both complete independent bank snapshots"
+ 	var known: Dictionary = state.duplicate()
+ 	known.erase("banks")
+ 	known.erase("bank_views")
+-	error = KnownRules.known_state_error(known)
++	known.erase("arrangement")
++	error = KnownRules.known_state_error(known, null if construction.legacy else construction.descriptor)
+ 	if not error.is_empty(): return error
+ 	var stage: int = int(state.sequence.stage_index)
+ 	var ended: bool = state.scheduler.encounter_id.is_empty()
+@@ -132,7 +136,9 @@
+ 	if outer.api_revision != Level.API_REVISION or not Codec.is_integer(outer.schema_version, Level.SNAPSHOT_SCHEMA_VERSION, Level.SNAPSHOT_SCHEMA_VERSION) or outer.level_id != "A2-L4" or outer.scene_path != "res://scenes/acts/act2/a2_l4.tscn" or not Codec.is_integer(outer.local_snapshot_version, 1, 1) or not outer.local is Dictionary or not outer.progress is Dictionary: return "L4 progression must retain its authored CinderLevel identity"
+ 	var local: Dictionary = outer.local
+ 	var progress: Dictionary = outer.progress
+-	if not Codec.keys_error(local, LOCAL_KEYS).is_empty() or not local.sequence is Dictionary or not local.pending_checkpoints is Array or not local.completion_pending is bool or not local.exit_requested is bool or not Codec.keys_error(progress, PROGRESS_KEYS).is_empty() or not progress.completed is bool or not progress.checkpoint_ids is Dictionary: return "L4 progression needs the closed local/history dictionaries"
++	var construction: Dictionary = Construction.saved(local)
++	if not construction.error.is_empty(): return "L4 progression construction envelope: " + construction.error
++	if not local.sequence is Dictionary or not local.pending_checkpoints is Array or not local.completion_pending is bool or not local.exit_requested is bool or not Codec.keys_error(progress, PROGRESS_KEYS).is_empty() or not progress.completed is bool or not progress.checkpoint_ids is Dictionary: return "L4 progression needs the closed local/history dictionaries"
+ 	for key: String in ["completion_id", "contact_exit_id", "checkpoint_id", "checkpoint_kind"]:
+ 		if not progress[key] is String: return "L4 progression ID/kind must be a string"
+ 	error = Sequence.new().snapshot_error(local.sequence)
+--- /dev/null
++++ b/scripts/acts/act2/london_approaches_construction.gd
+@@ -0,0 +1,166 @@
++extends RefCounted
++## INERT SOURCE DRAFT. Pure finite construction selection for A2-L4.
++## No Nodes, configure/bind/restore calls, preferences, native state or events.
++## Original known/native validators still run after this constructor selection.
++## The returned positions are derived native Vector3 values, never save fields.
++
++const Sequence: Script = preload("res://scripts/acts/act2/london_approaches_sequence.gd")
++const Codec: Script = preload("res://scripts/campaign/snapshot_codec.gd")
++const Exact: Script = preload("res://scripts/campaign/exact_json.gd")
++const Difficulty: Script = preload("res://scripts/combat/difficulty.gd")
++const API_REVISION: String = "act2-london-putney-construction-1"
++const SCHEMA_VERSION: int = 1
++const LEVEL_EPOCH: String = "A2-L4-london-approaches"
++const CANONICAL_RECIPE: String = "canonical-putney-slots-1"
++const EXCHANGED_RECIPE: String = "challenge-putney-slots-exchanged-1"
++const PROFILE_IDS: Array[String] = ["assisted", "standard", "challenge"]
++const DESCRIPTOR_KEYS: Array[String] = ["api_revision", "schema_version", "profile", "recipe_id"]
++const PROFILE_KEYS: Array[String] = ["id", "name", "raw_damage_multiplier", "windup_multiplier", "recovery_multiplier", "reserved_threat_budget", "commit_stagger_s", "arrangement"]
++const KNOWN_KEYS: Array[String] = ["sequence", "scheduler", "rays", "targets", "mechanisms", "views", "profile_id", "world_revision", "scenic_clock", "last_action_sequence", "contact_seen", "pending_checkpoints", "completion_pending", "exit_requested"]
++const LOCAL_KEYS: Array[String] = ["sequence", "scheduler", "rays", "targets", "mechanisms", "views", "profile_id", "world_revision", "scenic_clock", "last_action_sequence", "contact_seen", "pending_checkpoints", "completion_pending", "exit_requested", "banks", "bank_views"]
++const SELECTION_KEYS: Array[String] = ["error", "legacy", "descriptor", "profile_id", "profile", "positions"]
++
++
++static func fresh(profile_id: String) -> Dictionary:
++	var profile: Dictionary = _canonical_profile(profile_id)
++	if profile.is_empty(): return _failure("L4 construction requires an available canonical profile")
++	var recipe: String = EXCHANGED_RECIPE if profile_id == "challenge" else CANONICAL_RECIPE
++	var descriptor: Dictionary = {
++		"api_revision": API_REVISION,
++		"schema_version": SCHEMA_VERSION,
++		"profile": profile.duplicate(true),
++		"recipe_id": recipe,
++	}
++	return _selection(false, descriptor, profile_id, profile, recipe)
++
++
++static func saved(local: Variant) -> Dictionary:
++	if not local is Dictionary: return _failure("L4 construction requires a local dictionary")
++	var error: String = Codec.value_error(local)
++	var keys: Array[String] = LOCAL_KEYS.duplicate()
++	var has_descriptor: bool = local.has("arrangement")
++	if has_descriptor: keys.append("arrangement")
++	if error.is_empty(): error = Codec.keys_error(local, keys)
++	if not error.is_empty(): return _failure("L4 construction local envelope: " + error)
++	# Only absence selects the literal old16 format. Explicit null/{} is new and
++	# invalid; it must not reach select_known's internal legacy null sentinel.
++	if has_descriptor and not local.arrangement is Dictionary:
++		return _failure("L4 arrangement must be the complete new descriptor")
++	var known: Dictionary = local.duplicate()
++	known.erase("banks")
++	known.erase("bank_views")
++	known.erase("arrangement")
++	return select_known(known, local.arrangement if has_descriptor else null)
++
++
++static func select_known(known: Variant, arrangement: Variant = null) -> Dictionary:
++	if not known is Dictionary: return _failure("L4 construction requires a known dictionary")
++	var error: String = Codec.value_error(known)
++	if error.is_empty(): error = Codec.keys_error(known, KNOWN_KEYS)
++	if not error.is_empty(): return _failure("L4 construction known envelope: " + error)
++	if not known.profile_id is String or known.profile_id not in PROFILE_IDS:
++		return _failure("L4 construction profile ID is unsupported")
++	var profile_id: String = known.profile_id
++	var profile: Dictionary = _canonical_profile(profile_id)
++	if profile.is_empty(): return _failure("L4 construction canonical profile is unavailable")
++	if arrangement == null:
++		# No new exact typed comparison is imposed on old Scheduler/native packets.
++		# Existing KnownRules/SmokeRules/native validation owns their old accepted
++		# numeric set, complete sequence and paired native coherence unchanged.
++		return _selection(true, {}, profile_id, profile, CANONICAL_RECIPE)
++	error = _descriptor_error(arrangement, profile_id, profile)
++	if not error.is_empty(): return _failure(error)
++	error = _new_scheduler_join_error(known, arrangement.profile)
++	if not error.is_empty(): return _failure(error)
++	return _selection(false, arrangement, profile_id, profile, arrangement.recipe_id)
++
++
++static func binding(local: Variant, constructed: Dictionary) -> String:
++	# Pure retained-constructor comparison, not a native binding authorization.
++	# The host still validates the actual actors, tools, Rays and paired Player.
++	var expected: Dictionary = saved(local)
++	if not expected.error.is_empty(): return expected.error
++	var error: String = Codec.keys_error(constructed, SELECTION_KEYS)
++	if not error.is_empty(): return "L4 retained construction envelope: " + error
++	if not constructed.error is String or not constructed.error.is_empty() or not constructed.legacy is bool or not constructed.profile_id is String or not constructed.descriptor is Dictionary or not constructed.profile is Dictionary or not constructed.positions is Dictionary:
++		return "L4 retained construction has invalid field types or a prior error"
++	if constructed.legacy != expected.legacy or constructed.profile_id != expected.profile_id or not _same_exact(constructed.descriptor, expected.descriptor) or not _same_exact(constructed.profile, expected.profile):
++		return "L4 saved construction differs from the once-selected format/profile/recipe"
++	if not Codec.keys_error(constructed.positions, Sequence.ACTORS.keys()).is_empty():
++		return "L4 retained construction must contain exactly the nine authored actors"
++	for id: String in Sequence.ACTORS:
++		var actual: Variant = constructed.positions[id]
++		var selected: Vector3 = expected.positions[id]
++		if not actual is Vector3 or not actual.is_finite():
++			return "L4 retained construction requires finite native positions: " + id
++		if actual.x != selected.x or actual.y != selected.y or actual.z != selected.z:
++			return "L4 retained construction root differs from the closed recipe: " + id
++	return ""
++
++
++static func _descriptor_error(value: Variant, profile_id: String, canonical: Dictionary) -> String:
++	if not value is Dictionary: return "L4 arrangement must be a dictionary"
++	var error: String = Codec.value_error(value)
++	if error.is_empty(): error = Codec.keys_error(value, DESCRIPTOR_KEYS)
++	if not error.is_empty(): return "L4 arrangement envelope: " + error
++	if not value.api_revision is String or value.api_revision != API_REVISION or typeof(value.schema_version) != TYPE_INT or value.schema_version != SCHEMA_VERSION:
++		return "L4 arrangement requires its exact API and integer schema 1"
++	if not value.profile is Dictionary or not Codec.keys_error(value.profile, PROFILE_KEYS).is_empty() or not _same_exact(value.profile, canonical):
++		return "L4 arrangement requires the exact full canonical profile and scalar types"
++	if value.profile.id != profile_id or not value.recipe_id is String:
++		return "L4 arrangement profile/recipe identity differs"
++	if value.recipe_id not in [CANONICAL_RECIPE, EXCHANGED_RECIPE]:
++		return "L4 arrangement recipe is unsupported"
++	if value.recipe_id == EXCHANGED_RECIPE and profile_id != "challenge":
++		return "L4 exchanged Putney slots require the retained Challenge profile"
++	# Canonical Challenge is intentionally valid on read; do not rerun fresh().
++	return ""
++
++
++static func _new_scheduler_join_error(known: Dictionary, profile: Dictionary) -> String:
++	if not known.scheduler is Dictionary or not known.scheduler.get("profile") is Dictionary or not known.scheduler.get("encounter_id") is String:
++		return "L4 arrangement requires the actual saved Scheduler profile/epoch"
++	var scheduler: Dictionary = known.scheduler
++	if not scheduler.profile.is_empty():
++		if scheduler.encounter_id != LEVEL_EPOCH or not _same_exact(scheduler.profile, profile):
++			return "L4 new construction and live Scheduler must retain the exact same full profile"
++		return ""
++	# The descriptor survives a genuinely retired Scheduler. Do not infer a
++	# profile from empty Scheduler data or recreate an encounter to stamp it.
++	if not scheduler.encounter_id.is_empty() or not known.sequence is Dictionary or not known.completion_pending is bool or known.completion_pending or not scheduler.get("reservations") is Array or not scheduler.reservations.is_empty():
++		return "L4 empty Scheduler profile requires committed quiet clear"
++	var error: String = Sequence.new().snapshot_error(known.sequence)
++	if not error.is_empty(): return error
++	if Sequence.STAGES[int(known.sequence.stage_index)] != "clear":
++		return "L4 retained construction outlives the Scheduler only at clear"
++	return ""
++
++
++static func _canonical_profile(profile_id: String) -> Dictionary:
++	if profile_id not in PROFILE_IDS: return {}
++	var difficulty = Difficulty.new()
++	var profile: Dictionary = difficulty.profile(profile_id)
++	if not Codec.value_error(profile).is_empty() or not Codec.keys_error(profile, PROFILE_KEYS).is_empty() or profile.get("id") != profile_id or Exact.stringify(profile).is_empty():
++		return {}
++	# Preserve JSON.parse's actual numeric types. Rebuilding the eight fields
++	# or coercing the budget/multipliers would change the strict new contract.
++	return profile
++
++
++static func _selection(legacy: bool, descriptor: Dictionary, profile_id: String, profile: Dictionary, recipe: String) -> Dictionary:
++	var positions: Dictionary = Sequence.ACTORS.duplicate(true)
++	if recipe == EXCHANGED_RECIPE:
++		var scout: Vector3 = Sequence.ACTORS.putney_scout
++		var handler: Vector3 = Sequence.ACTORS.putney_handler
++		positions["putney_scout"] = Vector3(handler.x, scout.y, handler.z)
++		positions["putney_handler"] = Vector3(scout.x, handler.y, scout.z)
++	return {"error": "", "legacy": legacy, "descriptor": descriptor.duplicate(true), "profile_id": profile_id, "profile": profile.duplicate(true), "positions": positions}
++
++
++static func _same_exact(left: Variant, right: Variant) -> bool:
++	var wire: String = Exact.stringify(left)
++	return not wire.is_empty() and wire == Exact.stringify(right)
++
++
++static func _failure(error: String) -> Dictionary:
++	return {"error": error, "legacy": false, "descriptor": {}, "profile_id": "", "profile": {}, "positions": {}}

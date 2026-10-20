@@ -1,0 +1,154 @@
+"""Literal fixed-comparison summary/opaque trace reader; no native Variant or geometry decoder."""
+from pathlib import Path
+import hashlib
+import json
+import math
+import os
+import re
+import stat
+
+
+def require(ok, reason):
+    if not ok:
+        raise ValueError(reason)
+
+
+def digest(data):
+    return hashlib.sha256(data).hexdigest()
+
+
+def strict(data):
+    def pairs(items):
+        result = {}
+        for key, value in items:
+            require(key not in result, "Duplicate JSON key: " + key)
+            result[key] = value
+        return result
+    def finite(token):
+        value = float(token)
+        require(math.isfinite(value), "Nonfinite JSON exponent")
+        return value
+    return json.loads(data.decode("utf-8", errors="strict"), object_pairs_hook=pairs,
+                      parse_float=finite,
+                      parse_constant=lambda token: (_ for _ in ()).throw(ValueError(token)))
+
+
+def stable(path):
+    path = Path(path)
+    require(path.is_absolute() and path.resolve() == path, "Literal nonsymlink absolute path required")
+    before = path.lstat()
+    require(stat.S_ISREG(before.st_mode), "Regular file required")
+    fd = os.open(path, os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0))
+    with os.fdopen(fd, "rb") as stream:
+        opened = os.fstat(stream.fileno())
+        require((before.st_dev, before.st_ino) == (opened.st_dev, opened.st_ino), "Changed before open")
+        data = stream.read()
+        closed_fd = os.fstat(stream.fileno())
+    second = path.read_bytes()
+    after = path.lstat()
+    key = lambda row: (row.st_dev, row.st_ino, row.st_size, row.st_mode, row.st_mtime_ns)
+    require(key(before) == key(opened) == key(closed_fd) == key(after) and data == second,
+            "Unstable literal two-read observation")
+    return {"path": str(path), "sha256": digest(data), "bytes": len(data),
+            "mode": format(stat.S_IMODE(after.st_mode), "04o"), "stable_two_reads": True}, data
+
+
+def observe(report_path, spec, raw, api_return, child_return):
+    result = {"functional_pass": False, "terminal_recorded": False, "report_present": False,
+              "native_trace_decoded_by_python": False}
+    try:
+        require(Path(report_path).lstat().st_size <= 1024 * 1024,
+                "Native summary exceeds finite one-MiB bound")
+        meta, literal = stable(report_path)
+        result.update(report_present=True, original_report=meta)
+        packet = strict(literal)
+        require(type(packet) is dict and packet.get("api_revision") == "TEST-a2-l4-fixed-comparison-1"
+                and packet.get("inert_source_origin") is True
+                and packet.get("source_sha256") == spec["fixture_sha256"]
+                and packet.get("embedded_host_sha256") == spec["embedded_host_sha256"]
+                and packet.get("embedded_game_sha256") == spec["embedded_game_sha256"],
+                "Report API/exact fixture/embedded source identity differs")
+        flags = ["original_actual_success", "candidate_actual_success", "fixed_response_difference_supported",
+                 "normal_cleanup_completed"]
+        require(all(type(packet.get(key)) is bool for key in flags), "Native outcome/cleanup flags must be literal booleans")
+        require(packet.get("original_stationary_counterfactual_executed") is False
+                and packet.get("campaign_or_policy_acceptance_claimed") is False,
+                "Unexecuted original counterfactual and no policy claim must remain explicit")
+        require(type(packet.get("checks")) is int and packet["checks"] >= 0
+                and type(packet.get("failures")) is int and 0 <= packet["failures"] <= packet["checks"]
+                and type(packet.get("wall_ms")) is int and packet["wall_ms"] >= 0,
+                "Native summary count/timing types differ")
+        require(type(packet.get("native_evidence_error")) is str
+                and type(packet.get("verdict")) is str and type(packet.get("reason")) is str,
+                "Native reason/evidence fields differ")
+        result.update(checks=packet["checks"], failures=packet["failures"],
+                      native_flags={key: packet[key] for key in flags},
+                      verdict=packet["verdict"], reason=packet["reason"],
+                      native_evidence_error=packet["native_evidence_error"],
+                      first_failure_summary={"verdict": packet["verdict"], "reason": packet["reason"],
+                                             "failures": packet["failures"]},
+                      detailed_rows_location="Opaque native-trace.bin checks_detail; not decoded or synthesized by this host")
+        receipt = packet.get("raw_native_trace")
+        require(type(receipt) is dict and receipt.get("accepted") is True
+                and receipt.get("native_binary_roundtrip_exact") is True
+                and type(receipt.get("bytes")) is int and 0 < receipt["bytes"] <= 128 * 1024 * 1024
+                and type(receipt.get("sha256")) is str
+                and re.fullmatch(r"[0-9a-f]{64}", receipt["sha256"]) is not None
+                and receipt.get("readback_sha256") == receipt["sha256"]
+                and type(receipt.get("encoding")) is str,
+                "Native opaque trace persistence/roundtrip receipt failed or incomplete")
+        trace_path = Path(report_path).parent / "native-trace.bin"
+        expected_wire = "user://" + str(trace_path.relative_to(Path(spec["user_data_root"])))
+        require(receipt.get("path") == expected_wire, "Trace must be exact same owned native report directory")
+        require(trace_path.lstat().st_size <= 128 * 1024 * 1024,
+                "Native opaque trace exceeds finite 128-MiB bound")
+        trace_meta, _trace = stable(trace_path)
+        require(trace_meta["sha256"] == receipt["sha256"] and trace_meta["bytes"] == receipt["bytes"],
+                "Literal opaque native trace hash/size differs from actual native receipt")
+        result.update(original_native_trace=trace_meta, native_trace_receipt=receipt)
+        difference = packet["fixed_response_difference_supported"]
+        expected_native_return = 0 if difference else (2 if not packet["native_evidence_error"] and packet["failures"] == 0 else 1)
+        footer = ("A2-L4 fixed comparison: verdict=%s original_actual=%s candidate_actual=%s fixed_difference=%s "
+                  "checks=%d failures=%d summary_persisted=true raw_persisted=true; no campaign/policy acceptance") % (
+                      packet["verdict"], str(packet["original_actual_success"]).lower(),
+                      str(packet["candidate_actual_success"]).lower(), str(difference).lower(),
+                      packet["checks"], packet["failures"])
+        require([line for line in raw.splitlines() if line.startswith("A2-L4 fixed comparison:")] == [footer],
+                "Unique actual persisted footer/count/outcome join differs")
+        result.update(literal_footer=footer, expected_native_return=expected_native_return)
+        require(type(api_return) is int and type(child_return) is int
+                and api_return == child_return == expected_native_return,
+                "Canonical API/owned Popen/native outcome return codes disagree")
+        require(packet["checks"] >= len(spec["native_sources"]) + 1 and packet["failures"] == 0
+                and packet["native_evidence_error"] == "" and packet["normal_cleanup_completed"] is True,
+                "Native assertion/evidence/normal cleanup failure retained; no success or repeat")
+        require(not packet["candidate_actual_success"] or packet["original_actual_success"],
+                "Candidate cannot complete ahead of original")
+        positive = "supported_fixed_response_difference"
+        negatives = {"inconclusive", "equivalent_or_inconclusive", "refused", "refused_or_inconclusive",
+                     "unsafe", "invalid_TEST_scope", "incomplete_timeout"}
+        require(packet["verdict"] in negatives | {positive}, "Unknown/incomplete verdict is not a terminal observation")
+        if difference:
+            require(packet["verdict"] == positive and packet["original_actual_success"]
+                    and packet["candidate_actual_success"], "Positive result lacks both genuine native components")
+            disposition = "SUPPORTED_FIXED_RESPONSE_DIFFERENCE"
+        else:
+            require(packet["verdict"] != positive and not packet["candidate_actual_success"],
+                    "Nonpositive result cannot claim completed supported candidate")
+            if packet["verdict"] == "equivalent_or_inconclusive":
+                require(packet["original_actual_success"], "Equivalent original-only endpoint requires completed original")
+                disposition = "ORIGINAL_ONLY_EQUIVALENT_OR_INCONCLUSIVE_CANDIDATE_NOT_RUN"
+            elif packet["verdict"] in {"unsafe", "invalid_TEST_scope"}:
+                disposition = "ACTUAL_NONPOSITIVE_FAILURE_NO_ACCEPTANCE"
+            elif packet["original_actual_success"]:
+                disposition = "ORIGINAL_COMPLETED_CANDIDATE_NOT_PROVED"
+            else:
+                disposition = "ORIGINAL_NOT_COMPLETED_CANDIDATE_NOT_PROVED"
+        result.update(terminal_recorded=True, functional_pass=difference, terminal_disposition=disposition,
+                      source_gate_scope="Exact pinned fixture executes37 gates into retained native checks_detail before dynamic loads; this host does not decode those native rows",
+                      scope="One fixed TEST Putney native comparison, no saved packet, Shell/Store, whole route, portrait or policy acceptance")
+    except Exception as error:
+        result["error"] = str(error)
+    return result
+
+

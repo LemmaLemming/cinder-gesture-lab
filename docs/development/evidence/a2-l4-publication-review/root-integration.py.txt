@@ -1,0 +1,124 @@
+"""Root's exact local L4 evidence copy and permanent four-source selection; no engine or Git."""
+from pathlib import Path
+import datetime
+import hashlib
+import importlib.util
+import json
+import os
+import stat
+import sys
+import uuid
+
+sys.dont_write_bytecode = True
+ROOT = Path('/Users/howardchen/Documents/ChatGPT/video game idea')
+PREP = ROOT / '.cinder/a2-l4-evidence-publication-final-prepare-20261020'
+OUT = ROOT / '.cinder/a2-l4-shared76-local-integration-20261020'
+DEST = ROOT / 'docs/development/evidence/a2-l4-difficulty'
+MANIFEST_SHA = '8ec33c7e7ed431b314329ffd57e0d3050455ba0c9907d97490fa2bd0bee17771'
+SPEC_SHA = '24793b3d9503838d002096fc995e9dfcf34b038723cfc81f0732eac9ecb794bd'
+
+
+def require(value, message):
+    if not value:
+        raise RuntimeError(message)
+
+
+def record(path):
+    require(path.resolve() == path and not path.is_symlink(), 'Literal nonsymlink required: ' + str(path))
+    if not path.exists():
+        return {'exists': False, 'regular': False, 'symlink': False, 'sha256': None, 'bytes': None, 'mode': None}
+    before = path.stat()
+    require(stat.S_ISREG(before.st_mode), 'Regular file required')
+    with path.open('rb') as handle:
+        opened = os.fstat(handle.fileno())
+        data = handle.read()
+        after_read = os.fstat(handle.fileno())
+    after = path.stat()
+    key = lambda s: (s.st_dev, s.st_ino, s.st_mode, s.st_size, s.st_mtime_ns)
+    require(key(before) == key(opened) == key(after_read) == key(after), 'Read changed inode/metadata')
+    return {'exists': True, 'regular': True, 'symlink': False, 'sha256': hashlib.sha256(data).hexdigest(),
+            'bytes': len(data), 'mode': format(stat.S_IMODE(before.st_mode), '04o')}
+
+
+def write_new(path, data, mode=0o644):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    require(path.parent.resolve() == path.parent, 'Symlink parent refused')
+    with path.open('xb') as handle:
+        os.fchmod(handle.fileno(), mode)
+        handle.write(data)
+        handle.flush()
+        os.fsync(handle.fileno())
+
+
+def main():
+    require(len(sys.argv) == 3, 'Pass private portable review JSON and its expected SHA')
+    review = Path(sys.argv[1]).absolute()
+    require(record(review)['sha256'] == sys.argv[2], 'Portable review hash differs')
+    reviewed = json.loads(review.read_text())
+    require('CLEAR' in str(reviewed) or 'NO_MATERIAL_BLOCKER' in str(reviewed), 'Explicit clear portable review required')
+    manifest_path = PREP / 'copy-manifest.json'
+    require(record(manifest_path)['sha256'] == MANIFEST_SHA, 'Copy manifest changed')
+    manifest = json.loads(manifest_path.read_text())
+    require(manifest['file_count'] == 432 and manifest['bytes'] == 313227139, 'Copy scope changed')
+    require(not DEST.exists() and not OUT.exists(), 'New exact destination and receipt directory required')
+    spec_path = ROOT / '.cinder/a2-l4-save-view-host-prepare-20261020/INPUT_SPEC.json'
+    require(record(spec_path)['sha256'] == SPEC_SHA, 'Runtime selected spec differs')
+    subjects = json.loads(spec_path.read_text())['subjects']
+    require(len(subjects) == 4, 'Exactly four runtime targets required')
+    for target, row in subjects.items():
+        require(record(ROOT / target) == row['original'], 'Original runtime target differs: ' + target)
+        input_record = record(ROOT / row['candidate_source'])
+        require(input_record == dict(row['candidate'], mode='0644'), 'Candidate input differs: ' + target)
+    require(not (ROOT / 'scripts/acts/act2/london_approaches_construction.gd.uid').exists(), 'New helper UID unexpectedly exists')
+    for row in manifest['files']:
+        path = Path(row['private_source'])
+        target = ROOT / row['destination']
+        require(path.is_relative_to(PREP / 'publication') and target.is_relative_to(DEST), 'Copy outside reviewed subtree')
+        require(record(path) == dict(exists=True, regular=True, symlink=False, **{k: row[k] for k in ['sha256', 'bytes', 'mode']}), 'Private capsule file differs')
+    require(len(list((PREP / 'publication').rglob('*'))) >= 432, 'Private source tree missing')
+    OUT.mkdir()
+    for row in manifest['files']:
+        write_new(ROOT / row['destination'], Path(row['private_source']).read_bytes())
+    actual_files = {str(p.relative_to(ROOT)) for p in DEST.rglob('*') if p.is_file()}
+    require(actual_files == {r['destination'] for r in manifest['files']}, 'Copied tree scope differs')
+    for row in manifest['files']:
+        require(record(ROOT / row['destination']) == dict(exists=True, regular=True, symlink=False, **{k: row[k] for k in ['sha256', 'bytes', 'mode']}), 'Copied file differs')
+    module_spec = importlib.util.spec_from_file_location('cinder_shared76_dev', ROOT / 'scripts/dev/dev.py')
+    dev = importlib.util.module_from_spec(module_spec)
+    sys.modules[module_spec.name] = dev
+    module_spec.loader.exec_module(dev)
+    receipt = {'schema_version': 1, 'operation': 'ROOT_LOCAL_EVIDENCE_AND_PERMANENT_FOUR_SOURCE_INTEGRATION',
+               'started_at': datetime.datetime.now(datetime.timezone.utc).isoformat(), 'manifest_sha256': MANIFEST_SHA,
+               'portable_review': str(review.relative_to(ROOT)), 'portable_review_sha256': sys.argv[2],
+               'copied_files': 432, 'copied_bytes': 313227139, 'public_upload': False, 'engine_executed': False,
+               'queue_path': str(dev.shared_lock_path(ROOT)), 'runtime_subjects': subjects, 'writes': []}
+    with dev.godot_lock(ROOT):
+        receipt['queue_acquired'] = datetime.datetime.now(datetime.timezone.utc).isoformat()
+        prepared = []
+        for target, row in subjects.items():
+            path = ROOT / target
+            require(record(path) == row['original'], 'Runtime drift while queued: ' + target)
+            temp = path.with_name('.' + path.name + '.root-s76-' + uuid.uuid4().hex)
+            write_new(temp, (ROOT / row['candidate_source']).read_bytes(), int(row['candidate']['mode'], 8))
+            require(record(temp) == row['candidate'], 'Prepared runtime differs')
+            prepared.append((path, temp, row))
+        for path, temp, row in prepared:
+            require(record(path) == row['original'], 'Runtime drift before replace')
+            before = path.stat() if path.exists() else None
+            os.replace(temp, path)
+            require(record(path) == row['candidate'], 'Selected runtime differs')
+            receipt['writes'].append({'target': str(path.relative_to(ROOT)), 'before_inode': None if before is None else before.st_ino,
+                                      'after_inode': path.stat().st_ino, 'exact_candidate': row['candidate']})
+        for target, row in subjects.items():
+            require(record(ROOT / target) == row['candidate'], 'Final selected unit differs')
+        require(not (ROOT / 'scripts/acts/act2/london_approaches_construction.gd.uid').exists(), 'Unexpected helper UID')
+    receipt['queue_released'] = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    receipt.update(status='COMPLETE_EXACT_LOCAL_COPY_AND_SELECTED_RUNTIME', source_spec_sha256=SPEC_SHA,
+                   actual_new_native_checks=0, reason_no_retest='447/59/258 executed these exact four bytes; Shared76 is publication only')
+    write_new(OUT / 'RECEIPT.json', (json.dumps(receipt, indent=2) + '\n').encode())
+    print(json.dumps({'status': receipt['status'], 'files': 432, 'bytes': 313227139, 'runtime_targets': 4,
+                      'receipt': str(OUT / 'RECEIPT.json'), 'engine_executed': False, 'public_upload': False}))
+
+
+if __name__ == '__main__':
+    main()

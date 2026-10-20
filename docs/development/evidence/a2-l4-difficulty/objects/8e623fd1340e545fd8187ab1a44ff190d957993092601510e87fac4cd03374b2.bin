@@ -1,0 +1,15 @@
+# L4 inert save/view host source QA — 20 October 2026
+
+The full **65ed** host has one concrete blocker: its settings presence and wire-family assumptions. The exact native **f7** flow never writes settings; a missing settings file is valid, and real settings persistence uses plain JSON. Host line475 nevertheless requires `settings.json`, while lines422/474 apply the SaveStore format2 reader to all history CAS and present settings slots. This is a host TEST metadata defect, not an observed production/native failure.
+
+Root has assigned one additive v2: require campaign primary/backup and preferences primary only; retain all six slot presence receipts; keep named campaign/preferences strictly format2; treat optional named settings as finite plain JSON. For unattributed SHA-only history CAS, **any Store marker invokes the full unchanged format2/checksum guard**; otherwise retain finite JSON as unattributed non-Store, with no invented settings generation or schema. Do not force a settings write or change the native leaf/runtime. This receipt does not review the new v2.
+
+The remaining full-host review is clear:
+
+- All17 copied source/IO/inode/queue/rollback function bodies match the reviewed **9966** host literally. Canonical queue, exact engine/context, one owned child, durable closure, inode-aware restoration and unknown-file refusal remain intact.
+- Exact eight checkpoint ordering and three inter-stage Shell cleanups match f7. Final cleanup has six rows (three Shell, Game, probe, runtime settings); no duplicate final Shell row is required. The126 CAS bound is a maximum retention-attempt budget, not a required file count.
+- Known report, checkpoint binary/JSON pairs, one PNG, finite CAS and six current slots are retained before outcome parsing even on partial failure. Unknown/foreign files stay untouched and prevent positive custody. Opaque native binaries stay opaque.
+- Native report/footer, raw receipt bytes/hash/readback, summary order and complete flags are joined to retained originals. API, Popen and host status remain distinct. The single540×1170 PNG has literal custody; `actual_pixel_acceptance=false` preserves Root’s separate actual image inspection.
+- HOLD prevents this original capsule from running. The181 continuing inputs, four assembly texts and four subjects are separated from16 obsolete private capsule paths. No new global closure, native success or acceptance is inferred.
+
+The exact five capsule pins, f7/native supporting pins, all17 comparison results and detailed source rationale are in `REVIEW.json`. Original65ed is preserved. After the metadata correction Root must read and seal exact inputs before its one targeted execution. No parser, engine, host/native job, executable materialization, queue, Git, tracked/canonical/runtime write or Variant decode occurred. All24 original acceptances/current22 policies and all prior failed/untested limits remain intact.

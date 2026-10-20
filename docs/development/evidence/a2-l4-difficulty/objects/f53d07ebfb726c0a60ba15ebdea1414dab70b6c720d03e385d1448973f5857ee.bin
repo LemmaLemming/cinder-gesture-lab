@@ -1,0 +1,211 @@
+--- original-c0b7/fixed_comparison_published_framing.gd.txt
++++ deferred-finish/fixed_comparison_deferred_finish.gd.txt
+@@ -207,6 +207,15 @@
+ var _ammo_last: int = 0
+ var _pickup_seen: bool = false
+ var _framing_diagnostics: Dictionary = {}
++# TEST lifecycle only: pause/latch before yielding out of a probe emission.
++signal _component_close_completed
++var _component_close_active: bool = false
++var _component_close_result: bool = false
++var _finalizer_started: bool = false
++var _precleanup_serial: int = 0
++var _precleanup_receipts: Array[Dictionary] = []
++var _precleanup_all_ok: bool = true
++var _lifecycle_error: String = ""
+ 
+ 
+ func _initialize() -> void:
+@@ -244,7 +253,9 @@
+ 	var cf: Dictionary = _stationary_counterfactual()
+ 	_component["counterfactual_not_executed"] = cf
+ 	_counterfactual_intersects = cf.get("accepted", false) and cf.get("intersects", false)
+-	_close_component()
++	if not await _close_component_boundary():
++		_finish(); return
++	if _finished: return
+ 	if not cf.get("accepted", false): _stop("inconclusive", String(cf.get("reason", "counterfactual unsupported"))); _finish(); return
+ 	if not _counterfactual_intersects:
+ 		_stop("equivalent_or_inconclusive", "Actual original lock does not distinguish the proposed stationary response; no alternate lock/pose or candidate search")
+@@ -264,6 +275,9 @@
+ 	if not _report_path.begins_with("user://test-a2-l4-fixed-comparison-") or not _report_path.ends_with("/report.json") or _report_path.contains(".."):
+ 		return _expect(false, "bootstrap", "separate unique TEST report destination required")
+ 	if FileAccess.file_exists(_report_path) or FileAccess.file_exists(_report_path.get_base_dir().path_join("native-trace.bin")): return _expect(false, "bootstrap", "refuse overwriting prior summary or raw native trace")
++	if DirAccess.dir_exists_absolute(ProjectSettings.globalize_path(_report_path.get_base_dir())):
++		for name: String in DirAccess.get_files_at(_report_path.get_base_dir()):
++			if name.begins_with("pre-cleanup-"): return _expect(false, "bootstrap", "refuse overwriting any prior immutable pre-cleanup evidence")
+ 	_report_owned = DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(_report_path.get_base_dir())) == OK
+ 	return _expect(_report_owned, "bootstrap", "create only owned report directory")
+ 
+@@ -747,16 +761,48 @@
+ 	return "runtime=" + String(_level().get("runtime_error")) + "; load=" + String(_game.get("level_load_error")) + "; dead=" + str(_hero().dead)
+ 
+ 
+-func _close_component() -> void:
++func _snapshot_open_component() -> Dictionary:
++	if _component.is_empty(): return {}
++	var captured: Dictionary = _component.duplicate(true)
++	captured["actual_actions"] = _actions.duplicate(true)
++	captured["actual_incoming_native_contacts"] = _incoming.duplicate(true)
++	captured["progress_events"] = _progress_events.duplicate()
++	captured["actual_fired_events"] = _fired.duplicate()
++	captured["passive_or_hit_earned_reload_preserved"] = true
++	captured["last_native_locked_history"] = _locked_history.duplicate(true)
++	if is_instance_valid(_hero()): captured["final_player"] = {"position": _hero().global_position, "hp": _hero().hp, "shells": _hero().shells}
++	return _pure_native_data(captured)
++
++
++func _close_component_boundary() -> bool:
++	if _finished or _component_close_active: return false
++	if _component.is_empty(): return true
++	_component_close_active = true
++	_component_close_result = false
++	paused = true
++	if is_instance_valid(_probe): _probe.set_physics_process(false)
++	# Neither a Game nor the emitting probe is freed in this signal stack.
++	call_deferred("_close_component_deferred")
++	await _component_close_completed
++	return not _finished and _component_close_result
++
++
++func _close_component_deferred() -> void:
++	# call_deferred runs only after the tick_finished callback has unwound.
++	var persisted: bool = _persist_precleanup("original_to_candidate_boundary")
++	_close_component_now()
++	_component_close_result = persisted and _cleanup_ok and _evidence_error.is_empty()
++	_component_close_active = false
++	if _component_close_result and not _finished and is_instance_valid(_probe): _probe.set_physics_process(true)
++	_component_close_completed.emit()
++	# A watchdog may have latched finish while this boundary was pending.
++	# The finalizer's own once-only guard handles an already queued call.
++	if _finished: call_deferred("_finish_deferred")
++
++
++func _close_component_now() -> void:
+ 	if _component.is_empty(): return
+-	_component["actual_actions"] = _actions.duplicate(true)
+-	_component["actual_incoming_native_contacts"] = _incoming.duplicate(true)
+-	_component["progress_events"] = _progress_events.duplicate()
+-	_component["actual_fired_events"] = _fired.duplicate()
+-	_component["passive_or_hit_earned_reload_preserved"] = true
+-	_component["last_native_locked_history"] = _locked_history.duplicate(true)
+-	if is_instance_valid(_hero()): _component["final_player"] = {"position": _hero().global_position, "hp": _hero().hp, "shells": _hero().shells}
+-	_component = _pure_native_data(_component)
++	_component = _snapshot_open_component()
+ 	if is_instance_valid(_game):
+ 		var level: CinderLevel = _level()
+ 		var reference: WeakRef = weakref(level) if is_instance_valid(level) else null
+@@ -769,7 +815,6 @@
+ 		_expect(released, "cleanup", "normal attached exit/free retires owned focus subtree")
+ 	_components.append(_component)
+ 	_component = {}
+-
+ 
+ func _stop(verdict: String, reason: String) -> bool:
+ 	_verdict = verdict; _reason = reason
+@@ -858,16 +903,85 @@
+ 	return {"accepted": io_ok and not expected_sha.is_empty() and observed == bytes and observed_sha == expected_sha and roundtrip, "path": path, "bytes": bytes.size(), "sha256": expected_sha, "readback_sha256": observed_sha, "native_binary_roundtrip_exact": roundtrip, "encoding": "Godot var_to_bytes pure-data binary; Vector/Basis/Transform/Rect/float/int types retained exactly; explicit binding-reference metadata, never serialized Object/Callable handles"}
+ 
+ 
++
++func _persist_precleanup(boundary: String) -> bool:
++	_precleanup_serial += 1
++	var stem: String = "pre-cleanup-%02d" % _precleanup_serial
++	var path: String = _report_path.get_base_dir().path_join(stem + ".bin")
++	var summary_path: String = _report_path.get_base_dir().path_join(stem + ".json")
++	# Seal explicit binding observations while every current recipient is live.
++	var captured: Dictionary = _snapshot_open_component()
++	var payload: Dictionary = {
++		"api_revision": "TEST-a2-l4-pre-cleanup-trace-1", "boundary": boundary,
++		"cleanup_status": "pending; this artifact makes no normal-cleanup claim",
++		"source_sha256": FileAccess.get_sha256(get_script().resource_path),
++		"embedded_host_sha256": FOCUS_HOST_SHA256, "embedded_game_sha256": FOCUS_GAME_SHA256,
++		"source_observations": _source_observations.duplicate(true),
++		"closed_components": _components.duplicate(true), "open_component": captured,
++		"checks_detail": _rows.duplicate(true), "checks": _checks, "failures": _failures,
++		"actual_verdict_at_boundary": _verdict, "actual_reason_at_boundary": _reason,
++		"original_actual_success": _original_success, "candidate_actual_success": _candidate_success,
++		"counterfactual_intersects": _counterfactual_intersects,
++		"campaign_or_policy_acceptance_claimed": false,
++		"evidence_error_at_boundary": _evidence_error,
++		"earlier_immutable_receipts": _precleanup_receipts.duplicate(true),
++	}
++	var receipt: Dictionary = {"accepted": false, "boundary": boundary, "reason": "owned output path unavailable"}
++	if _report_owned and not FileAccess.file_exists(path) and not FileAccess.file_exists(summary_path):
++		var bytes: PackedByteArray = var_to_bytes(payload)
++		if bytes.size() <= 128 * 1024 * 1024:
++			receipt = _write_raw(path, bytes)
++			receipt["boundary"] = boundary
++		else:
++			receipt = {"accepted": false, "boundary": boundary, "reason": "full pre-cleanup trace exceeded 128MiB; no paths trimmed", "bytes": bytes.size()}
++	var summary: Dictionary = {
++		"api_revision": "TEST-a2-l4-pre-cleanup-summary-1", "boundary": boundary,
++		"cleanup_pending": true, "normal_cleanup_completed": false,
++		"campaign_or_policy_acceptance_claimed": false,
++		"actual_verdict_at_boundary": _verdict, "actual_reason_at_boundary": _reason,
++		"original_actual_success": _original_success, "candidate_actual_success": _candidate_success,
++		"checks": _checks, "failures": _failures, "raw_native_trace": receipt,
++	}
++	var summary_ok: bool = false
++	if _report_owned and not FileAccess.file_exists(summary_path):
++		var wire: String = JSON.stringify(summary, "\t", true, true) + "\n"
++		var file: FileAccess = FileAccess.open(summary_path, FileAccess.WRITE)
++		if file != null:
++			file.store_string(wire); file.flush()
++			var io_ok: bool = file.get_error() == OK
++			file.close()
++			summary_ok = io_ok and FileAccess.get_file_as_string(summary_path) == wire and FileAccess.get_sha256(summary_path) == wire.sha256_text()
++			receipt["summary"] = {"path": summary_path, "sha256": wire.sha256_text(), "accepted": summary_ok}
++	var accepted: bool = receipt.get("accepted", false) and summary_ok
++	_precleanup_all_ok = _precleanup_all_ok and accepted
++	_precleanup_receipts.append(receipt)
++	if not accepted:
++		_lifecycle_error = "Immutable pre-cleanup native trace/summary could not be safely persisted; actual mechanical verdict remains recorded separately"
++		push_error("A2-L4 pre-cleanup evidence persistence failed; no success or further arm work")
++	return accepted
++
++
+ func _finish() -> void:
+ 	if _finished: return
+-	# Latch before cleanup; any waiting coroutine must check before use.
++	# Immediate finishing latch + pause; no cleanup/free/report in emission.
+ 	_finished = true
+-	_close_component()
++	paused = true
++	if is_instance_valid(_probe): _probe.set_physics_process(false)
++	call_deferred("_finish_deferred")
++
++
++func _finish_deferred() -> void:
++	if _finalizer_started: return
++	if _component_close_active: return # boundary queues us again when complete
++	_finalizer_started = true
++	# Preserve the full live observation/verdict BEFORE any cleanup can fail.
++	_persist_precleanup("final_finish")
++	_close_component_now()
+ 	if node_added.is_connected(_observe_node): node_added.disconnect(_observe_node)
+ 	if is_instance_valid(_probe): _probe.free()
+ 	_probe = null
+ 	paused = false
+-	var raw_payload: Dictionary = {"api_revision": "TEST-a2-l4-native-comparison-trace-1", "source_sha256": FileAccess.get_sha256(get_script().resource_path), "embedded_host_sha256": FOCUS_HOST_SHA256, "embedded_game_sha256": FOCUS_GAME_SHA256, "components": _components, "source_observations": _source_observations, "checks_detail": _rows, "explicit_native_binding_reference_count": _explicit_binding_refs, "handle_policy": "Each ephemeral handle becomes explicit observation-time identity/physical binding data. Native geometric and scalar values remain their original Godot types. No Object/Callable/RID is serialized as a live handle. This is not a save/restore codec."}
++	var raw_payload: Dictionary = {"api_revision": "TEST-a2-l4-native-comparison-trace-1", "source_sha256": FileAccess.get_sha256(get_script().resource_path), "embedded_host_sha256": FOCUS_HOST_SHA256, "embedded_game_sha256": FOCUS_GAME_SHA256, "components": _components, "source_observations": _source_observations, "checks_detail": _rows, "explicit_native_binding_reference_count": _explicit_binding_refs, "handle_policy": "Each ephemeral handle becomes explicit observation-time identity/physical binding data. Native geometric and scalar values remain their original Godot types. No Object/Callable/RID is serialized as a live handle. This is not a save/restore codec.", "immutable_precleanup_receipts": _precleanup_receipts.duplicate(true), "precleanup_all_ok": _precleanup_all_ok, "lifecycle_error": _lifecycle_error}
+ 	var raw_receipt: Dictionary = {"accepted": false, "reason": "report directory unavailable"}
+ 	if _report_owned:
+ 		var bytes: PackedByteArray = var_to_bytes(raw_payload)
+@@ -875,8 +989,8 @@
+ 			raw_receipt = _write_raw(_report_path.get_base_dir().path_join("native-trace.bin"), bytes)
+ 		else:
+ 			raw_receipt = {"accepted": false, "reason": "finite trace exceeded 128MiB persistence budget; no paths truncated and no positive result", "bytes": bytes.size()}
+-	var difference: bool = _original_success and _candidate_success and _counterfactual_intersects and _cleanup_ok and _evidence_error.is_empty() and _failures == 0 and raw_receipt.get("accepted", false) and _verdict == "supported_fixed_response_difference"
+-	var report: Dictionary = {"api_revision": "TEST-a2-l4-fixed-comparison-1", "inert_source_origin": true, "source_sha256": FileAccess.get_sha256(get_script().resource_path), "embedded_host_sha256": FOCUS_HOST_SHA256, "embedded_game_sha256": FOCUS_GAME_SHA256, "original_actual_success": _original_success, "candidate_actual_success": _candidate_success, "original_stationary_counterfactual_executed": false, "fixed_response_difference_supported": difference, "campaign_or_policy_acceptance_claimed": false, "normal_cleanup_completed": _cleanup_ok, "native_evidence_error": _evidence_error, "verdict": _verdict, "reason": _reason, "checks": _checks, "failures": _failures, "wall_ms": Time.get_ticks_msec() - _start_ms, "raw_native_trace": raw_receipt}
++	var difference: bool = _original_success and _candidate_success and _counterfactual_intersects and _cleanup_ok and _precleanup_all_ok and _evidence_error.is_empty() and _failures == 0 and raw_receipt.get("accepted", false) and _verdict == "supported_fixed_response_difference"
++	var report: Dictionary = {"api_revision": "TEST-a2-l4-fixed-comparison-1", "inert_source_origin": true, "source_sha256": FileAccess.get_sha256(get_script().resource_path), "embedded_host_sha256": FOCUS_HOST_SHA256, "embedded_game_sha256": FOCUS_GAME_SHA256, "original_actual_success": _original_success, "candidate_actual_success": _candidate_success, "original_stationary_counterfactual_executed": false, "fixed_response_difference_supported": difference, "campaign_or_policy_acceptance_claimed": false, "normal_cleanup_completed": _cleanup_ok, "immutable_precleanup_receipts": _precleanup_receipts.duplicate(true), "precleanup_all_ok": _precleanup_all_ok, "lifecycle_error": _lifecycle_error, "native_evidence_error": _evidence_error, "verdict": _verdict, "reason": _reason, "checks": _checks, "failures": _failures, "wall_ms": Time.get_ticks_msec() - _start_ms, "raw_native_trace": raw_receipt}
+ 	var persisted: bool = false
+ 	if _report_owned:
+ 		var wire: String = JSON.stringify(report, "\t", true, true) + "\n"
+@@ -888,4 +1002,4 @@
+ 			persisted = io_ok and FileAccess.get_file_as_string(_report_path) == wire and FileAccess.get_sha256(_report_path) == wire.sha256_text()
+ 	if not persisted or not raw_receipt.get("accepted", false): push_error("A2-L4 fixed comparison summary/raw trace not safely persisted; no success exit")
+ 	print("A2-L4 fixed comparison: verdict=%s original_actual=%s candidate_actual=%s fixed_difference=%s checks=%d failures=%d summary_persisted=%s raw_persisted=%s; no campaign/policy acceptance" % [_verdict, str(_original_success), str(_candidate_success), str(difference), _checks, _failures, str(persisted), str(raw_receipt.get("accepted", false))])
+-	quit(0 if difference and persisted else 2 if persisted and raw_receipt.get("accepted", false) and _evidence_error.is_empty() and _failures == 0 else 1)
++	quit(0 if difference and persisted else 2 if persisted and raw_receipt.get("accepted", false) and _precleanup_all_ok and _evidence_error.is_empty() and _failures == 0 else 1)

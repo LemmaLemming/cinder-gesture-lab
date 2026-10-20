@@ -1,0 +1,13 @@
+# L4 actual save/view audit — 20 October 2026
+
+**Actual focused evidence and custody are clear; no material blocker found.** Root’s one graphical job closed with native258/0 complete, API0, ownedPID41341/Popen0 and Host0. Actual report, both log footers, eight plain checkpoint summaries and opaque binary serialization receipts join exactly. Only the final checkpoint follows normal cleanup; provisional earlier receipts are not acceptance records.
+
+The actual scope is literal old16 Standard whole-Attempts transport plus genuine public new17 Challenge replay, opposite future preferences, four no-input public Resume ticks, distinct durable Pause current, independent Title Continue, and earlier publicRetry with whole checkpoint/session/protected Story assertions. The exactf7 fixture and44 native source pins match the selected199-slot map. No oldChallenge packet, new late producer,447/59 repeat or full route is credited.
+
+All35 custody rows are accounted for:33 present actual originals/copies hash, size and mode identical (287,636,398 bytes), plus truthful absence of both settings slots. Eleven retained CAS values pass unchanged strict outer Store2/header/checksum checks; Python never parses their Exact payload strings. Current campaign primary/backup generations are8/7, preferences3/2. Six cleanup rows prove three inter-stage Shell releases, the brief Game release, probe release and runtime audio/FPS restoration.
+
+All five199-slot source maps and195 source-CAS objects join; only the four declared L4 subject targets differ during selection. All four owned-inode rollback receipts are exact, original three0664 sources restored, helper/helperUID/privatefixtureUID absent. The canonical queue was released. All258 indexed files match metadata, with no extras or missing entries.
+
+Root separately inspected the one actual540×1170 first-warning PNG (SHA `b33fb5d2515f021b6fd0b3babf8b45caf71b72392464348aee9390727ea17af3`): source, gold warning lane, Hero, nearby safe floor and HUD are readable; inactive far-left objects remain cropped. This is limited first-warning evidence, not all-state art or full-route proof. The host correctly claims no pixel/policy acceptance.
+
+Root can publish these focused records and decide internal policy acceptance after joining its separate pixel receipt; no retest is indicated. Preserve original65ed HOLD, b680→f7 TEST predicate correction, prior constructor447/fixed59 scopes and failedc0b7 evidence. `REVIEW.json` pins the actual records and detailed joins. No engine/parser/import/queue/process/Git/runtime/worker action or binary/Variant/Exact-payload decode occurred; only these two private review files were written.
