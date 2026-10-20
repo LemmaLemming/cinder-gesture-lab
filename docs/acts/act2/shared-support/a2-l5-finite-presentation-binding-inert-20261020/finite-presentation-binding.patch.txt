@@ -1,0 +1,35 @@
+--- baseline58b0/scripts/acts/act2/dead_london_sentry_visual.gd
++++ candidate/scripts/acts/act2/dead_london_sentry_visual.gd
+@@ -9,0 +10 @@
++const ENTRY_SIDE_NEAR_FOOT_AT: Vector3 = Vector3(0.65, 0.0, 0.95)
+@@ -74,2 +75,6 @@
+-	if not to_local(visual.global_position).is_equal_approx(NEAR_FOOT_AT):
+-		return false
++	var actual_offset: Vector3 = to_local(visual.global_position)
++	if not actual_offset.is_equal_approx(NEAR_FOOT_AT):
++		# Only the second finite construction offset extends the original bind.
++		# Original v1 eligibility/artwork path and approximate predicate remain.
++		if not actual_offset.is_equal_approx(ENTRY_SIDE_NEAR_FOOT_AT) or not _entry_side_foot_provenance(visual):
++			return false
+@@ -79,0 +85,21 @@
++
++
++func _entry_side_foot_provenance(visual: Node3D) -> bool:
++	# No parent/Actor preloads: those factories already depend on this rig.
++	# Inspect the exact existing native factory products without creating,
++	# moving, posing or accepting an arbitrary same-position substitute.
++	var actor: Node3D = get_parent() as Node3D
++	var foot: Node3D = visual.get_parent() as Node3D
++	if not is_instance_valid(actor) or not is_instance_valid(foot): return false
++	var parent: Node3D = actor.get_parent() as Node3D
++	for node: Node3D in [actor, foot, parent]:
++		if not is_instance_valid(node) or not node.is_inside_tree() or not node.is_node_ready() or node.is_queued_for_deletion() or node.get_world_3d() != get_world_3d(): return false
++	var actor_script: Script = actor.get_script() as Script
++	var parent_script: Script = parent.get_script() as Script
++	var foot_script: Script = foot.get_script() as Script
++	if actor_script == null or parent_script == null or foot_script == null: return false
++	if actor_script.resource_path != "res://scripts/acts/act2/dead_london_sentry_presented_actor.gd" or parent_script.resource_path != "res://scripts/acts/act2/dead_london_sentry_presented_encounter.gd" or foot_script.resource_path != "res://scripts/combat/lane_mechanism.gd" or visual.get_script() != FootVisualScript: return false
++	if foot.get_parent() != parent or not actor.has_method("get_cosmetic_rig") or not parent.has_method("get_actor") or not parent.has_method("get_foot"): return false
++	# The private visual pointer is read from this pinned parent version only;
++	# no new API/snapshot field/clock or mutable ownership mirror is introduced.
++	return actor.call("get_cosmetic_rig") == self and parent.call("get_actor") == actor and parent.call("get_foot") == foot and parent.get("_foot_visual") == visual
