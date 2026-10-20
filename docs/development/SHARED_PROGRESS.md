@@ -1,5 +1,13 @@
 # Cinder shared progress
 
+## Crystalman’s specific exercise policy accepted —20 October2026
+
+[Root accepts eight distinct existing purposes](ACT3_L5_DIFFICULTY_RETENTION.md) at owner64b6ccc: offered own-program reference, autonomous unlike-source priority, one completed capture, two sealed FIFO captures, honest preview/refusal/rearm, ordinary tether return, quiet whole-child continuity and noncombat coda/contact. Sixteen current source pairs match. These positive reasons are independent of the failed west-inset alternative; no new runtime, Challenge decision, native run or broad fairness credit follows. Original1455/770/99/85/18/23 and one-slot kit evidence retain exact sources and TEST limits. Old53/9,64/1,14/0 and568/57 remain unchanged. Thirteen authored+seven bounded retention policies cover20/24; all24 original content acceptances remain. Four policies remain.
+
+O2’s observer-only successor78/1 completes every old16 Save/Continue/Retry stage with exact CP/session and three qualified donor-cleanup events. New17’s exact initial Continue succeeds, then its TEST direction assertion fails; portrait is unexecuted. Source review identifies a possible once-versus-twice Vector3 normalization mismatch with the actual public actor adapter. No production cause or fix is claimed; the next justified check targets only new17 and reuses completed old16 evidence. L4 constructor447/0 is independently verified clean with exact rollback; corrected fixed comparison source is received and preparation remains inert. Agent02 continues its fixed L5 source handoff; Act3 may prepare only the next acknowledged O3 source proposal. Root remains first help. No public upload/mobile/export/release.
+
+Earlier checkpoints below preserve their then-current counts, worker scopes and actual outcomes.
+
 ## Pillars retention and complete Settings observation —20 October2026
 
 [Root accepts O1’s seven specific existing purposes](ACT3_O1_DIFFICULTY_RETENTION.md) independently of its failed alternative. Exact originald054 remains; no runtime/API/native rerun or new Challenge-decision claim follows. The original single trial stays failed/incomplete/equivalent at662 successful tick assertions plus one comparison failure/exit1, with incidental actor-hit differences outside its discriminator and the central warning unfinished. Exact owner withdrawal, source archives, all actual results and independent source review are portable. Thirteen authored+six bounded retention policies cover19/24; all24 original content levels remain accepted. Five policies remain.

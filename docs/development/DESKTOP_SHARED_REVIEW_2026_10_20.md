@@ -1,5 +1,7 @@
 # Desktop shared-system review — 20 October 2026
 
+This is the historical `caaaa143` shared-feature checkpoint. Later policy decisions are tracked in [current coverage](DIFFICULTY_COVERAGE.md).
+
 The required non-difficulty shared features have focused functional evidence. This is not campaign completion: all24 original content acceptances remain,19 difficulty policies are complete, and five policies remain. The focused acceptance policy does not require full routes, every enemy, earned exits or human approval.
 
 ## Complete Settings persistence
