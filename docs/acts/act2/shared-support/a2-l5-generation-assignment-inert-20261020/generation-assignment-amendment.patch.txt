@@ -1,0 +1,12 @@
+--- preserved0686/a2_l5_fixed_response_seed_controls.gd.txt
++++ additive/a2_l5_fixed_response_generation_assignment.gd.txt
+@@ -640 +640,5 @@
+-						if parsed: row.merge({"generation": int(serial), "format_version": wire.format_version})
++						if parsed:
++							var validated_generation: int = int(serial)
++							row["generation"] = validated_generation
++							row["format_version"] = wire.format_version
++							parsed = row["generation"] is int and row["generation"] == validated_generation and row["generation"] == serial and row["format_version"] == Store.FORMAT_VERSION
+@@ -645 +649 @@
+-					elif stored and suffix.is_empty() and int(row.generation) == generation:
++					elif stored and suffix.is_empty() and row.generation is int and row.generation == generation:

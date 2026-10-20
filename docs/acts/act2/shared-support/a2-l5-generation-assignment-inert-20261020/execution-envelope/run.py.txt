@@ -1,0 +1,609 @@
+"""Root-only one queued fixed L5 component comparison; no automatic rerun or policy acceptance."""
+from pathlib import Path
+import argparse
+import contextlib
+import datetime
+import importlib.util
+import json
+import os
+import re
+import signal
+import stat
+import sys
+import hashlib
+import math
+import uuid
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[1]
+def require(ok, reason):
+    if not ok:
+        raise ValueError(reason)
+
+
+def digest(data):
+    return hashlib.sha256(data).hexdigest()
+
+
+def strict(data):
+    def pairs(items):
+        result = {}
+        for key, value in items:
+            require(key not in result, "Duplicate JSON key: " + key)
+            result[key] = value
+        return result
+    def finite(token):
+        value = float(token)
+        require(math.isfinite(value), "Nonfinite JSON exponent")
+        return value
+    return json.loads(data.decode("utf-8", errors="strict"), object_pairs_hook=pairs,
+                      parse_float=finite,
+                      parse_constant=lambda token: (_ for _ in ()).throw(ValueError(token)))
+
+
+def stable(path):
+    path = Path(path)
+    require(path.is_absolute() and path.resolve() == path, "Literal nonsymlink absolute path required")
+    before = path.lstat()
+    require(stat.S_ISREG(before.st_mode), "Regular file required")
+    fd = os.open(path, os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0))
+    with os.fdopen(fd, "rb") as stream:
+        opened = os.fstat(stream.fileno())
+        require((before.st_dev, before.st_ino) == (opened.st_dev, opened.st_ino), "Changed before open")
+        data = stream.read()
+        closed_fd = os.fstat(stream.fileno())
+    second = path.read_bytes()
+    after = path.lstat()
+    key = lambda row: (row.st_dev, row.st_ino, row.st_size, row.st_mode, row.st_mtime_ns)
+    require(key(before) == key(opened) == key(closed_fd) == key(after) and data == second,
+            "Unstable literal two-read observation")
+    return {"path": str(path), "sha256": digest(data), "bytes": len(data),
+            "mode": format(stat.S_IMODE(after.st_mode), "04o"), "stable_two_reads": True}, data
+
+
+DIAGNOSTIC = re.compile(r"^\s*(?:ERROR|WARNING|SCRIPT ERROR):|ObjectDB.*leak|Orphan.*StringName", re.I)
+ABSENT = {"exists": False, "regular": False, "symlink": False, "sha256": None, "bytes": None, "mode": None}
+
+
+def fsync_directory(path):
+    fd = os.open(path, os.O_RDONLY)
+    try: os.fsync(fd)
+    finally: os.close(fd)
+
+
+def save(path, value):
+    data = (json.dumps(value, indent=2, allow_nan=False) + "\n").encode()
+    temporary = path.with_name(path.name + ".owned-" + uuid.uuid4().hex + ".tmp")
+    with temporary.open("xb") as stream:
+        stream.write(data); stream.flush(); os.fsync(stream.fileno())
+    os.replace(temporary, path); fsync_directory(path.parent)
+
+
+def record(path):
+    path = Path(path)
+    require(path.is_absolute() and path.parent.resolve() == path.parent, "No symlink parent allowed")
+    st = path.lstat() if os.path.lexists(path) else None
+    regular = bool(st and stat.S_ISREG(st.st_mode))
+    data = stable(path)[1] if regular else None
+    return {"exists": st is not None, "regular": regular, "symlink": bool(st and stat.S_ISLNK(st.st_mode)),
+            "sha256": digest(data) if data is not None else None, "bytes": len(data) if data is not None else None,
+            "mode": format(stat.S_IMODE(st.st_mode), "04o") if st else None}, data
+
+
+def write_literal(path, data):
+    with path.open("xb") as stream:
+        stream.write(data); stream.flush(); os.fsync(stream.fileno())
+    fsync_directory(path.parent)
+
+
+def engine(spec):
+    path = Path(spec["engine_expected"]["path"])
+    row, _ = record(path)
+    require(row == spec["engine_expected"]["record"] and os.access(path, os.X_OK), "Exact C7 engine bytes/mode/type differ")
+    return dict(row, path=str(path), retained_binary=False)
+
+
+def frozen(spec):
+    ready = strict((HERE / "READINESS.json").read_bytes())
+    require(spec["integration_root"] == str(ROOT), "Exact canonical Root required")
+    for name, expected in ready["frozen_files"].items():
+        meta, _ = stable(HERE / name)
+        require({key: meta[key] for key in ["sha256", "bytes", "mode"]} == expected, "Frozen host source changed: " + name)
+
+
+def snapshot(spec, out, label, selected=None):
+    names = sorted(set(spec["expected"]) | set(spec["subjects"]))
+    rows = {}; retention = {}; blobs = out / "source-blobs"; blobs.mkdir(exist_ok=True)
+    for name in names:
+        row, data = record(ROOT / name); rows[name] = row
+        if data is not None:
+            target = blobs / (row["sha256"] + ".bin")
+            if not target.exists(): write_literal(target, data)
+            require(digest(target.read_bytes()) == row["sha256"], "Source CAS differs")
+            retention[name] = dict(row, blob=str(target.relative_to(out)))
+    save(out / (label + ".json"), rows); save(out / (label + "-retention.json"), retention)
+    for name, expected in spec["expected"].items():
+        require(rows[name] == expected, "Named dependency/control/UID/cache source differs: " + name)
+    for name, variants in spec["subjects"].items():
+        if selected is None:
+            require(rows[name] == variants["original"], "Unknown subject left in situ: " + name)
+        else:
+            require(rows[name] == selected[name], "Selected subject source/mode/type differs: " + name)
+    frozen(spec)
+    return rows
+
+
+def replace_subject(path, data, mode, expected_prior, on_created=None, expected_identity=None):
+    """O2 final-prior-check replacement, plus exclusive link for genuine absence."""
+    require(expected_prior == ABSENT or expected_prior["regular"] and not expected_prior["symlink"], "Known regular or absent prior required")
+    temporary = path.with_name(path.name + ".l5-fixed-owned-" + uuid.uuid4().hex + ".tmp")
+    try:
+        write_literal(temporary, data); os.chmod(temporary, int(mode, 8))
+        require(record(path)[0] == expected_prior, "Final prior guard changed; unknown left in situ")
+        if expected_prior != ABSENT:
+            prior_stat = path.lstat()
+            require(expected_identity is not None and expected_identity == {"device": prior_stat.st_dev, "inode": prior_stat.st_ino},
+                    "Final prior inode changed; identical foreign file left in situ")
+        created_stat = temporary.lstat()
+        identity = {"device": created_stat.st_dev, "inode": created_stat.st_ino}
+        if expected_prior == ABSENT:
+            os.link(temporary, path)  # exclusive no-clobber even for identical foreign arrivals
+        else:
+            os.replace(temporary, path)
+        if on_created is not None: on_created(identity)
+        fsync_directory(path.parent)
+    finally:
+        if os.path.lexists(temporary): temporary.unlink()
+
+
+def retain_unknown(path, out, label):
+    row, data = record(path)
+    if data is not None: write_literal(out / (label + ".bin"), data)
+    meta = dict(row, path=str(path), left_in_situ=True)
+    if row["symlink"]: meta["link_target"] = os.readlink(path)
+    save(out / (label + ".json"), meta)
+    return row
+
+
+def restore_subject(path, initial, initial_data, candidate, out, label, owned_closed, created_by_this_run, creation_identity=None):
+    receipt = {"path": str(path), "owned_children_closed": owned_closed, "created_by_this_run": created_by_this_run,
+               "restored_exact_initial": False, "write_attempted": False, "under_canonical_lock": True,
+               "unknown_overwrite_authorized": False}
+    try:
+        current = record(path)[0]
+        if not owned_closed:
+            receipt["status"] = "OWNED_CHILD_NOT_CLOSED_NO_WRITE"
+        elif current == initial:
+            receipt.update(status="ALREADY_EXACT_INITIAL_NO_WRITE", restored_exact_initial=True)
+        elif current == candidate and created_by_this_run:
+            require(type(creation_identity) is dict and set(creation_identity) == {"device", "inode"}
+                    and all(type(value) is int for value in creation_identity.values()), "Actual own inode identity required")
+            require(record(path)[0] == candidate, "Final candidate bytes/mode/type guard changed")
+            current_stat = path.lstat()
+            require(creation_identity == {"device": current_stat.st_dev, "inode": current_stat.st_ino},
+                    "Identical foreign replacement inode left in situ")
+            receipt["write_attempted"] = True
+            if initial == ABSENT:
+                path.unlink(); fsync_directory(path.parent)
+                receipt.update(status="REMOVED_ONLY_EXACT_OWN_CREATED_CANDIDATE", restored_exact_initial=record(path)[0] == ABSENT)
+            else:
+                replace_subject(path, initial_data, initial["mode"], candidate, expected_identity=creation_identity)
+                receipt.update(status="RESTORED_EXACT_INITIAL_BYTES_MODE", restored_exact_initial=record(path)[0] == initial)
+        else:
+            receipt["status"] = "UNKNOWN_OR_UNOWNED_CANDIDATE_LEFT_IN_SITU"
+        if not receipt["restored_exact_initial"]:
+            receipt["observed"] = retain_unknown(path, out, label + "-unexpected")
+    except Exception as error:
+        receipt.update(status="GUARDED_RESTORE_FAILED_NO_UNKNOWN_WRITE", error=str(error))
+        receipt["observed"] = retain_unknown(path, out, label + "-guard-conflict")
+    save(out / (label + "-restore.json"), receipt)
+    return receipt
+
+
+class Tee:
+    def __init__(self, terminal, log): self.terminal, self.log = terminal, log
+    def write(self, value): self.log.write(value); return self.terminal.write(value)
+    def flush(self): self.log.flush(); self.terminal.flush()
+
+
+def load_dev(spec):
+    module = importlib.util.spec_from_file_location("cinder_l5_fixed_dev", ROOT / "scripts/dev/dev.py")
+    require(module is not None and module.loader is not None, "Canonical dev source required")
+    dev = importlib.util.module_from_spec(module); sys.modules[module.name] = dev
+    prior = sys.dont_write_bytecode
+    try: sys.dont_write_bytecode = True; module.loader.exec_module(dev)
+    finally: sys.dont_write_bytecode = prior
+    env = dict(os.environ)
+    env.update(CINDER_GODOT=spec["engine_expected"]["path"], CINDER_CANONICAL_ROOT=str(ROOT), PYTHONDONTWRITEBYTECODE="1")
+    context = dev.ProjectContext(root=ROOT, environ=env)
+    require(context.canonical_root == ROOT and str(dev.resolve_godot(context)) == spec["engine_expected"]["path"], "Canonical context/engine differs")
+    return dev, context
+
+
+def indexed(out):
+    files = {}
+    for path in sorted(out.rglob("*")):
+        if path.is_file() and path != out / "evidence-index.json":
+            meta, _ = stable(path)
+            files[str(path.relative_to(out))] = {key: meta[key] for key in ["sha256", "bytes", "mode"]}
+    save(out / "evidence-index.json", {"created_after_raw_close": True, "files": files})
+
+
+def copy_native(out):
+    """Retain every actual native artifact literally before interpreting reports."""
+    source = out / "native"
+    retained = out / "native-retained"
+    rows = {}; issues = []
+    if not os.path.lexists(source):
+        save(out / "native-artifact-custody.json", {"present": False, "files": rows, "issues": issues})
+        return rows
+    require(source.is_dir() and source.resolve() == source, "Unknown native root left in situ")
+    retained.mkdir(exist_ok=False)
+    for directory, dirs, names in os.walk(source, followlinks=False):
+        current = Path(directory)
+        for name in list(dirs):
+            if (current / name).is_symlink():
+                issues.append({"path": str(current / name), "error": "symlink directory left in situ"}); dirs.remove(name)
+        for name in sorted(names):
+            path = current / name; relative = path.relative_to(source)
+            try:
+                meta, literal = stable(path)
+                target = retained / relative; target.parent.mkdir(parents=True, exist_ok=True)
+                write_literal(target, literal); os.chmod(target, int(meta["mode"], 8))
+                require(stable(target)[0]["sha256"] == meta["sha256"], "Literal retained artifact differs")
+                entry = dict(meta, retained_copy=str(target.relative_to(out)), copied_verbatim=True)
+                rows[str(relative)] = entry  # Retention precedes finite JSON validation.
+                if name.endswith(".jsonl"):
+                    for line in literal.splitlines():
+                        if line.strip(): strict(line)
+                elif name.endswith(".json"):
+                    strict(literal)
+                entry["strict_finite_json_valid"] = name.endswith((".json", ".jsonl"))
+            except Exception as error:
+                issues.append({"path": str(path), "error": str(error), "left_in_situ": True})
+    save(out / "native-artifact-custody.json", {"present": True, "files": rows, "issues": issues,
+        "scope": "Literal native artifacts/JSON controls only; no native Variant decoding or semantic gameplay reproof"})
+    require(not issues, "Native partial artifacts retained, but one literal/finite-JSON custody check refused")
+    return rows
+
+
+def read_host_control(native_root, spec):
+    """One finite native-generated plain control schema; never decode Exact tags."""
+    meta, literal = stable(native_root / "host-control.plain.json")
+    value = strict(literal)
+    require(type(value) is dict and set(value) == {"api_revision", "schema_version", "source_gates", "store_directory", "store_cleanup", "comparison"}
+            and value["api_revision"] == "a2-l5-fixed-host-control-1"
+            and type(value["schema_version"]) is int and value["schema_version"] == 1,
+            "Exact closed native plain host-control schema required")
+    sources = value["source_gates"]
+    require(type(sources) is dict and set(sources) == {"expected", "actual"}
+            and sources["expected"] == spec["native_sources"] and type(sources["actual"]) is dict
+            and set(sources["actual"]) <= set(spec["native_sources"])
+            and all(type(k) is str and type(v) is str and re.fullmatch(r"[0-9a-f]{64}", v)
+                    for k, v in sources["actual"].items()), "Finite partial source29 controls differ")
+    directory = value["store_directory"]
+    require(type(directory) is dict and (directory == {} or (set(directory) == {"path", "absolute_path", "created_by_this_invocation", "initial_entries"}
+            and type(directory["path"]) is str and type(directory["absolute_path"]) is str
+            and type(directory["created_by_this_invocation"]) is bool and type(directory["initial_entries"]) is list
+            and all(type(row) is str for row in directory["initial_entries"]))), "Closed Store directory scalar controls required")
+    cleanup = value["store_cleanup"]
+    require(type(cleanup) is dict and (cleanup == {} or (set(cleanup) == {"directory", "removed", "left_in_situ", "directory_removed", "scope"}
+            and type(cleanup["directory"]) is str and type(cleanup["scope"]) is str
+            and type(cleanup["directory_removed"]) is bool and type(cleanup["removed"]) is list
+            and all(type(row) is str for row in cleanup["removed"]) and type(cleanup["left_in_situ"]) is list
+            and all(type(row) is dict and set(row) == {"path", "reason"} and type(row["path"]) is str
+                    and type(row["reason"]) is str for row in cleanup["left_in_situ"]))), "Closed Store cleanup scalar controls required")
+    comparison = value["comparison"]
+    require(type(comparison) is dict, "Closed computed-comparison controls required")
+    if comparison:
+        keys = set(comparison)
+        short = {"classification", "matched_actual_context"}
+        full = short | {"old_measured_trace_against_new_foot", "old_trace_against_matched_ray", "different_executed_spatial_response"}
+        require(keys in [short, full] and type(comparison["classification"]) is str
+                and all(type(comparison[key]) is bool for key in keys - {"classification"}), "Only native computed comparison scalar fields allowed")
+        require((keys == short and comparison["matched_actual_context"] is False
+                 and comparison["classification"] == "INCONCLUSIVE_UNMATCHED_ACTUAL_PAIR_CONTEXT")
+                or (keys == full and comparison["matched_actual_context"] is True
+                    and comparison["classification"] in ["DISTINCT_COMPONENT_RESPONSE_NATIVE_COUNTERFACTUAL", "EQUIVALENT_OR_UNPROVED_SPATIAL_STRATEGY"]),
+                "Finite actual native comparison branch differs")
+    return meta, value
+
+
+def observe_store_custody(native_root, packet, spec, controls):
+    """Literal archived Store headers and cleanup controls only; no Variant decoder."""
+    directory = controls["store_directory"]
+    require(type(directory) is dict and directory.get("created_by_this_invocation") is True
+            and directory.get("initial_entries") == [], "Fresh invocation Store directory receipt required")
+    user_path = directory.get("path")
+    require(type(user_path) is str and re.fullmatch(r"user://test-a2-l5-fixed-store-[0-9a-f]{32}/", user_path),
+            "Exact invocation Store namespace required")
+    actual_root = Path(spec["user_data_root"]) / user_path.removeprefix("user://").removesuffix("/")
+    require(type(directory.get("absolute_path")) is str and directory["absolute_path"].removesuffix("/") == str(actual_root), "Actual C7 user Store directory differs")
+    expected_archived = set(); actual_raw = []
+    for capture in packet["snapshots"]:
+        custody = capture.get("store_custody")
+        require(type(custody) is dict and custody.get("accepted") is True and custody.get("directory") == user_path
+                and custody.get("store_write") is True and type(custody.get("raw")) is dict
+                and set(custody["raw"]) == {"primary", "backup"}, "Actual raw primary/backup custody required")
+        primary = custody["raw"]["primary"]; backup = custody["raw"]["backup"]
+        require(type(primary) is dict and primary.get("present") is True and primary.get("copied_verbatim") is True
+                and type(primary.get("bytes")) is int and primary["bytes"] > 0
+                and type(primary.get("generation")) is int and primary["generation"] >= 1
+                and primary["generation"] == capture.get("store_generation") == custody.get("store_generation"),
+                "Actual primary generation/copy metadata required")
+        require(type(backup) is dict and backup.get("present") is False and backup.get("generation") is None,
+                "Each fresh single-write slot records actual absent backup; no fabricated generation")
+        require(type(primary.get("path")) is str and primary["path"].startswith(user_path), "Owned primary source path differs")
+        relative_name = primary["path"][len(user_path):]
+        require(re.fullmatch(r"(?:v1|v2)-(?:before-first-response|earned-eligibility-before-ack|actual-paired-response)\.component-store\.json", relative_name),
+                "Actual finite capture source name required")
+        require(primary.get("absolute_path") == str(actual_root / relative_name)
+                and backup.get("path") == primary["path"] + ".bak"
+                and backup.get("absolute_path") == primary["absolute_path"] + ".bak", "Actual primary/backup path join differs")
+        archive = primary.get("archive_path")
+        prefix = packet["output"]
+        expected_name = relative_name.removesuffix(".component-store.json") + ".store-primary.raw.json"
+        require(archive == prefix + expected_name, "Literal raw archive must stay in actual native output")
+        meta, literal = stable(native_root / expected_name)
+        require(meta["sha256"] == primary.get("sha256") == primary.get("archive_sha256")
+                and meta["bytes"] == primary["bytes"], "Literal archived raw bytes/hash/size differ")
+        envelope = strict(literal)
+        require(type(envelope) is dict and envelope.get("format_version") == 2
+                and type(envelope.get("generation")) is int and envelope["generation"] == primary["generation"]
+                and type(envelope.get("payload_json")) is str
+                and digest(envelope["payload_json"].encode()) == envelope.get("sha256"),
+                "Actual raw Store header/checksum/generation differs; payload is not Variant-decoded")
+        expected_archived.add(primary["path"])
+        actual_raw.append({"source": primary["path"], "archive": archive, "sha256": meta["sha256"],
+                           "bytes": meta["bytes"], "generation": primary["generation"], "backup_present": False})
+    cleanup = controls["store_cleanup"]
+    require(type(cleanup) is dict and cleanup.get("directory") == user_path and cleanup.get("directory_removed") is True
+            and cleanup.get("left_in_situ") == [] and type(cleanup.get("removed")) is list
+            and len(cleanup["removed"]) == len(set(cleanup["removed"]))
+            and set(cleanup["removed"]) == expected_archived and not os.path.lexists(actual_root),
+            "Actual owned archived Store cleanup incomplete; foreign leftovers remain a refusal")
+    return {"directory": user_path, "actual_directory_absent_after_child": True, "raw": actual_raw,
+            "scope": "Literal header/archive/normal cleanup custody only; no native inode or whole L5/Attempts claim"}
+
+
+def observe(native_root, spec, raw, api_return, child_return, out):
+    result = {"functional_pass": False, "report_present": False, "policy_acceptance_claimed": False}
+    try:
+        control_meta, controls = read_host_control(native_root, spec)
+        result.update(plain_control_original=control_meta, partial_native_controls=controls)
+        save(out / "native-observation.json", result)  # before report/outcome may refuse
+        meta, literal = stable(native_root / "report.json")
+        result.update(report_present=True, original_report=meta)
+        packet = strict(literal)
+        require(type(packet) is dict, "Literal native report object required")
+        require(type(packet.get("checks")) is int and packet["checks"] > 0
+                and type(packet.get("failures")) is int and packet["failures"] >= 0,
+                "Actual native integer counts required")
+        require(type(packet.get("scope_complete")) is bool and type(packet.get("classification")) is str
+                and type(packet.get("first_failure")) is dict and type(packet.get("results_present")) is list
+                and type(packet.get("snapshots")) is list and type(packet.get("scope")) is str,
+                "Native report control types differ")
+        expected_output = "res://" + str(native_root.relative_to(ROOT)) + "/"
+        require(packet.get("output") == expected_output, "Native invocation output differs")
+        footer = ("A2-L5 fixed response comparison: %d checks, %d failures; scope_complete=%s; classification=%s; output=%s"
+                  % (packet["checks"], packet["failures"], str(packet["scope_complete"]).lower(),
+                     packet["classification"], expected_output))
+        require([line for line in raw.splitlines() if line.startswith("A2-L5 fixed response comparison:")] == [footer],
+                "Unique actual native footer/report/count/outcome join differs")
+        result.update(checks=packet["checks"], failures=packet["failures"], classification=packet["classification"],
+                      scope_complete=packet["scope_complete"], first_failure=packet["first_failure"],
+                      results_present=packet["results_present"], literal_footer=footer, native_scope=packet["scope"])
+        sources = controls["source_gates"]
+        require(type(sources) is dict and set(sources) == {"expected", "actual"}
+                and sources["expected"] == sources["actual"] == spec["native_sources"], "Actual explicit source29 differs")
+        result["actual_source29"] = sources["actual"]
+        # Preserve all classifications before demanding the selected success branch.
+        save(out / "native-observation.json", result)
+        complete = (packet["scope_complete"] is True and packet["classification"] == "DISTINCT_COMPONENT_RESPONSE_NATIVE_COUNTERFACTUAL"
+                    and packet["failures"] == 0 and packet["results_present"] == ["v1", "v2"])
+        if complete:
+            comparison = controls["comparison"]
+            require(type(comparison) is dict and comparison.get("classification") == packet["classification"]
+                    and comparison.get("matched_actual_context") is True
+                    and comparison.get("old_measured_trace_against_new_foot") is True
+                    and comparison.get("old_trace_against_matched_ray") is False
+                    and comparison.get("different_executed_spatial_response") is True,
+                    "Native discriminator controls incomplete; no Python geometry recomputation")
+            for arm in ["v1", "v2"]:
+                require((native_root / (arm + "-executed-result.native.json")).is_file(), "Actual executed arm result missing")
+            require(packet["snapshots"] and all(type(row) is dict and type(row.get("capture_error")) is str
+                    and row["capture_error"] == "" and row.get("store_write") is True for row in packet["snapshots"]),
+                    "Actual component capture/Store refusal or incomplete snapshot record")
+            result["store_custody_observation"] = observe_store_custody(native_root, packet, spec, controls)
+        result["functional_pass"] = (complete and type(api_return) is int and api_return == 0
+                                     and type(child_return) is int and child_return == 0)
+    except Exception as error:
+        result["error"] = str(error)
+    return result
+
+
+def run_native(dev, context, lock_fd, spec, out, result):
+    user_base = Path(spec["user_data_root"])
+    require(user_base == Path.home() / "Library/Application Support/Godot/app_userdata/Cinder"
+            and user_base.resolve() == user_base, "Actual C7 normal macOS user context required")
+    native_root = out / "native"
+    require(not os.path.lexists(native_root), "Unique TEST native output must be absent; fixture creates it")
+    output_arg = "--out=res://" + str(native_root.relative_to(ROOT)) + "/"
+    argv = [spec["engine_expected"]["path"], "--path", str(ROOT), "--headless", "--log-file", str(out / "engine.log"),
+            "--script", "res://" + spec["fixture"], "--", output_arg]
+    save(out / "command.json", {"argv": argv, "native_output": str(native_root), "user_argument": output_arg,
+        "timeout_after_lock_seconds": spec["timeout_after_lock_seconds"], "canonical_api": "dev.godot_lock/run_validation",
+        "one_owned_child": True, "user_data_root": str(user_base), "cwd": str(ROOT),
+        "engine_environment": {key: context.environ.get(key) for key in ["CINDER_GODOT", "CINDER_CANONICAL_ROOT", "PYTHONDONTWRITEBYTECODE"]}})
+    owned = []; actual_popen = dev.subprocess.Popen
+    def tracked(command, *pos, **kw):
+        require(command == argv and not owned and kw.get("cwd") == ROOT and kw.get("env") == context.environ
+                and kw.get("pass_fds") == (lock_fd,), "Exactly one planned canonical child/context/lock required")
+        child = actual_popen(command, *pos, **kw); owned.append(child)
+        result.update(native_child_launch_state="SPAWNED", owned_children=[{"pid": child.pid, "closed": False, "popen_return": None}])
+        save(out / "result.json", result)
+        return child
+    result.update(engine_launch_attempted=True, native_child_launch_state="ADMISSION_PENDING")
+    save(out / "result.json", result)
+    try:
+        dev.subprocess.Popen = tracked
+        result["canonical_api_return"] = dev.run_validation(argv, context, lock_fd,
+            spec["timeout_after_lock_seconds"], detect_godot_errors=True)
+    finally:
+        dev.subprocess.Popen = actual_popen
+        for child in owned:
+            if child.poll() is None: dev.stop_validation(child)
+            child.wait(timeout=5)
+        result["owned_children"] = [{"pid": child.pid, "closed": child.poll() is not None, "popen_return": child.poll()} for child in owned]
+        result["native_child_launch_state"] = "CLOSED" if len(owned) == 1 and owned[0].poll() is not None else "NO_CLOSED_CHILD_RECEIPT"
+        save(out / "result.json", result)
+        # Raw partial evidence is retained on refusal/interrupt as soon as our child closes.
+        sys.stdout.flush(); sys.stderr.flush()
+        if result["native_child_launch_state"] == "CLOSED":
+            try:
+                copy_native(out)
+            except Exception as error:
+                result["native_artifact_custody_error"] = str(error)
+            observation = observe(native_root, spec, (out / "raw.log").read_text(),
+                                  result["canonical_api_return"], owned[0].poll(), out)
+            result["native_observation"] = observation; save(out / "native-observation.json", observation)
+            result["native_functional_pass"] = observation["functional_pass"] and "native_artifact_custody_error" not in result
+            save(out / "result.json", result)
+    require(len(owned) == 1 and owned[0].poll() is not None, "One actual owned child must close")
+    require(result.get("native_functional_pass") is True, "Actual native failure/equivalence/inconclusive/refusal or custody mismatch; no rerun")
+
+def restore_all(spec, out, before, state, owned_closed, beforeimage_base=None):
+    receipts = []
+    beforeimage_base = out if beforeimage_base is None else beforeimage_base
+    for index, (name, variants) in enumerate(reversed(list(spec["subjects"].items()))):
+        row = before[name]
+        require(row["record"] == variants["original"], "Beforeimage must be one exact known initial variant")
+        require(type(state[name].get("created_by_this_run")) is bool, "Literal own-creation Boolean required")
+        data = (beforeimage_base / row["blob"]).read_bytes() if row["record"]["regular"] else None
+        if data is not None: require(digest(data) == row["record"]["sha256"], "Durable beforeimage changed")
+        receipts.append(restore_subject(ROOT / name, row["record"], data, variants["candidate"], out,
+                                        "subject-" + str(index), owned_closed, state[name]["created_by_this_run"],
+                                        state[name].get("creation_identity")))
+    save(out / "restore-receipts.json", receipts)
+    return all(row["restored_exact_initial"] for row in receipts)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("phase", choices=["native", "recover"])
+    parser.add_argument("--run-dir", type=Path)
+    args = parser.parse_args()
+    stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%S.%fZ")
+    out = HERE / ("run-" + args.phase + "-" + stamp + "-" + uuid.uuid4().hex[:8]); out.mkdir(exist_ok=False)
+    result = {"phase": args.phase, "closed": False, "passed": False, "engine_launch_attempted": False,
+              "native_child_launch_state": "NOT_ATTEMPTED", "canonical_api_return": None,
+              "owned_children": [], "native_functional_pass": False, "policy_acceptance_claimed": False}
+    queue = {"queued": False, "acquired": False, "lock_context_released": False}; code = 2
+    spec = None; before = None; state = {}; at_entry = None
+    old_term = signal.getsignal(signal.SIGTERM)
+    signal.signal(signal.SIGTERM, lambda _sig, _frame: (_ for _ in ()).throw(KeyboardInterrupt()))
+    with (out / "raw.log").open("x") as raw, contextlib.redirect_stdout(Tee(sys.stdout, raw)), contextlib.redirect_stderr(Tee(sys.stderr, raw)):
+        try:
+            spec = strict((HERE / "INPUT_SPEC.json").read_bytes()); frozen(spec)
+            require(spec.get("application_state") == "ROOT_REVIEWED_READY", "Final fixture pins held: Root correction review incomplete; no execution authorized")
+            require(set(spec["subjects"]) == {"scripts/acts/act2/dead_london.gd", "scripts/acts/act2/dead_london_construction.gd"}, "Exactly two selected L5 source slots required")
+            require((args.phase == "recover") == (args.run_dir is not None), "Only recovery takes exact old run directory")
+            dev, context = load_dev(spec); engine_before = engine(spec); save(out / "engine-before.json", engine_before)
+            if args.phase == "native": snapshot(spec, out, "sources-before-queue")
+            queue.update(queued=True, lock_path=str(dev.shared_lock_path(ROOT))); save(out / "queue.json", queue)
+            with dev.godot_lock(ROOT) as lock_fd:
+                queue["acquired"] = True; save(out / "queue.json", queue)
+                try:
+                    require(engine(spec) == engine_before, "Engine changed while queued")
+                    if args.phase == "recover":
+                        prior = args.run_dir.absolute()
+                        require(prior.parent == HERE and prior.name.startswith("run-native-") and prior.resolve() == prior,
+                                      "Exact same-capsule prior native run required")
+                        prior_result = strict((prior / "result.json").read_bytes())
+                        launch = prior_result.get("native_child_launch_state")
+                        children = prior_result.get("owned_children", [])
+                        require((launch == "NOT_ATTEMPTED" and prior_result.get("engine_launch_attempted") is False and children == [])
+                                or (launch == "CLOSED" and len(children) == 1 and children[0].get("closed") is True
+                                    and type(children[0].get("popen_return")) is int),
+                                "Actual durable own-child closure receipt required; PID absence alone cannot authorize recovery")
+                        before = strict((prior / "beforeimages.json").read_bytes())
+                        state = strict((prior / "assembly-state.json").read_bytes())
+                        require(set(before) == set(state) == set(spec["subjects"]), "Exact two-source recovery custody required")
+                        # Recovery retains original beforeimages in their original run.
+                        ok = restore_all(spec, out, before, state, True, prior)
+                        save(out / "recovery.json", {"prior_run": str(prior), "canonical_lock_acquired": True,
+                                                   "no_engine_launch": True, "restored_exact_prior_entry": ok})
+                        require(ok, "Unknown source left in situ during recovery")
+                    else:
+                        at_entry = snapshot(spec, out, "sources-at-lock")
+                        before = {}; state = {}
+                        for index, (name, variants) in enumerate(spec["subjects"].items()):
+                            initial_stat = (ROOT / name).lstat() if os.path.lexists(ROOT / name) else None
+                            meta, data = record(ROOT / name)
+                            require(meta == at_entry[name] == variants["original"], "Original source changed before durable capture")
+                            initial_identity = {"device": initial_stat.st_dev, "inode": initial_stat.st_ino} if initial_stat else None
+                            if initial_stat is not None:
+                                confirmed = (ROOT / name).lstat()
+                                require(initial_identity == {"device": confirmed.st_dev, "inode": confirmed.st_ino}, "Original changed during durable capture")
+                            row = {"record": meta, "blob": None, "initial_identity": initial_identity}
+                            if data is not None:
+                                row["blob"] = "beforeimage-" + str(index) + ".bin"; write_literal(out / row["blob"], data)
+                            before[name] = row
+                            state[name] = {"selection_intent": False, "selection_complete": False,
+                                           "created_by_this_run": False, "creation_identity": None}
+                        save(out / "beforeimages.json", before); save(out / "assembly-state.json", state)
+                        save(out / "result.json", result)
+                        try:
+                            for name, variants in spec["subjects"].items():
+                                initial = before[name]["record"]
+                                candidate_meta, candidate = record(ROOT / variants["candidate_source"])
+                                require(candidate_meta == spec["expected"][variants["candidate_source"]]
+                                              and digest(candidate) == variants["candidate"]["sha256"], "Pinned candidate text changed")
+                                state[name]["selection_intent"] = True; save(out / "assembly-state.json", state)
+                                def created(identity, name=name):
+                                    state[name].update(created_by_this_run=True, creation_identity=identity)
+                                    save(out / "assembly-state.json", state)
+                                replace_subject(ROOT / name, candidate, variants["candidate"]["mode"], initial, created, before[name]["initial_identity"])
+                                state[name]["selection_complete"] = True; save(out / "assembly-state.json", state)
+                            selected = {name: variants["candidate"] for name, variants in spec["subjects"].items()}
+                            snapshot(spec, out, "sources-candidate-selected", selected)
+                            try:
+                                run_native(dev, context, lock_fd, spec, out, result)
+                            finally:
+                                raw.flush()
+                                snapshot(spec, out, "sources-after-child", selected)
+                                save(out / "engine-after-child.json", engine(spec))
+                                engine_log = (out / "engine.log").read_text(errors="replace") if (out / "engine.log").is_file() else ""
+                                diagnostics = [line for line in ((out / "raw.log").read_text() + "\n" + engine_log).splitlines() if DIAGNOSTIC.search(line)]
+                                result["raw_and_engine_diagnostics"] = diagnostics
+                            require(not diagnostics, "Native diagnostic remains NONCLEAN; no retry")
+                            require(engine(spec) == engine_before, "Engine identity changed")
+                        finally:
+                            owned_closed = (result["native_child_launch_state"] == "NOT_ATTEMPTED" and result["engine_launch_attempted"] is False) or (result["native_child_launch_state"] == "CLOSED" and len(result["owned_children"]) == 1 and result["owned_children"][0]["closed"] is True and type(result["owned_children"][0]["popen_return"]) is int)
+                            restored = restore_all(spec, out, before, state, owned_closed)
+                            result["restored_exact_entry"] = restored
+                            require(restored, "Exact entry restoration failed; unknown bytes/modes/symlinks left in situ")
+                            snapshot(spec, out, "sources-after-restore", {name: row["record"] for name, row in before.items()})
+                finally:
+                    queue["inside_lock_finally_reached"] = True; save(out / "queue.json", queue)
+            queue["lock_context_released"] = True; save(out / "queue.json", queue)
+            result["passed"] = (args.phase == "recover") or result.get("native_functional_pass") is True; code = 0 if result["passed"] else 2
+        except KeyboardInterrupt:
+            result["error"] = "Interrupted; only actual owned child closure and guarded rollback allowed"; code = 130
+        except Exception as error:
+            result["error"] = str(error); print("L5 fixed response host failure:", error, flush=True)
+        finally:
+            # Reaching this outer finally means the context manager has exited,
+            # even when a body exception bypassed the normal statement above.
+            if queue["acquired"]: queue["lock_context_released"] = True
+            if spec is not None:
+                try: save(out / "engine-at-close.json", engine(spec))
+                except Exception as error: result["engine_close_error"] = str(error); result["passed"] = False; code = 2
+            raw.flush(); result.update(closed=True, host_return=code, scope=spec["scope"] if spec else "Failed source bootstrap")
+            save(out / "result.json", result); save(out / "queue.json", queue)
+            print("A2-L5 fixed response host CLOSED code=" + str(code), flush=True)
+            raw.flush(); os.fsync(raw.fileno())
+    signal.signal(signal.SIGTERM, old_term); indexed(out); return code
+
+
+if __name__ == "__main__": raise SystemExit(main())

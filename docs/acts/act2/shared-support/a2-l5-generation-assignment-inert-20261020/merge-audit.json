@@ -1,0 +1,44 @@
+{
+  "request": "d2a7b718-87a1-41b9-86cf-614b2f4b9046",
+  "preserved_source_sha256": "0686dcf7db39d385629b604860b907a2aa0e19f64d4766f83af83031c2a329c1",
+  "amended_source_sha256": "0e63d341b0bf67af25fe45bcfe28d9d053a6de2f7b82727cdeaa685ad9ad357c",
+  "changed_existing_function_only": "_archive_store",
+  "all_other_functions_classes_constants_inputs_controls_unchanged": true,
+  "host_byte_identical": "9966c6e424f1cd114287b8de1e8f8158da5e847dd2baa997b1d49c982f7244bf",
+  "merge_sites_original": [
+    {
+      "line": 619,
+      "incoming_keys": [
+        "bytes",
+        "sha256",
+        "modified_unix"
+      ],
+      "preexisting_key_intersection": [],
+      "changed": false
+    },
+    {
+      "line": 633,
+      "incoming_keys": [
+        "archive_path",
+        "archive_sha256",
+        "copied_verbatim"
+      ],
+      "preexisting_key_intersection": [],
+      "changed": false
+    },
+    {
+      "line": 640,
+      "incoming_keys": [
+        "generation",
+        "format_version"
+      ],
+      "preexisting_key_intersection": [
+        "generation"
+      ],
+      "changed": "Explicit assignment after validated finite/integral/ranged header; strict resulting native int/header/store equality retained"
+    }
+  ],
+  "analogous_exact_defect_in_other_same_fixture_merges": false,
+  "audit_scope": "Only the three same-fixture merge sites; no wider audit/changes",
+  "validation": "Text/pin/whitespace only; no source parsing/native execution"
+}

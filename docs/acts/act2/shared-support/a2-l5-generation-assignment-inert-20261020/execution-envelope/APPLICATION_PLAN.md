@@ -1,0 +1,11 @@
+# L5 generation-assignment envelope — additive inert pins
+
+Requestd2a7b718. Preserve original0686/f5bd, host9966c6e4, both failed phases and previous source plans. The [one-function amendment](../README.md) and [spec](INPUT_SPEC.json) await Root independent source review. [Host text](run.py.txt) is byte-identical to9966c6e4; no host/parser/lifecycle changes and no owner native/parser/import/queue execution occurred.
+
+Root's sole new capsule is `.cinder/a2-l5-generation-assignment-host-prepare-20261020/`. After review, copy amended native text to private `fixed_response_companion.gd.txt` and identical `.gd`; copy constructor5f47/c26d texts to the same two `inputs/` files; copy unchanged host as `run.py` alongside spec/readiness/this plan. Existing support/runtime/evidence is not overwritten by owner preparation. The spec remains `HOLD_PENDING_ROOT_REVIEW_OF_ARCHIVE_GENERATION_ASSIGNMENT`; Root may seal ROOT_REVIEWED_READY and its resulting spec/readiness digest after review.
+
+Source29/finite143 dependencies and controls, exact originala7d9/0644 plus helper absence, durable beforeimages/source-inode ownership, C7 context, canonical dev.godot_lock/run_validation, one-owned-child closure/rollback/recovery, plain control parser/raw artifact custody and700s timeout retain prior scope. Changed private capsule paths/native hash require exact new pins; no global UID/import/project census or automatic mismatch bypass.
+
+Future command only after Root review/sealing: `python3 .cinder/a2-l5-generation-assignment-host-prepare-20261020/run.py native`. One necessary changed focused comparison, with unchanged setup/guards/ordinary responses and honest stop outcomes. Recover is source restoration only with durable same-child custody. No unchanged-source rerun, alternate coordinate/route/kit/producer/matrix or policy acceptance.
+
+Root exclusively owns inspection/guarded cleanup of the previous leftover user Store directory. This envelope amendment grants no owner cleanup or another job's process/file custody. Partial raw generations, missing report, Popen−15 and earlier1277/1 remain exact history. No new native result is claimed. Stop at pinned source handoff; Integration first help; no human decision required.
