@@ -1,0 +1,891 @@
+extends SceneTree
+## ONE INERT TEST comparison draft; unparsed/unexecuted. Root selects/applies.
+## Exactc310 unit, original first, one fixed station/recipe/kit, no campaign save.
+## No parser/import/engine/producer/portrait was run while drafting this text.
+const SOURCE_SHA256: Dictionary = {
+	"res://scripts/acts/act2/london_approaches.gd": "b81f9e8274bf72dca952fd1da8d41fd73e49059f24e0004ece6ca011d31fb3b4",
+	"res://scripts/acts/act2/london_approaches_snapshot_rules.gd": "d6f70d2eed03299b6627d7e179fa7e980e58ec8f6ad577f6697e1038b8c42229",
+	"res://scripts/acts/act2/london_approaches_smoke_rules.gd": "e54af1c3800b63c10764b7f9b52cb6a29713e5f4923ee591030430193619b2bb",
+	"res://scripts/acts/act2/london_approaches_sequence.gd": "e43236ccdc37827253533bdf999f26db2f4e3d5adfc309f1f70f98247fe8184a",
+	"res://scripts/acts/act2/london_approaches_floor.gd": "38644fceaa2e40c37b26022c429f4423f17fb4533ce6f7aa5242c6d7e1830def",
+	"res://scripts/acts/act2/london_approaches_kit.gd": "9aa9c32e5d2c5804df5dffe7b1fef1098e7c9626e4f349951d0e060680121437",
+	"res://scripts/acts/act2/weybridge.gd": "767430baacc6b6a32547e1ec87e81b9fe48ad24e53939c18876fa63317d85145",
+	"res://scripts/acts/act2/horsell_common.gd": "5f58885685d5b5727d286c57c45794bef0afc810424214636155283f60f43ad1",
+	"res://scripts/campaign/level.gd": "27fdab6686d8ba4b8282c48af84c0c3f63d8c8fa7620ae462a4642ec225100c1",
+	"res://scripts/campaign/shell.gd": "f8df3b798544b79d66985f5e468f13ade5485bccc6050b54c9d9d242b3211a0f",
+	"res://scripts/campaign/attempts.gd": "6701abec6181beb3934490e468b00868c14e69eb229f708d562b98efe32a43a0",
+	"res://scripts/campaign/snapshot_codec.gd": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+	"res://scripts/campaign/exact_json.gd": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+	"res://scripts/combat/difficulty.gd": "e6a0aba9b39697cf59837165ebec858b0dd15c7573f66d79eadc58595ed2e7ae",
+	"res://scripts/combat/threat_scheduler.gd": "c28ea9f4cd6c1ff9aedbc9cfc45a28826c589c095b9193b565f45d23c3df903d",
+	"res://scripts/combat/lane_mechanism.gd": "bcf6558d4ae57c4bf8714ae6fe6b1896b3c7c0be3b6a8a9f3178451653bd031d",
+	"res://scripts/acts/act2/ray_scout_exchange.gd": "6d8e11a29254cad18947655d8e7470d7892b18e856e534859ae6211a897ae7e2",
+	"res://scripts/combat/smoke_bank.gd": "698a70275c438be088fe8abeb7a35083444879364a3acda3ae91194fe4c67ae9",
+	"res://scripts/acts/act2/ray_scout_actor.gd": "dee72b851cb20b234a05552d07eae9cebd7490ee0fad12b3970da51eae132bb7",
+	"res://scripts/acts/act2/weybridge_scout_actor.gd": "7e90bfc541c467162a5a0b0afd6891e8aa6dda9835a4da05362e9301eed78916",
+	"res://scripts/acts/act2/salvage_handler_actor.gd": "42457249e8a30e2d28ad0d03017d16e2f5158092ad3531e528ccf6beb3f70d96",
+	"res://scripts/acts/act2/canister_tender_actor.gd": "c18a4b09ed55761de6f10cfa803d288718db480891ac1da97c9b5a5711e25c29",
+	"res://scripts/acts/act2/ruined_house_bank_guard.gd": "758ead75f9b98ce5afd0ae90077113f40d410f172a2d1b4c3375c249076a3e83",
+	"res://data/design/difficulty_profiles.json": "891baa4d087a1f35da0581c5dc6b888274296686144b3c8f5609249245def41c",
+	"res://scenes/acts/act2/a2_l4.tscn": "d3b02954794352ca7aaed051273b9c564099dca6a5ce64a3092eb774a48d2182",
+	"res://scripts/cues/threat_cue.gd": "c8a7abbbd4c021ec92c45e1e57fc966873110231b781dba00bd1ff3d63f5cc5a",
+	"res://scripts/acts/act2/london_approaches_construction.gd": "2733421a461c2b2f2421ea4a5500aabd370096b043612bb04860e01480ed551e",
+	"res://scripts/game.gd": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26",
+	"res://scenes/main.tscn": "c0c169890eed0afb26b1a09a017d45c90a64aa8ba874a683deb141c4190ee06b",
+	"res://scenes/player.tscn": "68cf79442eb217cb0e2afcc4099080ba79c3f3b2c548655195d0864f4fc8bfac",
+	"res://scripts/player.gd": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+	"res://scripts/effects.gd": "c5b8294b88e999d913a9043fd9f588a2b1f7f942280c71945a92d91d1be5b6d7",
+	"res://scripts/hud.gd": "3a76c06a97da117b2fbd43824d88f3ef5150e6ad0045b5e27766b8d70542897b",
+	"res://scripts/equipment.gd": "2f721f0e7af0d1034ae9f92c37b4af3c3223171d0e5d2c120e42c00ae9155ab0",
+	"res://tests/acts/act2/fixtures/a2_l1_profile_seed_game.gd": "17d23892d1b80c8bd7a95e8ccd3adf2b6e5a75561d26416fe8816debf732bf3e",
+	"res://scripts/combat/threat_geometry.gd": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+	"res://data/design/player_equipment.json": "737cf534df88fa965ab568f750515eb17098688d268e5b6b699de5cd519b98d1"
+}
+const FOCUS_HOST_SHA256: String = "1fc574eff95d8d0e295a6a61ee3fa15a416634313b552282d7c7fb8e3a816760"
+const FOCUS_GAME_SHA256: String = "c3d67c5b2ceba7877dac5a0d17dafeaa4f49a26f1d36874af033ecaffb733ec8"
+const FOCUS_HOST_SOURCE: String = """extends "res://scripts/acts/act2/london_approaches.gd"
+## TEST ONLY focus. No earned campaign prefix or snapshot authority.
+var test_recipe: String = ""
+var test_spawn_error: String = ""
+var test_spawn_observation: Dictionary = {}
+
+class FocusSequence:
+	extends RefCounted
+	var defeated_ids: Array[String] = []
+	var owner: WeakRef
+	func current_beat() -> String: return "putney_mix"
+	func current_active_ids() -> Array[String]:
+		var ids: Array[String] = ["putney_scout", "putney_handler"]
+		for id: String in defeated_ids: ids.erase(id)
+		return ids
+	func exit_is_open() -> bool: return false
+	func commit_contact(_id: String) -> bool: return false
+	func commit_defeat(id: String) -> bool:
+		var level: Node = owner.get_ref() if owner != null else null
+		if not is_instance_valid(level) or id not in current_active_ids(): return false
+		var actor: Node3D = (level.get("_actors") as Dictionary).get(id) as Node3D
+		if not is_instance_valid(actor) or actor.get_parent() != level or actor.get("actor_id") != id or float(actor.get("hp")) != 0.0: return false
+		defeated_ids.append(id)
+		return true
+	func snapshot_state() -> Dictionary: return {"error": "TEST focus has no campaign snapshot"}
+	func snapshot_error(_state: Dictionary) -> String: return "TEST focus cannot validate campaign progress"
+	func restore_state(_state: Dictionary) -> bool: return false
+
+func spawn_position() -> Vector3:
+	# Called by the real Game after its actual Player/BodyCollision are ready,
+	# before public enter_level. This derives one Y, never searches a pose.
+	var player: CinderPlayer = get_parent().get_node_or_null("Player") as CinderPlayer
+	var body: CollisionShape3D = player.get_node_or_null("BodyCollision") as CollisionShape3D if is_instance_valid(player) else null
+	if not is_instance_valid(body) or body.disabled or not body.shape is CapsuleShape3D or body.basis != Basis.IDENTITY or body.position != Vector3(0, CinderThreatScheduler.CAPSULE_CENTER_Y, 0):
+		test_spawn_error = "TEST fixed spawn requires original actual capsule binding"
+		return Vector3.INF
+	var capsule: CapsuleShape3D = body.shape as CapsuleShape3D
+	if not is_equal_approx(capsule.radius, CinderThreatScheduler.CAPSULE_RADIUS) or not is_equal_approx(capsule.height, CinderThreatScheduler.CAPSULE_HEIGHT):
+		test_spawn_error = "TEST actual capsule dimensions differ"
+		return Vector3.INF
+	var height: float = INF
+	var support_ids: Array[String] = []
+	for region: Dictionary in floor_regions():
+		var shape: CollisionShape3D = region.get("collision") as CollisionShape3D
+		var rect: Rect2 = region.get("safe_rect", Rect2())
+		if not rect.grow(-(capsule.radius + CinderThreatScheduler.SKIN)).has_point(Vector2(0, -39.6)): continue
+		if not is_instance_valid(shape) or shape.disabled or not shape.shape is BoxShape3D or shape.global_basis != Basis.IDENTITY or not shape.get_parent() is StaticBody3D:
+			test_spawn_error = "TEST fixed station requires original live axis-aligned dry floor"
+			return Vector3.INF
+		var top: float = shape.global_position.y + (shape.shape as BoxShape3D).size.y * 0.5
+		if is_finite(height) and not is_equal_approx(height, top):
+			test_spawn_error = "TEST fixed station has ambiguous support height"
+			return Vector3.INF
+		height = top
+		support_ids.append(String(shape.get_parent().get_path()))
+	if not is_finite(height):
+		test_spawn_error = "TEST fixed station has no original dry support"
+		return Vector3.INF
+	var y: float = height - body.position.y + capsule.height * 0.5
+	test_spawn_observation = {"station_xz": Vector2(0, -39.6), "floor_top": height, "capsule_center": body.position, "capsule_height": capsule.height, "capsule_radius": capsule.radius, "support_ids": support_ids, "derived_root_y": y}
+	return Vector3(0, y, -39.6)
+
+func _on_enter_level() -> void:
+	if not test_spawn_error.is_empty(): runtime_error = test_spawn_error; return
+	var fresh: Dictionary = LondonConstruction.fresh("challenge")
+	if not String(fresh.error).is_empty(): runtime_error = fresh.error; return
+	var descriptor: Dictionary = fresh.descriptor.duplicate(true)
+	if test_recipe not in [LondonConstruction.CANONICAL_RECIPE, LondonConstruction.EXCHANGED_RECIPE]: runtime_error = "TEST closed recipe required"; return
+	descriptor.recipe_id = test_recipe
+	# Selector-only pristine dictionary. This is constructor input only, never
+	# a native saved packet or earned state. No real Sequence field is edited.
+	var known: Dictionary = {"sequence": LondonSequence.new().snapshot_state(), "scheduler": {"profile": fresh.profile.duplicate(true), "encounter_id": LONDON_EPOCH}, "rays": {}, "targets": {}, "mechanisms": {}, "views": {}, "profile_id": "challenge", "world_revision": 1, "scenic_clock": 0.0, "last_action_sequence": 0, "contact_seen": "", "pending_checkpoints": [], "completion_pending": false, "exit_requested": false}
+	var selected: Dictionary = LondonConstruction.select_known(known, descriptor)
+	if not String(selected.error).is_empty(): runtime_error = selected.error; return
+	var focus = FocusSequence.new()
+	focus.owner = weakref(self)
+	_crossing = focus
+	_l4_construct(selected)
+
+func snapshot_state() -> Dictionary:
+	last_snapshot_error = "TEST Putney focus cannot create a campaign snapshot"
+	return {}
+func snapshot_error(_state: Dictionary) -> String: return "TEST Putney focus cannot validate a campaign snapshot"
+func snapshot_error_with_player(_state: Dictionary, _player: Dictionary) -> String: return "TEST Putney focus cannot validate a campaign aggregate"
+func restore_state(_state: Dictionary) -> bool:
+	last_snapshot_error = "TEST Putney focus cannot restore a campaign snapshot"
+	return false
+func _capture_local_state() -> Dictionary: return {"error": "TEST Putney focus has no local snapshot authority"}
+func _capture_known_state() -> Dictionary: return {"error": "TEST Putney focus has no known snapshot authority"}
+func _progress_snapshot_error(_state: Dictionary) -> String: return "TEST Putney focus cannot validate earned history"
+func _on_enter_restore_candidate(_local: Dictionary, _player: Dictionary) -> String: return "TEST Putney focus cannot construct a saved campaign attempt"
+"""
+const FOCUS_GAME_SOURCE: String = """extends "res://scripts/game.gd"
+## TEST ONLY immutable focus factory. Real Game view/input/controller inherited.
+var test_host_script: Script
+var test_recipe: String = ""
+func get_difficulty_preference() -> String: return "challenge"
+func _create_level_instance() -> CinderLevel:
+	var scene: PackedScene = load("res://scenes/acts/act2/a2_l4.tscn") as PackedScene
+	var level: CinderLevel = scene.instantiate() as CinderLevel
+	level.set_script(test_host_script)
+	level.level_id = "A2-L4"
+	level.objective_text = "TEST PUTNEY NATIVE RESPONSE / NO CAMPAIGN PROGRESS"
+	level.local_snapshot_version = 1
+	level.set("test_recipe", test_recipe)
+	return level
+"""
+
+const STATION_XZ: Vector2 = Vector2(0, -39.6)
+const LEVEL_SCENE: String = "res://scenes/acts/act2/a2_l4.tscn"
+const KIT: Dictionary = {"weapon": "WEAPON-01", "jacket": "CLOTH-J0", "pants": "CLOTH-P0", "shoes": "CLOTH-S0"}
+const EPS: float = 0.00001
+const MAX_TICKS: int = 600
+const TIMEOUT_S: float = 75.0
+
+class NativeTickProbe:
+	extends Node
+	signal tick_finished
+	func _init() -> void:
+		process_physics_priority = 120
+		process_mode = Node.PROCESS_MODE_ALWAYS
+	func _physics_process(_delta: float) -> void: tick_finished.emit()
+
+var _construction: Script
+var _geometry: Script
+var _exact: Script
+var _host_script: GDScript
+var _game_script: GDScript
+var _main: PackedScene
+var _game: Node
+var _probe: NativeTickProbe
+var _finished: bool = false
+var _report_path: String = ""
+var _report_owned: bool = false
+var _rows: Array[Dictionary] = []
+var _source_observations: Array[Dictionary] = []
+var _components: Array[Dictionary] = []
+var _component: Dictionary = {}
+var _locked_history: Dictionary = {}
+var _current_leases: Array[Dictionary] = []
+var _pending: Dictionary = {}
+var _union_error: String = ""
+var _actions: Array[Dictionary] = []
+var _incoming: Array[Dictionary] = []
+var _progress_events: Array[String] = []
+var _failures: int = 0
+var _checks: int = 0
+var _ticks: int = 0
+var _initial_hp: float = 0.0
+var _station: Vector3
+var _begin_s: float = 0.0
+var _verdict: String = "incomplete"
+var _reason: String = ""
+var _original_success: bool = false
+var _candidate_success: bool = false
+var _counterfactual_intersects: bool = false
+var _start_ms: int = 0
+var _explicit_binding_refs: int = 0
+var _cleanup_ok: bool = true
+var _evidence_error: String = ""
+var _fired: Array[String] = []
+var _ammo_last: int = 0
+var _pickup_seen: bool = false
+var _framing_diagnostics: Dictionary = {}
+
+
+func _initialize() -> void:
+	_start_ms = Time.get_ticks_msec()
+	_run.call_deferred()
+
+
+func _run() -> void:
+	if not _options(): _finish(); return
+	_watchdog()
+	# No candidate/embedded GDScript preload or reload before raw hash gate.
+	if not _source_gate(): _finish(); return
+	_construction = load("res://scripts/acts/act2/london_approaches_construction.gd") as Script
+	_geometry = load("res://scripts/combat/threat_geometry.gd") as Script
+	_exact = load("res://scripts/campaign/exact_json.gd") as Script
+	_main = load("res://scenes/main.tscn") as PackedScene
+	if not _expect(_construction != null and _geometry != null and _exact != null and _main != null, "bootstrap", "raw-guarded candidate/framework load"): _finish(); return
+	if not _expect(FOCUS_HOST_SOURCE.sha256_text() == FOCUS_HOST_SHA256 and FOCUS_GAME_SOURCE.sha256_text() == FOCUS_GAME_SHA256, "bootstrap", "entire embedded TEST helper text retains exact controls"): _finish(); return
+	_host_script = GDScript.new()
+	_host_script.source_code = FOCUS_HOST_SOURCE
+	_game_script = GDScript.new()
+	_game_script.source_code = FOCUS_GAME_SOURCE
+	# Future execution only: in-memory scripts, never additional helper files.
+	if not _expect(_host_script.reload() == OK and _game_script.reload() == OK, "bootstrap", "one in-memory TEST host/factory source unit parses"): _finish(); return
+	root.size = Vector2i(540, 1170)
+	_probe = NativeTickProbe.new()
+	root.add_child(_probe)
+	node_added.connect(_observe_node)
+	if not await _start_component(_construction.CANONICAL_RECIPE, "original canonical Challenge"):
+		_finish(); return
+	if not await _original_response(): _finish(); return
+	_original_success = true
+	# The original actual lock may track the escape into an equivalent case.
+	# This is an unexecuted calculation, never a fabricated original hold.
+	var cf: Dictionary = _stationary_counterfactual()
+	_component["counterfactual_not_executed"] = cf
+	_counterfactual_intersects = cf.get("accepted", false) and cf.get("intersects", false)
+	_close_component()
+	if not cf.get("accepted", false): _stop("inconclusive", String(cf.get("reason", "counterfactual unsupported"))); _finish(); return
+	if not _counterfactual_intersects:
+		_stop("equivalent_or_inconclusive", "Actual original lock does not distinguish the proposed stationary response; no alternate lock/pose or candidate search")
+		_finish(); return
+	if not await _start_component(_construction.EXCHANGED_RECIPE, "exchanged Challenge"):
+		_finish(); return
+	if not await _candidate_response(): _finish(); return
+	_candidate_success = true
+	_stop("supported_fixed_response_difference", "Actual canonical escape+ordinary cadence succeeded first; actual exchanged stationary hold+ordinary cadence succeeded, with zero incoming native contact and HP loss. Original stationary result remains an unexecuted actual-lock counterfactual.")
+	_finish()
+
+
+func _options() -> bool:
+	for arg: String in OS.get_cmdline_user_args():
+		if arg.begins_with("--report=") and _report_path.is_empty(): _report_path = arg.trim_prefix("--report=")
+		else: return _expect(false, "bootstrap", "only unique --report=user://test-a2-l4-fixed-comparison-NAME/report.json supported")
+	if not _report_path.begins_with("user://test-a2-l4-fixed-comparison-") or not _report_path.ends_with("/report.json") or _report_path.contains(".."):
+		return _expect(false, "bootstrap", "separate unique TEST report destination required")
+	if FileAccess.file_exists(_report_path) or FileAccess.file_exists(_report_path.get_base_dir().path_join("native-trace.bin")): return _expect(false, "bootstrap", "refuse overwriting prior summary or raw native trace")
+	_report_owned = DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(_report_path.get_base_dir())) == OK
+	return _expect(_report_owned, "bootstrap", "create only owned report directory")
+
+
+func _source_gate() -> bool:
+	var before: int = _failures
+	for path: String in SOURCE_SHA256:
+		var observed: String = FileAccess.get_sha256(path) if FileAccess.file_exists(path) else ""
+		_source_observations.append({"path": path, "expected_sha256": SOURCE_SHA256[path], "observed_sha256": observed})
+		_expect(observed == SOURCE_SHA256[path], "source", "exact prospective input " + path)
+	return _failures == before
+
+
+func _start_component(recipe: String, label: String) -> bool:
+	if _finished or is_instance_valid(_game): return false
+	_locked_history.clear(); _current_leases.clear(); _pending.clear(); _union_error = ""
+	_actions.clear(); _incoming.clear(); _progress_events.clear(); _fired.clear(); _pickup_seen = false; _ticks = 0
+	_component = {"label": label, "recipe": recipe, "trace": [], "scope": "TEST native Putney focus only; no earned history, whole snapshot or campaign authority"}
+	_game = _main.instantiate()
+	_game.set_script(_game_script)
+	_game.set("test_host_script", _host_script)
+	_game.set("test_recipe", recipe)
+	_game.set("level_scene_path", LEVEL_SCENE)
+	root.add_child(_game)
+	paused = true # no yield occurred during normal Game reset/entry
+	if not _live(): return _stop("refused", "actual focused construction failed: " + _runtime_error())
+	var level: CinderLevel = _level()
+	var hero: CinderPlayer = _hero()
+	# Initial TEST resource setup before the first combat tick. No pickup or
+	# blast dependency; HP/stat/geometry/cadence are never altered by the fixture.
+	hero.shells = 0
+	_ammo_last = 0
+	_station = hero.global_position
+	_initial_hp = hero.hp
+	_begin_s = _clock()
+	_component["spawn"] = level.get("test_spawn_observation")
+	_component["initial_player"] = {"position": _station, "hp": hero.hp, "shells": hero.shells, "equipment_ids": hero.equipment.snapshot(), "stats": hero.stats.duplicate(true)}
+	_component["frozen_selection"] = level.get("_l4_construction")
+	if not _expect(Vector2(_station.x, _station.z) == STATION_XZ and _station.is_finite() and String(level.get("test_spawn_error")).is_empty() and hero.equipment.snapshot() == KIT and hero.shells == 0, "setup", "one actual supported station, neutral existing kit and zero ammo"): return false
+	if not _expect(level.snapshot_state().is_empty() and not level.snapshot_error({}).is_empty() and not level.is_completed() and not bool(_state().exit_open) and (_state().active_ids as Array) == ["putney_scout", "putney_handler"], "TEST boundary", "focus has only native Putney activity and rejects campaign snapshot/progress authority"): return false
+	for frame: int in range(2):
+		await process_frame
+		if _finished: return false
+	_game.call("resume_lab")
+	return await _tick()
+
+
+func _original_response() -> bool:
+	# Wait only for the first actual native accepted armed response. There is
+	# no extra lock wait or artificial pre-primary observation cycle.
+	var plan: Dictionary = await _first_plan()
+	if plan.is_empty(): return false
+	_component["selected_actual_proof"] = plan.duplicate(true)
+	if not _path_error(plan.proof).is_empty(): return _stop("inconclusive", _path_error(plan.proof))
+	for segment: Dictionary in plan.proof.path:
+		while _clock() + EPS < float(segment.start_s):
+			if not _plan_current(plan): return _stop("inconclusive", "Original native cycle/proof became stale before its actual segment")
+			var error: String = _path_union_error(plan.proof.path)
+			if not error.is_empty(): return _stop("inconclusive", "Original complete response lost current/held-union support: " + error)
+			if not await _tick(): return false
+		if not _plan_current(plan): return _stop("inconclusive", "Original actual proof/cycle retired before response completion")
+		if segment.kind in ["escape_dash", "positioning_dash"]:
+			if not await _execute_dash(plan, segment): return false
+		elif segment.kind == "ordinary_primary":
+			if not _window_open(plan.actor_id): return _stop("refused", "Original native ordinary opening is unavailable; no gate relaxation")
+			var complete_s: float = _clock() + float(_hero().stats.primary_cooldown)
+			if complete_s > float(plan.reservation.recovery_until_s) - CinderThreatScheduler.TIME_MARGIN: return _stop("inconclusive", "Actual original input cannot retain full ordinary cadence within real recovery")
+			var actual_path: Array = plan.proof.path.duplicate(true)
+			actual_path[-1].end_s = complete_s
+			var preflight: String = _path_union_error(actual_path)
+			if not preflight.is_empty(): return _stop("inconclusive", "Actual original full-cadence extension refused: " + preflight)
+			if not _primary(plan.actor_id): return false
+			_component["actual_full_cadence_path"] = actual_path.duplicate(true)
+			_component["actual_primary_complete_s"] = complete_s
+			while _clock() + EPS < complete_s:
+				var error: String = _path_union_error(actual_path)
+				if not error.is_empty(): return _stop("inconclusive", "Original full ordinary cadence no longer safe: " + error)
+				if not await _tick(): return false
+			return _expect(_incoming.is_empty() and _hero().hp == _initial_hp and not _fired.has("blast"), "actual original", "real escape and necessary positioning plus useful ordinary primary through full cadence; zero native incoming contact/HP loss")
+	return _stop("inconclusive", "Original actual proof had no executed complete ordinary-primary obligation")
+
+
+func _candidate_response() -> bool:
+	var plan: Dictionary = await _first_plan()
+	if plan.is_empty(): return false
+	if plan.actor_id != "putney_handler": return _stop("inconclusive", "First actual selected candidate proof is not the proposed fixed-lane role; no wait/preference override")
+	_component["native_admission_escape_proof_not_hold_certificate"] = plan.duplicate(true)
+	var lease: Dictionary = plan.reservation
+	# Independently assess a stationary capsule through the entire committed
+	# native cycle. No part of the native escape path certifies this hold.
+	var hold: Array[Dictionary] = [{"from": _station, "to": _station, "start_s": _begin_s, "end_s": float(lease.recovery_until_s), "kind": "TEST_stationary_hold_independent"}]
+	_component["independent_held_path"] = hold.duplicate(true)
+	var attacked: bool = false
+	var complete_s: float = INF
+	while _clock() <= float(lease.recovery_until_s) + EPS:
+		if Vector2(_hero().global_position.x, _hero().global_position.z).distance_to(STATION_XZ) > EPS:
+			return _stop("inconclusive", "Candidate left the one fixed stationary XZ; no reposition/search")
+		var error: String = _path_union_error(hold)
+		if not error.is_empty(): return _stop("refused_or_inconclusive", "Independent complete held-capsule assessment: " + error)
+		if not attacked and _window_open(plan.actor_id) and float(_hero().get_threat_response_state().primary_cooldown_left_s) <= EPS:
+			complete_s = _clock() + float(_hero().stats.primary_cooldown)
+			if complete_s > float(lease.recovery_until_s) - CinderThreatScheduler.TIME_MARGIN: return _stop("inconclusive", "Actual native opening cannot retain complete ordinary cadence")
+			if not bool(_scheduler().call("_opening_reachable", _hero().global_position, _actor(plan.actor_id).global_position, float(_hero().stats.primary_range))): return _stop("refused", "Candidate actual ordinary opening fails native range/LOS")
+			if not _primary(plan.actor_id): return false
+			attacked = true
+			_component["actual_primary_complete_s"] = complete_s
+		if attacked and _clock() + EPS >= complete_s:
+			_component["actual_hold_observed_until_s"] = _clock()
+			_component["assessed_held_extent_is_not_an_executed_whole_recovery_claim"] = true
+			return _expect(_incoming.is_empty() and _hero().hp == _initial_hp and not _fired.has("blast"), "actual candidate", "real stationary hold and useful ordinary primary through complete cadence; zero incoming native contact/HP loss")
+		if not _plan_current(plan) and float(_actor(plan.actor_id).get("hp")) > 0.0:
+			return _stop("inconclusive", "Candidate native source cancelled/retired; no recreated cycle")
+		if not await _tick(): return false
+	return _stop("inconclusive", "Candidate had no executed useful ordinary response within its actual native recovery")
+
+
+func _first_plan() -> Dictionary:
+	for frame: int in range(180):
+		if not _live(): _stop("refused", _runtime_error()); return {}
+		var latest: Dictionary = {}
+		var state: Dictionary = _state()
+		# Same latest-actual-lock criterion and authored iteration on ties as
+		# the original fixture. Never wait on a chosen ID while another proof
+		# is already due, or select an artificial left/right route.
+		for id: String in state.active_ids:
+			var current: Dictionary = state.exchanges.get(id, {})
+			if current.get("status") in ["cancelled", "complete", "defeated"]:
+				_stop("inconclusive", "Actual source retired before a supported response: " + id); return {}
+			if current.get("status") != "running": continue
+			var lease: Dictionary = _find_lease(String(current.get("reservation_id", "")))
+			var proof: Dictionary = current.get("proof", {})
+			if current.has("mechanism_id"): proof = _level().call("mechanism_proof", String(current.mechanism_id))
+			if not lease.get("armed", false) or not proof.get("accepted", false): continue
+			var plan: Dictionary = {"actor_id": id, "cycle": current.cycle, "reservation": lease.duplicate(true), "proof": proof.duplicate(true), "resolved_role": current.resolved_role.duplicate(true)}
+			if latest.is_empty() or float(lease.lock_from_s) > float(latest.reservation.lock_from_s): latest = plan
+		if not latest.is_empty(): return latest
+		if not await _tick(): return {}
+	_stop("inconclusive", "Bounded actual first native admission/proof unavailable; no source/pose change")
+	return {}
+
+
+func _execute_dash(plan: Dictionary, segment: Dictionary) -> bool:
+	var hero: CinderPlayer = _hero()
+	var response: Dictionary = hero.get_threat_response_state()
+	response.merge(_level().call("_response_context"), true)
+	var response_error: String = _scheduler().call("response_error", response)
+	if not response_error.is_empty(): return _stop("inconclusive", "Actual native pre-dash response preflight: " + response_error)
+	if not response.get("stable", false) or float(response.dash_cooldown_left_s) > EPS or _clock() > float(segment.start_s) + 1.0 / float(Engine.physics_ticks_per_second) + EPS:
+		return _stop("inconclusive", "Actual native dash readiness/deadline differs; no late repaired proof")
+	if hero.global_position.distance_to(segment.from) > CinderThreatScheduler.FEET_TOLERANCE:
+		return _stop("inconclusive", "Actual native dash no longer begins at its selected proof origin")
+	var error: String = _path_union_error(plan.proof.path)
+	if not error.is_empty(): return _stop("inconclusive", "Full native response unsafe before actual dash: " + error)
+	var direction: Vector3 = segment.to - segment.from
+	direction.y = 0.0
+	var before: int = _actions.size()
+	if not _swipe(direction.normalized()): return false
+	for frame: int in range(90):
+		if not await _tick(): return false
+		var pending_error: String = _path_union_error(plan.proof.path)
+		if not pending_error.is_empty(): return _stop("inconclusive", "New actual/held pressure invalidated original complete dash/primary path: " + pending_error)
+		for action: Dictionary in _actions.slice(before):
+			if action.kind != "dash": continue
+			if not _expect((action.landing as Vector3).distance_to(segment.to) <= CinderThreatScheduler.FEET_TOLERANCE and not action.collision_shortened and action.path.size() >= 2, "actual original", "native dash completes its selected whole supported segment"): return false
+			return true
+	return _stop("inconclusive", "Actual dash did not publish a completed world-action record")
+
+
+func _path_error(proof: Dictionary) -> String:
+	if proof.get("accepted") != true or proof.get("uses_blast") != false or proof.get("uses_invulnerability") != false or proof.get("proof_scope") != "static_box_floor_full_dash_stationary_primary" or not proof.get("path") is Array or proof.path.size() not in [4, 6]: return "Complete native supported ordinary-primary proof required"
+	if not _geometry.finite_number(proof.get("primary_time_s")) or not _geometry.finite_number(proof.get("response_complete_s")) or float(proof.response_complete_s) != float(proof.primary_time_s) + float(_hero().stats.primary_cooldown): return "Native proof omits exact full selected primary cadence"
+	var kinds: Array[String] = ["recognition_and_ready", "escape_dash", "recovery_wait", "ordinary_primary"]
+	if proof.path.size() == 6: kinds.assign(["recognition_and_ready", "escape_dash", "recovery_wait", "positioning_dash", "primary_ready", "ordinary_primary"])
+	var previous: Dictionary = {}
+	for index: int in range(proof.path.size()):
+		var segment: Variant = proof.path[index]
+		if not segment is Dictionary or segment.size() != 5 or segment.get("kind") != kinds[index] or not _geometry.finite_vector(segment.get("from")) or not _geometry.finite_vector(segment.get("to")) or not _geometry.finite_number(segment.get("start_s")) or not _geometry.finite_number(segment.get("end_s")) or float(segment.end_s) < float(segment.start_s): return "Native full response segment unsupported"
+		if not previous.is_empty() and (segment.from != previous.to or float(segment.start_s) != float(previous.end_s)): return "Native complete response is discontinuous"
+		previous = segment
+	return ""
+
+
+func _path_union_error(path: Array) -> String:
+	if not _live(): return _runtime_error()
+	if not _union_error.is_empty(): return _union_error
+	for key: String in _pending:
+		if not _pending[key].is_empty(): return "Native unresolved pending/deferred paths retained: " + key
+	var floors: Array = _level().call("floor_regions")
+	if path.size() == 1 and path[0].get("kind") == "TEST_stationary_hold_independent":
+		var response: Dictionary = _hero().get_threat_response_state()
+		response.merge(_level().call("_response_context"), true)
+		var response_error: String = _scheduler().call("response_error", response)
+		if not response_error.is_empty(): return "Independent native stable/body/timing preflight: " + response_error
+	for segment: Dictionary in path:
+		if not _geometry.finite_vector(segment.get("from")) or not _geometry.finite_vector(segment.get("to")) or not _geometry.finite_number(segment.get("start_s")) or not _geometry.finite_number(segment.get("end_s")) or float(segment.end_s) < float(segment.start_s): return "Unsupported complete response interval"
+		if not bool(_scheduler().call("_floor_path_supported", segment.from, segment.to, floors)) or not bool(_scheduler().call("_capsule_path_clear", segment.from, segment.to, _hero(), floors)): return "Actual full response support/capsule predicate refused"
+	for lease: Dictionary in _current_leases:
+		if not lease.get("armed", false) and float(lease.active_from_s) <= float(path[-1].end_s): return "A real unarmed tracking future/due-lock is unknown; stationary/current geometry is not its certificate"
+	for lease: Dictionary in _locked_history.values():
+		if _geometry.timed_path_hits(lease.geometry, path, float(lease.active_from_s), float(lease.active_until_s), CinderThreatScheduler.CAPSULE_RADIUS + CinderThreatScheduler.SKIN): return "Actual current/retained locked threat intersects complete timed capsule path: " + String(lease.id)
+	return _guard_error()
+
+
+func _stationary_counterfactual() -> Dictionary:
+	var end_s: float = float(_component.get("actual_primary_complete_s", -1.0))
+	if end_s <= _begin_s or _locked_history.is_empty(): return {"accepted": false, "reason": "No actual original complete response/locked threat history"}
+	var path: Array[Dictionary] = [{"from": _station, "to": _station, "start_s": _begin_s, "end_s": end_s, "kind": "counterfactual_stationary_NOT_EXECUTED"}]
+	var intersections: Array[String] = []
+	for lease: Dictionary in _locked_history.values():
+		if _geometry.timed_path_hits(lease.geometry, path, float(lease.active_from_s), float(lease.active_until_s), CinderThreatScheduler.CAPSULE_RADIUS + CinderThreatScheduler.SKIN): intersections.append(String(lease.id))
+	return {"accepted": true, "executed": false, "path": path, "actual_locked_union": _locked_history.duplicate(true), "intersects": not intersections.is_empty(), "intersecting_actual_lease_ids": intersections, "claim": "Timed stationary capsule calculation only; no observed original hold or damage, no reconstructed lock"}
+
+
+func _tick() -> bool:
+	if _finished or not is_instance_valid(_probe): return false
+	await _probe.tick_finished
+	if _finished: return false
+	_ticks += 1
+	if _ticks > MAX_TICKS: return _stop("inconclusive", "One fixed component reached its finite native-tick budget")
+	if not _live(): return _stop("refused", "Actual native component stopped: " + _runtime_error())
+	_collect_union()
+	var error: String = _guard_error()
+	var camera: Camera3D = _game.get("camera") as Camera3D
+	var hud: GameHUD = _game.get("hud") as GameHUD
+	_component.trace.append(_pure_native_data({"clock_s": _clock(), "hero": _hero().get_threat_response_state(), "response_context": _level().call("_response_context"), "sources": _state().exchanges, "native_current_leases": _current_leases.duplicate(true), "native_locked_history": _locked_history.duplicate(true), "native_pending_paths": _pending.duplicate(true), "union_error": _union_error, "guard_error": error, "framing_diagnostics": _framing_diagnostics.duplicate(true), "camera": {"transform": camera.global_transform, "projection": camera.projection, "size": camera.size, "viewport_size": camera.get_viewport().get_visible_rect().size, "hud_safe_rect": hud.combat_safe_rect()}}))
+	if not error.is_empty(): return _stop("refused_or_inconclusive", "Actual native guard/support/framing failure: " + error)
+	if not _incoming.is_empty() or _hero().hp != _initial_hp: return _stop("unsafe", "Actual incoming native hit/contact or HP loss; native invulnerability does not supply success")
+	if not _progress_events.is_empty(): return _stop("invalid_TEST_scope", "Focus unexpectedly requested campaign progression")
+	return true
+
+
+func _collect_union() -> void:
+	_current_leases.clear(); _pending.clear(); _union_error = ""
+	var level: CinderLevel = _level()
+	var owners: Array[Node3D] = []
+	for key: String in ["_actors", "_mechanisms", "_clouds"]:
+		for node: Node3D in (level.get(key) as Dictionary).values(): owners.append(node)
+	var by_id: Dictionary = {}
+	for owner: Node3D in owners:
+		var control: Dictionary = _scheduler().call("source_control_state", owner)
+		if control.is_empty() or not control.get("outside_transaction", false): _union_error = "Actual pure source-control custody unavailable"; return
+		for lease: Dictionary in control.reservations:
+			if not lease.get("id") is String or not lease.get("geometry") is Dictionary or not _geometry.error(lease.geometry).is_empty() or not _geometry.finite_number(lease.get("active_from_s")) or not _geometry.finite_number(lease.get("active_until_s")) or not _geometry.finite_number(lease.get("lock_from_s")) or not _geometry.finite_number(lease.get("recovery_until_s")): _union_error = "Actual native lease shape/timing unsupported"; return
+			by_id[lease.id] = lease
+			if lease.get("armed", false):
+				if _locked_history.has(lease.id) and (_locked_history[lease.id].geometry != lease.geometry or _locked_history[lease.id].active_from_s != lease.active_from_s or _locked_history[lease.id].active_until_s != lease.active_until_s): _union_error = "Already locked actual geometry/timing changed"; return
+				_locked_history[lease.id] = lease.duplicate(true)
+	for lease: Dictionary in by_id.values(): _current_leases.append(lease)
+	var exchange: Node = level.get("_exchange")
+	for id: String in exchange.get("_records"):
+		var record: Dictionary = (exchange.get("_records") as Dictionary)[id]
+		_pending["ray:" + id] = (record.get("deferred_paths", []) as Array).duplicate(true)
+	for id: String in level.get("_mechanisms"):
+		var node: Node = (level.get("_mechanisms") as Dictionary)[id]
+		_pending["tool:" + id] = (node.get("_pending_segments") as Dictionary).duplicate(true)
+	for id: String in level.get("_clouds"):
+		var node: Node = (level.get("_clouds") as Dictionary)[id]
+		var stage: String = String(node.get("_pending_stage"))
+		_pending["bank:" + id] = {} if stage.is_empty() else {"pending_stage": stage, "trace": (node.get("_trace") as Array).duplicate(true)}
+
+
+func _guard_error() -> String:
+	_framing_diagnostics.clear()
+	if not _live(): return _runtime_error()
+	var hero: CinderPlayer = _hero()
+	var level: CinderLevel = _level()
+	if hero.equipment.snapshot() != KIT: return "Fixed existing kit changed"
+	if _pickup_seen or _fired.has("blast") or hero.shells < _ammo_last: return "Ammo consumption/blast/pickup occurred; ordinary opportunity cannot depend on it"
+	_ammo_last = hero.shells # passive and hit-earned native reload remain legal
+	var retained: Dictionary = level.get("_l4_construction")
+	if not retained.is_read_only() or not (retained.positions as Dictionary).is_read_only() or retained.profile_id != "challenge" or _exact.stringify(_scheduler().call("encounter_profile")) != _exact.stringify(retained.profile): return "Frozen full Challenge construction/Scheduler profile differs"
+	var custody: String = level.call("_actor_custody_error")
+	if not custody.is_empty(): return custody
+	for id: String in retained.positions:
+		var actor: Node3D = _actor(id)
+		if not is_instance_valid(actor) or actor.global_position != retained.positions[id] or actor.get("_authored_root_position") != retained.positions[id]: return "Native configured root/custody differs: " + id
+	var floors: Array = level.call("floor_regions")
+	var error: String = _scheduler().call("_floor_error", floors, hero.global_position)
+	if not error.is_empty(): return error
+	if not bool(_scheduler().call("_floor_path_supported", hero.global_position, hero.global_position, floors)) or not bool(_scheduler().call("_capsule_path_clear", hero.global_position, hero.global_position, hero, floors)): return "Current actual capsule/support predicate refused"
+	var body: CollisionShape3D = hero.get_node_or_null("BodyCollision") as CollisionShape3D
+	if not is_instance_valid(body) or body.disabled or not body.shape is CapsuleShape3D or body.position != Vector3(0, CinderThreatScheduler.CAPSULE_CENTER_Y, 0) or body.basis != Basis.IDENTITY or not hero.global_basis.is_equal_approx(Basis.IDENTITY) or not is_equal_approx((body.shape as CapsuleShape3D).radius, CinderThreatScheduler.CAPSULE_RADIUS) or not is_equal_approx((body.shape as CapsuleShape3D).height, CinderThreatScheduler.CAPSULE_HEIGHT): return "Actual shared capsule convention differs"
+	var state: Dictionary = _state()
+	for id: String in state.active_ids:
+		var current: Dictionary = state.exchanges[id]
+		if current.get("status") == "cancelled": return "Actual native attack cancellation: " + id + ":" + String(current.get("last_cancel_reason", ""))
+		if current.get("status") != "running": continue
+		if id == "putney_scout":
+			if not bool(level.call("_exchange_framed", _actor(id), current)): return "Actual native Ray presentation/framing lost"
+		elif id == "putney_handler":
+			if not bool(level.call("_mechanism_framed", "tool_" + id, current)): return "Actual native Handler presentation/framing lost"
+	# The full original wrapper still validates forecasts + published points.
+	# Normal Game planning consumes that original list; this TEST never refits.
+	var full_points: Array = level.camera_framing_points()
+	var hero_points: Array = _game.call("player_camera_framing_points")
+	_framing_diagnostics = {
+		"full_original_wrapper_points": full_points.duplicate(true),
+		"full_original_wrapper_error": level.last_camera_framing_error,
+		"full_original_forecast_points": (level.get("_forecast_points") as Dictionary).duplicate(true),
+		"normal_game_planner_state": _game.call("get_camera_framing_state"),
+		"normal_game_last_camera_framing_error": _game.get("last_camera_framing_error"),
+		"actual_full_hero_bounds": hero_points.duplicate(true),
+		"diagnostic_scope": "Original full forecast/planner diagnostics retained; only RUNNING published points classify current containment",
+	}
+	if not level.last_camera_framing_error.is_empty(): return level.last_camera_framing_error
+	var published_points: Array = _published_framing_points()
+	_framing_diagnostics["TEST_current_published_running_points"] = published_points.duplicate(true)
+	# Same cardinality and finite bounded Vector3 contract as the original
+	# CinderLevel wrapper; subset classification never relaxes point validity.
+	if published_points.size() > 224: return "Camera framing requires at most 224 actual world corners"
+	for point: Variant in published_points:
+		if not point is Vector3 or not point.is_finite() or maxf(absf(point.x), maxf(absf(point.y), absf(point.z))) > 1024.0:
+			return "Camera framing corners must be finite bounded world positions"
+	var camera_error: String = _game.call("camera_framing_error", published_points if not published_points.is_empty() else hero_points)
+	_framing_diagnostics["TEST_current_published_containment_error"] = camera_error
+	if not camera_error.is_empty(): return camera_error
+	return ""
+
+
+func _published_framing_points() -> Array:
+	# Pure TEST projection of exact b81f host camera logic. These aliases are
+	# native retained dictionaries; the three RUNNING branch bodies below are
+	# byte-for-byte copied. Only two idle forecast elif lines are omitted.
+	var level: CinderLevel = _level()
+	var runtime_error: String = String(level.get("runtime_error"))
+	var _entered: bool = bool(level.get("_entered"))
+	var hero: CinderPlayer = level.hero
+	var _mechanisms: Dictionary = level.get("_mechanisms")
+	var _views: Dictionary = level.get("_views")
+	var _exchange: Node = level.get("_exchange")
+	var _clouds: Dictionary = level.get("_clouds")
+	var _actors: Dictionary = level.get("_actors")
+	var _bank_views: Dictionary = level.get("_bank_views")
+	var LondonSequence: Script = _construction.Sequence
+	var Codec: Script = _construction.Codec
+	var BANK_TO_TENDER: Dictionary = {"flood_bank": "flood_tender", "villa_bank": "villa_tender"}
+	if not runtime_error.is_empty(): return []
+	if not _entered or not is_instance_valid(hero): return []
+	var points: Array[Vector3] = []
+	for id: String in _mechanisms:
+		var state: Dictionary = _mechanisms[id].call("state")
+		if state.status == "running":
+			points.append_array(_source_points(id))
+			if state.phase != "recovery": points.append_array(_lane_points(state.geometry))
+			if _views.has(id):
+				for key: String in ["landing", "attack_position"]: points.append_array(_landing_points(Codec.read_vector3(_views[id][key])))
+	if is_instance_valid(_exchange):
+		for ray_id: String in LondonSequence.RAYS:
+			var scout: Dictionary = _exchange.call("state", ray_id)
+			if scout.get("status") == "running":
+				points.append_array(_source_points(ray_id))
+				if scout.phase != "recovery":
+					points.append_array(_lane_points(_state_geometry(scout)))
+					var proof: Dictionary = scout.get("proof", {})
+					if not proof.get("landing") is Vector3: proof = scout.get("presentation_witness", {})
+					for key: String in ["landing", "attack_position"]:
+						if proof.get(key) is Vector3: points.append_array(_landing_points(proof[key]))
+	for id: String in _clouds:
+		if _clouds[id].call("state").status == "running":
+			points.append_array(_required_source_points(_actors[BANK_TO_TENDER[id]]))
+			points.append_array(_clouds[id].call("get_required_camera_points"))
+			if _bank_views.has(id):
+				for key: String in ["landing", "attack_position"]: points.append_array(_landing_points(Codec.read_vector3(_bank_views[id][key])))
+	return points
+
+
+# TEST forwarding adapters call only unchanged original pure native helpers.
+# They are outside the embedded host and do not override production behavior.
+func _source_points(id: String) -> Array:
+	return _level().call("_source_points", id)
+func _lane_points(geometry: Dictionary) -> Array:
+	return _level().call("_lane_points", geometry)
+func _landing_points(point: Vector3) -> Array:
+	return _level().call("_landing_points", point)
+func _state_geometry(state: Dictionary) -> Dictionary:
+	return _level().call("_state_geometry", state)
+func _required_source_points(actor: Node3D) -> Array:
+	return _level().call("_required_source_points", actor)
+
+
+func _window_open(id: String) -> bool:
+	if id == "putney_scout": return bool((_level().get("_exchange") as Node).call("damage_window_open", id))
+	return bool(_level().call("_handler_window", id))
+
+
+func _plan_current(plan: Dictionary) -> bool:
+	if not _live(): return false
+	var current: Dictionary = _state().exchanges.get(plan.actor_id, {})
+	var lease: Dictionary = _find_lease(String(current.get("reservation_id", "")))
+	return current.get("status") == "running" and int(current.get("cycle", -1)) == int(plan.cycle) and current.get("reservation_id") == plan.reservation.id and lease.get("armed", false)
+
+
+func _find_lease(id: String) -> Dictionary:
+	for lease: Dictionary in _current_leases:
+		if lease.id == id: return lease
+	return {}
+
+
+func _screen_delta(direction: Vector3) -> Vector2:
+	var camera: Camera3D = _game.get("camera") as Camera3D
+	var right: Vector3 = camera.global_basis.x
+	var down: Vector3 = camera.global_basis.z
+	right.y = 0.0; down.y = 0.0
+	return Vector2(direction.dot(right.normalized()), direction.dot(down.normalized())) * 120.0
+
+
+func _swipe(direction: Vector3) -> bool:
+	var start: Vector2 = Vector2(0.5, 0.60) * root.get_visible_rect().size
+	var end: Vector2 = start + _screen_delta(direction)
+	if not _expect((_game.call("screen_to_direction", end - start) as Vector3).is_equal_approx(direction), "actual input", "real camera maps native selected direction without a side tie-break"): return false
+	var press := InputEventScreenTouch.new()
+	press.index = 23; press.pressed = true; press.position = start
+	root.push_input(press, true)
+	var drag := InputEventScreenDrag.new()
+	drag.index = 23; drag.position = end; drag.relative = end - start
+	root.push_input(drag, true)
+	var release := InputEventScreenTouch.new()
+	release.index = 23; release.position = end
+	root.push_input(release, true)
+	return _expect(_hero().get_committed_dash_state().get("active", false), "actual input", "real routed swipe commits the native dash")
+
+
+func _primary(id: String) -> bool:
+	var hero: CinderPlayer = _hero()
+	var actor: Node3D = _actor(id)
+	var direction: Vector3 = actor.global_position - hero.global_position
+	direction.y = 0.0
+	if direction.length_squared() <= EPS: return _stop("inconclusive", "Ordinary aim direction is degenerate at the fixed native opening")
+	direction = direction.normalized()
+	var position: Vector2 = _game.call("get_aim_anchor") + _screen_delta(direction)
+	if not _expect((_game.call("aim_direction", position) as Vector3).is_equal_approx(direction), "actual input", "ordinary aim preserves last swipe final-release anchor"): return false
+	var before: int = _actions.size()
+	var hp_before: float = float(actor.get("hp"))
+	var press := InputEventScreenTouch.new()
+	press.index = 24; press.pressed = true; press.position = position
+	root.push_input(press, true)
+	var release := InputEventScreenTouch.new()
+	release.index = 24; release.position = position
+	root.push_input(release, true)
+	var accepted: bool = _actions.size() == before + 1 and _actions.back().kind == "primary" and int(_actions.back().hits) > 0 and float(actor.get("hp")) < hp_before and not _fired.has("blast")
+	_component["ordinary_primary"] = {"clock_s": _clock(), "target_id": id, "hp_before": hp_before, "hp_after": actor.get("hp"), "actual_world_record": _actions.back() if _actions.size() > before else {}}
+	if not _expect(accepted, "actual useful primary", "real first tap damages its native recovering HP30 source without blast or synthetic damage"): return _stop("refused", "Actual ordinary-primary effect unavailable")
+	return true
+
+
+func _observe_node(node: Node) -> void:
+	if node is CinderPlayer:
+		node.world_action_executed.connect(func(record: Dictionary) -> void: _actions.append(record.duplicate(true)))
+		node.fired.connect(func(kind: String) -> void: _fired.append(kind))
+	if node is CinderLevel:
+		node.checkpoint_requested.connect(func(_id: String, _checkpoint: String, _kind: String) -> void: _progress_events.append("checkpoint"))
+		node.completion_requested.connect(func(_id: String, _completion: String) -> void: _progress_events.append("completion"))
+		node.contact_exit_requested.connect(func(_id: String, _exit: String) -> void: _progress_events.append("exit"))
+	var script: Script = node.get_script() as Script
+	var path: String = script.resource_path if script != null else ""
+	if path.contains("pickup"): _pickup_seen = true
+	if path == "res://scripts/combat/lane_mechanism.gd":
+		node.connect("hit_resolved", func(hero_id: String, cycle: int, result: Dictionary) -> void: _incoming.append({"kind": "lane-contact", "hero_id": hero_id, "cycle": cycle, "result": result.duplicate(true)}))
+	elif path == "res://scripts/acts/act2/ray_scout_exchange.gd":
+		node.connect("hit_resolved", func(id: String, result: Dictionary) -> void: _incoming.append({"kind": "ray-contact", "source_id": id, "result": result.duplicate(true)}))
+	elif path == "res://scripts/combat/smoke_bank.gd":
+		node.connect("tick_resolved", func(hero_id: String, cycle: int, result: Dictionary) -> void: _incoming.append({"kind": "bank-contact", "hero_id": hero_id, "cycle": cycle, "result": result.duplicate(true)}))
+
+
+func _level() -> CinderLevel:
+	return _game.get("active_level") as CinderLevel if is_instance_valid(_game) else null
+func _hero() -> CinderPlayer:
+	return _game.get("player") as CinderPlayer if is_instance_valid(_game) else null
+func _scheduler() -> Node:
+	return _level().get("_scheduler") if is_instance_valid(_level()) else null
+func _actor(id: String) -> Node3D:
+	return (_level().get("_actors") as Dictionary).get(id) as Node3D
+func _state() -> Dictionary:
+	return _level().call("encounter_state") if is_instance_valid(_level()) else {}
+func _clock() -> float:
+	return float(_scheduler().call("get_clock")) if is_instance_valid(_scheduler()) else -1.0
+func _live() -> bool:
+	return not _finished and is_instance_valid(_game) and is_instance_valid(_level()) and is_instance_valid(_hero()) and not _hero().dead and String(_level().get("runtime_error")).is_empty() and String(_game.get("level_load_error")).is_empty()
+func _runtime_error() -> String:
+	if not is_instance_valid(_game) or not is_instance_valid(_level()) or not is_instance_valid(_hero()): return "TEST actual Game/Level/Player binding unavailable"
+	return "runtime=" + String(_level().get("runtime_error")) + "; load=" + String(_game.get("level_load_error")) + "; dead=" + str(_hero().dead)
+
+
+func _close_component() -> void:
+	if _component.is_empty(): return
+	_component["actual_actions"] = _actions.duplicate(true)
+	_component["actual_incoming_native_contacts"] = _incoming.duplicate(true)
+	_component["progress_events"] = _progress_events.duplicate()
+	_component["actual_fired_events"] = _fired.duplicate()
+	_component["passive_or_hit_earned_reload_preserved"] = true
+	_component["last_native_locked_history"] = _locked_history.duplicate(true)
+	if is_instance_valid(_hero()): _component["final_player"] = {"position": _hero().global_position, "hp": _hero().hp, "shells": _hero().shells}
+	_component = _pure_native_data(_component)
+	if is_instance_valid(_game):
+		var level: CinderLevel = _level()
+		var reference: WeakRef = weakref(level) if is_instance_valid(level) else null
+		var game_reference: WeakRef = weakref(_game)
+		if is_instance_valid(level): level.exit_level()
+		_game.free()
+		_game = null
+		var released: bool = (reference == null or reference.get_ref() == null) and game_reference.get_ref() == null
+		_cleanup_ok = _cleanup_ok and released
+		_expect(released, "cleanup", "normal attached exit/free retires owned focus subtree")
+	_components.append(_component)
+	_component = {}
+
+
+func _stop(verdict: String, reason: String) -> bool:
+	_verdict = verdict; _reason = reason
+	return false
+
+
+func _expect(condition: bool, scope: String, detail: String) -> bool:
+	_checks += 1
+	if not condition: _failures += 1
+	_rows.append({"scope": scope, "detail": detail, "passed": condition})
+	if not condition: push_error("A2-L4 fixed comparison: " + scope + ": " + detail)
+	return condition
+
+
+func _watchdog() -> void:
+	await create_timer(TIMEOUT_S, true, false, true).timeout
+	if _finished: return
+	_stop("incomplete_timeout", "Bounded wall-clock deadline, no success credit or alternate trial")
+	_finish()
+
+
+func _pure_native_data(value: Variant) -> Variant:
+	# Native geometric/timing types remain native in the binary trace. Only
+	# ephemeral handles become EXPLICIT observation-time identity/binding data;
+	# these records cannot reconstruct or authorize a Node/Resource/Callable.
+	match typeof(value):
+		TYPE_DICTIONARY:
+			var result: Dictionary = {}
+			for key: Variant in value: result[key] = _pure_native_data(value[key])
+			return result
+		TYPE_ARRAY:
+			var result: Array = []
+			for child: Variant in value: result.append(_pure_native_data(child))
+			return result
+		TYPE_OBJECT:
+			_explicit_binding_refs += 1
+			if not is_instance_valid(value):
+				_evidence_error = "Native binding released before observation-time projection"
+				return {"UNSUPPORTED_NATIVE_REFERENCE": _evidence_error}
+			if not value is CinderPlayer and not value is StaticBody3D and not value is CollisionShape3D and not value is BoxShape3D and not value is CapsuleShape3D:
+				_evidence_error = "Unrecognized native Object binding: " + value.get_class()
+				return {"UNSUPPORTED_NATIVE_REFERENCE": _evidence_error}
+			var binding: Dictionary = {"EXPLICIT_NATIVE_BINDING_REFERENCE": value.get_class(), "instance_id": value.get_instance_id(), "reconstructible": false}
+			if value is Node:
+				binding["path"] = String(value.get_path()) if value.is_inside_tree() else "outside-tree"
+				var script: Script = value.get_script() as Script
+				binding["script_path"] = script.resource_path if script != null else ""
+				if value is Node3D:
+					binding["actual_global_transform"] = value.global_transform
+					binding["world_instance_id"] = value.get_world_3d().get_instance_id() if value.is_inside_tree() else 0
+				if value is CollisionObject3D:
+					binding["collision_layer"] = value.collision_layer
+					binding["collision_mask"] = value.collision_mask
+				if value is CollisionShape3D:
+					binding["disabled"] = value.disabled
+					binding["actual_shape"] = _pure_native_data(value.shape)
+			elif value is Resource:
+				binding["resource_path"] = value.resource_path
+				if value is BoxShape3D: binding["actual_box_size"] = value.size
+				elif value is CapsuleShape3D:
+					binding["actual_capsule_radius"] = value.radius
+					binding["actual_capsule_height"] = value.height
+			return binding
+		TYPE_CALLABLE, TYPE_RID, TYPE_SIGNAL:
+			_evidence_error = "Unsupported native handle encountered in raw trace: type " + str(typeof(value))
+			return {"UNSUPPORTED_NATIVE_HANDLE": _evidence_error}
+		_: return value
+
+
+func _sha256_bytes(bytes: PackedByteArray) -> String:
+	var digest := HashingContext.new()
+	if digest.start(HashingContext.HASH_SHA256) != OK or digest.update(bytes) != OK: return ""
+	return digest.finish().hex_encode()
+
+
+func _write_raw(path: String, bytes: PackedByteArray) -> Dictionary:
+	var expected_sha: String = _sha256_bytes(bytes)
+	var file: FileAccess = FileAccess.open(path, FileAccess.WRITE)
+	if file == null: return {"accepted": false, "reason": "raw native trace open failed"}
+	file.store_buffer(bytes); file.flush()
+	var io_ok: bool = file.get_error() == OK
+	file.close()
+	var observed: PackedByteArray = FileAccess.get_file_as_bytes(path)
+	var observed_sha: String = _sha256_bytes(observed)
+	var roundtrip: bool = var_to_bytes(bytes_to_var(observed)) == bytes
+	return {"accepted": io_ok and not expected_sha.is_empty() and observed == bytes and observed_sha == expected_sha and roundtrip, "path": path, "bytes": bytes.size(), "sha256": expected_sha, "readback_sha256": observed_sha, "native_binary_roundtrip_exact": roundtrip, "encoding": "Godot var_to_bytes pure-data binary; Vector/Basis/Transform/Rect/float/int types retained exactly; explicit binding-reference metadata, never serialized Object/Callable handles"}
+
+
+func _finish() -> void:
+	if _finished: return
+	# Latch before cleanup; any waiting coroutine must check before use.
+	_finished = true
+	_close_component()
+	if node_added.is_connected(_observe_node): node_added.disconnect(_observe_node)
+	if is_instance_valid(_probe): _probe.free()
+	_probe = null
+	paused = false
+	var raw_payload: Dictionary = {"api_revision": "TEST-a2-l4-native-comparison-trace-1", "source_sha256": FileAccess.get_sha256(get_script().resource_path), "embedded_host_sha256": FOCUS_HOST_SHA256, "embedded_game_sha256": FOCUS_GAME_SHA256, "components": _components, "source_observations": _source_observations, "checks_detail": _rows, "explicit_native_binding_reference_count": _explicit_binding_refs, "handle_policy": "Each ephemeral handle becomes explicit observation-time identity/physical binding data. Native geometric and scalar values remain their original Godot types. No Object/Callable/RID is serialized as a live handle. This is not a save/restore codec."}
+	var raw_receipt: Dictionary = {"accepted": false, "reason": "report directory unavailable"}
+	if _report_owned:
+		var bytes: PackedByteArray = var_to_bytes(raw_payload)
+		if bytes.size() <= 128 * 1024 * 1024:
+			raw_receipt = _write_raw(_report_path.get_base_dir().path_join("native-trace.bin"), bytes)
+		else:
+			raw_receipt = {"accepted": false, "reason": "finite trace exceeded 128MiB persistence budget; no paths truncated and no positive result", "bytes": bytes.size()}
+	var difference: bool = _original_success and _candidate_success and _counterfactual_intersects and _cleanup_ok and _evidence_error.is_empty() and _failures == 0 and raw_receipt.get("accepted", false) and _verdict == "supported_fixed_response_difference"
+	var report: Dictionary = {"api_revision": "TEST-a2-l4-fixed-comparison-1", "inert_source_origin": true, "source_sha256": FileAccess.get_sha256(get_script().resource_path), "embedded_host_sha256": FOCUS_HOST_SHA256, "embedded_game_sha256": FOCUS_GAME_SHA256, "original_actual_success": _original_success, "candidate_actual_success": _candidate_success, "original_stationary_counterfactual_executed": false, "fixed_response_difference_supported": difference, "campaign_or_policy_acceptance_claimed": false, "normal_cleanup_completed": _cleanup_ok, "native_evidence_error": _evidence_error, "verdict": _verdict, "reason": _reason, "checks": _checks, "failures": _failures, "wall_ms": Time.get_ticks_msec() - _start_ms, "raw_native_trace": raw_receipt}
+	var persisted: bool = false
+	if _report_owned:
+		var wire: String = JSON.stringify(report, "\t", true, true) + "\n"
+		var file: FileAccess = FileAccess.open(_report_path, FileAccess.WRITE)
+		if file != null:
+			file.store_string(wire); file.flush()
+			var io_ok: bool = file.get_error() == OK
+			file.close()
+			persisted = io_ok and FileAccess.get_file_as_string(_report_path) == wire and FileAccess.get_sha256(_report_path) == wire.sha256_text()
+	if not persisted or not raw_receipt.get("accepted", false): push_error("A2-L4 fixed comparison summary/raw trace not safely persisted; no success exit")
+	print("A2-L4 fixed comparison: verdict=%s original_actual=%s candidate_actual=%s fixed_difference=%s checks=%d failures=%d summary_persisted=%s raw_persisted=%s; no campaign/policy acceptance" % [_verdict, str(_original_success), str(_candidate_success), str(difference), _checks, _failures, str(persisted), str(raw_receipt.get("accepted", false))])
+	quit(0 if difference and persisted else 2 if persisted and raw_receipt.get("accepted", false) and _evidence_error.is_empty() and _failures == 0 else 1)
