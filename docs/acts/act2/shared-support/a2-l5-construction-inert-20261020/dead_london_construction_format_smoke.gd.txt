@@ -1,0 +1,157 @@
+extends SceneTree
+## INERT, UNPARSED, UNEXECUTED constructor/format companion for Root promotion.
+## Closed-shape TEST maps below are NOT native/legacy save packets. No world,
+## source, HP, earned phase, Attempts, Store or historical Challenge authority.
+const Selection = preload("res://scripts/acts/act2/dead_london_construction.gd")
+const Host = preload("res://scripts/acts/act2/dead_london.gd")
+const Difficulty = preload("res://scripts/combat/difficulty.gd")
+const Exact = preload("res://scripts/campaign/exact_json.gd")
+const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
+var checks: int = 0
+var failures: int = 0
+var complete: bool = false
+var first_failure: String = ""
+
+func _initialize() -> void:
+	_run.call_deferred()
+
+func _run() -> void:
+	_expect(Host.LOCAL_KEYS == Selection.LEGACY_KEYS and Host.LOCAL_KEYS.size() == 26, "host retains the exact original closed26 key catalogue")
+	for profile_id: String in ["assisted", "standard", "challenge"]:
+		var fresh: Dictionary = Selection.fresh(profile_id)
+		if not _expect(fresh.error.is_empty(), "fresh canonical profile selects: " + profile_id): _finish(); return
+		var recipe: String = Selection.ENTRY_SIDE if profile_id == "challenge" else Selection.CANONICAL
+		_expect(not fresh.legacy and fresh.descriptor.recipe_id == recipe and fresh.definition.joint_anchor == Selection.JOINT and fresh.definition.foot_radius == 1.10, "fresh recipe changes only the whole finite Foot definition: " + profile_id)
+		_expect(fresh.definition.foot_anchor == (Selection.ENTRY_FOOT if profile_id == "challenge" else Selection.ORIGINAL_FOOT), "fresh exact whole Foot anchor: " + profile_id)
+		var old26: Dictionary = _shape(profile_id)
+		var before: String = Exact.stringify(old26)
+		var old: Dictionary = Selection.restored(old26)
+		_expect(old.error.is_empty() and old.legacy and old.descriptor.recipe_id == Selection.CANONICAL and old.definition.foot_anchor == Selection.ORIGINAL_FOOT and old26.size() == 26 and before == Exact.stringify(old26), "literal old26 including Challenge is original, pure and not rewritten: " + profile_id)
+		var new27: Dictionary = old26.duplicate(true)
+		new27["construction"] = fresh.descriptor.duplicate(true)
+		new27.sentry.configuration.foot_anchor = Codec.vector3(fresh.definition.foot_anchor)
+		var modern: Dictionary = Selection.restored(new27)
+		_expect(modern.error.is_empty() and not modern.legacy and modern.definition == fresh.definition and new27.size() == 27, "new27 restores its explicit definition: " + profile_id)
+		var decoded: Dictionary = Exact.parse(Exact.stringify(new27))
+		_expect(decoded.get("accepted", false) and not Exact.stringify(decoded.value).is_empty() and Exact.stringify(decoded.value) == Exact.stringify(new27), "exact tagged JSON preserves typed construction and shape map: " + profile_id)
+		# Future preference is intentionally absent from restore's inputs.
+		Selection.fresh("assisted" if profile_id == "challenge" else "challenge")
+		_expect(Selection.restored(new27).definition == fresh.definition and Selection.restored(old26).definition.foot_anchor == Selection.ORIGINAL_FOOT, "other fresh preferences cannot retag a saved construction: " + profile_id)
+		var explicit_v1: Dictionary = new27.duplicate(true)
+		explicit_v1.construction.recipe_id = Selection.CANONICAL
+		explicit_v1.sentry.configuration.foot_anchor = Codec.vector3(Selection.ORIGINAL_FOOT)
+		_expect(Selection.restored(explicit_v1).error.is_empty(), "explicit canonical v1 accepts every canonical saved profile: " + profile_id)
+		var host: Node = Host.new()
+		var player: Dictionary = {"world_actions": {"sequence": 0}}
+		_expect(host.call("_local_shape_error", old26, player) == "" and host.call("_local_shape_error", new27, player) == "" and host.get_child_count() == 0, "host pure shape preflight accepts both formats without native construction: " + profile_id)
+		var numeric_old: Dictionary = old26.duplicate(true)
+		numeric_old.world_revision = 1.0
+		numeric_old.last_action_sequence = 0.0
+		_expect(host.call("_local_shape_error", numeric_old, player) == "", "legacy integral numeric world/cursor acceptance is unchanged: " + profile_id)
+		numeric_old.stage = 0.0
+		_expect(host.call("_local_shape_error", numeric_old, player) != "", "legacy stage remains strict int; no blanket numeric coercion: " + profile_id)
+		host.free()
+		# Empty ended Scheduler profile does not erase the saved descriptor.
+		var ended: Dictionary = new27.duplicate(true)
+		ended.stage = 10
+		ended.completion_pending = false
+		ended.scheduler.profile = {}
+		var ended_plan: Dictionary = Selection.restored(ended)
+		_expect(ended_plan.error.is_empty() and Exact.stringify(ended_plan.descriptor) == Exact.stringify(fresh.descriptor), "descriptor outlives ordinarily ended Scheduler in pure selection: " + profile_id)
+		# This is only selector/format coverage, not a valid completed aggregate.
+		ended.stage = 0
+		_expect(not Selection.restored(ended).error.is_empty(), "active-stage empty Scheduler profile is refused: " + profile_id)
+	var valid: Dictionary = Selection.fresh("challenge").descriptor
+	for field: String in Selection.KEYS:
+		var missing: Dictionary = valid.duplicate(true)
+		missing.erase(field)
+		_expect(not Selection.descriptor_error(missing).is_empty(), "descriptor missing field refuses: " + field)
+	var extra: Dictionary = valid.duplicate(true)
+	extra["arbitrary_foot_anchor"] = [0.65, 0, -27.45]
+	_expect(not Selection.descriptor_error(extra).is_empty(), "descriptor cannot smuggle arbitrary native anchors")
+	var wrong_schema: Dictionary = valid.duplicate(true)
+	wrong_schema.schema_version = 1.0
+	_expect(not Selection.descriptor_error(wrong_schema).is_empty(), "new descriptor schema1 remains strict int")
+	var bad_api: Dictionary = valid.duplicate(true)
+	bad_api.api_revision = StringName(Selection.API)
+	_expect(not Selection.descriptor_error(bad_api).is_empty(), "new descriptor API remains String, not StringName")
+	var unknown: Dictionary = valid.duplicate(true)
+	unknown.recipe_id = "A2-L5/other@v3"
+	_expect(not Selection.descriptor_error(unknown).is_empty(), "unknown recipe refuses instead of guessing an anchor")
+	for profile_id: String in ["assisted", "standard"]:
+		var incompatible: Dictionary = Selection.fresh(profile_id).descriptor
+		incompatible.recipe_id = Selection.ENTRY_SIDE
+		_expect(not Selection.descriptor_error(incompatible).is_empty(), "entry-side recipe cannot become non-Challenge: " + profile_id)
+	var spoofed: Dictionary = valid.duplicate(true)
+	spoofed.profile.raw_damage_multiplier = 2.0
+	_expect(not Selection.descriptor_error(spoofed).is_empty(), "canonical profile values cannot be retuned")
+	var type_only: Dictionary = valid.duplicate(true)
+	var amount: Variant = type_only.profile.raw_damage_multiplier
+	type_only.profile.raw_damage_multiplier = int(amount) if amount is float else float(amount)
+	_expect(not Selection.descriptor_error(type_only).is_empty(), "equal numeric value with different profile type refuses")
+	var short_profile: Dictionary = valid.duplicate(true)
+	short_profile.profile.erase("arrangement")
+	_expect(not Selection.descriptor_error(short_profile).is_empty(), "profile8 includes the exact arrangement field")
+	var base: Dictionary = _shape("challenge")
+	base["construction"] = valid.duplicate(true)
+	base.sentry.configuration.foot_anchor = Codec.vector3(Selection.ENTRY_FOOT)
+	var wrong_header: Dictionary = base.duplicate(true)
+	wrong_header.sentry.configuration.foot_anchor = Codec.vector3(Selection.ORIGINAL_FOOT)
+	_expect(not Selection.restored(wrong_header).error.is_empty(), "descriptor and actual saved B05 anchor must join before construction")
+	var false_legacy: Dictionary = base.duplicate(true)
+	false_legacy.erase("construction")
+	_expect(not Selection.restored(false_legacy).error.is_empty(), "dropping the descriptor cannot conceal entry-side anchors as old26")
+	var wrong_active: Dictionary = base.duplicate(true)
+	wrong_active.scheduler.profile = Difficulty.new().profile("standard")
+	_expect(not Selection.restored(wrong_active).error.is_empty(), "nonempty actual saved profile joins all eight fields, not equal multipliers")
+	var wrong_id: Dictionary = base.duplicate(true)
+	wrong_id.profile_id = "standard"
+	_expect(not Selection.restored(wrong_id).error.is_empty(), "saved profile ID and descriptor cannot diverge")
+	var null_descriptor: Dictionary = base.duplicate(true)
+	null_descriptor.construction = null
+	_expect(not Selection.restored(null_descriptor).error.is_empty(), "present null is not literal old26 absence")
+	var extra_local: Dictionary = base.duplicate(true)
+	extra_local["unused"] = 0
+	_expect(not Selection.restored(extra_local).error.is_empty(), "new format remains closed27")
+	var missing_local: Dictionary = base.duplicate(true)
+	missing_local.erase("world_revision")
+	_expect(not Selection.restored(missing_local).error.is_empty(), "new format cannot omit an original local key")
+	var alias: Dictionary = Selection.restored(base)
+	alias.descriptor.profile.name = "mutated returned diagnostic"
+	_expect(Exact.stringify(base.construction) == Exact.stringify(valid) and Selection.restored(base).error.is_empty(), "returned descriptor mutation cannot alter input or next selection")
+	complete = true
+	_finish()
+
+func _shape(profile_id: String) -> Dictionary:
+	# TEST ONLY complete KEY/SHAPE map. Empty components are not actual saved
+	# Player/Scheduler/B05 state; strict whole/native validators must still run.
+	var local: Dictionary = {}
+	for key: String in Host.LOCAL_KEYS: local[key] = null
+	local.stage = 0
+	local.defeated_scouts = []
+	local.contacts = []
+	local.contact_seen = ""
+	for key: String in ["rehearsal_complete", "sentry_started", "phase2_checkpoint", "passage_open", "completion_pending", "exit_requested", "pending_phase2", "pending_clear", "phase2_admitted_after_checkpoint"]: local[key] = false
+	local.profile_id = profile_id
+	local.world_revision = 1
+	local.last_action_sequence = 0
+	local.pending_checkpoints = []
+	local.pending_defeats = []
+	local.gate_states = {"entry": false, "departure": true}
+	for key: String in ["scheduler", "familiar", "rehearsal", "rehearsal_view", "sentry_foot_view", "bait", "sentry"]: local[key] = {}
+	local.scheduler.profile = Difficulty.new().profile(profile_id)
+	local.sentry = {"configuration": {"joint_anchor": Codec.vector3(Selection.JOINT), "foot_anchor": Codec.vector3(Selection.ORIGINAL_FOOT), "foot_radius": 1.10, "profile_id": profile_id}}
+	return local
+
+func _expect(ok: bool, label: String) -> bool:
+	checks += 1
+	if not ok:
+		failures += 1
+		if first_failure.is_empty(): first_failure = label
+		push_error(label)
+	return ok
+
+func _finish() -> void:
+	print(JSON.stringify({"checks": checks, "failures": failures, "scope_complete": complete, "first_failure": first_failure, "scope": "Pure finite constructor/closed26-27/typed profile/Exact format/host shape only; TEST maps are not legacy saves; no native world, whole-unit persistence, gameplay, paired response or acceptance credit."}))
+	print("A2-L5 construction/format companion: %d checks, %d failures; scope_complete=%s" % [checks, failures, str(complete)])
+	quit(0 if failures == 0 and complete else 1)
