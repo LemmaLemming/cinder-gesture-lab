@@ -1,5 +1,13 @@
 # Cinder shared progress
 
+## Irontick’s five existing purposes retained —20 October2026
+
+[Root accepts five individually supported purposes](ACT3_O3_DIFFICULTY_RETENTION.md) at owner97c12441: real endpoint with independently eligible pulse, offset return with real solid/LOS stones, required Echo versus optional C50 priority, partial-hit/rearm/earned CP continuity and history-driven progress/separate grounded departure. All18 current source pairs match. The last two support continuity/departure rather than extra combat novelty; there is no whole-optional/act exemption, additional Challenge response, native repeat or runtime/API change. Current global revision stays Shared75; actual worker adoptions remain separate. Original Shared62 footer counters, Shared64 Root137, first340×736 warning image, later failures/nonclean/diagnostic PauseERROR and untested C50/Replay/full-route/art/balance scopes remain explicit. Exact two owner documents plus canonical handoff and three reviews are portable.
+
+Fourteen authored+eight bounded retention policies cover22/24; all24 original content acceptances remain. A2-L4/L5 are the two unfinished policies. Root reviews L4’s minimal deferred TEST cleanup/custody correction and Agent02’s additive L5 userStore/envelope correction; no old suite repeats or inferred outcome from the failed locked-probe stack. Act3 remains stopped after its acknowledged completed scope. Root first help; no public upload/mobile/export/release or human/full-route gate.
+
+Earlier checkpoints below retain their then-current counts and scope.
+
 ## Clear Air Circuit direction and saved construction accepted —20 October2026
 
 [Root accepts the exact020 Handler amendment](ACT2_O2_DIFFICULTY.md): fresh Challenge diagonal requires an actual one-dash response where the original uses two; both make an ordinary30→10 hit with full cadence, no incoming loss and no blast. Original1142/0+candidate1149/0 are clean. Overall78/1 remains failed while its complete old16 five-stage Store/Continue/Pause/Retry case is reused. Onlynew17 executes the next92/0 clean job, retaining43 true exact layout clauses, current/earlier CP/session/Story and generations/backups, plus one actual first-warning portrait personally inspected. Native actor adapter uses two normalizations; the old combined TEST failure is preserved. Normal subtree disposal passes; own save deletion lacks a post-removal absence assertion. Original32/1,33/1,47/1,78/1 and all unexecuted portions stay unchanged.
