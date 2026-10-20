@@ -7,12 +7,14 @@ const StalkerScript = preload("res://scripts/acts/act3/sunbound_stalker.gd")
 const SchedulerScript = preload("res://scripts/combat/threat_scheduler.gd")
 const InteractionCue = preload("res://scripts/cues/interaction_cue.gd")
 const MarkerProp = preload("res://scripts/acts/act3/temporal_marker_prop.gd")
+const Construction = preload("res://scripts/acts/act3/pillars_construction.gd")
 const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
 const ENCOUNTER_DATA: String = "res://data/campaign/act3/a3_o1_encounters.json"
 const ENCOUNTER_ID: String = "A3-O1/pillars"
 const WORLD_REVISION: int = 1
 const LOCAL_VERSION: int = 2
-const ROUTE_API: String = "act3-pillars-before-time-2"
+const LEGACY_ROUTE_API: String = "act3-pillars-before-time-2"
+const ROUTE_API: String = "act3-pillars-before-time-3"
 const COMPLETION_ID: String = "three-mirages-collected"
 const EXIT_ID: String = "pillars-return-threshold"
 const CHECKPOINT_IDS: Array[String] = ["mirage-one-collected", "mirage-two-collected"]
@@ -48,6 +50,13 @@ var _scenery_additions: Array[Node3D] = []
 var _exit_state: String = "clear"
 var _contact: Dictionary = {}
 var _configuration_error: String = ""
+var _construction: Dictionary = {}
+var _selected_profile: Dictionary = {}
+var _selected_homes: Dictionary = {}
+var _selected_recipe_id: String = ""
+var _legacy_capture: bool = false
+var _configuration_started: bool = false
+var _sources_configured: bool = false
 var _exit_dispatch_generation: int = 0
 var _exit_dispatch_queued: bool = false
 
@@ -169,7 +178,7 @@ func _home_marker_error() -> String:
 		return "Pillars requires its immutable authored home root"
 	for source_id: String in SOURCE_IDS:
 		var marker: Marker3D = get_node_or_null("EncounterHomes/" + source_id.replace("-", "_")) as Marker3D
-		if not is_instance_valid(marker) or marker.is_queued_for_deletion() or marker.get_parent() != homes or marker.position != SOURCE_POSITIONS[source_id] or marker.basis != Basis.IDENTITY:
+		if not is_instance_valid(marker) or marker.is_queued_for_deletion() or marker.get_parent() != homes or marker.position != (_selected_homes[source_id] if _configuration_started else SOURCE_POSITIONS[source_id]) or marker.basis != Basis.IDENTITY:
 			return "Pillars requires its exact immutable authored home: " + source_id
 	return ""
 
@@ -188,26 +197,83 @@ func _build_authored_scenery() -> void:
 		_scenery_additions.append(scenery.get_child(index) as Node3D)
 
 
-func _configure_sources(profile: String) -> String:
+## Pure fresh selection is separate from saved construction; TEST components may
+## select another retained recipe without relocating a configured recipient.
+func _fresh_construction(profile: String) -> Dictionary:
+	return Construction.fresh(profile)
+
+
+func selected_source_positions() -> Dictionary:
+	return _selected_homes.duplicate(true)
+
+
+func selected_construction() -> Dictionary:
+	return {"error": "" if _sources_configured else "Pillars construction is not configured", "legacy": _legacy_capture, "profile_id": String(_selected_profile.get("id", "")), "profile": _selected_profile.duplicate(true), "recipe_id": _selected_recipe_id, "homes": _selected_homes.duplicate(true), "construction": _construction.duplicate(true)}
+
+
+func _configure_sources(selected: Dictionary) -> String:
 	if not _configuration_error.is_empty():
 		return _configuration_error
-	if not threat_scheduler.begin_encounter(profile, ENCOUNTER_ID, WORLD_REVISION):
+	if _configuration_started:
+		return "Pillars selected native construction may only configure once"
+	if not String(selected.get("error", "Missing construction result")).is_empty():
+		return String(selected.get("error", "Invalid construction result"))
+	# Recheck the closed pure descriptor before any binding. This is only
+	# construction metadata, never substituted source/route/saved history.
+	var header: Dictionary = {"api_revision": LEGACY_ROUTE_API if selected.legacy else ROUTE_API, "schema_version": 1 if selected.legacy else 2, "scenery": {}, "scheduler": {"profile": selected.profile.duplicate(true)}, "sources": {}, "route": {}}
+	if not selected.legacy:
+		header["construction"] = selected.construction.duplicate(true)
+	var checked: Dictionary = Construction.saved(header)
+	if not String(checked.error).is_empty():
+		return String(checked.error)
+	if checked.profile_id != selected.profile_id or checked.recipe_id != selected.recipe_id or checked.homes != selected.homes:
+		return "Pillars selected construction differs from its finite native map"
+	_legacy_capture = checked.legacy
+	_construction = checked.construction.duplicate(true)
+	_selected_profile = checked.profile.duplicate(true)
+	_selected_homes = checked.homes.duplicate(true)
+	_selected_recipe_id = checked.recipe_id
+	_configuration_started = true # A partial failed constructor cannot retry.
+	for source_id: String in SOURCE_IDS:
+		var marker: Marker3D = get_node("EncounterHomes/" + source_id.replace("-", "_")) as Marker3D
+		marker.position = _selected_homes[source_id]
+		var source: CinderAct3SunboundStalker = sources[source_id]
+		source.position = _selected_homes[source_id]
+		source.set_physics_process(false)
+	if not threat_scheduler.begin_encounter(checked.profile_id, ENCOUNTER_ID, WORLD_REVISION):
 		return threat_scheduler.last_error
 	for source_id: String in SOURCE_IDS:
 		var source: CinderAct3SunboundStalker = sources[source_id]
 		if not source.configure(source_id, hero, effects, threat_scheduler, combat_response.bind(source_id), _authoring.stalker_raw_role, _authoring.minimum_timing_floors):
 			return "Pillars source configuration failed: " + source_id + ": " + source.last_error
 		source.set_sun_visual(sun_state)
-		source.set_physics_process(false) # All real sources exist; proximity admits their first tick.
+		source.set_physics_process(false)
+	_sources_configured = true
+	return ""
+
+
+func _construction_runtime_error() -> String:
+	if not _configuration_started or not _sources_configured or not is_instance_valid(threat_scheduler):
+		return "Pillars requires complete once-configured selected construction"
+	var resolved: Dictionary = Construction.recipe_homes(_selected_profile.get("id"), _selected_recipe_id)
+	if not String(resolved.error).is_empty() or resolved.homes != _selected_homes:
+		return "Pillars selected immutable home map differs from its finite recipe"
+	var profile: Dictionary = threat_scheduler.encounter_profile()
+	if _legacy_capture:
+		if not _construction.is_empty() or _selected_recipe_id != Construction.CANONICAL_RECIPE or not Codec.same_values(profile, _selected_profile):
+			return "Pillars legacy writer/profile/canonical homes changed"
+	elif not Construction.exact_equal(_construction, {"api_revision": Construction.CONSTRUCTION_API, "schema_version": 1, "profile": _selected_profile, "recipe_id": _selected_recipe_id}) or not Construction.exact_equal(profile, _selected_profile):
+		return "Pillars new construction retains its exact full profile/recipe"
 	return ""
 
 
 func _on_enter_level() -> void:
-	super._on_enter_level()
 	var profile: String = "standard"
 	if is_instance_valid(shared_shell) and shared_shell.has_method("get_difficulty_preference"):
 		profile = shared_shell.call("get_difficulty_preference")
-	_configuration_error = _configure_sources(profile)
+	_configuration_error = _configure_sources(_fresh_construction(profile))
+	if _configuration_error.is_empty():
+		super._on_enter_level()
 	_update_presentation()
 
 
@@ -220,11 +286,12 @@ func restore_candidate_physics_registration_required() -> bool:
 
 
 func _on_enter_restore_candidate(local: Dictionary, saved_player: Dictionary) -> String:
-	# Immutable floor is already ready before the native registration frame.
-	# Construct exact real recipients while paused; saved state applies later.
-	if not local.get("scheduler") is Dictionary or not local.scheduler.get("profile") is Dictionary or not local.scheduler.profile.get("id") is String:
-		return "Pillars restore construction requires its saved difficulty identity"
-	_configuration_error = _configure_sources(local.scheduler.profile.id)
+	# The actual immutable floor was registered while paused. Select this
+	# packet's own construction before any native configuration or samples.
+	var selected: Dictionary = Construction.saved(local)
+	if not String(selected.error).is_empty():
+		return String(selected.error)
+	_configuration_error = _configure_sources(selected)
 	if not _configuration_error.is_empty():
 		return _configuration_error
 	_active = true
@@ -290,7 +357,7 @@ func _settle_paused_sun(generation: int) -> void:
 
 
 func _source_is_near(source_id: String, at: Vector3) -> bool:
-	var home: Vector3 = SOURCE_POSITIONS[source_id]
+	var home: Vector3 = _selected_homes[source_id]
 	return at.is_finite() and absf(at.y) <= 0.2 and FLOOR_RECT.has_point(Vector2(at.x, at.z)) and Vector2(at.x - home.x, at.z - home.z).length() <= SOURCE_WAKE_RADIUS
 
 
@@ -402,7 +469,7 @@ func state() -> Dictionary:
 			awake.append(source_id)
 		if is_instance_valid(sources[source_id]):
 			source_states[source_id] = sources[source_id].state()
-	return {"api_revision": ROUTE_API, "configuration_error": _configuration_error, "collected": collected, "collections": _collections.duplicate(true), "awake": awake, "awakenings": _awakenings.duplicate(true), "marker_states": marker_states, "exit_state": _exit_state, "contact": _contact.duplicate(true), "completed": is_completed(), "checkpoint": current_checkpoint(), "clock_s": threat_scheduler.get_clock() if is_instance_valid(threat_scheduler) else 0.0, "sun_state": sun_state, "sun_stage": sun_stage, "source_states": source_states}
+	return {"api_revision": LEGACY_ROUTE_API if _legacy_capture else ROUTE_API, "configuration_error": _configuration_error, "collected": collected, "collections": _collections.duplicate(true), "awake": awake, "awakenings": _awakenings.duplicate(true), "marker_states": marker_states, "exit_state": _exit_state, "contact": _contact.duplicate(true), "completed": is_completed(), "checkpoint": current_checkpoint(), "clock_s": threat_scheduler.get_clock() if is_instance_valid(threat_scheduler) else 0.0, "sun_state": sun_state, "sun_stage": sun_stage, "source_states": source_states}
 
 
 func _update_presentation(quiet: bool = false) -> void:
@@ -591,12 +658,18 @@ func _capture_local_state() -> Dictionary:
 	var actors: Dictionary = {}
 	for source_id: String in SOURCE_IDS:
 		actors[source_id] = sources[source_id].snapshot_state()
-	return {"api_revision": ROUTE_API, "schema_version": 1, "scenery": super._capture_local_state(), "scheduler": threat_scheduler.snapshot_state(scheduler_bindings()), "sources": actors, "route": {"collections": _collections.duplicate(true), "awakenings": _awakenings.duplicate(true), "exit_state": _exit_state, "contact": _contact.duplicate(true)}}
+	var local: Dictionary = {"api_revision": LEGACY_ROUTE_API if _legacy_capture else ROUTE_API, "schema_version": 1 if _legacy_capture else 2, "scenery": super._capture_local_state(), "scheduler": threat_scheduler.snapshot_state(scheduler_bindings()), "sources": actors, "route": {"collections": _collections.duplicate(true), "awakenings": _awakenings.duplicate(true), "exit_state": _exit_state, "contact": _contact.duplicate(true)}}
+	if not _legacy_capture:
+		local["construction"] = _construction.duplicate(true)
+	return local
 
 
 func _runtime_error() -> String:
 	if not _configuration_error.is_empty():
 		return _configuration_error
+	var selected_error: String = _construction_runtime_error()
+	if not selected_error.is_empty():
+		return selected_error
 	if not is_instance_valid(scenery) or scenery.is_queued_for_deletion() or not scenery.call("runtime_error").is_empty():
 		return "Pillars requires its live reused scenery/floor"
 	if not is_instance_valid(threat_scheduler) or threat_scheduler.is_queued_for_deletion() or threat_scheduler.get_parent() != self:
@@ -646,8 +719,13 @@ func _paired_local_error(local: Dictionary, expected_hero: Vector3, expected_dea
 	var error: String = _runtime_error()
 	if not error.is_empty():
 		return error
-	if not Codec.keys_error(local, ["api_revision", "schema_version", "scenery", "scheduler", "sources", "route"]).is_empty() or local.get("api_revision") != ROUTE_API or not Codec.is_integer(local.get("schema_version"), 1, 1) or not local.get("scenery") is Dictionary or not local.get("scheduler") is Dictionary or not local.get("sources") is Dictionary or not local.get("route") is Dictionary:
-		return "Complete versioned Pillars scenery/Scheduler/source/contact unit required"
+	var selected: Dictionary = Construction.saved(local)
+	if not String(selected.error).is_empty():
+		return String(selected.error)
+	if selected.legacy != _legacy_capture or selected.recipe_id != _selected_recipe_id or selected.homes != _selected_homes:
+		return "Pillars saved construction differs from this immutable recipient"
+	if not _legacy_capture and not Construction.exact_equal(selected.construction, _construction):
+		return "Pillars saved full construction profile differs from this recipient"
 	error = super._local_snapshot_error(local.scenery)
 	if not error.is_empty():
 		return error
@@ -736,7 +814,7 @@ func _awakening_error(local: Dictionary, expected_hero: Vector3, expected_dead: 
 			if float(record.clock_s) == float(local.scheduler.clock_s) and Codec.read_vector3(record.hero_position) != expected_hero:
 				return "Current awakening sample differs from its paired Hero"
 		else:
-			if int(actor.cycle) != 0 or not String(actor.reservation_id).is_empty() or Codec.read_vector3(actor.position) != SOURCE_POSITIONS[source_id] or actor.phase not in ["idle", "defeated"]:
+			if int(actor.cycle) != 0 or not String(actor.reservation_id).is_empty() or Codec.read_vector3(actor.position) != _selected_homes[source_id] or actor.phase not in ["idle", "defeated"]:
 				return "Dormant source cannot move, start a cycle or retain an attack lease"
 			# Ordinary hits remain real and optional. They can change native HP,
 			# death or pending impulse before a living Level30 proximity sample.
@@ -753,6 +831,9 @@ func _snapshot_envelope_error(snapshot: Dictionary) -> String:
 		return error
 	if not Codec.keys_error(snapshot, ["api_revision", "schema_version", "level_id", "scene_path", "local_snapshot_version", "progress", "local"]).is_empty():
 		return "Closed Pillars snapshot envelope required"
+	var selected: Dictionary = Construction.saved(snapshot.local)
+	if not String(selected.error).is_empty():
+		return String(selected.error)
 	return _route_progress_error(snapshot)
 
 
