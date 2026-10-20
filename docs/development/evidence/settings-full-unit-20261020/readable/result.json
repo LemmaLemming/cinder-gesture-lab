@@ -1,0 +1,230 @@
+{
+  "closed": true,
+  "passed": true,
+  "canonical_api_return": 0,
+  "owned_child_pid": 97534,
+  "owned_child_return": 0,
+  "owned_child_closed": true,
+  "native_observation": {
+    "functional_pass": true,
+    "native_report": {
+      "accepted": {
+        "audio": {
+          "effects": 0.4,
+          "master": 0.6,
+          "music": 0.2
+        },
+        "quality": "Low",
+        "reduced_motion": true,
+        "schema_version": 1,
+        "target_fps": 30
+      },
+      "assertions": [
+        {
+          "index": 1,
+          "label": "one explicit private output and fixture hash only",
+          "passed": true
+        },
+        {
+          "index": 2,
+          "label": "actual selected fixture text matches reviewed hash",
+          "passed": true
+        },
+        {
+          "index": 3,
+          "label": "fresh private native-output directory only",
+          "passed": true
+        },
+        {
+          "index": 4,
+          "label": "actual Settings and inherited parent source plus exact existing UIDs",
+          "passed": true
+        },
+        {
+          "index": 5,
+          "label": "fresh isolated PID/ticks user directory",
+          "passed": true
+        },
+        {
+          "index": 6,
+          "label": "canonical Standard and 60 defaults before any write",
+          "passed": true
+        },
+        {
+          "index": 7,
+          "label": "construction creates no settings file or FPS/audio change",
+          "passed": true
+        },
+        {
+          "index": 8,
+          "label": "real default-persistent complete nondefault settings update",
+          "passed": true
+        },
+        {
+          "index": 9,
+          "label": "committed canonical unit contains every requested setting",
+          "passed": true
+        },
+        {
+          "index": 10,
+          "label": "retain actual committed raw settings JSON before cleanup",
+          "passed": true
+        },
+        {
+          "index": 11,
+          "label": "distinct new Settings instance loads the complete canonical unit",
+          "passed": true
+        },
+        {
+          "index": 12,
+          "label": "fresh load normalizes integer identities without rewriting disk",
+          "passed": true
+        },
+        {
+          "index": 13,
+          "label": "failure fixture starts from the real valid temporary-directory record",
+          "passed": true
+        },
+        {
+          "index": 14,
+          "label": "injected sibling-rename failure reports its failed commit",
+          "passed": true
+        },
+        {
+          "index": 15,
+          "label": "failed atomic replacement retains old memory/disk and emits no change",
+          "passed": true
+        },
+        {
+          "index": 16,
+          "label": "failed commit removes its own uncommitted temporary file",
+          "passed": true
+        },
+        {
+          "index": 17,
+          "label": "a later successful rename replaces the old file without deleting it first",
+          "passed": true
+        },
+        {
+          "index": 18,
+          "label": "atomic failure test restores the original valid preferences",
+          "passed": true
+        },
+        {
+          "index": 19,
+          "label": "only the parent's six injected-commit failure checks ran",
+          "passed": true
+        },
+        {
+          "index": 20,
+          "label": "successful seam recovery restores the original complete unit and raw bytes",
+          "passed": true
+        },
+        {
+          "index": 21,
+          "label": "retain restored raw settings JSON before cleanup",
+          "passed": true
+        },
+        {
+          "index": 22,
+          "label": "named sources and actual FPS/audio state remain unchanged",
+          "passed": true
+        },
+        {
+          "index": 23,
+          "label": "single synchronous settings case finishes within 10 seconds",
+          "passed": true
+        },
+        {
+          "index": 24,
+          "label": "normal inherited cleanup removes only the owned isolated user directory",
+          "passed": true
+        }
+      ],
+      "atomic_checks": 6,
+      "case": "settings-full-unit",
+      "checks": 24,
+      "cleanup_complete": true,
+      "complete": true,
+      "elapsed_ms": 6,
+      "executable_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.tools/Godot.app/Contents/MacOS/Godot",
+      "failures": 0,
+      "fault_scope": "Inherited FailedCommitSettings injects ERR_CANT_CREATE only after a real temporary write/readback; no actual OS failure or runtime settings application.",
+      "first_failure": {},
+      "fixture_path": "res://.cinder/settings-full-unit-prepare-20261020/settings_full_unit.gd",
+      "fixture_sha256": "626492ed87957a4bff087aa155bfe0369bd8ad36b04587d2af60b01b8ab8f07c",
+      "pid": 97534,
+      "project_root": "/Users/howardchen/Documents/ChatGPT/video game idea/",
+      "raw_settings": "{\n\t\"audio\": {\n\t\t\"effects\": 0.4,\n\t\t\"master\": 0.6,\n\t\t\"music\": 0.2\n\t},\n\t\"quality\": \"Low\",\n\t\"reduced_motion\": true,\n\t\"schema_version\": 1,\n\t\"target_fps\": 30\n}\n",
+      "reopened": {
+        "audio": {
+          "effects": 0.4,
+          "master": 0.6,
+          "music": 0.2
+        },
+        "quality": "Low",
+        "reduced_motion": true,
+        "schema_version": 1,
+        "target_fps": 30
+      },
+      "restored": {
+        "audio": {
+          "effects": 0.4,
+          "master": 0.6,
+          "music": 0.2
+        },
+        "quality": "Low",
+        "reduced_motion": true,
+        "schema_version": 1,
+        "target_fps": 30
+      },
+      "restored_raw_settings": "{\n\t\"audio\": {\n\t\t\"effects\": 0.4,\n\t\t\"master\": 0.6,\n\t\t\"music\": 0.2\n\t},\n\t\"quality\": \"Low\",\n\t\"reduced_motion\": true,\n\t\"schema_version\": 1,\n\t\"target_fps\": 30\n}\n",
+      "runtime_after": {
+        "audio_buses": [
+          {
+            "linear": 1.0,
+            "muted": false,
+            "name": "Master",
+            "send": ""
+          }
+        ],
+        "max_fps": 0,
+        "physics_ticks_per_second": 60,
+        "time_scale": 1.0
+      },
+      "runtime_before": {
+        "audio_buses": [
+          {
+            "linear": 1.0,
+            "muted": false,
+            "name": "Master",
+            "send": ""
+          }
+        ],
+        "max_fps": 0,
+        "physics_ticks_per_second": 60,
+        "time_scale": 1.0
+      },
+      "source_post": {
+        "res://scripts/settings/game_settings.gd": "60d76e75d66f757d5601903ff92007b3da55a77d5c79e1ba7dbb3da2925bb162",
+        "res://scripts/settings/game_settings.gd.uid": "f1b82776f1b83f512b5ed0d6307de1fda84ac886456ce53b7276770c2d7c03ab",
+        "res://tests/settings_smoke.gd": "b67a58e3928b0cc1163e343f0d46b9efb763a147d5eabe369215f2c459c244a8",
+        "res://tests/settings_smoke.gd.uid": "c2d7e3eb39e9eb80127d0a3dad2ec767acb1749e3383e3f356bbd2e29266d285"
+      },
+      "source_pre": {
+        "res://scripts/settings/game_settings.gd": "60d76e75d66f757d5601903ff92007b3da55a77d5c79e1ba7dbb3da2925bb162",
+        "res://scripts/settings/game_settings.gd.uid": "f1b82776f1b83f512b5ed0d6307de1fda84ac886456ce53b7276770c2d7c03ab",
+        "res://tests/settings_smoke.gd": "b67a58e3928b0cc1163e343f0d46b9efb763a147d5eabe369215f2c459c244a8",
+        "res://tests/settings_smoke.gd.uid": "c2d7e3eb39e9eb80127d0a3dad2ec767acb1749e3383e3f356bbd2e29266d285"
+      },
+      "user_args": [
+        "--output-root=res://.cinder/settings-full-unit-prepare-20261020/run-native-20261020T041340.894731Z-16d12c8d/native-output",
+        "--fixture-sha256=626492ed87957a4bff087aa155bfe0369bd8ad36b04587d2af60b01b8ab8f07c"
+      ],
+      "user_directory": "user://settings-full-unit-97534-171660"
+    },
+    "raw_settings_sha256": "9d7c49caf2f6a92322d80a255dbaedbda9eb5f5f1cf8ecebd42e8ab6bc656762",
+    "native_checks": 24
+  },
+  "host_return": 0
+}

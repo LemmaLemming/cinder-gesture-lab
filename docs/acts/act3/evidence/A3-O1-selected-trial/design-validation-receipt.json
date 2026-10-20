@@ -1,0 +1,51 @@
+{
+  "kind": "post-command-tool-transcript-receipt",
+  "scope": "Commands already executed once; these summaries are copied from actual tool outputs, not original captured stdout files. No validator rerun.",
+  "commands": [
+    {
+      "argv": [
+        "python3",
+        "scripts/dev/dev.py",
+        "ability",
+        "validate"
+      ],
+      "exit": 0,
+      "result": {
+        "ok": true,
+        "revision": 0,
+        "registered_count": 20,
+        "use_count": 0,
+        "active_use_count": 0,
+        "unregistered_ids": [],
+        "semantic_review_required": true
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/dev/dev.py",
+        "equipment",
+        "validate"
+      ],
+      "exit": 0,
+      "result": {
+        "ok": true,
+        "revision": 0,
+        "ability_usage_revision": 0,
+        "item_count": 36,
+        "claim_count": 0,
+        "active_claim_count": 0,
+        "catalogue_duplicate_types": [],
+        "semantic_review_required": true
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/design/validate_equipment.py"
+      ],
+      "exit": 0,
+      "result": "PASS: 12 clothing, 4 weapons, 6 powerups, 14 perk definitions; 10 numeric fixtures. Screened256 gear loadouts/500 conditional subsets/7500 combined states across15 legal powerup combinations. Structural/numerical screening only; no new runtime balance claim."
+    }
+  ]
+}

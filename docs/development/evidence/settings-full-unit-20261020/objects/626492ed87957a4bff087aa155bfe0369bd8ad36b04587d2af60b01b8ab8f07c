@@ -1,0 +1,127 @@
+extends "res://tests/settings_smoke.gd"
+## Inert review text. Root alone may materialize and select the one native job.
+## Only full-unit persistence and the parent's six injected-commit checks run.
+const CASE: String = "settings-full-unit"
+const SOURCE_PINS: Dictionary = {
+	"res://scripts/settings/game_settings.gd": "60d76e75d66f757d5601903ff92007b3da55a77d5c79e1ba7dbb3da2925bb162",
+	"res://scripts/settings/game_settings.gd.uid": "f1b82776f1b83f512b5ed0d6307de1fda84ac886456ce53b7276770c2d7c03ab",
+	"res://tests/settings_smoke.gd": "b67a58e3928b0cc1163e343f0d46b9efb763a147d5eabe369215f2c459c244a8",
+	"res://tests/settings_smoke.gd.uid": "c2d7e3eb39e9eb80127d0a3dad2ec767acb1749e3383e3f356bbd2e29266d285"
+}
+
+var _rows: Array[Dictionary] = []
+var _first_failure: Dictionary = {}
+var _output: String = ""
+var _fixture_sha: String = ""
+var _source_pre: Dictionary = {}
+var _source_post: Dictionary = {}
+var _runtime_before: Dictionary = {}
+var _runtime_after: Dictionary = {}
+var _accepted: Dictionary = {}
+var _reopened: Dictionary = {}
+var _restored: Dictionary = {}
+var _raw: String = ""
+var _restored_raw: String = ""
+var _atomic_checks: int = 0
+var _owns_output: bool = false
+var _owns_user: bool = false
+var _finished: bool = false
+var _started_ms: int = 0
+
+func _run() -> void:
+	_finish(_exercise())
+
+func _exercise() -> bool:
+	_started_ms = Time.get_ticks_msec()
+	_runtime_before = _runtime_state()
+	var args: PackedStringArray = OS.get_cmdline_user_args()
+	if not _step(args.size() == 2 and args[0].begins_with("--output-root=res://.cinder/") and args[1].begins_with("--fixture-sha256="), "one explicit private output and fixture hash only"): return false
+	_output = args[0].trim_prefix("--output-root=").trim_suffix("/")
+	_fixture_sha = args[1].trim_prefix("--fixture-sha256=")
+	if not _step(not _output.contains("..") and not _output.contains("\\") and _fixture_sha.length() == 64 and FileAccess.get_sha256(get_script().resource_path) == _fixture_sha, "actual selected fixture text matches reviewed hash"): return false
+	if not _step(not DirAccess.dir_exists_absolute(_output) and not FileAccess.file_exists(_output) and DirAccess.make_dir_recursive_absolute(_output) == OK, "fresh private native-output directory only"): return false
+	_owns_output = true
+	_source_pre = _sources()
+	if not _step(_source_pre == SOURCE_PINS, "actual Settings and inherited parent source plus exact existing UIDs"): return false
+	_directory = "user://settings-full-unit-%d-%d" % [OS.get_process_id(), Time.get_ticks_usec()]
+	if not _step(not DirAccess.dir_exists_absolute(_directory) and DirAccess.make_dir_recursive_absolute(_directory) == OK, "fresh isolated PID/ticks user directory"): return false
+	_owns_user = true
+	var path: String = _directory + "/settings.json"
+	var settings = SettingsScript.new(path)
+	if not _step(settings.snapshot() == SettingsScript.defaults() and settings.snapshot().quality == "Standard" and settings.snapshot().target_fps == 60, "canonical Standard and 60 defaults before any write"): return false
+	if not _step(not FileAccess.file_exists(path) and _runtime_state() == _runtime_before, "construction creates no settings file or FPS/audio change"): return false
+	var changes: Dictionary = {"quality": "Low", "target_fps": 30, "audio": {"master": 0.6, "music": 0.2, "effects": 0.4}, "reduced_motion": true}
+	if not _step(settings.update(changes), "real default-persistent complete nondefault settings update"): return false
+	_accepted = settings.snapshot()
+	var expected: Dictionary = {"schema_version": 1, "quality": "Low", "target_fps": 30, "audio": {"master": 0.6, "music": 0.2, "effects": 0.4}, "reduced_motion": true}
+	if not _step(_accepted == expected, "committed canonical unit contains every requested setting"): return false
+	_raw = FileAccess.get_file_as_string(path)
+	if not _step(not _raw.is_empty() and _write_literal("raw-settings.json", _raw), "retain actual committed raw settings JSON before cleanup"): return false
+	var fresh = SettingsScript.new(path)
+	if not _step(fresh.get_instance_id() != settings.get_instance_id() and fresh.load_settings() and fresh.snapshot() == _accepted, "distinct new Settings instance loads the complete canonical unit"): return false
+	_reopened = fresh.snapshot()
+	if not _step(_reopened.schema_version is int and _reopened.target_fps is int and FileAccess.get_file_as_string(path) == _raw, "fresh load normalizes integer identities without rewriting disk"): return false
+	var atomic_before: int = _checks
+	_atomic_failure_checks(path, _accepted, _raw)
+	_atomic_checks = _checks - atomic_before
+	if _failures > 0: return false
+	if not _step(_atomic_checks == 6, "only the parent's six injected-commit failure checks ran"): return false
+	var restored = SettingsScript.new(path)
+	if not _step(restored.load_settings() and restored.snapshot() == _accepted and FileAccess.get_file_as_string(path) == _raw, "successful seam recovery restores the original complete unit and raw bytes"): return false
+	_restored = restored.snapshot()
+	_restored_raw = FileAccess.get_file_as_string(path)
+	if not _step(_write_literal("raw-settings-after-atomic.json", _restored_raw), "retain restored raw settings JSON before cleanup"): return false
+	_source_post = _sources()
+	_runtime_after = _runtime_state()
+	if not _step(_source_post == _source_pre and _runtime_after == _runtime_before, "named sources and actual FPS/audio state remain unchanged"): return false
+	if not _step(Time.get_ticks_msec() - _started_ms < 10000, "single synchronous settings case finishes within 10 seconds"): return false
+	return true
+
+func _expect(condition: bool, description: String) -> void:
+	super._expect(condition, description)
+	var row: Dictionary = {"index": _checks, "passed": condition, "label": description}
+	_rows.append(row)
+	if not condition and _first_failure.is_empty(): _first_failure = row.duplicate(true)
+
+func _step(condition: bool, label: String) -> bool:
+	_expect(condition, label)
+	return condition
+
+func _sources() -> Dictionary:
+	var observed: Dictionary = {}
+	for path: String in SOURCE_PINS: observed[path] = FileAccess.get_sha256(path)
+	return observed
+
+func _runtime_state() -> Dictionary:
+	var buses: Array[Dictionary] = []
+	for index: int in range(AudioServer.bus_count):
+		buses.append({"name": AudioServer.get_bus_name(index), "send": AudioServer.get_bus_send(index), "linear": AudioServer.get_bus_volume_linear(index), "muted": AudioServer.is_bus_mute(index)})
+	return {"max_fps": Engine.max_fps, "physics_ticks_per_second": Engine.physics_ticks_per_second, "time_scale": Engine.time_scale, "audio_buses": buses}
+
+func _write_literal(name: String, text: String) -> bool:
+	if not _owns_output: return false
+	var file: FileAccess = FileAccess.open(_output + "/" + name, FileAccess.WRITE)
+	if file == null: return false
+	var stored: bool = file.store_string(text)
+	file.flush()
+	var error: Error = file.get_error()
+	file.close()
+	return stored and error == OK and FileAccess.get_file_as_string(_output + "/" + name) == text
+
+func _report(complete: bool, cleanup_complete: bool) -> Dictionary:
+	return {"case": CASE, "complete": complete, "cleanup_complete": cleanup_complete, "checks": _checks, "failures": _failures, "first_failure": _first_failure, "assertions": _rows, "fixture_path": get_script().resource_path, "fixture_sha256": _fixture_sha, "source_pre": _source_pre, "source_post": _source_post, "user_directory": _directory, "user_args": OS.get_cmdline_user_args(), "pid": OS.get_process_id(), "project_root": ProjectSettings.globalize_path("res://"), "executable_path": OS.get_executable_path(), "accepted": _accepted, "reopened": _reopened, "restored": _restored, "raw_settings": _raw, "restored_raw_settings": _restored_raw, "atomic_checks": _atomic_checks, "runtime_before": _runtime_before, "runtime_after": _runtime_after, "elapsed_ms": Time.get_ticks_msec() - _started_ms, "fault_scope": "Inherited FailedCommitSettings injects ERR_CANT_CREATE only after a real temporary write/readback; no actual OS failure or runtime settings application."}
+
+func _finish(complete: bool) -> void:
+	if _finished: return
+	_finished = true
+	_source_post = _sources()
+	_runtime_after = _runtime_state()
+	var prewritten: bool = _write_literal("before-cleanup.json", JSON.stringify(_report(false, false), "\t", true, true) + "\n")
+	print("SETTINGS FULL UNIT BEFORE CLEANUP: %d checks, %d failures; report_written=%s" % [_checks, _failures, str(prewritten)])
+	if _owns_user: _cleanup()
+	var clean: bool = not _owns_user or not DirAccess.dir_exists_absolute(_directory)
+	_expect(clean, "normal inherited cleanup removes only the owned isolated user directory")
+	complete = complete and prewritten and clean and _failures == 0
+	var written: bool = _write_literal("native.json", JSON.stringify(_report(complete, clean), "\t", true, true) + "\n")
+	print("SETTINGS FULL UNIT: %d checks, %d failures; complete=%s; report=%s/native.json" % [_checks, _failures, str(complete and written), _output])
+	quit(0 if complete and written else 1)

@@ -1,0 +1,204 @@
+"""Root-reviewed one queued Settings full-unit check; read-only source, no swap."""
+from pathlib import Path
+import contextlib
+import datetime
+import hashlib
+import importlib.util
+import json
+import math
+import os
+import re
+import stat
+import sys
+import uuid
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[1]
+DIAGNOSTIC = re.compile(r"^\s*(?:ERROR|WARNING|SCRIPT ERROR):|ObjectDB.*leak|Orphan.*StringName", re.I)
+
+
+def require(ok, reason):
+    if not ok:
+        raise ValueError(reason)
+
+
+def strict(data):
+    # Same literal finite/duplicate-key rules as the reviewed persistence reader.
+    def pairs(items):
+        result = {}
+        for key, value in items:
+            require(key not in result, "Duplicate JSON key: " + key)
+            result[key] = value
+        return result
+    def finite(token):
+        value = float(token)
+        require(math.isfinite(value), "Nonfinite JSON exponent: " + token)
+        return value
+    return json.loads(data.decode("utf-8", errors="strict"), object_pairs_hook=pairs,
+                      parse_float=finite, parse_constant=lambda x: (_ for _ in ()).throw(ValueError(x)))
+
+
+def save(path, value):
+    path.write_text(json.dumps(value, indent=2, allow_nan=False) + "\n")
+
+
+def record(path):
+    if not os.path.lexists(path):
+        return {"exists": False}, None
+    st = path.lstat()
+    require(stat.S_ISREG(st.st_mode) and not path.is_symlink(), "Regular nonsymlink input required: " + str(path))
+    data = path.read_bytes()
+    after = path.lstat()
+    require((st.st_dev, st.st_ino, st.st_size, st.st_mtime_ns, st.st_mode) ==
+            (after.st_dev, after.st_ino, after.st_size, after.st_mtime_ns, after.st_mode)
+            and path.read_bytes() == data, "Source changed while reading: " + str(path))
+    return {"exists": True, "sha256": hashlib.sha256(data).hexdigest(), "bytes": len(data),
+            "mode": format(stat.S_IMODE(st.st_mode), "04o")}, data
+
+
+def sources(spec, out, label):
+    rows = {}
+    names = set(spec["expected"]) | set(spec["controls"]) | {str((HERE / "READINESS.json").relative_to(ROOT))}
+    for name in sorted(names):
+        row, data = record(ROOT / name)
+        rows[name] = row
+        if name in spec["expected"]:
+            require(row == spec["expected"][name], "Named source/UID/fixture expectation differs: " + name)
+        if data is not None:
+            target = out / "inputs" / row["sha256"]
+            if not target.exists():
+                target.write_bytes(data)
+    readiness = strict((HERE / "READINESS.json").read_bytes())
+    for name, sha in readiness["frozen_files"].items():
+        require(rows[name].get("sha256") == sha and rows[name].get("mode") == "0644", "Frozen control differs: " + name)
+    save(out / (label + ".json"), rows)
+    return rows
+
+
+def observe(out, spec, result, args):
+    observation = {"functional_pass": False}
+    native = out / "native-output/native.json"
+    if not native.exists():
+        observation["error"] = "Native report absent; no reconstruction"
+        return observation
+    try:
+        packet = strict(native.read_bytes())
+        observation["native_report"] = packet
+        rows = packet["assertions"]
+        require(type(rows) is list and bool(rows) and all(type(r) is dict and set(r) == {"index", "passed", "label"}
+                and type(r["index"]) is int and r["index"] == i and type(r["passed"]) is bool
+                and type(r["label"]) is str for i, r in enumerate(rows, 1)), "Consecutive closed native rows required")
+        failed = [r for r in rows if not r["passed"]]
+        require(type(packet["checks"]) is int and packet["checks"] == len(rows)
+                and type(packet["failures"]) is int and packet["failures"] == len(failed)
+                and packet["first_failure"] == (failed[0] if failed else {}), "Actual counts/first failure differ")
+        require(packet["source_pre"] == packet["source_post"] == spec["native_sources"], "Native named Settings/parent/UID source hashes differ")
+        require(packet["fixture_path"] == "res://" + spec["fixture"] and packet["fixture_sha256"] == spec["fixture_sha256"]
+                and packet["user_args"] == args and packet["pid"] == result["owned_child_pid"]
+                and packet["project_root"].rstrip("/") == str(ROOT) and packet["executable_path"] == spec["engine_path"], "Actual native source/args/project/owned PID differ")
+        require(re.fullmatch(r"user://settings-full-unit-%d-[0-9]+" % result["owned_child_pid"], packet["user_directory"]), "Owned PID/ticks user directory required")
+        prefix = strict((out / "native-output/before-cleanup.json").read_bytes())
+        require(prefix["assertions"] == rows[:-1] and prefix["complete"] is False and prefix["cleanup_complete"] is False,
+                "Actual pre-cleanup report/row prefix required")
+        expected = {"schema_version": 1, "quality": "Low", "target_fps": 30,
+                    "audio": {"master": 0.6, "music": 0.2, "effects": 0.4}, "reduced_motion": True}
+        raw = (out / "native-output/raw-settings.json").read_bytes()
+        restored = (out / "native-output/raw-settings-after-atomic.json").read_bytes()
+        require(raw == restored and strict(raw) == expected and packet["raw_settings"].encode() == raw
+                and packet["restored_raw_settings"].encode() == raw, "Actual original/restored raw settings bytes differ")
+        require(packet["accepted"] == packet["reopened"] == packet["restored"] == expected
+                and type(packet["reopened"]["schema_version"]) is int and type(packet["reopened"]["target_fps"]) is int,
+                "Complete canonical distinct-instance reload/restored unit differs")
+        require(packet["runtime_before"] == packet["runtime_after"] and packet["atomic_checks"] == 6,
+                "FPS/audio changed or inherited six-check seam differs")
+        footer = "SETTINGS FULL UNIT: %d checks, %d failures; complete=%s; report=res://%s/native.json" % (
+            len(rows), len(failed), str(packet["complete"]).lower(), (out / "native-output").relative_to(ROOT))
+        raw_log = (out / "raw.log").read_text()
+        require([line for line in raw_log.splitlines() if line.startswith("SETTINGS FULL UNIT:")] == [footer], "Exact native footer/report join required")
+        require(packet["case"] == "settings-full-unit" and packet["complete"] is True and packet["cleanup_complete"] is True
+                and len(rows) == 24 and not failed, "One complete24-check focused result required")
+        observation.update(functional_pass=True, raw_settings_sha256=hashlib.sha256(raw).hexdigest(), native_checks=len(rows))
+    except Exception as error:
+        observation["error"] = str(error)
+    return observation
+
+
+class Tee:
+    def __init__(self, terminal, file): self.terminal, self.file = terminal, file
+    def write(self, text): self.file.write(text); return self.terminal.write(text)
+    def flush(self): self.file.flush(); self.terminal.flush()
+
+
+def main():
+    out = HERE / ("run-native-" + datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%S.%fZ") + "-" + uuid.uuid4().hex[:8])
+    out.mkdir(); (out / "inputs").mkdir()
+    result = {"closed": False, "passed": False, "canonical_api_return": None, "owned_child_pid": None, "owned_child_return": None}
+    queue = {"acquired": False, "released": False}; code = 2; baseline = None; spec = None
+    print("Settings full-unit output:", out, flush=True)
+    with (out / "raw.log").open("x") as log, contextlib.redirect_stdout(Tee(sys.stdout, log)), contextlib.redirect_stderr(Tee(sys.stderr, log)):
+        try:
+            spec = strict((HERE / "INPUT_SPEC.json").read_bytes())
+            require(spec["integration_root"] == str(ROOT), "Canonical integration root required")
+            baseline = sources(spec, out, "before-queue")
+            engine_before, _ = record(Path(spec["engine_path"]))
+            require(engine_before == spec["engine_expected"], "Exact existing engine differs")
+            module_spec = importlib.util.spec_from_file_location("cinder_settings_full_unit_dev", ROOT / "scripts/dev/dev.py")
+            dev = importlib.util.module_from_spec(module_spec); sys.modules[module_spec.name] = dev
+            old_bytecode = sys.dont_write_bytecode
+            try:
+                sys.dont_write_bytecode = True; module_spec.loader.exec_module(dev)
+            finally:
+                sys.dont_write_bytecode = old_bytecode
+            environ = dict(os.environ); environ.update(CINDER_GODOT=spec["engine_path"], CINDER_CANONICAL_ROOT=str(ROOT), PYTHONDONTWRITEBYTECODE="1")
+            context = dev.ProjectContext(root=ROOT, environ=environ)
+            require(context.root == context.canonical_root == ROOT and str(dev.resolve_godot(context)) == spec["engine_path"], "Canonical queue context/engine differs")
+            args = ["--output-root=res://" + str((out / "native-output").relative_to(ROOT)), "--fixture-sha256=" + spec["fixture_sha256"]]
+            command = [spec["engine_path"], "--path", str(ROOT), "--headless", "--log-file", str(out / "engine.log"), "--script", "res://" + spec["fixture"], "--"] + args
+            save(out / "command.json", {"argv": command, "timeout_after_lock_seconds": 30, "scope": "One no-swap canonical dev.godot_lock/run_validation child; normal native user:// context."})
+            save(out / "queue.json", queue)
+            try:
+                with dev.godot_lock(ROOT) as lock_fd:
+                    queue["acquired"] = True; save(out / "queue.json", queue)
+                    require(sources(spec, out, "at-lock") == baseline and record(Path(spec["engine_path"]))[0] == engine_before, "Named inputs/engine changed while queued")
+                    owned = []; real_popen = dev.subprocess.Popen
+                    def observe_popen(argv, *pos, **kw):
+                        require(argv == command and not owned, "Exactly one owned validation child allowed")
+                        child = real_popen(argv, *pos, **kw); owned.append(child); result["owned_child_pid"] = child.pid
+                        save(out / "result.json", result); return child
+                    dev.subprocess.Popen = observe_popen
+                    try:
+                        result["canonical_api_return"] = dev.run_validation(command, context, lock_fd, 30, detect_godot_errors=True)
+                    finally:
+                        dev.subprocess.Popen = real_popen
+                        if owned and owned[0].poll() is None: dev.stop_validation(owned[0])
+                        result["owned_child_return"] = owned[0].poll() if owned else None
+                        result["owned_child_closed"] = len(owned) == 1 and result["owned_child_return"] is not None
+                        save(out / "result.json", result)
+                    log.flush(); result["native_observation"] = observe(out, spec, result, args)
+                    save(out / "native-observation.json", result["native_observation"])
+                    require(sources(spec, out, "after-child") == baseline and record(Path(spec["engine_path"]))[0] == engine_before, "Named input/engine drift after child")
+                    require(result["owned_child_closed"] and result["canonical_api_return"] == result["owned_child_return"] == 0
+                            and result["native_observation"]["functional_pass"], "Native/API/owned process result failed or incomplete")
+                    diagnostics = (out / "raw.log").read_text() + "\n" + ((out / "engine.log").read_text(errors="replace") if (out / "engine.log").is_file() else "")
+                    require(not any(DIAGNOSTIC.search(line) for line in diagnostics.splitlines()), "Native functional result has nonclean diagnostics; no repeat for green")
+            finally:
+                if queue["acquired"]: queue["released"] = True
+                save(out / "queue.json", queue)
+            result["passed"] = True; code = 0
+        except KeyboardInterrupt:
+            result["error"] = "Interrupted; only the canonical owned child may be stopped"; code = 130
+        except Exception as error:
+            result["error"] = str(error); print("Settings full-unit host failure:", error, flush=True)
+        finally:
+            result.update(closed=True, host_return=code)
+            save(out / "result.json", result)
+            print("Settings full-unit host CLOSED code=" + str(code), flush=True)
+    files = {}
+    for path in sorted(out.rglob("*")):
+        if path.is_file(): files[str(path.relative_to(out))] = record(path)[0]
+    save(out / "index.json", {"created_after_raw_close": True, "files": files})
+    return code
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
