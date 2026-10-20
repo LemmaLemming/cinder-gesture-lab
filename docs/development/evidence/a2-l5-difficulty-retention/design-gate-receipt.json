@@ -1,0 +1,36 @@
+{
+  "at": "2026-10-20T07:04:01.757096+00:00",
+  "scope": "Read-only live design gate before specific L5 policy disposition; no allocation/placement/runtime edit",
+  "commands": [
+    {
+      "argv": [
+        "python3",
+        "scripts/dev/dev.py",
+        "equipment",
+        "status"
+      ],
+      "exit": 0,
+      "sha256": "50ae143f48fc7ddd28f4e9d08693d46bad1f2f52394ba116b1965b9e27ec8ac6",
+      "bytes": 49235,
+      "file": "equipment-status.json",
+      "revision": 0,
+      "ability_usage_revision": 0
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/dev/dev.py",
+        "ability",
+        "status",
+        "--level",
+        "A2-L5"
+      ],
+      "exit": 0,
+      "sha256": "a47f2a3aa95b85529d79f623f17ee91836b4eec8325f67494f62cac9c482f166",
+      "bytes": 3592,
+      "file": "ability-status.json",
+      "revision": 0,
+      "ability_usage_revision": null
+    }
+  ]
+}

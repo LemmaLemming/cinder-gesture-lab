@@ -1,0 +1,13 @@
+--- original-3eba
++++ Root-key-array-only
+@@ -300,7 +300,9 @@
+ 		var keys: Array[String] = ["active_from_s", "active_until_s", "cooldown_until_s", "geometry", "id", "lock_from_s", "opening_position", "profile_id", "recovery_until_s", "source_position", "start_s", "world_revision"]
+ 		if name == "ray_exchange": keys.append("adapter")
+ 		if not _expect(Codec.keys_error(exchange, keys).is_empty() and exchange.geometry is Dictionary and exchange.profile_id == "challenge", "retained finite native exchange schema: " + name): return false
+-		var shape_keys: Array[String] = ["kind", "origin", "radius"] if name == "foot_exchange" else ["from", "kind", "radius", "to"]
++		var shape_keys: Array[String] = []
++		if name == "foot_exchange": shape_keys.assign(["kind", "origin", "radius"])
++		else: shape_keys.assign(["from", "kind", "radius", "to"])
+ 		if not _expect(Codec.keys_error(exchange.geometry, shape_keys).is_empty() and exchange.geometry.get("kind") == ("circle" if name == "foot_exchange" else "lane"), "retained same-only geometry schema, no geometry conversion"): return false
+ 		for field: String in ["start_s", "lock_from_s", "active_from_s", "active_until_s", "recovery_until_s", "cooldown_until_s"]:
+ 			if not _expect(exchange[field] is float and is_finite(exchange[field]), "retained native scalar deadline: " + name + "." + field): return false

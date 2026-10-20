@@ -1,0 +1,31 @@
+# L5 finite visual attachment source review
+
+**Source-clear for the finite presentation proposal; zero concrete source blockers found.** This does not select a command, execute the candidate or accept the remaining difficulty policy.
+
+I read all four owner artifacts and the full 373-line candidate. Baseline `58b0f58c` is 18,564 bytes; candidate `af04f74dd613d554906a82ca3683da3fd60c512f84a664d34d7003a7207e4b71` is 20,721 bytes. All four artifact pins and all 15 declared input hashes/byte counts match. Existing physical modes are recorded separately, including GiantFootVisual’s 0600; no source mode was changed.
+
+The full source diff changes only `bind_near_foot`, adds the positive-offset constant and adds one provenance helper. All other 14 existing functions—including generated model, materials, pose, actual endpoint derivation, readability, fallback and release—are byte-identical.
+
+## Finite predicate and actual call chain
+
+The original negative-offset predicate keeps the same `to_local(...).is_equal_approx(NEAR_FOOT_AT)` calculation and original preceding node/ankle guards. It now stores that value once. When the old predicate succeeds, the new helper is skipped and the original weak binding/preview hide/pose statements execute unchanged. The second accepted value is only `(.65,0,+.95)`, using the same approximate comparison, with no new tolerance or arbitrary offset parameter.
+
+The added identity checks at candidate lines 87–105 are feasible when the actual presented parent calls them. Base Parent configure requires itself ready at line 123, adds the actual presented Actor at 149, actual Lane Foot at 163, and its actual GiantFootVisual at 165–167. After successful native configuration, presented Parent lines 10–15 calls Actor.bind_cosmetic_foot with that exact `_foot_visual`; Actor lines 19–21 passes it to this rig. All are live same-world direct factory products, and Parent.get_actor/get_foot/private `_foot_visual` and Actor.get_cosmetic_rig therefore have their intended identities before the weak binding.
+
+The test subclass does **not** replace those product Scripts. FixedGame’s pre-tree change at companion lines 130–139 substitutes the surrounding World and preserves `sentry_parent_script`; ComponentHost lines 89–92 separately creates that actual parent. The scene retains the exact presented-parent Script, its factory retains the exact presented Actor, and the independent Foot/visual keep their exact native Scripts. There is no need for subclass tolerance or a Parent/Actor preload cycle.
+
+Actual ankle and upper-limb coordinates still come through the existing bound visual and chassis conversions (`_near_ankle`, `_near_foot_upper`) into unchanged `_fit_segment` calls. No native Foot/Actor/root movement, layout repair, new attacking limb, timing/HP/input/collision/footprint or other gameplay guard changes occur.
+
+## Presentation limits and retained evidence
+
+The proposal retains the pinned rust/black/pale materials, three-legged fighting-machine family, reachable low brace and actual cue vocabulary. The +Z pad/stay may crowd the brace, Hero or apparatus. Source coordinates do not establish projected readability; the proposal reports that limitation honestly. Root’s later brief affected native view must retain the existing source, footprint, safe-floor and Hero readability guards.
+
+The independently read actual audit `f4d16419cef29494a765817cff96b24a7105ac943c5f66a7efb40d3d8882623d` and all eight specifically cited prior evidence pins match. Preserve the actual **3489 checks / 1 failure / incomplete**, Host2/API1/PID39626/Popen1 result. Only v1 completed its bounded native component response under the original visual58b0. V2 refused configure at native clock 1.1; no v2 response, comparison or image follows. Empty runtime_error is explained by the presented-parent cleanup/false return, not successful configuration. The unchanged original branch supports qualified reuse of that old v1 evidence; it is not a new af04 execution.
+
+## Root-owned next scope
+
+Existing companion0e63 still pins visual58b0 at line 30 and runs both arms. Its current host owns only two constructor sources. Root must separately review the minimal TEST visual-pin/candidate-only/report change and third-source beforeimage/owned-inode restoration custody before any run. This review supplies no command or fixture change.
+
+Retained `v1-executed-result.native.json` is Exact diagnostic output after `_safe`; companion line 851 turns Vector3 values into arrays. It cannot be passed directly to native `_compare`. No decoder/import helper or geometry recomputation is supplied here. Candidate viability and retained original-v1 success remain separate unless Root reviews a sound native context/trace/holds/counterfactual join; comparative novelty stays unproved without that join.
+
+All 24 original content acceptances, 22 current policies and earlier failed/script-error phases retain their original scope. No parser, engine/native, queue, Git, runtime/worker/tracked source change or pixel inspection was performed. Only this new private review directory was written.

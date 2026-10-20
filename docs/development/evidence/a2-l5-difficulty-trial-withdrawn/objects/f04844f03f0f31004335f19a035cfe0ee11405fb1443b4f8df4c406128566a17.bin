@@ -1,0 +1,161 @@
+--- preserved0e63/a2_l5_fixed_response_generation_assignment.gd.txt
++++ candidate-only/a2_l5_candidate_only_retained_v1.gd.txt
+@@ -3 +3,25 @@
+-## Exactly one fixed setup, v1 then v2; no search/retry/restore/portrait/route.
++## Exactly one current v2 setup; literal retained v1 reference, no v1 rerun/search/retry/restore/portrait/route.
++const REFERENCE_FILES: Dictionary = {
++  "retained-v1-executed.exact.json": {
++    "path": "res://.cinder/a2-l5-retained-v1-candidate-only-host-prepare-20261020/inputs/retained-v1-executed.exact.json",
++    "sha256": "783de1bad93283d249e9684e6ba0213e75e12011941ecc9228e4cfce20090f8d",
++    "bytes": 186333
++  },
++  "retained-phase-report.plain.json": {
++    "path": "res://.cinder/a2-l5-retained-v1-candidate-only-host-prepare-20261020/inputs/retained-phase-report.plain.json",
++    "sha256": "81a4f2c72a5c84a9a5ec4b493c961307d5bf9a7507ab196c04d060a3bfb517af",
++    "bytes": 6869
++  },
++  "retained-phase-sources.exact.json": {
++    "path": "res://.cinder/a2-l5-retained-v1-candidate-only-host-prepare-20261020/inputs/retained-phase-sources.exact.json",
++    "sha256": "2536e40cc03d5bbf8eee8c9a3cffd1c1f2241a493d50fc7fedf8f99624f6f744",
++    "bytes": 7331
++  },
++  "retained-independent-review.json": {
++    "path": "res://.cinder/a2-l5-retained-v1-candidate-only-host-prepare-20261020/inputs/retained-independent-review.json",
++    "sha256": "f4d16419cef29494a765817cff96b24a7105ac943c5f66a7efb40d3d8882623d",
++    "bytes": 30585
++  }
++}
++const REFERENCE_PHASE: String = ".cinder/a2-l5-generation-assignment-host-prepare-20261020/run-native-20261020T055207.792218Z-93659e61"
++const REFERENCE_VISUAL_SHA: String = "58b0f58c2a8641c7a55727ca616dd8cdf829f57f3f9166e58db4e15ad83ca2d4"
+@@ -30 +54 @@
+-	"res://scripts/acts/act2/dead_london_sentry_visual.gd": "58b0f58c2a8641c7a55727ca616dd8cdf829f57f3f9166e58db4e15ad83ca2d4",
++	"res://scripts/acts/act2/dead_london_sentry_visual.gd": "af04f74dd613d554906a82ca3683da3fd60c512f84a664d34d7003a7207e4b71",
+@@ -153,0 +178,3 @@
++var executed_arms: Array[String] = []
++var retained_reference: Dictionary = {"arm": "v1", "source_sha256": REFERENCE_FILES["retained-v1-executed.exact.json"].sha256, "source_bytes": 186333, "source_visual_sha256": REFERENCE_VISUAL_SHA, "source_phase": REFERENCE_PHASE, "review_sha256": REFERENCE_FILES["retained-independent-review.json"].sha256, "admitted": false, "safe_wire_roundtrip": false, "scope": "retained source-qualified Challenge/v1 component; original3489/1 overall failed; not a current af04 execution or whole L5 save"}
++var retained_join: Dictionary = {"stage": "not_started", "converted_slots": []}
+@@ -206,2 +233,4 @@
+-	if await _case("v1", Construction.CANONICAL):
+-		if await _case("v2", Construction.ENTRY_SIDE): _compare()
++	if not _admit_retained_v1(): await _finish(); return
++	executed_arms.append("v2") # Selected current case attempt; success remains results.v2 only.
++	if not _write_host_control(): await _finish(); return
++	if await _case("v2", Construction.ENTRY_SIDE): _compare()
+@@ -217,0 +247,105 @@
++
++func _admit_retained_v1() -> bool:
++	retained_join["stage"] = "reading_pinned_reference_inputs"
++	var texts: Dictionary = {}
++	for name: String in REFERENCE_FILES:
++		var pin: Dictionary = REFERENCE_FILES[name]
++		var file: FileAccess = FileAccess.open(pin.path, FileAccess.READ)
++		if not _expect(file != null, "retained reference input opens: " + name): return false
++		var size: int = file.get_length()
++		if not _expect(size == pin.bytes, "literal retained input byte count: " + name): file.close(); return false
++		var bytes: PackedByteArray = file.get_buffer(size)
++		var read_error: Error = file.get_error()
++		file.close()
++		texts[name] = bytes.get_string_from_utf8()
++		if name == "retained-v1-executed.exact.json":
++			var raw: FileAccess = FileAccess.open(output + "retained-v1-executed.raw.exact.json", FileAccess.WRITE)
++			if not _expect(raw != null, "retain literal old result before native parsing/admission"): return false
++			raw.store_buffer(bytes); raw.flush()
++			var error: Error = raw.get_error()
++			raw.close()
++			retained_join["raw_input"] = {"path": pin.path, "expected_sha256": pin.sha256, "observed_sha256": FileAccess.get_sha256(pin.path), "bytes": bytes.size(), "retained_copy": output + "retained-v1-executed.raw.exact.json", "retained_sha256": FileAccess.get_sha256(output + "retained-v1-executed.raw.exact.json")}
++			if not _expect(error == OK and FileAccess.get_sha256(output + "retained-v1-executed.raw.exact.json") == pin.sha256, "literal retained reference copy hash"): return false
++		if not _expect(read_error == OK and bytes.size() == pin.bytes and FileAccess.get_sha256(pin.path) == pin.sha256, "pinned unchanged retained reference bytes: " + name): return false
++	retained_join["stage"] = "pinned_inputs_retained"
++	if not _write_exact("retained-v1-join.native.json", retained_join): return false
++	var parser: JSON = JSON.new()
++	if not _expect(parser.parse(texts["retained-phase-report.plain.json"]) == OK and parser.data is Dictionary, "literal original report object"): return false
++	var report: Dictionary = parser.data
++	if not _expect(Codec.keys_error(report, ["checks", "classification", "failures", "first_failure", "output", "results_present", "scope", "scope_complete", "snapshots"]).is_empty() and report.checks == 3489 and report.failures == 1 and report.scope_complete == false and report.classification == "incomplete" and report.results_present == ["v1"] and report.first_failure is Dictionary and report.first_failure.get("arm") == "v2" and report.first_failure.get("label") == "one actual immutable B05 configure/start after fixed seed" and report.snapshots is Array and report.snapshots.size() == 3, "original3489/1 stays failed, only v1 result precedes v2 configure refusal"): return false
++	for capture: Variant in report.snapshots:
++		if not _expect(capture is Dictionary and capture.get("capture_error") == "" and capture.get("store_write") == true and capture.get("store_custody") is Dictionary and capture.store_custody.get("accepted") == true, "original v1 component capture custody, not current stores"): return false
++	if not _expect(parser.parse(texts["retained-independent-review.json"]) == OK and parser.data is Dictionary, "pinned independent original review object"): return false
++	var review: Dictionary = parser.data
++	if not _expect(review.get("state") == "CLOSED_FAILURE_WITH_QUALIFIED_V1_COMPONENT_ONLY; V2_PRESENTATION_BINDING_BLOCKER" and review.get("phase") == REFERENCE_PHASE and review.get("closed_actual") is Dictionary and review.closed_actual.get("results_present") == ["v1"] and review.closed_actual.get("checks") == 3489 and review.closed_actual.get("failures") == 1 and review.get("v1_qualified_scope") is Dictionary and review.v1_qualified_scope.get("executed_result") is Dictionary and review.v1_qualified_scope.executed_result.get("sha256") == REFERENCE_FILES["retained-v1-executed.exact.json"].sha256 and review.v1_qualified_scope.executed_result.get("bytes") == 186333 and review.v1_qualified_scope.executed_result.get("mode") == "0644", "independent review qualifies only literal original v1 component"): return false
++	var sources: Dictionary = Exact.parse(texts["retained-phase-sources.exact.json"])
++	if not _expect(sources.get("accepted") == true and sources.get("value") is Dictionary, "existing native Exact parses original source map"): return false
++	var old_expected: Dictionary = SOURCE_PINS.duplicate(true)
++	old_expected["res://scripts/acts/act2/dead_london_sentry_visual.gd"] = REFERENCE_VISUAL_SHA
++	if not _expect(Codec.keys_error(sources.value, ["expected", "actual"]).is_empty() and _same(sources.value.expected, old_expected) and _same(sources.value.actual, old_expected), "retained source29 unchanged except declared original visual58b0"): return false
++	var parsed: Dictionary = Exact.parse(texts["retained-v1-executed.exact.json"])
++	if not _expect(parsed.get("accepted") == true and parsed.get("value") is Dictionary, "existing native Exact parses literal retained result"): return false
++	var old: Dictionary = parsed.value.duplicate(true)
++	var before: String = Exact.stringify(old)
++	if not _expect(not before.is_empty() and before == texts["retained-v1-executed.exact.json"] and Codec.value_error(old).is_empty(), "literal retained Exact canonical scalar roundtrip before join"): return false
++	if not _expect(Codec.keys_error(old, ["commands", "event_log", "outcome", "pair", "radius", "ray_bait_sample", "recipe", "start", "tick_log", "trace"]).is_empty() and old.recipe == Construction.CANONICAL and old.radius is float and is_finite(old.radius) and old.radius > 0.0 and old.start is Dictionary and old.pair is Dictionary and old.outcome is Dictionary and old.ray_bait_sample is Dictionary and old.trace is Array and old.trace.size() == 188 and old.commands is Array and old.commands.size() == 5, "one finite retained v1 case schema/recipe/arrays"): return false
++	if not _expect(Codec.keys_error(old.start, ["bait", "foot_start_s", "sample"]).is_empty() and old.start.bait is Dictionary and old.start.foot_start_s is float and is_finite(old.start.foot_start_s) and old.start.sample is Dictionary, "retained first Foot start schema"): return false
++	var sample: Dictionary = old.start.sample
++	if not _expect(Codec.keys_error(sample, ["capsule", "clock_s", "equipment", "hp", "position", "response", "velocity"]).is_empty() and sample.capsule is Dictionary and sample.response is Dictionary and sample.equipment is Dictionary and sample.hp is float and is_finite(sample.hp) and sample.clock_s is float and is_finite(sample.clock_s), "retained actual sample schema"): return false
++	if not _expect(Codec.keys_error(sample.response, ["action_clock_s", "actor", "commitment_remaining_s", "dash_cooldown_left_s", "equipment_ids", "motion", "pending_weapon_id", "primary_commitment_s", "primary_cooldown_left_s", "stable", "stats"]).is_empty(), "retained response context closed schema"): return false
++	if not _expect(Codec.keys_error(sample.capsule, ["collision_instance_decimal", "foot_offset", "footprint_half", "height"]).is_empty() and sample.capsule.collision_instance_decimal is String and sample.capsule.foot_offset is float and sample.capsule.height is float and sample.capsule.footprint_half is Array and sample.capsule.footprint_half.size() == 2 and sample.response.get("stats") is Dictionary and sample.response.get("dash_cooldown_left_s") is float and sample.response.get("primary_cooldown_left_s") is float, "retained same-only capsule/stats/control types remain safe-wire values"): return false
++	if not _expect(Codec.keys_error(old.pair, ["equipment", "foot_cycle", "foot_exchange", "proof", "ray_cycle", "ray_exchange", "validated"]).is_empty() and old.pair.validated is bool and old.pair.validated and old.pair.foot_cycle is int and old.pair.ray_cycle is int and old.pair.foot_exchange is Dictionary and old.pair.ray_exchange is Dictionary, "retained genuine validated pair schema"): return false
++	for name: String in ["foot_exchange", "ray_exchange"]:
++		var exchange: Dictionary = old.pair[name]
++		var keys: Array[String] = ["active_from_s", "active_until_s", "cooldown_until_s", "geometry", "id", "lock_from_s", "opening_position", "profile_id", "recovery_until_s", "source_position", "start_s", "world_revision"]
++		if name == "ray_exchange": keys.append("adapter")
++		if not _expect(Codec.keys_error(exchange, keys).is_empty() and exchange.geometry is Dictionary and exchange.profile_id == "challenge", "retained finite native exchange schema: " + name): return false
++		var shape_keys: Array[String] = ["kind", "origin", "radius"] if name == "foot_exchange" else ["from", "kind", "radius", "to"]
++		if not _expect(Codec.keys_error(exchange.geometry, shape_keys).is_empty() and exchange.geometry.get("kind") == ("circle" if name == "foot_exchange" else "lane"), "retained same-only geometry schema, no geometry conversion"): return false
++		for field: String in ["start_s", "lock_from_s", "active_from_s", "active_until_s", "recovery_until_s", "cooldown_until_s"]:
++			if not _expect(exchange[field] is float and is_finite(exchange[field]), "retained native scalar deadline: " + name + "." + field): return false
++	if not _expect(Codec.keys_error(old.outcome, ["actual_position", "clock_s", "complete_s", "hp_after", "hp_before", "joint_position", "los", "original_upper_s", "range", "state_before"]).is_empty(), "retained actual ordinary outcome schema"): return false
++	var slots: Array[Dictionary] = [{"label": "old.start.sample.position", "holder": sample, "key": "position"}, {"label": "old.outcome.actual_position", "holder": old.outcome, "key": "actual_position"}]
++	# Existing _compare requires Array[Dictionary]. Only this listed trace
++	# container is typed; every original member/scalar stays untouched.
++	var typed_trace: Array[Dictionary] = []
++	for index: int in range(old.trace.size()):
++		var row: Variant = old.trace[index]
++		if not _expect(row is Dictionary and Codec.keys_error(row, ["end_s", "from", "kind", "start_s", "to"]).is_empty() and row.kind == "actual_native_interval" and row.start_s is float and row.end_s is float and is_finite(row.start_s) and is_finite(row.end_s) and row.end_s >= row.start_s, "retained actual trace interval schema: " + str(index)): return false
++		typed_trace.append(row)
++		for endpoint: String in ["from", "to"]: slots.append({"label": "old.trace[%d].%s" % [index, endpoint], "holder": row, "key": endpoint})
++	old["trace"] = typed_trace
++	for index: int in range(old.commands.size()):
++		var row: Variant = old.commands[index]
++		if not _expect(row is Dictionary and row.get("kind") is String, "retained command kind: " + str(index)): return false
++		match row.kind:
++			"dash":
++				if not _expect(Codec.keys_error(row, ["clock_s", "direction", "kind", "proof_key"]).is_empty() and row.clock_s is float and is_finite(row.clock_s) and row.proof_key is String, "retained dash command schema"): return false
++				slots.append({"label": "old.commands[%d].direction" % index, "holder": row, "key": "direction"})
++			"selected-first-current-legal-offer":
++				if not _expect(Codec.keys_error(row, ["clock_s", "key", "kind", "proof"]).is_empty() and row.clock_s is float and is_finite(row.clock_s) and row.key is String and row.proof is Dictionary, "retained legal offer command schema"): return false
++			"ordinary_primary":
++				if not _expect(Codec.keys_error(row, ["kind", "receipt"]).is_empty() and row.receipt is Dictionary, "retained primary command schema"): return false
++			_:
++				return _expect(false, "unknown retained command; no schema widening")
++	if not _expect(slots.size() == 380, "only enumerated380 vector slots in this exact188-interval/two-dash literal"): return false
++	retained_join["stage"] = "finite_schema_admitted_before_vector_join"
++	for slot: Dictionary in slots:
++		var value: Variant = slot.holder[slot.key]
++		if not _expect(value is Array and value.size() == 3, "strict retained three-float array: " + slot.label): return false
++		for scalar: Variant in value:
++			if not _expect(scalar is float and is_finite(scalar), "strict finite retained native float: " + slot.label): return false
++		var point: Vector3 = Codec.read_vector3(value)
++		if not _expect(point.is_finite() and Exact.stringify(Codec.vector3(point)) == Exact.stringify(value), "existing native Codec exact scalar-bit roundtrip: " + slot.label): return false
++		slot.holder[slot.key] = point
++		retained_join.converted_slots.append(slot.label)
++	if not _expect(Exact.stringify(_safe(old)) == before, "whole retained safe-wire roundtrip preserves every original scalar bit"): return false
++	retained_reference["safe_wire_roundtrip"] = true
++	retained_reference["admitted"] = true
++	retained_join["stage"] = "retained_v1_admitted_not_current_execution"
++	retained_join["reference"] = retained_reference.duplicate(true)
++	retained_join["whole_safe_wire_sha256"] = before.sha256_text()
++	if not _write_exact("retained-v1-join.native.json", retained_join): return false
++	results["v1"] = old
++	return _write_host_control()
++
+@@ -805 +939,4 @@
+-	if output_created: _write_host_control()
++	if output_created:
++		retained_join["first_failure"] = first_failure.duplicate(true)
++		_write_exact("retained-v1-join.native.json", retained_join)
++		_write_host_control()
+@@ -807 +944 @@
+-	var report: Dictionary = {"checks": checks, "failures": failures, "scope_complete": complete, "classification": note, "first_failure": first_failure, "results_present": results.keys(), "snapshots": snapshots, "output": output, "scope": "one fixed station/setup, two native component definitions/actual ordinary responses; conditional matched native old-trace counterfactual only. No Retry/restore, literal historical Challenge packet, strict L5 local27/Attempts, route, full-playthrough, portrait, balance or difficulty acceptance claim."}
++	var report: Dictionary = {"checks": checks, "failures": failures, "scope_complete": complete, "classification": note, "first_failure": first_failure, "results_present": results.keys(), "executed_arms": executed_arms.duplicate(), "retained_reference": retained_reference.duplicate(true), "snapshots": snapshots, "output": output, "scope": "current job selects only v2; executed_arms and retained_reference report actual attempt/admission status; qualified v1 is an imported source-qualified component reference; unchanged matched native old-trace counterfactual only. No Retry/restore, literal historical Challenge packet, strict L5 local27/Attempts, route, full-playthrough, portrait, balance or difficulty acceptance claim."}
+@@ -827 +964 @@
+-	var value: Dictionary = {"api_revision": "a2-l5-fixed-host-control-1", "schema_version": 1, "source_gates": {"expected": SOURCE_PINS.duplicate(true), "actual": source_before.duplicate(true)}, "store_directory": host_control_directory.duplicate(true), "store_cleanup": host_control_cleanup.duplicate(true), "comparison": host_control_comparison.duplicate(true)}
++	var value: Dictionary = {"api_revision": "a2-l5-fixed-host-control-2", "schema_version": 2, "executed_arms": executed_arms.duplicate(), "retained_reference": retained_reference.duplicate(true), "source_gates": {"expected": SOURCE_PINS.duplicate(true), "actual": source_before.duplicate(true)}, "store_directory": host_control_directory.duplicate(true), "store_cleanup": host_control_cleanup.duplicate(true), "comparison": host_control_comparison.duplicate(true)}

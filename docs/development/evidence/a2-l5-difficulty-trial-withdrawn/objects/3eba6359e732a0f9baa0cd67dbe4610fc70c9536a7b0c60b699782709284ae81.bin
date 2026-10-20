@@ -1,0 +1,1009 @@
+extends SceneTree
+## INERT SOURCE ONLY. Root reviews/materializes/parses/runs compatible canonical.
+## Exactly one current v2 setup; literal retained v1 reference, no v1 rerun/search/retry/restore/portrait/route.
+const REFERENCE_FILES: Dictionary = {
+  "retained-v1-executed.exact.json": {
+    "path": "res://.cinder/a2-l5-retained-v1-candidate-only-host-prepare-20261020/inputs/retained-v1-executed.exact.json",
+    "sha256": "783de1bad93283d249e9684e6ba0213e75e12011941ecc9228e4cfce20090f8d",
+    "bytes": 186333
+  },
+  "retained-phase-report.plain.json": {
+    "path": "res://.cinder/a2-l5-retained-v1-candidate-only-host-prepare-20261020/inputs/retained-phase-report.plain.json",
+    "sha256": "81a4f2c72a5c84a9a5ec4b493c961307d5bf9a7507ab196c04d060a3bfb517af",
+    "bytes": 6869
+  },
+  "retained-phase-sources.exact.json": {
+    "path": "res://.cinder/a2-l5-retained-v1-candidate-only-host-prepare-20261020/inputs/retained-phase-sources.exact.json",
+    "sha256": "2536e40cc03d5bbf8eee8c9a3cffd1c1f2241a493d50fc7fedf8f99624f6f744",
+    "bytes": 7331
+  },
+  "retained-independent-review.json": {
+    "path": "res://.cinder/a2-l5-retained-v1-candidate-only-host-prepare-20261020/inputs/retained-independent-review.json",
+    "sha256": "f4d16419cef29494a765817cff96b24a7105ac943c5f66a7efb40d3d8882623d",
+    "bytes": 30585
+  }
+}
+const REFERENCE_PHASE: String = ".cinder/a2-l5-generation-assignment-host-prepare-20261020/run-native-20261020T055207.792218Z-93659e61"
+const REFERENCE_VISUAL_SHA: String = "58b0f58c2a8641c7a55727ca616dd8cdf829f57f3f9166e58db4e15ad83ca2d4"
+const MainScene = preload("res://scenes/main.tscn")
+const ComponentScene = preload("res://tests/acts/act2/fixtures/a2_l5_production_art_component.tscn")
+const Construction = preload("res://scripts/acts/act2/dead_london_construction.gd")
+const Host = preload("res://scripts/acts/act2/dead_london.gd")
+const Exact = preload("res://scripts/campaign/exact_json.gd")
+const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
+const Store = preload("res://scripts/campaign/save_store.gd")
+const Geometry = preload("res://scripts/combat/threat_geometry.gd")
+const Scheduler = preload("res://scripts/combat/threat_scheduler.gd")
+const BodySweep = preload("res://scripts/combat/body_sweep.gd")
+const Equipment = preload("res://scripts/equipment.gd")
+const STATION: Vector3 = Vector3(1.350000023841858, 0, -27.939250946044922)
+const MAX_ARM_FRAMES: int = 2400
+const MAX_ARM_NATIVE_S: float = 35.0
+const WALL_LIMIT_MS: int = 600000
+# Fixed source pins are inserted by source preparation, never chosen by runtime.
+const SOURCE_PINS: Dictionary = {
+	"res://scenes/main.tscn": "c0c169890eed0afb26b1a09a017d45c90a64aa8ba874a683deb141c4190ee06b",
+	"res://scripts/game.gd": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26",
+	"res://scripts/player.gd": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+	"res://scripts/hud.gd": "3a76c06a97da117b2fbd43824d88f3ef5150e6ad0045b5e27766b8d70542897b",
+	"res://scripts/equipment.gd": "2f721f0e7af0d1034ae9f92c37b4af3c3223171d0e5d2c120e42c00ae9155ab0",
+	"res://scripts/acts/act2/dead_london_sentry_encounter.gd": "f36e42c36e32edc2e20f7fed8d2dd21b0758f356fcc7cd53332ebd93109edfc1",
+	"res://scripts/acts/act2/dead_london_sentry_presented_encounter.gd": "c72d44cb8315a70adf285ce79c25d084d439ea6c55561de42078395fe27f7517",
+	"res://scripts/acts/act2/dead_london_sentry_actor.gd": "ffaf6c671894715995f03fa5d2c1f54ea6b2bf720a118fb0a8b97a2269b67b5d",
+	"res://scripts/acts/act2/dead_london_sentry_presented_actor.gd": "0f84ae138e572459e32575fe77e1050368c90ad4adccd1732e85496b144e5fe0",
+	"res://scripts/acts/act2/dead_london_sentry_visual.gd": "af04f74dd613d554906a82ca3683da3fd60c512f84a664d34d7003a7207e4b71",
+	"res://scripts/acts/act2/dead_london_kit.gd": "0f7d1b139c4ec9d0446f34761595dd762851e0ffe3d35e1f75cbcde63f03c983",
+	"res://scripts/acts/act2/dead_london_bait.gd": "9ae1b065521e1d521025d0f90fc941aa0f19867851ddc3eaa632432147d94808",
+	"res://scripts/acts/act2/dead_london_ray_exchange.gd": "d6bbcc1f35f45b4ac32226f898d924350e3b01543f28f44cf15cade7b75a3ff1",
+	"res://scripts/campaign/level.gd": "27fdab6686d8ba4b8282c48af84c0c3f63d8c8fa7620ae462a4642ec225100c1",
+	"res://scripts/campaign/save_store.gd": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0",
+	"res://scripts/campaign/exact_json.gd": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+	"res://scripts/campaign/snapshot_codec.gd": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+	"res://scripts/combat/threat_scheduler.gd": "c28ea9f4cd6c1ff9aedbc9cfc45a28826c589c095b9193b565f45d23c3df903d",
+	"res://scripts/combat/threat_geometry.gd": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+	"res://scripts/combat/body_sweep.gd": "bddf3956d85c656fedea6bbce952ceb494c76867cdba895ff089abeb4c31eab9",
+	"res://scripts/combat/difficulty.gd": "e6a0aba9b39697cf59837165ebec858b0dd15c7573f66d79eadc58595ed2e7ae",
+	"res://scripts/combat/lane_mechanism.gd": "bcf6558d4ae57c4bf8714ae6fe6b1896b3c7c0be3b6a8a9f3178451653bd031d",
+	"res://data/design/difficulty_profiles.json": "891baa4d087a1f35da0581c5dc6b888274296686144b3c8f5609249245def41c",
+	"res://data/design/player_equipment.json": "737cf534df88fa965ab568f750515eb17098688d268e5b6b699de5cd519b98d1",
+	"res://scenes/acts/act2/dead_london.tscn": "1dcbdcadc4f3ccac37515a65b9f2be1b62352e6a3e735648fe441de610e76917",
+	"res://tests/acts/act2/fixtures/a2_l1_profile_seed_game.gd": "17d23892d1b80c8bd7a95e8ccd3adf2b6e5a75561d26416fe8816debf732bf3e",
+	"res://tests/acts/act2/fixtures/a2_l5_production_art_component.tscn": "37727fd291c06753234be899276fb65f7c3bf17c5ef0c8fd7649ae1c0b81ccd1",
+	"res://scripts/acts/act2/dead_london.gd": "5f47cfd1fb5f54b11cb425c057dffbff7500ff43b29da1da62b5a71daf9c1e11",
+	"res://scripts/acts/act2/dead_london_construction.gd": "c26d2ce401b46fa74499e0dea9da2cba66efe33f76f5ccec33959e841f682686"
+}
+
+class TickBarrier:
+	extends Node
+	signal after_tick
+	func _init() -> void:
+		process_mode = Node.PROCESS_MODE_ALWAYS
+		process_physics_priority = 120
+	func _physics_process(_delta: float) -> void: after_tick.emit()
+
+class ComponentHost:
+	extends "res://scripts/acts/act2/dead_london.gd"
+	## TEST sparse component: same inherited _ready/floors/gates/scenery, exact
+	## framing/context/consumer guards and reviewed latch; no fake route stage.
+	var recipe_id: String = ""
+	signal observed(value: Dictionary)
+	var notices: Array[Dictionary] = []
+	var errors: Array[String] = []
+	var component_ready: bool = false
+
+	func _on_enter_level() -> void:
+		var descriptor: Dictionary = Construction.fresh("challenge").descriptor
+		descriptor.recipe_id = recipe_id # Authored finite recipe before any source.
+		var problem: String = _latch_construction({"error": "", "descriptor": descriptor, "legacy": false})
+		if not problem.is_empty(): errors.append(problem); return
+		_scheduler = SchedulerScript.new()
+		add_child(_scheduler)
+		if not _scheduler.begin_encounter(_profile, EPOCH, WORLD_REVISION): errors.append(_scheduler.last_error); return
+		_bait = BaitScript.new()
+		if not _bait.call("bind", hero) or not _bait.call("begin_boundary", "sentry-entry"): errors.append("actual supported initial bait refused"); return
+		hero.world_action_executed.connect(_observe_action)
+		set_physics_process(true)
+
+	func actual_world_root() -> Node3D:
+		# Nested component geometry still uses the real Game.world containing Hero.
+		return shared_shell.get("world") as Node3D if is_instance_valid(shared_shell) else null
+
+	func begin_sentry_at_fixed_seed() -> bool:
+		if is_instance_valid(_sentry) or not errors.is_empty() or sentry_parent_script == null: return false
+		_sentry = sentry_parent_script.new() as Node3D
+		add_child(_sentry)
+		if not _parent_api_present(): errors.append("actual B05 API missing"); return false
+		if not _sentry.call("configure", hero, effects, _scheduler, _bait, actual_world_root(), floor_bindings(), _response_context(), _construction_definition.joint_anchor, _construction_definition.foot_anchor, Callable(self, "_sentry_guard")): errors.append("native B05 configure refused"); return false
+		if not _sentry.call("bind_transport_scope", scheduler_bindings()): errors.append("native two-owner scope refused"); return false
+		if not _sentry.call("get_ray").call("set_response_context_provider", Callable(self, "_response_context")): errors.append("production response provider refused"); return false
+		_sentry.connect("runtime_failed", func(reason: String) -> void: errors.append(reason))
+		_sentry.connect("phase_checkpoint_eligible", func(receipt: Dictionary) -> void: notices.append(receipt.duplicate(true)))
+		_sentry.connect("hit_resolved", func(id: String, value: Dictionary) -> void: observed.emit({"kind": "hit", "source": id, "value": value.duplicate(true)}))
+		_sentry.call("get_ray").connect("state_changed", func(id: String, value: Dictionary) -> void: _observe_source("ray-publication", id, value))
+		_sentry.call("get_foot").connect("state_changed", func(value: Dictionary) -> void: _observe_source("foot-publication", "A2-L5:near-foot", value))
+		component_ready = true
+		_refresh_cosmetic_readability() # Same production projection before first guard.
+		return bool(_sentry.call("start"))
+
+	func _observe_action(record: Dictionary) -> void:
+		observed.emit({"kind": "actual-action", "value": record.duplicate(true)})
+		if record.kind == "blast": errors.append("unexpected blast in primary-only comparison")
+		if not _bait.call("observe_record", record): errors.append(String(_bait.get("last_error")))
+
+	func _observe_source(kind: String, id: String, value: Dictionary) -> void:
+		var compact: Dictionary = {}
+		for key: String in ["status", "phase", "cycle", "direction", "armed", "geometry", "exchange", "reservation_id", "last_cancel_reason", "clock_s"]:
+			if value.has(key): compact[key] = value[key]
+		observed.emit({"kind": kind, "source": id, "value": compact})
+
+	func _physics_process(_delta: float) -> void:
+		# TEST component has no navigation/progress processor. This only uses the
+		# original cosmetic projection, never phases/physics/admission/damage.
+		if _entered and not get_tree().paused and is_instance_valid(_sentry): _refresh_cosmetic_readability()
+
+	func _camera_framing_points() -> Array:
+		return _sentry_required_points() if component_ready and is_instance_valid(_sentry) else []
+
+	func _on_exit_level() -> void:
+		if is_instance_valid(hero) and hero.world_action_executed.is_connected(_observe_action): hero.world_action_executed.disconnect(_observe_action)
+		super._on_exit_level()
+
+class FixedGame:
+	extends "res://tests/acts/act2/fixtures/a2_l1_profile_seed_game.gd"
+	var selected_recipe: String = ""
+	func _create_level_instance() -> CinderLevel:
+		var level: CinderLevel = super._create_level_instance()
+		var geometry: CinderLevel = level.get_node("ActualProductionGeometry") as CinderLevel
+		# TEST pre-tree subclass binding, before the inherited production _ready.
+		# No source exists, transform changes or live script replacement occur.
+		var props: Dictionary = {}
+		for key: String in ["level_id", "objective_text", "spawn_path", "local_snapshot_version", "sentry_parent_script"]: props[key] = geometry.get(key)
+		geometry.set_script(ComponentHost)
+		for key: String in props: geometry.set(key, props[key])
+		geometry.set("recipe_id", selected_recipe)
+		return level
+
+var game: Node
+var component: Node
+var probe: TickBarrier
+var output: String = ""
+var output_created: bool = false
+var store_output: String = ""
+var store_output_created: bool = false
+var store_listing_ok: bool = false
+var owned_store_files: Dictionary = {}
+var host_control_directory: Dictionary = {}
+var host_control_cleanup: Dictionary = {}
+var host_control_comparison: Dictionary = {}
+var executed_arms: Array[String] = []
+var retained_reference: Dictionary = {"arm": "v1", "source_sha256": REFERENCE_FILES["retained-v1-executed.exact.json"].sha256, "source_bytes": 186333, "source_visual_sha256": REFERENCE_VISUAL_SHA, "source_phase": REFERENCE_PHASE, "review_sha256": REFERENCE_FILES["retained-independent-review.json"].sha256, "admitted": false, "safe_wire_roundtrip": false, "scope": "retained source-qualified Challenge/v1 component; original3489/1 overall failed; not a current af04 execution or whole L5 save"}
+var retained_join: Dictionary = {"stage": "not_started", "converted_slots": []}
+var arm: String = ""
+var checks: int = 0
+var failures: int = 0
+var first_failure: Dictionary = {}
+var finishing: bool = false
+var started_ms: int = 0
+var old_audio: AudioBusLayout
+var old_fps: int
+var arm_frames: int = 0
+var trace_enabled: bool = false
+var trace: Array[Dictionary] = []
+var commands: Array[Dictionary] = []
+var snapshots: Array[Dictionary] = []
+var previous: Dictionary = {}
+var first_pair: Dictionary = {}
+var pair_start: Dictionary = {}
+var paired_bait_sample: Dictionary = {}
+var pair_command_start: int = 0
+var outcome: Dictionary = {}
+var results: Dictionary = {}
+var note: String = "incomplete"
+var initial_hp: float = 0.0
+var neutral_stats: Dictionary = {}
+var motion_previous: Dictionary = {}
+var previous_exchanges: Array[Dictionary] = []
+var source_before: Dictionary = {}
+var tick_log: FileAccess
+var event_log: FileAccess
+var tick_rows: int = 0
+var event_rows: int = 0
+
+func _initialize() -> void:
+	started_ms = Time.get_ticks_msec()
+	old_audio = AudioServer.generate_bus_layout()
+	old_fps = Engine.max_fps
+	process_frame.connect(_wall_guard)
+	_run.call_deferred()
+
+func _run() -> void:
+	for arg: String in OS.get_cmdline_user_args():
+		if arg.begins_with("--out="): output = arg.trim_prefix("--out=")
+		else: _expect(false, "only explicit output selector is supported; no station/kit/angle controls")
+	if failures > 0: await _finish(); return
+	if not _expect(output.begins_with("res://.cinder/") and output.ends_with("/") and not output.contains(".."), "explicit fresh ignored output directory required"): await _finish(); return
+	if not _expect(not DirAccess.dir_exists_absolute(ProjectSettings.globalize_path(output)), "refuse to overwrite any previous comparison evidence"): await _finish(); return
+	if not _expect(DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(output)) == OK, "create output directory"): await _finish(); return
+	output_created = true
+	if not _prepare_store_output(): await _finish(); return
+	root.size = Vector2i(540, 1170)
+	probe = TickBarrier.new()
+	root.add_child(probe)
+	if not _source_gate(): await _finish(); return
+	if not _admit_retained_v1(): await _finish(); return
+	executed_arms.append("v2") # Selected current case attempt; success remains results.v2 only.
+	if not _write_host_control(): await _finish(); return
+	if await _case("v2", Construction.ENTRY_SIDE): _compare()
+	await _finish()
+
+func _source_gate() -> bool:
+	for path: String in SOURCE_PINS:
+		var actual: String = FileAccess.get_sha256(path)
+		source_before[path] = actual
+		if not _expect(actual == SOURCE_PINS[path], "frozen reviewed source gate: " + path): return false
+	var retained: bool = _write_exact("source-gates.native.json", {"expected": SOURCE_PINS, "actual": source_before})
+	if not _write_host_control(): return false
+	return retained
+
+func _admit_retained_v1() -> bool:
+	retained_join["stage"] = "reading_pinned_reference_inputs"
+	var texts: Dictionary = {}
+	for name: String in REFERENCE_FILES:
+		var pin: Dictionary = REFERENCE_FILES[name]
+		var file: FileAccess = FileAccess.open(pin.path, FileAccess.READ)
+		if not _expect(file != null, "retained reference input opens: " + name): return false
+		var size: int = file.get_length()
+		if not _expect(size == pin.bytes, "literal retained input byte count: " + name): file.close(); return false
+		var bytes: PackedByteArray = file.get_buffer(size)
+		var read_error: Error = file.get_error()
+		file.close()
+		texts[name] = bytes.get_string_from_utf8()
+		if name == "retained-v1-executed.exact.json":
+			var raw: FileAccess = FileAccess.open(output + "retained-v1-executed.raw.exact.json", FileAccess.WRITE)
+			if not _expect(raw != null, "retain literal old result before native parsing/admission"): return false
+			raw.store_buffer(bytes); raw.flush()
+			var error: Error = raw.get_error()
+			raw.close()
+			retained_join["raw_input"] = {"path": pin.path, "expected_sha256": pin.sha256, "observed_sha256": FileAccess.get_sha256(pin.path), "bytes": bytes.size(), "retained_copy": output + "retained-v1-executed.raw.exact.json", "retained_sha256": FileAccess.get_sha256(output + "retained-v1-executed.raw.exact.json")}
+			if not _expect(error == OK and FileAccess.get_sha256(output + "retained-v1-executed.raw.exact.json") == pin.sha256, "literal retained reference copy hash"): return false
+		if not _expect(read_error == OK and bytes.size() == pin.bytes and FileAccess.get_sha256(pin.path) == pin.sha256, "pinned unchanged retained reference bytes: " + name): return false
+	retained_join["stage"] = "pinned_inputs_retained"
+	if not _write_exact("retained-v1-join.native.json", retained_join): return false
+	var parser: JSON = JSON.new()
+	if not _expect(parser.parse(texts["retained-phase-report.plain.json"]) == OK and parser.data is Dictionary, "literal original report object"): return false
+	var report: Dictionary = parser.data
+	if not _expect(Codec.keys_error(report, ["checks", "classification", "failures", "first_failure", "output", "results_present", "scope", "scope_complete", "snapshots"]).is_empty() and report.checks == 3489 and report.failures == 1 and report.scope_complete == false and report.classification == "incomplete" and report.results_present == ["v1"] and report.first_failure is Dictionary and report.first_failure.get("arm") == "v2" and report.first_failure.get("label") == "one actual immutable B05 configure/start after fixed seed" and report.snapshots is Array and report.snapshots.size() == 3, "original3489/1 stays failed, only v1 result precedes v2 configure refusal"): return false
+	for capture: Variant in report.snapshots:
+		if not _expect(capture is Dictionary and capture.get("capture_error") == "" and capture.get("store_write") == true and capture.get("store_custody") is Dictionary and capture.store_custody.get("accepted") == true, "original v1 component capture custody, not current stores"): return false
+	if not _expect(parser.parse(texts["retained-independent-review.json"]) == OK and parser.data is Dictionary, "pinned independent original review object"): return false
+	var review: Dictionary = parser.data
+	if not _expect(review.get("state") == "CLOSED_FAILURE_WITH_QUALIFIED_V1_COMPONENT_ONLY; V2_PRESENTATION_BINDING_BLOCKER" and review.get("phase") == REFERENCE_PHASE and review.get("closed_actual") is Dictionary and review.closed_actual.get("results_present") == ["v1"] and review.closed_actual.get("checks") == 3489 and review.closed_actual.get("failures") == 1 and review.get("v1_qualified_scope") is Dictionary and review.v1_qualified_scope.get("executed_result") is Dictionary and review.v1_qualified_scope.executed_result.get("sha256") == REFERENCE_FILES["retained-v1-executed.exact.json"].sha256 and review.v1_qualified_scope.executed_result.get("bytes") == 186333 and review.v1_qualified_scope.executed_result.get("mode") == "0644", "independent review qualifies only literal original v1 component"): return false
+	var sources: Dictionary = Exact.parse(texts["retained-phase-sources.exact.json"])
+	if not _expect(sources.get("accepted") == true and sources.get("value") is Dictionary, "existing native Exact parses original source map"): return false
+	var old_expected: Dictionary = SOURCE_PINS.duplicate(true)
+	old_expected["res://scripts/acts/act2/dead_london_sentry_visual.gd"] = REFERENCE_VISUAL_SHA
+	if not _expect(Codec.keys_error(sources.value, ["expected", "actual"]).is_empty() and _same(sources.value.expected, old_expected) and _same(sources.value.actual, old_expected), "retained source29 unchanged except declared original visual58b0"): return false
+	var parsed: Dictionary = Exact.parse(texts["retained-v1-executed.exact.json"])
+	if not _expect(parsed.get("accepted") == true and parsed.get("value") is Dictionary, "existing native Exact parses literal retained result"): return false
+	var old: Dictionary = parsed.value.duplicate(true)
+	var before: String = Exact.stringify(old)
+	if not _expect(not before.is_empty() and before == texts["retained-v1-executed.exact.json"] and Codec.value_error(old).is_empty(), "literal retained Exact canonical scalar roundtrip before join"): return false
+	if not _expect(Codec.keys_error(old, ["commands", "event_log", "outcome", "pair", "radius", "ray_bait_sample", "recipe", "start", "tick_log", "trace"]).is_empty() and old.recipe == Construction.CANONICAL and old.radius is float and is_finite(old.radius) and old.radius > 0.0 and old.start is Dictionary and old.pair is Dictionary and old.outcome is Dictionary and old.ray_bait_sample is Dictionary and old.trace is Array and old.trace.size() == 188 and old.commands is Array and old.commands.size() == 5, "one finite retained v1 case schema/recipe/arrays"): return false
+	if not _expect(Codec.keys_error(old.start, ["bait", "foot_start_s", "sample"]).is_empty() and old.start.bait is Dictionary and old.start.foot_start_s is float and is_finite(old.start.foot_start_s) and old.start.sample is Dictionary, "retained first Foot start schema"): return false
+	var sample: Dictionary = old.start.sample
+	if not _expect(Codec.keys_error(sample, ["capsule", "clock_s", "equipment", "hp", "position", "response", "velocity"]).is_empty() and sample.capsule is Dictionary and sample.response is Dictionary and sample.equipment is Dictionary and sample.hp is float and is_finite(sample.hp) and sample.clock_s is float and is_finite(sample.clock_s), "retained actual sample schema"): return false
+	if not _expect(Codec.keys_error(sample.response, ["action_clock_s", "actor", "commitment_remaining_s", "dash_cooldown_left_s", "equipment_ids", "motion", "pending_weapon_id", "primary_commitment_s", "primary_cooldown_left_s", "stable", "stats"]).is_empty(), "retained response context closed schema"): return false
+	if not _expect(Codec.keys_error(sample.capsule, ["collision_instance_decimal", "foot_offset", "footprint_half", "height"]).is_empty() and sample.capsule.collision_instance_decimal is String and sample.capsule.foot_offset is float and sample.capsule.height is float and sample.capsule.footprint_half is Array and sample.capsule.footprint_half.size() == 2 and sample.response.get("stats") is Dictionary and sample.response.get("dash_cooldown_left_s") is float and sample.response.get("primary_cooldown_left_s") is float, "retained same-only capsule/stats/control types remain safe-wire values"): return false
+	if not _expect(Codec.keys_error(old.pair, ["equipment", "foot_cycle", "foot_exchange", "proof", "ray_cycle", "ray_exchange", "validated"]).is_empty() and old.pair.validated is bool and old.pair.validated and old.pair.foot_cycle is int and old.pair.ray_cycle is int and old.pair.foot_exchange is Dictionary and old.pair.ray_exchange is Dictionary, "retained genuine validated pair schema"): return false
+	for name: String in ["foot_exchange", "ray_exchange"]:
+		var exchange: Dictionary = old.pair[name]
+		var keys: Array[String] = ["active_from_s", "active_until_s", "cooldown_until_s", "geometry", "id", "lock_from_s", "opening_position", "profile_id", "recovery_until_s", "source_position", "start_s", "world_revision"]
+		if name == "ray_exchange": keys.append("adapter")
+		if not _expect(Codec.keys_error(exchange, keys).is_empty() and exchange.geometry is Dictionary and exchange.profile_id == "challenge", "retained finite native exchange schema: " + name): return false
+		var shape_keys: Array[String] = ["kind", "origin", "radius"] if name == "foot_exchange" else ["from", "kind", "radius", "to"]
+		if not _expect(Codec.keys_error(exchange.geometry, shape_keys).is_empty() and exchange.geometry.get("kind") == ("circle" if name == "foot_exchange" else "lane"), "retained same-only geometry schema, no geometry conversion"): return false
+		for field: String in ["start_s", "lock_from_s", "active_from_s", "active_until_s", "recovery_until_s", "cooldown_until_s"]:
+			if not _expect(exchange[field] is float and is_finite(exchange[field]), "retained native scalar deadline: " + name + "." + field): return false
+	if not _expect(Codec.keys_error(old.outcome, ["actual_position", "clock_s", "complete_s", "hp_after", "hp_before", "joint_position", "los", "original_upper_s", "range", "state_before"]).is_empty(), "retained actual ordinary outcome schema"): return false
+	var slots: Array[Dictionary] = [{"label": "old.start.sample.position", "holder": sample, "key": "position"}, {"label": "old.outcome.actual_position", "holder": old.outcome, "key": "actual_position"}]
+	# Existing _compare requires Array[Dictionary]. Only this listed trace
+	# container is typed; every original member/scalar stays untouched.
+	var typed_trace: Array[Dictionary] = []
+	for index: int in range(old.trace.size()):
+		var row: Variant = old.trace[index]
+		if not _expect(row is Dictionary and Codec.keys_error(row, ["end_s", "from", "kind", "start_s", "to"]).is_empty() and row.kind == "actual_native_interval" and row.start_s is float and row.end_s is float and is_finite(row.start_s) and is_finite(row.end_s) and row.end_s >= row.start_s, "retained actual trace interval schema: " + str(index)): return false
+		typed_trace.append(row)
+		for endpoint: String in ["from", "to"]: slots.append({"label": "old.trace[%d].%s" % [index, endpoint], "holder": row, "key": endpoint})
+	old["trace"] = typed_trace
+	for index: int in range(old.commands.size()):
+		var row: Variant = old.commands[index]
+		if not _expect(row is Dictionary and row.get("kind") is String, "retained command kind: " + str(index)): return false
+		match row.kind:
+			"dash":
+				if not _expect(Codec.keys_error(row, ["clock_s", "direction", "kind", "proof_key"]).is_empty() and row.clock_s is float and is_finite(row.clock_s) and row.proof_key is String, "retained dash command schema"): return false
+				slots.append({"label": "old.commands[%d].direction" % index, "holder": row, "key": "direction"})
+			"selected-first-current-legal-offer":
+				if not _expect(Codec.keys_error(row, ["clock_s", "key", "kind", "proof"]).is_empty() and row.clock_s is float and is_finite(row.clock_s) and row.key is String and row.proof is Dictionary, "retained legal offer command schema"): return false
+			"ordinary_primary":
+				if not _expect(Codec.keys_error(row, ["kind", "receipt"]).is_empty() and row.receipt is Dictionary, "retained primary command schema"): return false
+			_:
+				return _expect(false, "unknown retained command; no schema widening")
+	if not _expect(slots.size() == 380, "only enumerated380 vector slots in this exact188-interval/two-dash literal"): return false
+	retained_join["stage"] = "finite_schema_admitted_before_vector_join"
+	for slot: Dictionary in slots:
+		var value: Variant = slot.holder[slot.key]
+		if not _expect(value is Array and value.size() == 3, "strict retained three-float array: " + slot.label): return false
+		for scalar: Variant in value:
+			if not _expect(scalar is float and is_finite(scalar), "strict finite retained native float: " + slot.label): return false
+		var point: Vector3 = Codec.read_vector3(value)
+		if not _expect(point.is_finite() and Exact.stringify(Codec.vector3(point)) == Exact.stringify(value), "existing native Codec exact scalar-bit roundtrip: " + slot.label): return false
+		slot.holder[slot.key] = point
+		retained_join.converted_slots.append(slot.label)
+	if not _expect(Exact.stringify(_safe(old)) == before, "whole retained safe-wire roundtrip preserves every original scalar bit"): return false
+	retained_reference["safe_wire_roundtrip"] = true
+	retained_reference["admitted"] = true
+	retained_join["stage"] = "retained_v1_admitted_not_current_execution"
+	retained_join["reference"] = retained_reference.duplicate(true)
+	retained_join["whole_safe_wire_sha256"] = before.sha256_text()
+	if not _write_exact("retained-v1-join.native.json", retained_join): return false
+	results["v1"] = old
+	return _write_host_control()
+
+
+func _case(label: String, recipe: String) -> bool:
+	arm = label
+	arm_frames = 0
+	trace_enabled = false
+	tick_rows = 0; event_rows = 0
+	tick_log = FileAccess.open(output + arm + "-ticks.jsonl", FileAccess.WRITE)
+	event_log = FileAccess.open(output + arm + "-events.jsonl", FileAccess.WRITE)
+	if not _expect(tick_log != null and event_log != null, "open immediate tick/event evidence before setup"): return false
+	trace.clear(); commands.clear(); previous.clear(); motion_previous.clear(); previous_exchanges.clear(); first_pair.clear(); pair_start.clear(); paired_bait_sample.clear(); outcome.clear()
+	game = MainScene.instantiate()
+	game.set_script(FixedGame)
+	game.set("test_profile_id", "challenge")
+	game.set("selected_recipe", recipe)
+	game.set("level_scene_path", "res://tests/acts/act2/fixtures/a2_l5_production_art_component.tscn")
+	root.add_child(game)
+	paused = true
+	var hero: CinderPlayer = game.get("player") as CinderPlayer
+	var level: Variant = game.get("active_level")
+	if not _expect(is_instance_valid(hero) and is_instance_valid(level), "actual Main constructor supplied Hero and component level"): return false
+	component = level.get_node_or_null("ActualProductionGeometry")
+	if not _expect(is_instance_valid(component), "actual production geometry supplied before any component entry"): return false
+	if not _expect(game.get("level_load_error") == "" and is_instance_valid(hero) and component.get("hero") == null and hero.equipment.snapshot() == Equipment.STARTER and hero.hp == hero.max_hp, "normal native Hero/neutral gear, unentered production scaffold; no HP seed"): return false
+	hero.shells = 0 # Disclosed initial TEST resource, before any B05/config/combat.
+	game.call("resume_lab")
+	for _i: int in range(12): await _step()
+	if not _expect(_stable() and hero.is_on_floor(), "actual fixed authored spawn reaches supported native readiness"): return false
+	component.connect("observed", _event)
+	component.call("enter_level", hero, game.get("fx"), game)
+	if not _expect(component.get("errors").is_empty(), "TEST component uses public lifecycle and reviewed finite construction before sources"): return false
+	if not _write_exact(arm + "-setup-before-seed.native.json", _diagnostic()): return false
+	for direction: Vector3 in [Vector3.FORWARD, Vector3.BACK, Vector3(0.5, 0, -sqrt(0.75))]:
+		if not await _setup_dash(direction): return false
+	for _i: int in range(12): await _step()
+	var bait: Dictionary = component.get("_bait").call("state")
+	var records: Array[Dictionary] = hero.get_world_action_records()
+	var third: Dictionary = records.back() if not records.is_empty() else {}
+	var bait_dash: Dictionary = bait.last_dash if bait.get("last_dash") is Dictionary else {}
+	var third_completed: bool = records.size() == 3 and third.get("kind") == "dash" and int(third.get("sequence", -1)) == 3 and third.get("landing") is Vector3
+	var bait_sequence: bool = not bait_dash.is_empty() and int(bait_dash.get("sequence", -1)) == 3
+	var clauses: Dictionary = {
+		"exactly_three_completed_public_controller_dashes_seq3": third_completed,
+		"native_stable_grounded_no_action": _stable(),
+		"actual_third_receipt_planar_landing_with_native_EPS": third_completed and Geometry.planar(hero.global_position - third.landing).length() <= Scheduler.EPSILON,
+		"native_bait_completed_sequence3": bait_sequence,
+		"native_bait_boundary_sentry_entry": bait.get("boundary") == "sentry-entry",
+		"original_production_APRON_HERO_BOUNDS": Host.APRON_HERO_BOUNDS.has_point(Geometry.planar(hero.global_position)),
+	}
+	# Record EVERY actual clause before the first refusal. Historical pixels
+	# document a point; the original contract is apron-after-the-three-swipes.
+	if not _write_exact(arm + "-seed-contract.native.json", {"clauses": clauses, "actual_hero_position": hero.global_position, "actual_third_record": third, "actual_bait": bait, "native_epsilon": Scheduler.EPSILON, "original_apron_bounds": Host.APRON_HERO_BOUNDS, "historical_station_only": STATION, "historical_delta_only": hero.global_position - STATION, "historical_planar_delta_only": Geometry.planar(hero.global_position - STATION).length(), "scope": "same authored spawn and exact three public dash directions; no historic-coordinate equality, new tolerance, reposition, extra action or pose search"}): return false
+	for clause: String in clauses:
+		if not _expect(clauses[clause], "fixed three-dash apron setup clause: " + clause): return false
+	initial_hp = hero.hp
+	neutral_stats = hero.stats.duplicate(true)
+	if not _write_exact(arm + "-fixed-seed.native.json", _diagnostic()): return false
+	if not _expect(component.call("begin_sentry_at_fixed_seed"), "one actual immutable B05 configure/start after fixed seed"): return false
+	await _step() # One ordinary synchronization tick, not a phase/lock wait.
+	if not await _persist("before-first-response", true): return false
+	if not await _drive("threshold"): return false
+	if not await _drive("eligibility"): return false
+	if not await _persist("earned-eligibility-before-ack", true): return false
+	if not _expect(component.get("notices").size() == 1 and _state().stage == "phase-two-checkpoint" and _state().actor_hp == 15.0 and not _state().transition_pending, "real isolated damage/Foot/drained receipts deliver eligibility exactly once"): return false
+	trace_enabled = true
+	pair_command_start = commands.size()
+	previous = _position_sample()
+	if not _expect(_parent().call("resume_after_phase_checkpoint"), "TEST host acknowledges genuine eligibility once; no protected campaign checkpoint claim"): return false
+	if not await _drive("paired"): return false
+	trace_enabled = false
+	if not await _persist("actual-paired-response", true): return false
+	if not _expect(not first_pair.is_empty() and not pair_start.is_empty() and not outcome.is_empty(), "first paired cycle/start and executed ordinary outcome retained"): return false
+	var radius: float = _radius()
+	if not _expect(not Geometry.timed_path_hits(first_pair.ray_exchange.geometry, trace, first_pair.ray_exchange.active_from_s, first_pair.ray_exchange.active_until_s, radius) and not Geometry.timed_path_hits(first_pair.foot_exchange.geometry, trace, first_pair.foot_exchange.active_from_s, first_pair.foot_exchange.active_until_s, radius), "complete actual movements and holds clear both real active footprints; no immunity dependency"): return false
+	results[label] = {"recipe": recipe, "pair": first_pair.duplicate(true), "start": pair_start.duplicate(true), "trace": trace.duplicate(true), "commands": commands.slice(pair_command_start).duplicate(true), "ray_bait_sample": paired_bait_sample.duplicate(true), "outcome": outcome.duplicate(true), "radius": radius, "tick_log": {"path": output + arm + "-ticks.jsonl", "rows": tick_rows}, "event_log": {"path": output + arm + "-events.jsonl", "rows": event_rows}}
+	if not _write_exact(arm + "-executed-result.native.json", results[label]): return false
+	await _cleanup_case()
+	return failures == 0
+
+func _setup_dash(direction: Vector3) -> bool:
+	for _i: int in range(120):
+		if finishing or not is_instance_valid(game): return false
+		if paused: return _expect(false, "actual pause interrupted fixed setup; no forced resume/focus")
+		if _stable() and float(_hero().get_threat_response_state().dash_cooldown_left_s) == 0.0: break
+		await _step()
+	if finishing or not is_instance_valid(game): return false
+	var before: int = _sequence()
+	if not _expect(_hero().request_dash(direction), "fixed setup ordinary controller dash accepted"): return false
+	for _i: int in range(120):
+		if finishing or not is_instance_valid(game): return false
+		if paused: return _expect(false, "actual pause interrupted fixed setup motion; no forced resume/focus")
+		await _step()
+		if finishing or not is_instance_valid(game): return false
+		if _sequence() > before and _stable():
+			var record: Dictionary = _hero().get_world_action_records().back()
+			return _expect(record.kind == "dash" and record.landing == _hero().global_position, "fixed seed uses actual completed stop/collision-shortened receipt")
+	return _expect(false, "fixed setup dash did not complete; no alternate direction")
+
+func _drive(goal: String) -> bool:
+	var selected: Dictionary = {}
+	var cursor: int = 0
+	var dash_sequence: int = -1
+	var key: String = ""
+	for _i: int in range(MAX_ARM_FRAMES):
+		if not _healthy(): return false
+		var current: Dictionary = _state()
+		if goal == "eligibility" and not component.get("notices").is_empty(): return true
+		if goal == "threshold" and current.actor_hp == 15.0 and current.transition_pending: return true
+		# A real legal earlier primary preempts planned waits/moves. No timing,
+		# source availability, direction or proof-index preference is invented.
+		if goal != "eligibility" and _primary_ready(goal): return await _primary(goal)
+		var offer: Dictionary = _offer(goal)
+		if failures > 0: return false
+		if not offer.is_empty() and offer.key != key and _stable():
+			selected = offer.proof.duplicate(true); key = offer.key; cursor = 0; dash_sequence = -1
+			commands.append({"kind": "selected-first-current-legal-offer", "key": key, "clock_s": _clock(), "proof": selected.duplicate(true)})
+		# Consume already-finished wait segments in this same control turn;
+		# do not add a fixture-only physics delay before the next legal input.
+		while not selected.is_empty() and cursor < selected.path.size():
+			var segment: Dictionary = selected.path[cursor]
+			if _clock() < float(segment.start_s): break
+			if segment.kind in ["escape_dash", "positioning_dash"]:
+				if dash_sequence < 0:
+					if _clock() > float(segment.end_s) + Scheduler.EPSILON: return _expect(false, "first legal response dash window expired; no new admission")
+					if _stable() and float(_hero().get_threat_response_state().dash_cooldown_left_s) == 0.0:
+						dash_sequence = _sequence()
+						var direction: Vector3 = (segment["to"] - segment["from"]).normalized()
+						commands.append({"kind": "dash", "clock_s": _clock(), "direction": direction, "proof_key": key})
+						if not _expect(_hero().request_dash(direction), "ordinary proof-selected dash accepted without forced direction"): return false
+					break
+				elif _sequence() > dash_sequence and _stable():
+					cursor += 1; dash_sequence = -1
+					continue
+				break
+			elif _clock() >= float(segment.end_s):
+				if segment.kind == "ordinary_primary" and goal != "eligibility": return _expect(false, "first response ended without useful ordinary opening")
+				cursor += 1
+				continue
+			break
+		await _step()
+	return _expect(false, "bounded first native response incomplete; no repeated convenient cycle")
+
+func _offer(goal: String) -> Dictionary:
+	var current: Dictionary = _state()
+	if current.ray.cycle > (2 if goal == "paired" else 1) or current.foot.cycle > (2 if goal == "paired" else 1):
+		_expect(false, "native first-cycle scope rolled over; stop instead of waiting for a convenient proof")
+		return {}
+	var pair: Dictionary = current.pair
+	if goal == "paired" and pair.get("validated", false):
+		if first_pair.is_empty():
+			first_pair = pair.duplicate(true)
+			paired_bait_sample = current.ray.bait_sample.duplicate(true)
+		return {"key": "paired-%d-%d" % [pair.foot_cycle, pair.ray_cycle], "proof": pair.proof}
+	if goal == "threshold" and current.ray.get("proof_available", false) and current.ray.proof.get("accepted", false): return {"key": "ray-%d" % current.ray.cycle, "proof": current.ray.proof}
+	if goal in ["eligibility", "paired"] and current.foot.status == "running":
+		for row: Dictionary in current.accepted_cycles:
+			if row.kind == "foot" and row.cycle == current.foot.cycle and row.get("proof", {}).get("accepted", false): return {"key": "foot-%d" % row.cycle, "proof": row.proof}
+	return {}
+
+func _primary_ready(goal: String) -> bool:
+	if not _stable(): return false
+	var response: Dictionary = _hero().get_threat_response_state()
+	var current: Dictionary = _state()
+	if float(response.primary_cooldown_left_s) != 0.0 or current.joint_cue.state != "available" or current.ray.status != "running" or current.ray.phase != "recovery": return false
+	if goal == "paired" and (not current.pair.get("validated", false) or current.foot.status != "running" or current.foot.phase != "recovery"): return false
+	var upper: float = float(current.ray.exchange.recovery_until_s) - Scheduler.TIME_MARGIN
+	if goal == "paired": upper = minf(upper, float(current.pair.foot_exchange.recovery_until_s) - Scheduler.TIME_MARGIN)
+	return _clock() + float(response.stats.primary_cooldown) <= upper and Geometry.planar(_hero().global_position - _actor().global_position).length() <= float(response.stats.primary_range) - Scheduler.SKIN and _los().is_empty()
+
+func _primary(goal: String) -> bool:
+	var current: Dictionary = _state()
+	var before: float = current.actor_hp
+	var start: float = _clock()
+	var finish: float = start + float(_hero().get_threat_response_state().stats.primary_cooldown)
+	var upper: float = float(current.ray.exchange.recovery_until_s) - Scheduler.TIME_MARGIN
+	if goal == "paired":
+		if first_pair.is_empty():
+			first_pair = current.pair.duplicate(true)
+			paired_bait_sample = current.ray.bait_sample.duplicate(true)
+		upper = minf(upper, float(current.pair.foot_exchange.recovery_until_s) - Scheduler.TIME_MARGIN)
+	var receipt: Dictionary = {"clock_s": start, "complete_s": finish, "original_upper_s": upper, "actual_position": _hero().global_position, "joint_position": _actor().global_position, "range": _hero().get_threat_response_state().stats.primary_range, "los": _los(), "hp_before": before, "state_before": current.duplicate(true)}
+	if not _expect(_hero().slash(_actor().global_position - _hero().global_position) == 1, "earliest legal ordinary primary physically reaches the actual low joint"): return false
+	receipt["hp_after"] = _state().actor_hp
+	commands.append({"kind": "ordinary_primary", "receipt": receipt})
+	while _clock() < finish:
+		if not _healthy(): return false
+		await _step()
+	if failures > 0: return false
+	if not _expect(_clock() <= upper + Scheduler.EPSILON and _hero().hp == initial_hp and not _hero().dead and _stable(), "complete actual primary cooldown/hold fits original recoveries with unchanged HP"): return false
+	if goal == "paired":
+		outcome = receipt.duplicate(true)
+		return _expect(before == 15.0 and _state().actor_hp == 0.0 and _state().stage == "cleared", "real second finite pool ordinary outcome; no host route/exit claim")
+	return _expect(before == 30.0 and _state().actor_hp == 15.0, "actual ordinary first-pool cap earns15 rather than seeded HP")
+
+func _step() -> void:
+	if finishing or not is_instance_valid(probe): return
+	await probe.after_tick
+	arm_frames += 1
+	if is_instance_valid(component) and component.get("component_ready"):
+		var current: Dictionary = _state()
+		var sample: Dictionary = _position_sample()
+		var radius: float = _radius()
+		var active: Array[Dictionary] = _active_exchanges(current)
+		var clears_active: bool = true
+		if not motion_previous.is_empty() and float(sample.clock_s) > float(motion_previous.clock_s):
+			var interval: Array[Dictionary] = [{"start_s": motion_previous.clock_s, "end_s": sample.clock_s, "from": motion_previous.position, "to": sample.position}]
+			for exchange: Dictionary in active + previous_exchanges:
+				if Geometry.timed_path_hits(exchange.geometry, interval, exchange.active_from_s, exchange.active_until_s, radius): clears_active = false
+		motion_previous = sample.duplicate(true)
+		previous_exchanges = active.duplicate(true)
+		if trace_enabled:
+			if not previous.is_empty() and float(sample.clock_s) > float(previous.clock_s): trace.append({"kind": "actual_native_interval", "start_s": previous.clock_s, "end_s": sample.clock_s, "from": previous.position, "to": sample.position})
+			previous = sample.duplicate(true)
+			if pair_start.is_empty() and not current.pair.is_empty(): pair_start = {"foot_start_s": current.pair.foot_exchange.start_s, "sample": sample.duplicate(true), "bait": component.get("_bait").call("state")}
+		var geometry_points: Array = component.call("_sentry_required_points")
+		var held: bool = current.ray.status == "running" or current.foot.status == "running"
+		var framing: bool = not geometry_points.is_empty() and bool(component.call("_sentry_points_framed", geometry_points))
+		var supported: bool = false
+		for region: Dictionary in component.call("floor_bindings").values():
+			if region.safe_rect.grow(-radius).has_point(Geometry.planar(sample.position)): supported = true
+		var contacts: Array[Dictionary] = []
+		for i: int in range(_hero().get_slide_collision_count()):
+			var c: KinematicCollision3D = _hero().get_slide_collision(i)
+			contacts.append({"position": c.get_position(), "normal": c.get_normal(), "collider_decimal": str(c.get_collider_id())})
+		var compact: Dictionary = {}
+		for field: String in ["stage", "clock_s", "actor_hp", "boss_phase", "transition_pending", "joint_cue"]: compact[field] = current[field]
+		compact["held_exchanges"] = active
+		for source: String in ["ray", "foot"]:
+			compact[source] = {}
+			for field: String in ["status", "phase", "cycle", "direction", "armed", "geometry", "exchange", "reservation_id", "last_cancel_reason"]:
+				if current[source].has(field): compact[source][field] = current[source][field]
+		var row: Dictionary = {"sample": sample, "state": compact, "capsule": _capsule_values(), "supported_floor_footprint": supported, "on_floor": _hero().is_on_floor(), "contacts": contacts, "held_union_required": held, "complete_union_framed": framing, "actual_interval_clears_active": clears_active, "required_points": geometry_points, "actor_basis": _actor().global_basis, "actor_position": _actor().global_position}
+		if tick_log != null:
+			tick_log.store_line(JSON.stringify(_safe(row), "", true, true)); tick_rows += 1
+		_expect(supported and clears_active and (not held or framing) and _hero().hp == initial_hp and not _hero().dead and _hero().equipment.snapshot() == Equipment.STARTER and Codec.same_values(_hero().stats, neutral_stats), "each native interval retains supported complete capsule/current armed-held union, neutral stats and immunity-free unchanged HP")
+
+func _active_exchanges(current: Dictionary) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	if current.ray.status == "running" and current.ray.get("armed", false) and not current.ray.exchange.is_empty(): result.append(current.ray.exchange.duplicate(true))
+	if current.foot.status == "running":
+		for row: Dictionary in current.accepted_cycles:
+			if row.kind == "foot" and row.cycle == current.foot.cycle: result.append(row.admitted_exchange.duplicate(true)); break
+	return result
+
+func _healthy() -> bool:
+	if finishing or failures > 0 or not is_instance_valid(game) or not is_instance_valid(component): return false
+	if paused: return _expect(false, "actual pause interrupted the fixed comparison; no forced resume/focus")
+	if not component.get("errors").is_empty(): return _expect(false, "first actual B05/bait refusal: " + str(component.get("errors")))
+	if Time.get_ticks_msec() - started_ms > WALL_LIMIT_MS or arm_frames > MAX_ARM_FRAMES or _clock() > MAX_ARM_NATIVE_S: return _expect(false, "fixed bounded comparison budget; no impossibility inference")
+	return not _hero().dead
+
+func _position_sample() -> Dictionary:
+	return {"clock_s": _clock(), "position": _hero().global_position, "velocity": _hero().velocity, "hp": _hero().hp, "response": _hero().get_threat_response_state(), "equipment": _hero().equipment.snapshot(), "capsule": _capsule_values()}
+
+func _capsule_values() -> Dictionary:
+	var body: Dictionary = BodySweep.source_description(_hero())
+	if body.has("error"): return body
+	return {"footprint_half": body.footprint_half, "height": body.height, "foot_offset": body.foot_offset, "collision_instance_decimal": str(body.collision.get_instance_id())}
+
+func _radius() -> float:
+	var description: Dictionary = BodySweep.source_description(_hero())
+	if description.has("error"): _expect(false, String(description.error)); return Scheduler.CAPSULE_RADIUS + Scheduler.SKIN
+	return maxf(Scheduler.CAPSULE_RADIUS, maxf(description.footprint_half.x, description.footprint_half.y)) + Scheduler.SKIN
+
+func _los() -> Dictionary:
+	return _hero().get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(_hero().global_position + Vector3.UP * 0.7, _actor().global_position + Vector3.UP * 0.7, 1))
+
+func _stable() -> bool:
+	if not is_instance_valid(game) or not is_instance_valid(_hero()): return false
+	var r: Dictionary = _hero().get_threat_response_state()
+	return r.stable and r.motion.grounded and not _hero().action_in_progress()
+
+func _sequence() -> int:
+	var records: Array[Dictionary] = _hero().get_world_action_records()
+	return 0 if records.is_empty() else int(records.back().sequence)
+func _hero() -> CinderPlayer: return game.get("player") as CinderPlayer
+func _parent() -> Node3D: return component.get("_sentry") as Node3D
+func _actor() -> Node3D: return _parent().call("get_actor") as Node3D
+func _state() -> Dictionary: return _parent().call("state")
+func _clock() -> float: return component.get("_scheduler").get_clock() if is_instance_valid(component) and is_instance_valid(component.get("_scheduler")) else 0.0
+
+func _persist(label: String, required: bool) -> bool:
+	# Retain raw diagnostics BEFORE strict capture or Store validation can refuse.
+	var was_paused: bool = paused
+	paused = true
+	await process_frame
+	await process_frame
+	var stem: String = arm + "-" + label
+	if tick_log != null: tick_log.flush()
+	if event_log != null: event_log.flush()
+	if not _write_exact(stem + ".diagnostic.native.json", _diagnostic()): paused = was_paused; return false
+	if not is_instance_valid(component) or not component.get("component_ready"):
+		paused = was_paused
+		return not required or _expect(false, "component not configured; partial setup diagnostics already retained")
+	var bindings: Dictionary = component.call("scheduler_bindings")
+	var player: Dictionary = _hero().snapshot_state()
+	var scheduler: Dictionary = component.get("_scheduler").snapshot_state(bindings)
+	var sentry: Dictionary = _parent().call("snapshot_state", bindings)
+	var payload: Dictionary = {"kind": "TEST:A2-L5:two-owner-component-1", "construction": component.get("_construction_descriptor").duplicate(true), "player": player, "scheduler": scheduler, "sentry": sentry}
+	# This exact partial or complete payload is written before validator/Store.
+	if not _write_exact(stem + ".payload.native.json", payload): paused = was_paused; return false
+	var problem: String = _component_payload_error(payload)
+	var record: Dictionary = {"label": label, "capture_error": problem, "player_error": _hero().last_snapshot_error, "scheduler_error": component.get("_scheduler").last_snapshot_error, "parent_error": _parent().get("last_snapshot_error"), "scope": "actual two-owner component; not L5 whole local27/Attempts or historical save"}
+	if problem.is_empty():
+		if not _store_slot_available(stem):
+			problem = "fresh invocation Store slot collision or custody refusal"
+		else:
+			var store: CinderSaveStore = Store.new(store_output + stem + ".component-store.json")
+			store.payload_validator = _component_payload_error
+			var stored: bool = store.write_payload(payload)
+			record["store_write"] = stored
+			record["store_error"] = store.last_error
+			record["store_generation"] = store.generation
+			# Archive actual raw primary/backup, including absence, BEFORE cleanup.
+			var custody: Dictionary = _archive_store(stem, stored, store.generation)
+			record["store_custody"] = custody
+			if not stored: problem = store.last_error
+			if not custody.get("accepted", false): problem = "raw Store archive/custody refused; actual partial evidence retained"
+	record["capture_error"] = problem
+	snapshots.append(record)
+	_write_exact(stem + ".capture-result.native.json", record)
+	paused = was_paused
+	return problem.is_empty() or not required or _expect(false, "actual component capture/Store refusal, with payload/diagnostics already retained: " + problem)
+
+func _prepare_store_output() -> bool:
+	# One exclusive invocation directory in the real normal user context.
+	var nonce: String = Crypto.new().generate_random_bytes(16).hex_encode()
+	store_output = "user://test-a2-l5-fixed-store-" + nonce + "/"
+	var parent: DirAccess = DirAccess.open("user://")
+	if not _expect(parent != null, "actual user data root must exist for fresh Store custody"): return false
+	var name: String = store_output.trim_prefix("user://").trim_suffix("/")
+	if not _expect(not parent.file_exists(name) and not parent.dir_exists(name) and not parent.is_link(name), "refuse any existing user Store directory/file/link"): return false
+	if not _expect(parent.make_dir(name) == OK, "exclusive invocation user Store directory creation"): return false
+	store_output_created = true
+	var initial_entries: Array[String] = _store_entries()
+	host_control_directory = {"path": store_output, "absolute_path": ProjectSettings.globalize_path(store_output), "created_by_this_invocation": true, "initial_entries": initial_entries}
+	if not _write_exact("component-store-directory.native.json", host_control_directory): return false
+	if not _write_host_control(): return false
+	return _expect(store_listing_ok and initial_entries.is_empty(), "new invocation Store directory must be listable and empty")
+
+func _store_directory() -> DirAccess:
+	if not store_output_created: return null
+	var parent: DirAccess = DirAccess.open("user://")
+	var name: String = store_output.trim_prefix("user://").trim_suffix("/")
+	if parent == null or parent.is_link(name) or not parent.dir_exists(name): return null
+	return DirAccess.open(store_output)
+
+func _store_entries() -> Array[String]:
+	store_listing_ok = false
+	var result: Array[String] = []
+	var dir: DirAccess = _store_directory()
+	if dir == null: return result
+	dir.include_hidden = true
+	dir.include_navigational = false
+	if dir.list_dir_begin() != OK: return result
+	var name: String = dir.get_next()
+	while not name.is_empty():
+		result.append(name)
+		name = dir.get_next()
+	dir.list_dir_end()
+	store_listing_ok = true
+	result.sort()
+	return result
+
+func _store_slot_available(stem: String) -> bool:
+	var dir: DirAccess = _store_directory()
+	if not _expect(dir != null, "actual owned user Store directory remains regular"): return false
+	var name: String = stem + ".component-store.json"
+	var entries: Array[String] = _store_entries()
+	if not _expect(store_listing_ok, "Store collision listing must succeed"): return false
+	for entry: String in entries:
+		if not owned_store_files.has(store_output + entry): return _expect(false, "unattributed entry in invocation Store directory retained: " + entry)
+		if entry == name or entry == name + ".bak" or entry.begins_with(name + ".tmp-") or entry.begins_with(name + ".bak.tmp-"):
+			return _expect(false, "refuse existing primary/backup/temp Store collision: " + entry)
+	return true
+
+func _archive_store(stem: String, stored: bool, generation: int) -> Dictionary:
+	var result: Dictionary = {"accepted": true, "directory": store_output, "store_write": stored, "store_generation": generation, "raw": {}}
+	for suffix: String in ["", ".bak"]:
+		var name: String = stem + ".component-store.json" + suffix
+		var path: String = store_output + name
+		var row: Dictionary = {"path": path, "absolute_path": ProjectSettings.globalize_path(path), "present": false, "generation": null, "observed_type": "absent"}
+		var dir: DirAccess = _store_directory()
+		if dir == null or dir.is_link(name) or dir.dir_exists(name):
+			row["present"] = null if dir == null else true
+			row["observed_type"] = "unknown-root" if dir == null else ("symlink" if dir.is_link(name) else "directory")
+			row["custody_error"] = "unknown Store directory/link/type left in situ"
+			result.accepted = false
+		elif dir.file_exists(name):
+			row.present = true
+			row["observed_type"] = "regular"
+			var file: FileAccess = FileAccess.open(path, FileAccess.READ)
+			if file == null:
+				row["custody_error"] = "actual raw Store could not be opened"
+				result.accepted = false
+			else:
+				var size: int = file.get_length()
+				var modified: int = FileAccess.get_modified_time(path)
+				var sha: String = FileAccess.get_sha256(path)
+				var literal: PackedByteArray = file.get_buffer(size)
+				var read_error: Error = file.get_error()
+				file.close()
+				row.merge({"bytes": size, "sha256": sha, "modified_unix": modified})
+				var archive: String = output + stem + (".store-primary.raw.json" if suffix.is_empty() else ".store-backup.raw.json")
+				var archive_file: FileAccess = null
+				if not FileAccess.file_exists(archive) and not DirAccess.dir_exists_absolute(ProjectSettings.globalize_path(archive)):
+					archive_file = FileAccess.open(archive, FileAccess.WRITE)
+				if archive_file == null:
+					row["custody_error"] = "fresh literal archive path could not be created; raw left in situ"
+					result.accepted = false
+				else:
+					archive_file.store_buffer(literal)
+					archive_file.flush()
+					var write_error: Error = archive_file.get_error()
+					archive_file.close()
+					var stable: bool = read_error == OK and write_error == OK and literal.size() == size and not sha.is_empty() and FileAccess.get_sha256(path) == sha and FileAccess.get_modified_time(path) == modified and FileAccess.get_sha256(archive) == sha and FileAccess.get_file_as_bytes(archive).size() == size
+					row.merge({"archive_path": archive, "archive_sha256": FileAccess.get_sha256(archive), "copied_verbatim": stable})
+					var parser: JSON = JSON.new()
+					var parsed: bool = parser.parse(literal.get_string_from_utf8()) == OK and parser.data is Dictionary
+					if parsed:
+						var wire: Dictionary = parser.data
+						var serial: Variant = wire.get("generation")
+						parsed = (serial is int or serial is float) and is_finite(float(serial)) and serial >= 1 and serial <= Store.MAX_GENERATION and serial == floor(serial) and wire.get("format_version") == Store.FORMAT_VERSION
+						if parsed:
+							var validated_generation: int = int(serial)
+							row["generation"] = validated_generation
+							row["format_version"] = wire.format_version
+							parsed = row["generation"] is int and row["generation"] == validated_generation and row["generation"] == serial and row["format_version"] == Store.FORMAT_VERSION
+					if not stable or not parsed:
+						row["custody_error"] = "raw archive stability/header check refused; actual bytes retained"
+						result.accepted = false
+					# Each unique fresh slot has one real write; never fabricate backup generations.
+					elif stored and suffix.is_empty() and row.generation is int and row.generation == generation:
+						owned_store_files[path] = row.duplicate(true)
+					else:
+						row["custody_error"] = "unexpected/unattributed generation left in situ"
+						result.accepted = false
+		result.raw["primary" if suffix.is_empty() else "backup"] = row
+	result["actual_entries_after_write"] = _store_entries()
+	if not store_listing_ok: result.accepted = false
+	for entry: String in result.actual_entries_after_write:
+		if not owned_store_files.has(store_output + entry): result.accepted = false
+	if stored and not result.raw.primary.present: result.accepted = false
+	if not _write_exact(stem + ".store-custody.native.json", result): result.accepted = false
+	return result
+
+func _cleanup_store_output() -> void:
+	if not store_output_created: return
+	var receipt: Dictionary = {"directory": store_output, "removed": [], "left_in_situ": [], "directory_removed": false, "scope": "only fresh invocation files with verified archived raw bytes; no native inode identity claim"}
+	if not _write_exact("component-store-before-cleanup.native.json", {"directory": store_output, "owned_archived_files": owned_store_files, "actual_entries": _store_entries()}): return
+	var dir: DirAccess = _store_directory()
+	if dir == null:
+		receipt.left_in_situ.append({"path": store_output, "reason": "directory ownership/type changed"})
+	else:
+		for path: String in owned_store_files:
+			var row: Dictionary = owned_store_files[path]
+			var name: String = path.trim_prefix(store_output)
+			var same: bool = not name.contains("/") and not dir.is_link(name) and dir.file_exists(name) and not dir.dir_exists(name) and FileAccess.get_sha256(path) == row.sha256 and FileAccess.get_file_as_bytes(path).size() == row.bytes and FileAccess.get_modified_time(path) == row.modified_unix and FileAccess.get_sha256(row.archive_path) == row.sha256
+			if same and dir.remove(name) == OK:
+				receipt.removed.append(path)
+			else:
+				receipt.left_in_situ.append({"path": path, "reason": "final exact owned/archive check or removal refused"})
+		var remaining: Array[String] = _store_entries()
+		if not store_listing_ok: receipt.left_in_situ.append({"path": store_output, "reason": "final directory listing refused; directory retained"})
+		for name: String in remaining: receipt.left_in_situ.append({"path": store_output + name, "reason": "unattributed entry retained; never remove foreign or temporary paths"})
+		if remaining.is_empty() and store_listing_ok:
+			receipt.directory_removed = DirAccess.remove_absolute(ProjectSettings.globalize_path(store_output)) == OK
+			if not receipt.directory_removed: receipt.left_in_situ.append({"path": store_output, "reason": "empty directory removal refused"})
+	host_control_cleanup = receipt.duplicate(true)
+	_write_exact("component-store-cleanup.native.json", receipt)
+	_write_host_control()
+	_expect(receipt.left_in_situ.is_empty() and receipt.directory_removed, "only invocation-owned archived Store files cleaned; unknowns retained")
+
+func _component_payload_error(value: Dictionary) -> String:
+	var error: String = Codec.value_error(value)
+	if error.is_empty(): error = Codec.keys_error(value, ["kind", "construction", "player", "scheduler", "sentry"])
+	if not error.is_empty(): return error
+	if value.kind != "TEST:A2-L5:two-owner-component-1" or not value.player is Dictionary or not value.scheduler is Dictionary or not value.sentry is Dictionary: return "actual closed component packet required"
+	error = Construction.descriptor_error(value.construction)
+	if error.is_empty() and not _same(value.construction, component.get("_construction_descriptor")): error = "component descriptor differs from configured native definition"
+	if error.is_empty() and (value.player.is_empty() or value.scheduler.is_empty() or value.sentry.is_empty()): error = "actual component writer returned incomplete state"
+	if error.is_empty(): error = _hero().snapshot_error(value.player)
+	if error.is_empty(): error = String(_parent().call("snapshot_error", value.sentry, component.call("scheduler_bindings"), value.player, value.scheduler))
+	return error
+
+func _diagnostic() -> Dictionary:
+	var row: Dictionary = {"arm": arm, "wall_elapsed_ms": Time.get_ticks_msec() - started_ms, "paused": paused, "first_failure": first_failure, "historical_station_only": STATION, "tick_log": {"path": output + arm + "-ticks.jsonl", "rows": tick_rows}, "commands": commands, "trace": trace, "snapshots": snapshots, "source_gates": source_before}
+	if is_instance_valid(game):
+		row["scene_load_error"] = game.get("level_load_error")
+		if is_instance_valid(game.get("camera")): row["camera"] = {"position": game.get("camera").global_position, "basis": game.get("camera").global_basis, "size": game.get("camera").size}
+		if is_instance_valid(game.get("hud")): row["hud_safe_rect"] = game.get("hud").combat_safe_rect()
+		if is_instance_valid(_hero()):
+			row["hero"] = {"position": _hero().global_position, "velocity": _hero().velocity, "hp": _hero().hp, "shells": _hero().shells, "equipment": _hero().equipment.snapshot(), "response": _hero().get_threat_response_state(), "actions": _hero().get_world_action_records(), "body": _capsule_values()}
+	if is_instance_valid(component):
+		row["errors"] = component.get("errors")
+		row["eligibility"] = component.get("notices")
+		row["publications_actions_hits"] = {"path": output + arm + "-events.jsonl", "rows": event_rows}
+		if is_instance_valid(component.get("_bait")): row["bait"] = component.get("_bait").call("state")
+		if is_instance_valid(component.get("_sentry")):
+			row["parent"] = _state()
+			row["parent_runtime_error"] = _parent().get("runtime_error")
+			if is_instance_valid(_parent().call("get_ray")): row["ray_last_error"] = _parent().call("get_ray").get("last_error")
+			if is_instance_valid(_parent().call("get_foot")): row["foot_last_error"] = _parent().call("get_foot").get("last_error")
+	return row
+
+func _compare() -> void:
+	var old: Dictionary = results.v1
+	var fresh: Dictionary = results.v2
+	var a: Dictionary = old.pair
+	var b: Dictionary = fresh.pair
+	var matched: bool = Geometry.planar(old.start.sample.position - fresh.start.sample.position).length() <= Scheduler.EPSILON and _same(old.start.sample.equipment, fresh.start.sample.equipment) and _same(old.start.sample.response.stats, fresh.start.sample.response.stats) and old.start.sample.hp == fresh.start.sample.hp and _same(old.start.bait.get("initial_floor"), fresh.start.bait.get("initial_floor")) and _same(a.ray_exchange.geometry, b.ray_exchange.geometry) and _same(old.ray_bait_sample.get("point"), fresh.ray_bait_sample.get("point")) and old.ray_bait_sample.get("boundary") == fresh.ray_bait_sample.get("boundary") and absf(float(old.radius) - float(fresh.radius)) <= Scheduler.EPSILON and _same(old.start.sample.capsule.footprint_half, fresh.start.sample.capsule.footprint_half) and _same(old.start.sample.capsule.height, fresh.start.sample.capsule.height) and _same(old.start.sample.capsule.foot_offset, fresh.start.sample.capsule.foot_offset) and _same(old.start.sample.velocity, fresh.start.sample.velocity) and old.start.sample.response.dash_cooldown_left_s == fresh.start.sample.response.dash_cooldown_left_s and old.start.sample.response.primary_cooldown_left_s == fresh.start.sample.response.primary_cooldown_left_s
+	# No source or timestamp is changed: normalize only the copied diagnostic
+	# trace relative to the actual first-Foot start in each arm.
+	for kind: String in ["foot_exchange", "ray_exchange"]:
+		for field: String in ["start_s", "lock_from_s", "active_from_s", "active_until_s", "recovery_until_s"]:
+			if absf((float(a[kind][field]) - float(a.foot_exchange.start_s)) - (float(b[kind][field]) - float(b.foot_exchange.start_s))) > Scheduler.EPSILON: matched = false
+	if not matched:
+		note = "INCONCLUSIVE_UNMATCHED_ACTUAL_PAIR_CONTEXT"
+		_write_exact("comparison.native.json", {"classification": note, "old": old, "candidate": fresh, "scope": "no counterfactual or novelty claim when actual entry/bait/lane/timing context differs"})
+		host_control_comparison = {"classification": note, "matched_actual_context": matched}
+		_write_host_control()
+		return
+	var translated: Array[Dictionary] = old.trace.duplicate(true)
+	var delta: float = float(b.foot_exchange.start_s) - float(a.foot_exchange.start_s)
+	for row: Dictionary in translated:
+		row.start_s = float(row.start_s) + delta
+		row.end_s = float(row.end_s) + delta
+	var conflict: bool = Geometry.timed_path_hits(b.foot_exchange.geometry, translated, b.foot_exchange.active_from_s, b.foot_exchange.active_until_s, float(fresh.radius))
+	var ray_conflict: bool = Geometry.timed_path_hits(b.ray_exchange.geometry, translated, b.ray_exchange.active_from_s, b.ray_exchange.active_until_s, float(fresh.radius))
+	var spatially_different: bool = _different_strategy(old, fresh)
+	note = "DISTINCT_COMPONENT_RESPONSE_NATIVE_COUNTERFACTUAL" if conflict and not ray_conflict and spatially_different else "EQUIVALENT_OR_UNPROVED_SPATIAL_STRATEGY"
+	_write_exact("comparison.native.json", {"classification": note, "matched_actual_context": matched, "old_measured_trace_against_new_foot": conflict, "old_trace_against_matched_ray": ray_conflict, "different_executed_spatial_response": spatially_different, "normalized_old_trace": translated, "old": old, "candidate": fresh, "scope": "actual success in each native world plus copied old-trace counterfactual against matched actual new union; old inputs were NOT executed in the candidate world; no full-host save/GUI/route/art/balance/policy credit"})
+
+	host_control_comparison = {"classification": note, "matched_actual_context": matched, "old_measured_trace_against_new_foot": conflict, "old_trace_against_matched_ray": ray_conflict, "different_executed_spatial_response": spatially_different}
+	_write_host_control()
+
+func _different_strategy(old: Dictionary, fresh: Dictionary) -> bool:
+	var a: Array[Vector3] = []
+	var b: Array[Vector3] = []
+	for row: Dictionary in old.commands:
+		if row.kind == "dash": a.append(row.direction)
+	for row: Dictionary in fresh.commands:
+		if row.kind == "dash": b.append(row.direction)
+	if a.size() != b.size(): return true
+	for i: int in range(a.size()):
+		if Geometry.planar(a[i] - b[i]).length() > Scheduler.EPSILON: return true
+	return Geometry.planar(old.outcome.actual_position - fresh.outcome.actual_position).length() > Scheduler.EPSILON
+
+func _cleanup_case() -> void:
+	if not is_instance_valid(game): return
+	var refs: Array[WeakRef] = []
+	_collect_refs(game, refs)
+	# Public cleanup while all native descendants still have their actual tree.
+	if is_instance_valid(component): component.call("exit_level")
+	if is_instance_valid(game.get("active_level")): game.get("active_level").call("exit_level")
+	game.free(); game = null; component = null
+	if tick_log != null: tick_log.flush(); tick_log.close(); tick_log = null
+	if event_log != null: event_log.flush(); event_log.close(); event_log = null
+	await process_frame
+	await process_frame
+	for ref: WeakRef in refs: _expect(ref.get_ref() == null, "normal partial/whole component, Hero, world, HUD and source cleanup")
+
+func _event(value: Dictionary) -> void:
+	if event_log != null:
+		event_log.store_line(JSON.stringify(_safe(value), "", true, true)); event_rows += 1
+
+func _collect_refs(node: Node, refs: Array[WeakRef]) -> void:
+	refs.append(weakref(node))
+	for child: Node in node.get_children(): _collect_refs(child, refs)
+
+func _expect(ok: bool, label: String) -> bool:
+	checks += 1
+	if not ok:
+		failures += 1
+		if first_failure.is_empty(): first_failure = {"label": label, "arm": arm, "clock_s": _clock(), "wall_elapsed_ms": Time.get_ticks_msec() - started_ms}
+		push_error(label)
+	return ok
+
+func _finish() -> void:
+	if finishing: return
+	finishing = true
+	if is_instance_valid(game): await _persist("abort-before-cleanup", false)
+	await _cleanup_case()
+	if tick_log != null: tick_log.flush(); tick_log.close(); tick_log = null
+	if event_log != null: event_log.flush(); event_log.close(); event_log = null
+	if is_instance_valid(probe): probe.free()
+	_cleanup_store_output()
+	for path: String in source_before: _expect(FileAccess.get_sha256(path) == source_before[path], "source gate remains exact after execution: " + path)
+	if output_created:
+		retained_join["first_failure"] = first_failure.duplicate(true)
+		_write_exact("retained-v1-join.native.json", retained_join)
+		_write_host_control()
+	var complete: bool = failures == 0 and note == "DISTINCT_COMPONENT_RESPONSE_NATIVE_COUNTERFACTUAL"
+	var report: Dictionary = {"checks": checks, "failures": failures, "scope_complete": complete, "classification": note, "first_failure": first_failure, "results_present": results.keys(), "executed_arms": executed_arms.duplicate(), "retained_reference": retained_reference.duplicate(true), "snapshots": snapshots, "output": output, "scope": "current job selects only v2; executed_arms and retained_reference report actual attempt/admission status; qualified v1 is an imported source-qualified component reference; unchanged matched native old-trace counterfactual only. No Retry/restore, literal historical Challenge packet, strict L5 local27/Attempts, route, full-playthrough, portrait, balance or difficulty acceptance claim."}
+	if output_created:
+		var file: FileAccess = FileAccess.open(output + "report.json", FileAccess.WRITE)
+		if file != null: file.store_string(JSON.stringify(_safe(report), "\t", true, true)); file.close()
+		else: failures += 1; complete = false; push_error("final report could not be retained")
+	if process_frame.is_connected(_wall_guard): process_frame.disconnect(_wall_guard)
+	AudioServer.set_bus_layout(old_audio); Engine.max_fps = old_fps
+	paused = false
+	print("A2-L5 fixed response comparison: %d checks, %d failures; scope_complete=%s; classification=%s; output=%s" % [checks, failures, str(complete), note, output])
+	quit(1 if failures > 0 else (0 if complete else 2))
+
+func _wall_guard() -> void:
+	if not finishing and Time.get_ticks_msec() - started_ms > WALL_LIMIT_MS:
+		_expect(false, "fixed wall watchdog; actual partial evidence retained, no route/impossibility conclusion")
+		_finish.call_deferred()
+
+func _write_host_control() -> bool:
+	if not output_created: return _expect(false, "plain host control requires this invocation's fresh evidence directory")
+	# Exactly this closed finite primitive schema: no native Variant/geometry
+	# conversion, parallel Exact encoder or derived gameplay result.
+	var value: Dictionary = {"api_revision": "a2-l5-fixed-host-control-2", "schema_version": 2, "executed_arms": executed_arms.duplicate(), "retained_reference": retained_reference.duplicate(true), "source_gates": {"expected": SOURCE_PINS.duplicate(true), "actual": source_before.duplicate(true)}, "store_directory": host_control_directory.duplicate(true), "store_cleanup": host_control_cleanup.duplicate(true), "comparison": host_control_comparison.duplicate(true)}
+	var file: FileAccess = FileAccess.open(output + "host-control.plain.json", FileAccess.WRITE)
+	if file == null: return _expect(false, "finite plain host control could not be opened")
+	file.store_string(JSON.stringify(value, "\t", true, true))
+	file.flush()
+	var error: Error = file.get_error()
+	file.close()
+	return _expect(error == OK, "finite native-generated plain host control retained")
+
+func _write_exact(name: String, value: Variant) -> bool:
+	if not output_created: return _expect(false, "output was not freshly created by this comparison")
+	var wire: String = Exact.stringify(_safe(value))
+	if wire.is_empty(): return _expect(false, "lossless diagnostic encoding refused before file write: " + name)
+	var file: FileAccess = FileAccess.open(output + name, FileAccess.WRITE)
+	if file == null: return _expect(false, "diagnostic output could not be opened: " + name)
+	file.store_string(wire); file.close()
+	return true
+
+func _same(left: Variant, right: Variant) -> bool:
+	var a: String = Exact.stringify(_safe(left))
+	return not a.is_empty() and a == Exact.stringify(_safe(right))
+
+func _safe(value: Variant) -> Variant:
+	if value is StringName: return String(value)
+	if value is Vector3: return [value.x, value.y, value.z]
+	if value is Vector2: return [value.x, value.y]
+	if value is Color: return [value.r, value.g, value.b, value.a]
+	if value is AABB: return {"position": _safe(value.position), "size": _safe(value.size)}
+	if value is Vector2i: return [value.x, value.y]
+	if value is Vector3i: return [value.x, value.y, value.z]
+	if value is Rect2: return {"position": _safe(value.position), "size": _safe(value.size)}
+	if value is Basis: return {"x": _safe(value.x), "y": _safe(value.y), "z": _safe(value.z)}
+	if value is Transform3D: return {"basis": _safe(value.basis), "origin": _safe(value.origin)}
+	if value is int and (value > 9007199254740991 or value < -9007199254740991): return {"native_integer_decimal": str(value)}
+	if value is Object: return {"native_class": value.get_class(), "native_instance_decimal": str(value.get_instance_id())} if is_instance_valid(value) else {"freed_native_object": true}
+	if value is RID: return {"native_rid_decimal": str(value.get_id())}
+	if value is Dictionary:
+		var result: Dictionary = {}
+		for key: Variant in value: result[String(key)] = _safe(value[key])
+		return result
+	if value is PackedVector3Array or value is PackedVector2Array or value is PackedFloat32Array or value is PackedFloat64Array or value is PackedInt32Array or value is PackedInt64Array or value is PackedByteArray or value is PackedStringArray: return _safe(Array(value))
+	if value is Array:
+		var result: Array = []
+		for child: Variant in value: result.append(_safe(child))
+		return result
+	return value

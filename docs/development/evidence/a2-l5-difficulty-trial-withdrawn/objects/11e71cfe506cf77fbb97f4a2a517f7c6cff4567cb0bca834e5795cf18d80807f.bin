@@ -1,0 +1,585 @@
+extends SceneTree
+## INERT SOURCE ONLY. Root reviews/materializes/parses/runs compatible canonical.
+## Candidate-only first genuine Foot warning view; inert, no Store/old arm/route/policy credit.
+const MainScene = preload("res://scenes/main.tscn")
+const ComponentScene = preload("res://tests/acts/act2/fixtures/a2_l5_production_art_component.tscn")
+const Construction = preload("res://scripts/acts/act2/dead_london_construction.gd")
+const Host = preload("res://scripts/acts/act2/dead_london.gd")
+const Exact = preload("res://scripts/campaign/exact_json.gd")
+const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
+const Geometry = preload("res://scripts/combat/threat_geometry.gd")
+const Scheduler = preload("res://scripts/combat/threat_scheduler.gd")
+const BodySweep = preload("res://scripts/combat/body_sweep.gd")
+const Equipment = preload("res://scripts/equipment.gd")
+const STATION: Vector3 = Vector3(1.350000023841858, 0, -27.939250946044922)
+const MAX_ARM_FRAMES: int = 2400
+const MAX_ARM_NATIVE_S: float = 35.0
+const WALL_LIMIT_MS: int = 600000
+# Fixed source pins are inserted by source preparation, never chosen by runtime.
+const SOURCE_PINS: Dictionary = {
+	"res://scripts/presentation/camera_framing.gd": "daf839d1e35497c88a59d4c1c2af7bb02194418e2c667aceb677242bd642c39b",
+	"res://scripts/acts/act2/giant_foot_visual.gd": "180a2c6658dc901c240cbd2f4ec84f1906d74211afeb30adb3f4f570d518622d",
+	"res://scenes/player.tscn": "68cf79442eb217cb0e2afcc4099080ba79c3f3b2c548655195d0864f4fc8bfac",
+	"res://scenes/main.tscn": "c0c169890eed0afb26b1a09a017d45c90a64aa8ba874a683deb141c4190ee06b",
+	"res://scripts/game.gd": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26",
+	"res://scripts/player.gd": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+	"res://scripts/hud.gd": "3a76c06a97da117b2fbd43824d88f3ef5150e6ad0045b5e27766b8d70542897b",
+	"res://scripts/equipment.gd": "2f721f0e7af0d1034ae9f92c37b4af3c3223171d0e5d2c120e42c00ae9155ab0",
+	"res://scripts/acts/act2/dead_london_sentry_encounter.gd": "f36e42c36e32edc2e20f7fed8d2dd21b0758f356fcc7cd53332ebd93109edfc1",
+	"res://scripts/acts/act2/dead_london_sentry_presented_encounter.gd": "c72d44cb8315a70adf285ce79c25d084d439ea6c55561de42078395fe27f7517",
+	"res://scripts/acts/act2/dead_london_sentry_actor.gd": "ffaf6c671894715995f03fa5d2c1f54ea6b2bf720a118fb0a8b97a2269b67b5d",
+	"res://scripts/acts/act2/dead_london_sentry_presented_actor.gd": "0f84ae138e572459e32575fe77e1050368c90ad4adccd1732e85496b144e5fe0",
+	"res://scripts/acts/act2/dead_london_sentry_visual.gd": "af04f74dd613d554906a82ca3683da3fd60c512f84a664d34d7003a7207e4b71",
+	"res://scripts/acts/act2/dead_london_kit.gd": "0f7d1b139c4ec9d0446f34761595dd762851e0ffe3d35e1f75cbcde63f03c983",
+	"res://scripts/acts/act2/dead_london_bait.gd": "9ae1b065521e1d521025d0f90fc941aa0f19867851ddc3eaa632432147d94808",
+	"res://scripts/acts/act2/dead_london_ray_exchange.gd": "d6bbcc1f35f45b4ac32226f898d924350e3b01543f28f44cf15cade7b75a3ff1",
+	"res://scripts/campaign/level.gd": "27fdab6686d8ba4b8282c48af84c0c3f63d8c8fa7620ae462a4642ec225100c1",
+	"res://scripts/campaign/save_store.gd": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0",
+	"res://scripts/campaign/exact_json.gd": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+	"res://scripts/campaign/snapshot_codec.gd": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+	"res://scripts/combat/threat_scheduler.gd": "c28ea9f4cd6c1ff9aedbc9cfc45a28826c589c095b9193b565f45d23c3df903d",
+	"res://scripts/combat/threat_geometry.gd": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+	"res://scripts/combat/body_sweep.gd": "bddf3956d85c656fedea6bbce952ceb494c76867cdba895ff089abeb4c31eab9",
+	"res://scripts/combat/difficulty.gd": "e6a0aba9b39697cf59837165ebec858b0dd15c7573f66d79eadc58595ed2e7ae",
+	"res://scripts/combat/lane_mechanism.gd": "bcf6558d4ae57c4bf8714ae6fe6b1896b3c7c0be3b6a8a9f3178451653bd031d",
+	"res://data/design/difficulty_profiles.json": "891baa4d087a1f35da0581c5dc6b888274296686144b3c8f5609249245def41c",
+	"res://data/design/player_equipment.json": "737cf534df88fa965ab568f750515eb17098688d268e5b6b699de5cd519b98d1",
+	"res://scenes/acts/act2/dead_london.tscn": "1dcbdcadc4f3ccac37515a65b9f2be1b62352e6a3e735648fe441de610e76917",
+	"res://tests/acts/act2/fixtures/a2_l1_profile_seed_game.gd": "17d23892d1b80c8bd7a95e8ccd3adf2b6e5a75561d26416fe8816debf732bf3e",
+	"res://tests/acts/act2/fixtures/a2_l5_production_art_component.tscn": "37727fd291c06753234be899276fb65f7c3bf17c5ef0c8fd7649ae1c0b81ccd1",
+	"res://scripts/acts/act2/dead_london.gd": "5f47cfd1fb5f54b11cb425c057dffbff7500ff43b29da1da62b5a71daf9c1e11",
+	"res://scripts/acts/act2/dead_london_construction.gd": "c26d2ce401b46fa74499e0dea9da2cba66efe33f76f5ccec33959e841f682686"
+}
+
+class TickBarrier:
+	extends Node
+	signal after_tick
+	func _init() -> void:
+		process_mode = Node.PROCESS_MODE_ALWAYS
+		process_physics_priority = 120
+	func _physics_process(_delta: float) -> void: after_tick.emit()
+
+class ComponentHost:
+	extends "res://scripts/acts/act2/dead_london.gd"
+	## TEST sparse component: same inherited _ready/floors/gates/scenery, exact
+	## framing/context/consumer guards and reviewed latch; no fake route stage.
+	var recipe_id: String = ""
+	signal observed(value: Dictionary)
+	var notices: Array[Dictionary] = []
+	var errors: Array[String] = []
+	var component_ready: bool = false
+
+	func _on_enter_level() -> void:
+		var descriptor: Dictionary = Construction.fresh("challenge").descriptor
+		descriptor.recipe_id = recipe_id # Authored finite recipe before any source.
+		var problem: String = _latch_construction({"error": "", "descriptor": descriptor, "legacy": false})
+		if not problem.is_empty(): errors.append(problem); return
+		_scheduler = SchedulerScript.new()
+		add_child(_scheduler)
+		if not _scheduler.begin_encounter(_profile, EPOCH, WORLD_REVISION): errors.append(_scheduler.last_error); return
+		_bait = BaitScript.new()
+		if not _bait.call("bind", hero) or not _bait.call("begin_boundary", "sentry-entry"): errors.append("actual supported initial bait refused"); return
+		hero.world_action_executed.connect(_observe_action)
+		set_physics_process(true)
+
+	func actual_world_root() -> Node3D:
+		# Nested component geometry still uses the real Game.world containing Hero.
+		return shared_shell.get("world") as Node3D if is_instance_valid(shared_shell) else null
+
+	func begin_sentry_at_fixed_seed() -> bool:
+		if is_instance_valid(_sentry) or not errors.is_empty() or sentry_parent_script == null: return false
+		_sentry = sentry_parent_script.new() as Node3D
+		add_child(_sentry)
+		if not _parent_api_present(): errors.append("actual B05 API missing"); return false
+		if not _sentry.call("configure", hero, effects, _scheduler, _bait, actual_world_root(), floor_bindings(), _response_context(), _construction_definition.joint_anchor, _construction_definition.foot_anchor, Callable(self, "_sentry_guard")): errors.append("native B05 configure refused"); return false
+		if not _sentry.call("bind_transport_scope", scheduler_bindings()): errors.append("native two-owner scope refused"); return false
+		if not _sentry.call("get_ray").call("set_response_context_provider", Callable(self, "_response_context")): errors.append("production response provider refused"); return false
+		_sentry.connect("runtime_failed", func(reason: String) -> void: errors.append(reason))
+		_sentry.connect("phase_checkpoint_eligible", func(receipt: Dictionary) -> void: notices.append(receipt.duplicate(true)))
+		_sentry.connect("hit_resolved", func(id: String, value: Dictionary) -> void: observed.emit({"kind": "hit", "source": id, "value": value.duplicate(true)}))
+		_sentry.call("get_ray").connect("state_changed", func(id: String, value: Dictionary) -> void: _observe_source("ray-publication", id, value))
+		_sentry.call("get_foot").connect("state_changed", func(value: Dictionary) -> void: _observe_source("foot-publication", "A2-L5:near-foot", value))
+		component_ready = true
+		_refresh_cosmetic_readability() # Same production projection before first guard.
+		return bool(_sentry.call("start"))
+
+	func _observe_action(record: Dictionary) -> void:
+		observed.emit({"kind": "actual-action", "value": record.duplicate(true)})
+		if record.kind == "blast": errors.append("unexpected blast in primary-only comparison")
+		if not _bait.call("observe_record", record): errors.append(String(_bait.get("last_error")))
+
+	func _observe_source(kind: String, id: String, value: Dictionary) -> void:
+		var compact: Dictionary = {}
+		for key: String in ["status", "phase", "cycle", "direction", "armed", "geometry", "exchange", "reservation_id", "last_cancel_reason", "clock_s"]:
+			if value.has(key): compact[key] = value[key]
+		observed.emit({"kind": kind, "source": id, "value": compact})
+
+	func _physics_process(_delta: float) -> void:
+		# TEST component has no navigation/progress processor. This only uses the
+		# original cosmetic projection, never phases/physics/admission/damage.
+		if _entered and not get_tree().paused and is_instance_valid(_sentry): _refresh_cosmetic_readability()
+
+	func _camera_framing_points() -> Array:
+		return _sentry_required_points() if component_ready and is_instance_valid(_sentry) else []
+
+	func _on_exit_level() -> void:
+		if is_instance_valid(hero) and hero.world_action_executed.is_connected(_observe_action): hero.world_action_executed.disconnect(_observe_action)
+		super._on_exit_level()
+
+class FixedGame:
+	extends "res://tests/acts/act2/fixtures/a2_l1_profile_seed_game.gd"
+	var selected_recipe: String = ""
+	func _create_level_instance() -> CinderLevel:
+		var level: CinderLevel = super._create_level_instance()
+		var geometry: CinderLevel = level.get_node("ActualProductionGeometry") as CinderLevel
+		# TEST pre-tree subclass binding, before the inherited production _ready.
+		# No source exists, transform changes or live script replacement occur.
+		var props: Dictionary = {}
+		for key: String in ["level_id", "objective_text", "spawn_path", "local_snapshot_version", "sentry_parent_script"]: props[key] = geometry.get(key)
+		geometry.set_script(ComponentHost)
+		for key: String in props: geometry.set(key, props[key])
+		geometry.set("recipe_id", selected_recipe)
+		return level
+
+var game: Node
+var component: Node
+var probe: TickBarrier
+var output: String = ""
+var output_created: bool = false
+var arm: String = ""
+var checks: int = 0
+var failures: int = 0
+var first_failure: Dictionary = {}
+var finishing: bool = false
+var started_ms: int = 0
+var old_audio: AudioBusLayout
+var old_fps: int
+var arm_frames: int = 0
+var trace_enabled: bool = false
+var trace: Array[Dictionary] = []
+var commands: Array[Dictionary] = []
+var snapshots: Array[Dictionary] = []
+var previous: Dictionary = {}
+var first_pair: Dictionary = {}
+var pair_start: Dictionary = {}
+var paired_bait_sample: Dictionary = {}
+var pair_command_start: int = 0
+var outcome: Dictionary = {}
+var results: Dictionary = {}
+var note: String = "incomplete"
+var initial_hp: float = 0.0
+var neutral_stats: Dictionary = {}
+var motion_previous: Dictionary = {}
+var previous_exchanges: Array[Dictionary] = []
+var source_before: Dictionary = {}
+var tick_log: FileAccess
+var event_log: FileAccess
+var tick_rows: int = 0
+var event_rows: int = 0
+
+var view_receipt: Dictionary = {}
+var view_captured: bool = false
+var capture_active: bool = false
+var capture_cancelled: bool = false
+var cleanup_completed: bool = false
+
+func _run() -> void:
+	for arg: String in OS.get_cmdline_user_args():
+		if arg.begins_with("--out="): output = arg.trim_prefix("--out=")
+		else: _expect(false,"Only fresh output selector; no view/setup/response controls")
+	if failures > 0: await _finish(); return
+	if not _expect(DisplayServer.get_name() != "headless", "Actual graphical display required"): await _finish(); return
+	if not _expect(output.begins_with("res://.cinder/") and output.ends_with("/") and not output.contains("..") and not DirAccess.dir_exists_absolute(ProjectSettings.globalize_path(output)),"Fresh ignored evidence directory only"): await _finish(); return
+	if not _expect(DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(output)) == OK,"Create fresh view evidence directory"): await _finish(); return
+	output_created = true
+	root.size = Vector2i(540,1170)
+	probe = TickBarrier.new(); root.add_child(probe)
+	for path: String in SOURCE_PINS:
+		source_before[path] = FileAccess.get_sha256(path)
+		_expect(source_before[path] == SOURCE_PINS[path],"Exact selected candidate source: "+path)
+	if failures == 0: await _view_case()
+	await _finish()
+
+func _initialize() -> void:
+	started_ms = Time.get_ticks_msec()
+	old_audio = AudioServer.generate_bus_layout()
+	old_fps = Engine.max_fps
+	process_frame.connect(_wall_guard)
+	_run.call_deferred()
+
+func _view_case() -> bool:
+	var recipe: String = Construction.ENTRY_SIDE
+	arm = "v2"
+	arm_frames = 0
+	trace_enabled = false
+	tick_rows = 0; event_rows = 0
+	tick_log = FileAccess.open(output + arm + "-ticks.jsonl", FileAccess.WRITE)
+	event_log = FileAccess.open(output + arm + "-events.jsonl", FileAccess.WRITE)
+	if not _expect(tick_log != null and event_log != null, "open immediate tick/event evidence before setup"): return false
+	trace.clear(); commands.clear(); previous.clear(); motion_previous.clear(); previous_exchanges.clear(); first_pair.clear(); pair_start.clear(); paired_bait_sample.clear(); outcome.clear()
+	game = MainScene.instantiate()
+	game.set_script(FixedGame)
+	game.set("test_profile_id", "challenge")
+	game.set("selected_recipe", recipe)
+	game.set("level_scene_path", "res://tests/acts/act2/fixtures/a2_l5_production_art_component.tscn")
+	root.add_child(game)
+	paused = true
+	var hero: CinderPlayer = game.get("player") as CinderPlayer
+	var level: Variant = game.get("active_level")
+	if not _expect(is_instance_valid(hero) and is_instance_valid(level), "actual Main constructor supplied Hero and component level"): return false
+	component = level.get_node_or_null("ActualProductionGeometry")
+	if not _expect(is_instance_valid(component), "actual production geometry supplied before any component entry"): return false
+	if not _expect(game.get("level_load_error") == "" and is_instance_valid(hero) and component.get("hero") == null and hero.equipment.snapshot() == Equipment.STARTER and hero.hp == hero.max_hp, "normal native Hero/neutral gear, unentered production scaffold; no HP seed"): return false
+	hero.shells = 0 # Disclosed initial TEST resource, before any B05/config/combat.
+	game.call("resume_lab")
+	for _i: int in range(12): await _step()
+	if not _expect(_stable() and hero.is_on_floor(), "actual fixed authored spawn reaches supported native readiness"): return false
+	component.connect("observed", _event)
+	component.call("enter_level", hero, game.get("fx"), game)
+	if not _expect(component.get("errors").is_empty(), "TEST component uses public lifecycle and reviewed finite construction before sources"): return false
+	if not _write_exact(arm + "-setup-before-seed.native.json", _diagnostic()): return false
+	for direction: Vector3 in [Vector3.FORWARD, Vector3.BACK, Vector3(0.5, 0, -sqrt(0.75))]:
+		if not await _setup_dash(direction): return false
+	for _i: int in range(12): await _step()
+	var bait: Dictionary = component.get("_bait").call("state")
+	var records: Array[Dictionary] = hero.get_world_action_records()
+	var third: Dictionary = records.back() if not records.is_empty() else {}
+	var bait_dash: Dictionary = bait.last_dash if bait.get("last_dash") is Dictionary else {}
+	var third_completed: bool = records.size() == 3 and third.get("kind") == "dash" and int(third.get("sequence", -1)) == 3 and third.get("landing") is Vector3
+	var bait_sequence: bool = not bait_dash.is_empty() and int(bait_dash.get("sequence", -1)) == 3
+	var clauses: Dictionary = {
+		"exactly_three_completed_public_controller_dashes_seq3": third_completed,
+		"native_stable_grounded_no_action": _stable(),
+		"actual_third_receipt_planar_landing_with_native_EPS": third_completed and Geometry.planar(hero.global_position - third.landing).length() <= Scheduler.EPSILON,
+		"native_bait_completed_sequence3": bait_sequence,
+		"native_bait_boundary_sentry_entry": bait.get("boundary") == "sentry-entry",
+		"original_production_APRON_HERO_BOUNDS": Host.APRON_HERO_BOUNDS.has_point(Geometry.planar(hero.global_position)),
+	}
+	# Record EVERY actual clause before the first refusal. Historical pixels
+	# document a point; the original contract is apron-after-the-three-swipes.
+	if not _write_exact(arm + "-seed-contract.native.json", {"clauses": clauses, "actual_hero_position": hero.global_position, "actual_third_record": third, "actual_bait": bait, "native_epsilon": Scheduler.EPSILON, "original_apron_bounds": Host.APRON_HERO_BOUNDS, "historical_station_only": STATION, "historical_delta_only": hero.global_position - STATION, "historical_planar_delta_only": Geometry.planar(hero.global_position - STATION).length(), "scope": "same authored spawn and exact three public dash directions; no historic-coordinate equality, new tolerance, reposition, extra action or pose search"}): return false
+	for clause: String in clauses:
+		if not _expect(clauses[clause], "fixed three-dash apron setup clause: " + clause): return false
+	initial_hp = hero.hp
+	neutral_stats = hero.stats.duplicate(true)
+	if not _write_exact(arm + "-fixed-seed.native.json", _diagnostic()): return false
+	if not _expect(component.call("begin_sentry_at_fixed_seed"), "one actual immutable B05 configure/start after fixed seed"): return false
+	# Only original portrait's actual immutable first-Ray escape follows setup.
+	var ray: Node3D = _parent().call("get_ray")
+	var first: Dictionary = {}
+	for _i: int in range(MAX_ARM_FRAMES):
+		if not _healthy(): return false
+		var state: Dictionary = ray.call("state")
+		if state.status == "running" and state.phase == "lock": first = state; break
+		if int(_state().foot.cycle) > 0 or int(state.cycle) > 1: return _expect(false,"First genuine Ray lock missed; no later substitute")
+		await _step()
+	if not _expect(not first.is_empty() and first.cycle == 1 and first.armed and first.proof_available and _primary_proof(first.proof),"Actual immutable first-Ray proof contains accepted no-ammo/no-immunity full-cadence opening"): return false
+	var escape: Dictionary = {}
+	for segment: Dictionary in first.proof.path:
+		if segment.kind == "escape_dash": escape = segment.duplicate(true); break
+	if not _expect(not escape.is_empty() and Geometry.finite_vector(escape.get("from")) and Geometry.finite_vector(escape.get("to")) and escape.start_s is float and is_finite(escape.start_s),"Original portrait immutable proof supplies fourth action"): return false
+	if not _write_exact("first-ray-proof-before-response.native.json", {"state":first,"escape":escape,"actions":_hero().get_world_action_records(),"diagnostic":_diagnostic()}): return false
+	for _i: int in range(MAX_ARM_FRAMES):
+		if not _healthy(): return false
+		if _clock() >= float(escape.start_s): break
+		await _step()
+	if not _expect(_clock() >= float(escape.start_s) and _stable() and _sequence() == 3 and float(_hero().get_threat_response_state().dash_cooldown_left_s) == 0.0,"Only actual scheduled proof response, no readiness delay or correction"): return false
+	if not await _setup_dash((escape.to-escape.from).normalized()): return false
+	if not _expect(_sequence() == 4 and _hero().get_world_action_records().size() == 4,"Exactly three setup dashes plus one proof escape, no other actions"): return false
+	for _i: int in range(MAX_ARM_FRAMES):
+		if not _healthy(): return false
+		var foot: Dictionary = _state().foot
+		if foot.status == "running" and foot.cycle == 1 and foot.phase == "warning":
+			capture_active = true
+			var captured: bool = await _capture_warning(first,escape)
+			capture_active = false
+			return captured
+		if int(foot.cycle) > 1 or (foot.cycle == 1 and foot.status == "running" and foot.phase != "warning"): return _expect(false,"First Foot warning missed; no lock/later-cycle substitute")
+		await _step()
+	return _expect(false,"No first genuine Foot warning inside unchanged native budget")
+
+func _primary_proof(proof: Dictionary) -> bool:
+	if proof.get("accepted") != true or proof.get("uses_blast") != false or proof.get("uses_invulnerability") != false or not proof.get("path") is Array or proof.path.is_empty() or not Geometry.finite_vector(proof.get("landing")) or not Geometry.finite_vector(proof.get("attack_position")): return false
+	if not Host.APRON_HERO_BOUNDS.has_point(Geometry.planar(proof.landing)) or not Host.APRON_HERO_BOUNDS.has_point(Geometry.planar(proof.attack_position)): return false
+	var escape: bool = false
+	var primary: bool = false
+	var stats: Dictionary = _hero().get_threat_response_state().stats
+	for segment: Dictionary in proof.path:
+		if segment.kind == "escape_dash": escape = true
+		if segment.kind == "ordinary_primary": primary = segment.from == segment.to and segment.start_s == proof.primary_time_s and segment.end_s == proof.response_complete_s and proof.response_complete_s == proof.primary_time_s + float(stats.primary_cooldown)
+	return escape and primary and Geometry.planar(proof.attack_position-_actor().global_position).length() <= float(stats.primary_range)+.00001
+
+func _capture_warning(first_ray: Dictionary,escape: Dictionary) -> bool:
+	var current: Dictionary = _state()
+	var foot: Dictionary = current.foot
+	var proof: Dictionary = {}
+	for row: Dictionary in current.accepted_cycles:
+		if row.kind == "foot" and row.cycle == 1 and row.admitted_exchange.id == foot.reservation_id and row.admitted_exchange.geometry == foot.geometry: proof = row.proof.duplicate(true)
+	var points: Array[Vector3] = component.call("_sentry_required_points")
+	if not _expect(foot.status == "running" and foot.cycle == 1 and foot.phase == "warning" and current.stage == "foot-introduction" and _primary_proof(proof) and not points.is_empty() and bool(component.call("_sentry_points_framed",points)) and String(game.call("camera_framing_error",points)).is_empty() and _hero().hp == initial_hp and _hero().shells == 0 and _sequence() == 4,"First genuine Foot warning/native receipt/proof/source-partner-footprint-Hero-landing union"): return false
+	view_receipt = {"state_before_draw":current,"proof":proof,"first_ray":first_ray,"response4":escape,"actions":_hero().get_world_action_records(),"diagnostic":_diagnostic(),"required_points":points,"cleanup_pending":true,"normal_cleanup_completed":false,"pixel_readability_accepted":false}
+	# Freeze this actual warning, retain validity before any draw/cleanup failure.
+	paused = true
+	if not _write_exact("first-foot-warning-before-draw.native.json",view_receipt): return false
+	await RenderingServer.frame_post_draw
+	if capture_cancelled: return false
+	var after: Dictionary = _state()
+	var after_points: Array[Vector3] = component.call("_sentry_required_points")
+	var camera: Camera3D = game.get("camera")
+	var hud: GameHUD = game.get("hud")
+	var container: SubViewportContainer = camera.get_viewport().get_parent() as SubViewportContainer
+	var inner: Vector2 = Vector2(camera.get_viewport().size)
+	var outer: Vector2 = root.get_visible_rect().size
+	if not _expect(paused and _same(after,current) and _same(after_points,points) and not after_points.is_empty() and bool(component.call("_sentry_points_framed",after_points)) and String(game.call("camera_framing_error",after_points)).is_empty() and camera.projection == Camera3D.PROJECTION_ORTHOGONAL and camera.size == 7.2 and outer == Vector2(540,1170) and inner == Vector2(270,585) and is_instance_valid(container) and container.stretch and container.stretch_shrink == 2 and container.get_global_rect() == Rect2(Vector2.ZERO,outer),"Postdraw retains exact first warning and canonical full-root 2x inner viewport mapping"): return false
+	var projected: Array[Dictionary] = []
+	for point: Vector3 in after_points:
+		var pixel_inner: Vector2 = camera.unproject_position(point)
+		projected.append({"world":point,"inner_viewport_pixel":pixel_inner,"root_image_pixel":pixel_inner*outer/inner})
+	var image: Image = root.get_texture().get_image()
+	var path: String = output+"first-foot-warning.png"
+	if not _expect(image != null and image.get_size() == Vector2i(540,1170) and image.save_png(path) == OK,"Exactly one actual graphical portrait PNG"): return false
+	var reread: Image = Image.load_from_file(path)
+	if not _expect(reread != null and reread.get_size() == image.get_size() and reread.get_format() == image.get_format() and reread.get_data() == image.get_data(),"PNG pixel readback exactly equals captured root image"): return false
+	var safe: Rect2 = hud.combat_safe_rect()
+	view_receipt.merge({"state_after_draw":after,"required_points_after_draw":after_points,"projected_points":projected,"image_path":path,"image_sha256":FileAccess.get_sha256(path),"pixel_readback_equal":true,"camera":{"position":camera.global_position,"basis":camera.global_basis,"size":camera.size,"projection":camera.projection,"viewport_size":inner},"root_image_size":outer,"container_rect":container.get_global_rect(),"hud_safe_rect_normalized":safe,"coordinate_contract":"unproject is270x585 inner; root PNG540x1170 = inner*outer/inner; HUD safe rect uses canonical normalized coordinates","native_containment_error":game.call("camera_framing_error",after_points),"pixel_readability_accepted":false},true)
+	view_captured = _write_exact("first-foot-warning-view.native.json",view_receipt)
+	return view_captured
+
+func _setup_dash(direction: Vector3) -> bool:
+	for _i: int in range(120):
+		if finishing or not is_instance_valid(game): return false
+		if paused: return _expect(false, "actual pause interrupted fixed setup; no forced resume/focus")
+		if _stable() and float(_hero().get_threat_response_state().dash_cooldown_left_s) == 0.0: break
+		await _step()
+	if finishing or not is_instance_valid(game): return false
+	var before: int = _sequence()
+	if not _expect(_hero().request_dash(direction), "fixed setup ordinary controller dash accepted"): return false
+	for _i: int in range(120):
+		if finishing or not is_instance_valid(game): return false
+		if paused: return _expect(false, "actual pause interrupted fixed setup motion; no forced resume/focus")
+		await _step()
+		if finishing or not is_instance_valid(game): return false
+		if _sequence() > before and _stable():
+			var record: Dictionary = _hero().get_world_action_records().back()
+			return _expect(record.kind == "dash" and record.landing == _hero().global_position, "fixed seed uses actual completed stop/collision-shortened receipt")
+	return _expect(false, "fixed setup dash did not complete; no alternate direction")
+
+func _step() -> void:
+	if finishing or not is_instance_valid(probe): return
+	await probe.after_tick
+	arm_frames += 1
+	if is_instance_valid(component) and component.get("component_ready"):
+		var current: Dictionary = _state()
+		var sample: Dictionary = _position_sample()
+		var radius: float = _radius()
+		var active: Array[Dictionary] = _active_exchanges(current)
+		var clears_active: bool = true
+		if not motion_previous.is_empty() and float(sample.clock_s) > float(motion_previous.clock_s):
+			var interval: Array[Dictionary] = [{"start_s": motion_previous.clock_s, "end_s": sample.clock_s, "from": motion_previous.position, "to": sample.position}]
+			for exchange: Dictionary in active + previous_exchanges:
+				if Geometry.timed_path_hits(exchange.geometry, interval, exchange.active_from_s, exchange.active_until_s, radius): clears_active = false
+		motion_previous = sample.duplicate(true)
+		previous_exchanges = active.duplicate(true)
+		if trace_enabled:
+			if not previous.is_empty() and float(sample.clock_s) > float(previous.clock_s): trace.append({"kind": "actual_native_interval", "start_s": previous.clock_s, "end_s": sample.clock_s, "from": previous.position, "to": sample.position})
+			previous = sample.duplicate(true)
+			if pair_start.is_empty() and not current.pair.is_empty(): pair_start = {"foot_start_s": current.pair.foot_exchange.start_s, "sample": sample.duplicate(true), "bait": component.get("_bait").call("state")}
+		var geometry_points: Array = component.call("_sentry_required_points")
+		var held: bool = current.ray.status == "running" or current.foot.status == "running"
+		var framing: bool = not geometry_points.is_empty() and bool(component.call("_sentry_points_framed", geometry_points))
+		var supported: bool = false
+		for region: Dictionary in component.call("floor_bindings").values():
+			if region.safe_rect.grow(-radius).has_point(Geometry.planar(sample.position)): supported = true
+		var contacts: Array[Dictionary] = []
+		for i: int in range(_hero().get_slide_collision_count()):
+			var c: KinematicCollision3D = _hero().get_slide_collision(i)
+			contacts.append({"position": c.get_position(), "normal": c.get_normal(), "collider_decimal": str(c.get_collider_id())})
+		var compact: Dictionary = {}
+		for field: String in ["stage", "clock_s", "actor_hp", "boss_phase", "transition_pending", "joint_cue"]: compact[field] = current[field]
+		compact["held_exchanges"] = active
+		for source: String in ["ray", "foot"]:
+			compact[source] = {}
+			for field: String in ["status", "phase", "cycle", "direction", "armed", "geometry", "exchange", "reservation_id", "last_cancel_reason"]:
+				if current[source].has(field): compact[source][field] = current[source][field]
+		var row: Dictionary = {"sample": sample, "state": compact, "capsule": _capsule_values(), "supported_floor_footprint": supported, "on_floor": _hero().is_on_floor(), "contacts": contacts, "held_union_required": held, "complete_union_framed": framing, "actual_interval_clears_active": clears_active, "required_points": geometry_points, "actor_basis": _actor().global_basis, "actor_position": _actor().global_position}
+		if tick_log != null:
+			tick_log.store_line(JSON.stringify(_safe(row), "", true, true)); tick_rows += 1
+		_expect(supported and clears_active and (not held or framing) and _hero().hp == initial_hp and not _hero().dead and _hero().equipment.snapshot() == Equipment.STARTER and Codec.same_values(_hero().stats, neutral_stats), "each native interval retains supported complete capsule/current armed-held union, neutral stats and immunity-free unchanged HP")
+
+func _active_exchanges(current: Dictionary) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	if current.ray.status == "running" and current.ray.get("armed", false) and not current.ray.exchange.is_empty(): result.append(current.ray.exchange.duplicate(true))
+	if current.foot.status == "running":
+		for row: Dictionary in current.accepted_cycles:
+			if row.kind == "foot" and row.cycle == current.foot.cycle: result.append(row.admitted_exchange.duplicate(true)); break
+	return result
+
+func _healthy() -> bool:
+	if finishing or failures > 0 or not is_instance_valid(game) or not is_instance_valid(component): return false
+	if paused: return _expect(false, "actual pause interrupted the fixed comparison; no forced resume/focus")
+	if not component.get("errors").is_empty(): return _expect(false, "first actual B05/bait refusal: " + str(component.get("errors")))
+	if Time.get_ticks_msec() - started_ms > WALL_LIMIT_MS or arm_frames > MAX_ARM_FRAMES or _clock() > MAX_ARM_NATIVE_S: return _expect(false, "fixed bounded comparison budget; no impossibility inference")
+	return not _hero().dead
+
+func _position_sample() -> Dictionary:
+	return {"clock_s": _clock(), "position": _hero().global_position, "velocity": _hero().velocity, "hp": _hero().hp, "response": _hero().get_threat_response_state(), "equipment": _hero().equipment.snapshot(), "capsule": _capsule_values()}
+
+func _capsule_values() -> Dictionary:
+	var body: Dictionary = BodySweep.source_description(_hero())
+	if body.has("error"): return body
+	return {"footprint_half": body.footprint_half, "height": body.height, "foot_offset": body.foot_offset, "collision_instance_decimal": str(body.collision.get_instance_id())}
+
+func _radius() -> float:
+	var description: Dictionary = BodySweep.source_description(_hero())
+	if description.has("error"): _expect(false, String(description.error)); return Scheduler.CAPSULE_RADIUS + Scheduler.SKIN
+	return maxf(Scheduler.CAPSULE_RADIUS, maxf(description.footprint_half.x, description.footprint_half.y)) + Scheduler.SKIN
+
+func _los() -> Dictionary:
+	return _hero().get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(_hero().global_position + Vector3.UP * 0.7, _actor().global_position + Vector3.UP * 0.7, 1))
+
+func _stable() -> bool:
+	if not is_instance_valid(game) or not is_instance_valid(_hero()): return false
+	var r: Dictionary = _hero().get_threat_response_state()
+	return r.stable and r.motion.grounded and not _hero().action_in_progress()
+
+func _sequence() -> int:
+	var records: Array[Dictionary] = _hero().get_world_action_records()
+	return 0 if records.is_empty() else int(records.back().sequence)
+
+func _hero() -> CinderPlayer: return game.get("player") as CinderPlayer
+
+func _parent() -> Node3D: return component.get("_sentry") as Node3D
+
+func _actor() -> Node3D: return _parent().call("get_actor") as Node3D
+
+func _state() -> Dictionary: return _parent().call("state")
+
+func _clock() -> float: return component.get("_scheduler").get_clock() if is_instance_valid(component) and is_instance_valid(component.get("_scheduler")) else 0.0
+
+func _diagnostic() -> Dictionary:
+	var row: Dictionary = {"arm": arm, "wall_elapsed_ms": Time.get_ticks_msec() - started_ms, "paused": paused, "first_failure": first_failure, "historical_station_only": STATION, "tick_log": {"path": output + arm + "-ticks.jsonl", "rows": tick_rows}, "commands": commands, "trace": trace, "snapshots": snapshots, "source_gates": source_before}
+	if is_instance_valid(game):
+		row["scene_load_error"] = game.get("level_load_error")
+		if is_instance_valid(game.get("camera")): row["camera"] = {"position": game.get("camera").global_position, "basis": game.get("camera").global_basis, "size": game.get("camera").size}
+		if is_instance_valid(game.get("hud")): row["hud_safe_rect"] = game.get("hud").combat_safe_rect()
+		if is_instance_valid(_hero()):
+			row["hero"] = {"position": _hero().global_position, "velocity": _hero().velocity, "hp": _hero().hp, "shells": _hero().shells, "equipment": _hero().equipment.snapshot(), "response": _hero().get_threat_response_state(), "actions": _hero().get_world_action_records(), "body": _capsule_values()}
+	if is_instance_valid(component):
+		row["errors"] = component.get("errors")
+		row["eligibility"] = component.get("notices")
+		row["publications_actions_hits"] = {"path": output + arm + "-events.jsonl", "rows": event_rows}
+		if is_instance_valid(component.get("_bait")): row["bait"] = component.get("_bait").call("state")
+		if is_instance_valid(component.get("_sentry")):
+			row["parent"] = _state()
+			row["parent_runtime_error"] = _parent().get("runtime_error")
+			if is_instance_valid(_parent().call("get_ray")): row["ray_last_error"] = _parent().call("get_ray").get("last_error")
+			if is_instance_valid(_parent().call("get_foot")): row["foot_last_error"] = _parent().call("get_foot").get("last_error")
+	return row
+
+func _cleanup_case() -> void:
+	if not is_instance_valid(game): return
+	var refs: Array[WeakRef] = []
+	_collect_refs(game, refs)
+	# Public cleanup while all native descendants still have their actual tree.
+	if is_instance_valid(component): component.call("exit_level")
+	if is_instance_valid(game.get("active_level")): game.get("active_level").call("exit_level")
+	game.free(); game = null; component = null
+	if tick_log != null: tick_log.flush(); tick_log.close(); tick_log = null
+	if event_log != null: event_log.flush(); event_log.close(); event_log = null
+	await process_frame
+	await process_frame
+	for ref: WeakRef in refs: _expect(ref.get_ref() == null, "normal partial/whole component, Hero, world, HUD and source cleanup")
+
+func _event(value: Dictionary) -> void:
+	if event_log != null:
+		event_log.store_line(JSON.stringify(_safe(value), "", true, true)); event_rows += 1
+
+func _collect_refs(node: Node, refs: Array[WeakRef]) -> void:
+	refs.append(weakref(node))
+	for child: Node in node.get_children(): _collect_refs(child, refs)
+
+func _expect(ok: bool, label: String) -> bool:
+	checks += 1
+	if not ok:
+		failures += 1
+		if first_failure.is_empty(): first_failure = {"label": label, "arm": arm, "clock_s": _clock(), "wall_elapsed_ms": Time.get_ticks_msec() - started_ms}
+		push_error(label)
+	return ok
+
+func _wall_guard() -> void:
+	if capture_active:
+		if not capture_cancelled and Time.get_ticks_msec() - started_ms > WALL_LIMIT_MS:
+			capture_cancelled = true
+			_expect(false,"Draw watchdog latched; cleanup waits for returned capture, Root owns hung child timeout")
+		return
+	if not finishing and Time.get_ticks_msec() - started_ms > WALL_LIMIT_MS:
+		_expect(false, "fixed wall watchdog; actual partial evidence retained, no route/impossibility conclusion")
+		_finish.call_deferred()
+
+func _write_exact(name: String, value: Variant) -> bool:
+	if not output_created: return _expect(false, "output was not freshly created by this comparison")
+	var wire: String = Exact.stringify(_safe(value))
+	if wire.is_empty(): return _expect(false, "lossless diagnostic encoding refused before file write: " + name)
+	var file: FileAccess = FileAccess.open(output + name, FileAccess.WRITE)
+	if file == null: return _expect(false, "diagnostic output could not be opened: " + name)
+	file.store_string(wire); file.close()
+	return true
+
+func _same(left: Variant, right: Variant) -> bool:
+	var a: String = Exact.stringify(_safe(left))
+	return not a.is_empty() and a == Exact.stringify(_safe(right))
+
+func _safe(value: Variant) -> Variant:
+	if value is StringName: return String(value)
+	if value is Vector3: return [value.x, value.y, value.z]
+	if value is Vector2: return [value.x, value.y]
+	if value is Color: return [value.r, value.g, value.b, value.a]
+	if value is AABB: return {"position": _safe(value.position), "size": _safe(value.size)}
+	if value is Vector2i: return [value.x, value.y]
+	if value is Vector3i: return [value.x, value.y, value.z]
+	if value is Rect2: return {"position": _safe(value.position), "size": _safe(value.size)}
+	if value is Basis: return {"x": _safe(value.x), "y": _safe(value.y), "z": _safe(value.z)}
+	if value is Transform3D: return {"basis": _safe(value.basis), "origin": _safe(value.origin)}
+	if value is int and (value > 9007199254740991 or value < -9007199254740991): return {"native_integer_decimal": str(value)}
+	if value is Object: return {"native_class": value.get_class(), "native_instance_decimal": str(value.get_instance_id())} if is_instance_valid(value) else {"freed_native_object": true}
+	if value is RID: return {"native_rid_decimal": str(value.get_id())}
+	if value is Dictionary:
+		var result: Dictionary = {}
+		for key: Variant in value: result[String(key)] = _safe(value[key])
+		return result
+	if value is PackedVector3Array or value is PackedVector2Array or value is PackedFloat32Array or value is PackedFloat64Array or value is PackedInt32Array or value is PackedInt64Array or value is PackedByteArray or value is PackedStringArray: return _safe(Array(value))
+	if value is Array:
+		var result: Array = []
+		for child: Variant in value: result.append(_safe(child))
+		return result
+	return value
+
+func _finish() -> void:
+	if finishing: return
+	finishing = true
+	paused = true
+	if output_created and is_instance_valid(game): _write_exact("before-cleanup.native.json",{"view":view_receipt,"diagnostic":_diagnostic(),"checks":checks,"failures":failures,"first_failure":first_failure,"cleanup_pending":true})
+	var failures_before_cleanup: int = failures
+	await _cleanup_case()
+	cleanup_completed = not is_instance_valid(game) and failures == failures_before_cleanup
+	if is_instance_valid(probe): probe.free()
+	var sources_ok: bool = true
+	for path: String in source_before:
+		if not _expect(FileAccess.get_sha256(path) == source_before[path],"Selected source unchanged after normal cleanup: "+path): sources_ok = false
+	var success: bool = view_captured and cleanup_completed and sources_ok and failures == 0
+	if output_created:
+		var report: Dictionary = {"api_revision":"a2-l5-first-foot-warning-view-1","checks":checks,"failures":failures,"first_failure":first_failure,"success":success,"view_captured":view_captured,"normal_cleanup_completed":cleanup_completed,"sources_unchanged":sources_ok,"source_before":source_before,"image_sha256":view_receipt.get("image_sha256",""),"pixel_readability_accepted":false,"root_pixel_review_pending":true,"executed_arms":["v2"],"scope":"one actual first Foot warning component only; no Store/old arm/comparison/publicsave/wholeL5/route/policy"}
+		var file: FileAccess = FileAccess.open(output+"report.json",FileAccess.WRITE)
+		if file != null:
+			file.store_string(JSON.stringify(report,"\t",true,true))
+			file.flush()
+			var error: Error = file.get_error()
+			file.close()
+			success = success and error == OK
+		else: success = false
+	if process_frame.is_connected(_wall_guard): process_frame.disconnect(_wall_guard)
+	AudioServer.set_bus_layout(old_audio); Engine.max_fps = old_fps
+	paused = false
+	print("A2-L5 first Foot warning view: %d checks, %d failures; success=%s; pixel_review_pending=true; output=%s" % [checks,failures,str(success),output])
+	quit(0 if success else 1)
+

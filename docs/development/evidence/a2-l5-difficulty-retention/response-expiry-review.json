@@ -1,0 +1,528 @@
+{
+  "kind": "a2-l5-candidate-response-expiry-review-1",
+  "reviewer": "/root/l5_public_source_sol",
+  "state": "CLOSED_FAILED4222_PRESERVED; TEST_EXPIRY_MISMATCH_PLUS_ACTUAL_RAY2_LOCK_REFUSAL",
+  "inputs": {
+    ".cinder/a2-l5-key-array-corrected-host-prepare-20261020/fixed_response_companion.gd.txt": {
+      "sha256": "9458b500df665f9fade846d50f6a2f996e542cbce6ba50b2387353d2dc872bd6",
+      "bytes": 76184
+    },
+    ".cinder/a2-l5-key-array-corrected-host-prepare-20261020/run-native-20261020T065654.365229Z-8677c70c/native-retained/v2-ticks.jsonl": {
+      "sha256": "dfb68834617e258f88f5cfa520def73c2d7e44d46518e1f77feab0a68cc09934",
+      "bytes": 4983785
+    },
+    ".cinder/a2-l5-key-array-corrected-host-prepare-20261020/run-native-20261020T065654.365229Z-8677c70c/native-retained/v2-events.jsonl": {
+      "sha256": "02c569a570718b94823e7a10923d51293cec5196e5bcfd6b4642c367285907b0",
+      "bytes": 173939
+    },
+    ".cinder/a2-l5-key-array-corrected-host-prepare-20261020/run-native-20261020T065654.365229Z-8677c70c/native-retained/report.json": {
+      "sha256": "08a3f38c5a2bfeb80beff03f400a18be97bbd1c65e4b9eae9d7f6b987d184afd",
+      "bytes": 7611
+    },
+    ".cinder/a2-l5-key-array-corrected-host-prepare-20261020/run-native-20261020T065654.365229Z-8677c70c/native-retained/host-control.plain.json": {
+      "sha256": "afc2d59a72ac3d3b3ceb53a4769183ced4fdb2e78296e7ff2b73bd567deabba1",
+      "bytes": 8517
+    },
+    "scripts/acts/act2/dead_london_sentry_encounter.gd": {
+      "sha256": "f36e42c36e32edc2e20f7fed8d2dd21b0758f356fcc7cd53332ebd93109edfc1",
+      "bytes": 115686
+    },
+    "scripts/acts/act2/dead_london_ray_exchange.gd": {
+      "sha256": "d6bbcc1f35f45b4ac32226f898d924350e3b01543f28f44cf15cade7b75a3ff1",
+      "bytes": 63748
+    },
+    "scripts/combat/threat_scheduler.gd": {
+      "sha256": "c28ea9f4cd6c1ff9aedbc9cfc45a28826c589c095b9193b565f45d23c3df903d",
+      "bytes": 266033
+    }
+  },
+  "plain_native_report": {
+    "checks": 4222,
+    "failures": 1,
+    "first_failure": {
+      "arm": "v2",
+      "clock_s": 10.966666666666791,
+      "label": "first response ended without useful ordinary opening",
+      "wall_elapsed_ms": 14796
+    },
+    "classification": "incomplete",
+    "scope_complete": false,
+    "results_present": [
+      "v1"
+    ],
+    "retained_reference": {
+      "admitted": true,
+      "arm": "v1",
+      "review_sha256": "f4d16419cef29494a765817cff96b24a7105ac943c5f66a7efb40d3d8882623d",
+      "safe_wire_roundtrip": true,
+      "scope": "retained source-qualified Challenge/v1 component; original3489/1 overall failed; not a current af04 execution or whole L5 save",
+      "source_bytes": 186333,
+      "source_phase": ".cinder/a2-l5-generation-assignment-host-prepare-20261020/run-native-20261020T055207.792218Z-93659e61",
+      "source_sha256": "783de1bad93283d249e9684e6ba0213e75e12011941ecc9228e4cfce20090f8d",
+      "source_visual_sha256": "58b0f58c2a8641c7a55727ca616dd8cdf829f57f3f9166e58db4e15ad83ca2d4"
+    }
+  },
+  "literal_plain_tick_transitions": [
+    {
+      "literal_tick_line": 414,
+      "clock_s": 7.999999999999977,
+      "stage": "await-first-brace",
+      "actor_hp": 15.0,
+      "ray": {
+        "cycle": 1,
+        "phase": "clear",
+        "status": "cancelled",
+        "armed": false,
+        "last_cancel_reason": "b05_first_brace_spent"
+      },
+      "foot": {
+        "cycle": 1,
+        "phase": "clear",
+        "status": "complete",
+        "reservation_id": ""
+      },
+      "joint_state": "spent",
+      "hero_hp": 100.0
+    },
+    {
+      "literal_tick_line": 415,
+      "clock_s": 8.016666666666644,
+      "stage": "phase-two-checkpoint",
+      "actor_hp": 15.0,
+      "ray": {
+        "cycle": 1,
+        "phase": "clear",
+        "status": "cancelled",
+        "armed": false,
+        "last_cancel_reason": "b05_first_brace_spent"
+      },
+      "foot": {
+        "cycle": 1,
+        "phase": "clear",
+        "status": "complete",
+        "reservation_id": ""
+      },
+      "joint_state": "clear",
+      "hero_hp": 100.0
+    },
+    {
+      "literal_tick_line": 417,
+      "clock_s": 8.04999999999998,
+      "stage": "phase-two",
+      "actor_hp": 15.0,
+      "ray": {
+        "cycle": 1,
+        "phase": "clear",
+        "status": "cancelled",
+        "armed": false,
+        "last_cancel_reason": "b05_first_brace_spent"
+      },
+      "foot": {
+        "cycle": 2,
+        "phase": "warning",
+        "status": "running",
+        "reservation_id": "threat-3"
+      },
+      "joint_state": "clear",
+      "hero_hp": 100.0
+    },
+    {
+      "literal_tick_line": 483,
+      "clock_s": 9.150000000000034,
+      "stage": "phase-two",
+      "actor_hp": 15.0,
+      "ray": {
+        "cycle": 2,
+        "phase": "warning",
+        "status": "running",
+        "armed": false,
+        "last_cancel_reason": ""
+      },
+      "foot": {
+        "cycle": 2,
+        "phase": "lock",
+        "status": "running",
+        "reservation_id": "threat-3"
+      },
+      "joint_state": "clear",
+      "hero_hp": 100.0
+    },
+    {
+      "literal_tick_line": 510,
+      "clock_s": 9.600000000000056,
+      "stage": "phase-two",
+      "actor_hp": 15.0,
+      "ray": {
+        "cycle": 2,
+        "phase": "clear",
+        "status": "cancelled",
+        "armed": false,
+        "last_cancel_reason": "tracking_lock_unproved"
+      },
+      "foot": {
+        "cycle": 2,
+        "phase": "lock",
+        "status": "running",
+        "reservation_id": "threat-3"
+      },
+      "joint_state": "clear",
+      "hero_hp": 100.0
+    },
+    {
+      "literal_tick_line": 549,
+      "clock_s": 10.250000000000089,
+      "stage": "phase-two",
+      "actor_hp": 15.0,
+      "ray": {
+        "cycle": 2,
+        "phase": "clear",
+        "status": "cancelled",
+        "armed": false,
+        "last_cancel_reason": "tracking_lock_unproved"
+      },
+      "foot": {
+        "cycle": 2,
+        "phase": "active",
+        "status": "running",
+        "reservation_id": "threat-3"
+      },
+      "joint_state": "clear",
+      "hero_hp": 100.0
+    },
+    {
+      "literal_tick_line": 561,
+      "clock_s": 10.450000000000099,
+      "stage": "phase-two",
+      "actor_hp": 15.0,
+      "ray": {
+        "cycle": 2,
+        "phase": "clear",
+        "status": "cancelled",
+        "armed": false,
+        "last_cancel_reason": "tracking_lock_unproved"
+      },
+      "foot": {
+        "cycle": 2,
+        "phase": "recovery",
+        "status": "running",
+        "reservation_id": "threat-3"
+      },
+      "joint_state": "clear",
+      "hero_hp": 100.0
+    }
+  ],
+  "literal_final_tick": {
+    "literal_tick_line": 592,
+    "clock_s": 10.966666666666791,
+    "state": {
+      "actor_hp": 15.0,
+      "boss_phase": 2,
+      "clock_s": 10.966666666666791,
+      "foot": {
+        "cycle": 2,
+        "geometry": {
+          "kind": "circle",
+          "origin": [
+            0.6499999761581421,
+            0.0,
+            -27.450000762939453
+          ],
+          "radius": 1.1
+        },
+        "last_cancel_reason": "",
+        "phase": "recovery",
+        "reservation_id": "threat-3",
+        "status": "running"
+      },
+      "held_exchanges": [
+        {
+          "active_from_s": 10.249999999999979,
+          "active_until_s": 10.449999999999978,
+          "cooldown_until_s": 12.04999999999998,
+          "geometry": {
+            "kind": "circle",
+            "origin": [
+              0.6499999761581421,
+              0.0,
+              -27.450000762939453
+            ],
+            "radius": 1.1
+          },
+          "id": "threat-3",
+          "lock_from_s": 9.149999999999979,
+          "opening_position": [
+            0.0,
+            0.0,
+            -28.399999618530273
+          ],
+          "profile_id": "challenge",
+          "recovery_until_s": 12.849999999999978,
+          "source_position": [
+            0.6499999761581421,
+            0.0,
+            -27.450000762939453
+          ],
+          "start_s": 8.04999999999998,
+          "world_revision": 1
+        }
+      ],
+      "joint_cue": {
+        "api_revision": "interaction-cue-1",
+        "required": true,
+        "state": "clear",
+        "trigger": "attack",
+        "visible": false
+      },
+      "ray": {
+        "armed": false,
+        "cycle": 2,
+        "direction": [
+          0.5164316892623901,
+          0.0,
+          -0.8563283681869507
+        ],
+        "exchange": {
+          "active_from_s": 10.700000000000035,
+          "active_until_s": 10.860000000000035,
+          "adapter": {
+            "active_s": 0.16,
+            "attack_interval_s": 1.6,
+            "kind": "tracking",
+            "lock_s": 1.1,
+            "locked": false,
+            "radius": 0.31,
+            "reach": 3.799999475479126,
+            "recovery_s": 1.6
+          },
+          "cooldown_until_s": 12.300000000000034,
+          "geometry": {
+            "from": [
+              0.0,
+              0.0,
+              -28.399999618530273
+            ],
+            "kind": "lane",
+            "radius": 0.31,
+            "to": [
+              1.9624401330947876,
+              0.0,
+              -31.6540470123291
+            ]
+          },
+          "id": "threat-4",
+          "lock_from_s": 9.600000000000035,
+          "opening_position": [
+            0.0,
+            0.0,
+            -28.399999618530273
+          ],
+          "profile_id": "challenge",
+          "recovery_until_s": 12.460000000000035,
+          "source_position": [
+            0.0,
+            0.0,
+            -28.399999618530273
+          ],
+          "start_s": 9.150000000000034,
+          "world_revision": 1
+        },
+        "geometry": {
+          "from": [
+            0.0,
+            0.0,
+            -28.399999618530273
+          ],
+          "kind": "lane",
+          "radius": 0.31,
+          "to": [
+            1.9624401330947876,
+            0.0,
+            -31.6540470123291
+          ]
+        },
+        "last_cancel_reason": "tracking_lock_unproved",
+        "phase": "clear",
+        "status": "cancelled"
+      },
+      "stage": "phase-two",
+      "transition_pending": false
+    },
+    "hero_hp": 100.0,
+    "hero_position": [
+      1.350000023841858,
+      -0.004157917574048042,
+      -27.938520431518555
+    ],
+    "stable": true,
+    "primary_cooldown_left_s": 0.0,
+    "safe_flags": {
+      "actual_interval_clears_active": true,
+      "complete_union_framed": true,
+      "supported_floor_footprint": true
+    }
+  },
+  "literal_action_event_summaries": [
+    {
+      "literal_event_line": 1,
+      "value": {
+        "sequence": 1,
+        "kind": "dash",
+        "started_at_s": 0.19999999999999998,
+        "completed_at_s": 0.3833333333333333,
+        "landing": [
+          0.0,
+          -0.004882815759629011,
+          -27.743555068969727
+        ]
+      }
+    },
+    {
+      "literal_event_line": 2,
+      "value": {
+        "sequence": 2,
+        "kind": "dash",
+        "started_at_s": 0.55,
+        "completed_at_s": 0.733333333333334,
+        "landing": [
+          0.0,
+          -0.004882815759629011,
+          -25.60024642944336
+        ]
+      }
+    },
+    {
+      "literal_event_line": 3,
+      "value": {
+        "sequence": 3,
+        "kind": "dash",
+        "started_at_s": 0.9000000000000011,
+        "completed_at_s": 1.0833333333333344,
+        "landing": [
+          1.350000023841858,
+          -0.004157917574048042,
+          -27.938520431518555
+        ]
+      }
+    },
+    {
+      "literal_event_line": 62,
+      "value": {
+        "sequence": 4,
+        "kind": "dash",
+        "started_at_s": 2.0999999999999974,
+        "completed_at_s": 2.28333333333333,
+        "landing": [
+          1.350000023841858,
+          -0.004157917574048042,
+          -30.638521194458008
+        ]
+      }
+    },
+    {
+      "literal_event_line": 120,
+      "value": {
+        "sequence": 5,
+        "kind": "dash",
+        "started_at_s": 3.049999999999994,
+        "completed_at_s": 3.2333333333333267,
+        "landing": [
+          1.350000023841858,
+          -0.004157917574048042,
+          -27.938520431518555
+        ]
+      }
+    },
+    {
+      "literal_event_line": 124,
+      "value": {
+        "sequence": 6,
+        "kind": "primary",
+        "started_at_s": 3.2499999999999933,
+        "completed_at_s": 3.2499999999999933,
+        "landing": null
+      }
+    },
+    {
+      "literal_event_line": 126,
+      "value": {
+        "sequence": 7,
+        "kind": "dash",
+        "started_at_s": 3.6999999999999917,
+        "completed_at_s": 3.8833333333333244,
+        "landing": [
+          1.350000023841858,
+          -0.004157917574048042,
+          -30.638521194458008
+        ]
+      }
+    },
+    {
+      "literal_event_line": 130,
+      "value": {
+        "sequence": 8,
+        "kind": "dash",
+        "started_at_s": 5.799999999999985,
+        "completed_at_s": 5.983333333333317,
+        "landing": [
+          1.350000023841858,
+          -0.004157917574048042,
+          -27.938520431518555
+        ]
+      }
+    },
+    {
+      "literal_event_line": 133,
+      "value": {
+        "sequence": 9,
+        "kind": "dash",
+        "started_at_s": 8.550000000000004,
+        "completed_at_s": 8.733333333333347,
+        "landing": [
+          1.350000023841858,
+          -0.004157917574048042,
+          -30.638521194458008
+        ]
+      }
+    },
+    {
+      "literal_event_line": 165,
+      "value": {
+        "sequence": 10,
+        "kind": "dash",
+        "started_at_s": 10.666666666666776,
+        "completed_at_s": 10.850000000000119,
+        "landing": [
+          1.350000023841858,
+          -0.004157917574048042,
+          -27.938520431518555
+        ]
+      }
+    }
+  ],
+  "plain_store_cleanup": {
+    "directory": "user://test-a2-l5-fixed-store-98b8f932746f1cfd7784939bd91bc864/",
+    "directory_removed": true,
+    "left_in_situ": [],
+    "removed": [
+      "user://test-a2-l5-fixed-store-98b8f932746f1cfd7784939bd91bc864/v2-before-first-response.component-store.json",
+      "user://test-a2-l5-fixed-store-98b8f932746f1cfd7784939bd91bc864/v2-earned-eligibility-before-ack.component-store.json",
+      "user://test-a2-l5-fixed-store-98b8f932746f1cfd7784939bd91bc864/v2-abort-before-cleanup.component-store.json"
+    ],
+    "scope": "only fresh invocation files with verified archived raw bytes; no native inode identity claim"
+  },
+  "plain_comparison": {},
+  "diagnosis": {
+    "test_control_mismatch": "_offer(paired) permits accepted solo foot-N proof before validated pair; _primary_ready(paired) forbids primary without validated pair+armed Ray recovery; _drive treats solo proof ordinary expiry as fatal anyway.",
+    "production_refusal": "Actual Ray2 cancels tracking_lock_unproved at9.600000000000056 before Foot2 ordinary proof expires at10.966666666666791. Parent cannot validate this unarmed cancelled Ray or expose paired ordinary opening.",
+    "production_subcause": "Unresolved from allowed plain observations; scheduler maps several geometry/context/deadline/stagger/proof rejection branches to this same reason. No geometry reconstruction or Exact decode performed.",
+    "skip_fix_feasible_scope": "Only expired ordinary_primary of selected key foot-* with goal paired AND no current validated pair may be consumed as a non-goal segment; retain fatal paired-* expiry, thresholds, first-cycle scope, primary preemption, safety/budgets and comparator.",
+    "skip_fix_sufficiency": "Insufficient to make this recorded first pair viable. Once Ray2 cancelled, parent will not replace it within pair.ray_cycle2; later new pair would roll Foot/Ray beyond strict first-cycle scope. No success inferred or recommended rerun from skip alone.",
+    "checkpoint_evidence": "Plain ticks415 checkpoint ->417 phase-two; report earned-eligibility-before-ack capture accepted. Component logs do not publish a named checkpoint acknowledgement event; source call is resume_after_phase_checkpoint after exactly-one-notice assertion.",
+    "recommendation": "Retain failure; do not implement or rerun solely to skip expiry. Root first isolates actual Ray2 commit refusal using existing allowed native diagnostic evidence or separately scoped observation before deciding any mechanical/control change."
+  },
+  "source_or_native_changes": false,
+  "native_parser_engine_queue_git_userdata_operations": 0,
+  "Exact_or_Variant_decoder_or_geometry_reconstruction": false,
+  "visual11e7_preserved": true,
+  "acceptance_credit": false
+}

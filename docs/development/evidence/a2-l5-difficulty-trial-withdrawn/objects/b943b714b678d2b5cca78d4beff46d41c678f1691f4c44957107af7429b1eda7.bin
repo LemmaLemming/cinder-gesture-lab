@@ -1,0 +1,55 @@
+extends SceneTree
+## INERT. Root alone may select/run once. Immutable retained files only.
+## No world, scene, simulation, Store, Actor, producer or gameplay construction.
+const Exact = preload("res://scripts/campaign/exact_json.gd")
+const BASE: String = "res://.cinder/a2-l5-fixed-response-store-custody-host-prepare-20261020/run-native-20261020T051604.076997Z-599b5d7d/native/"
+const INPUTS: Dictionary = {
+	"v1-setup-before-seed.native.json": {"sha256": "587fe1ed27bd077422afcbf88753301b34b621187518e649f505cc9ed24b4ab9", "bytes": 10043},
+	"v1-abort-before-cleanup.diagnostic.native.json": {"sha256": "558e1e4fcfce0144037263f695c8f903fa2d1aa8737136779940680bddba2b10", "bytes": 31912}
+}
+const SOURCE_PINS: Dictionary = {
+	"res://scripts/campaign/exact_json.gd": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+	"res://scripts/player.gd": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+	"res://scripts/combat/threat_scheduler.gd": "c28ea9f4cd6c1ff9aedbc9cfc45a28826c589c095b9193b565f45d23c3df903d"
+}
+# Exact source Scheduler:44. Do not preload its simulation dependency graph.
+const EPSILON: float = 0.00001
+func _initialize() -> void:
+	for path: String in SOURCE_PINS:
+		if FileAccess.get_sha256(path) != SOURCE_PINS[path]:
+			_refuse("Named reader/predicate source changed: " + path); return
+	var observations: Dictionary = {}
+	for name: String in INPUTS:
+		var path: String = BASE + name
+		var raw: PackedByteArray = FileAccess.get_file_as_bytes(path)
+		if FileAccess.get_sha256(path) != INPUTS[name].sha256 or raw.size() != INPUTS[name].bytes:
+			_refuse("Immutable actual diagnostic changed: " + name); return
+		var parsed: Dictionary = Exact.parse(raw.get_string_from_utf8())
+		if not parsed.get("accepted", false) or not parsed.get("value") is Dictionary:
+			_refuse("Native Exact.parse refused: " + name); return
+		var row: Dictionary = parsed.value
+		if not row.get("hero") is Dictionary or not row.hero.get("response") is Dictionary or not row.get("bait") is Dictionary or not _point(row.hero.get("position")) or not _point(row.get("fixed_station")) or not row.hero.get("actions") is Array:
+			_refuse("Retained diagnostic shape differs: " + name); return
+		var r: Dictionary = row.hero.response
+		if not r.get("motion") is Dictionary or not r.get("stable") is bool or not r.motion.get("grounded") is bool or not r.get("commitment_remaining_s") is float:
+			_refuse("Retained response shape differs: " + name); return
+		var dx: float = row.hero.position[0] - row.fixed_station[0]
+		var dz: float = row.hero.position[2] - row.fixed_station[2]
+		var distance: float = sqrt(dx * dx + dz * dz)
+		var last: Dictionary = row.hero.actions.back() if not row.hero.actions.is_empty() else {}
+		var dash_dictionary: bool = row.bait.get("last_dash") is Dictionary
+		var last_sequence: Variant = row.bait.last_dash.get("sequence") if dash_dictionary else null
+		# Player:150 uses max(phase_left,dash_left,knockback_left). A zero
+		# retained commitment proves both action_in_progress disjuncts false.
+		# This is an inference from saved scalars, not a fresh native Actor call.
+		var no_action_proven: bool = r.commitment_remaining_s == 0.0
+		observations[name] = {"sha256": INPUTS[name].sha256, "bytes": raw.size(), "arm": row.get("arm"), "first_failure": row.get("first_failure"), "hero_position": row.hero.position, "fixed_station": row.fixed_station, "planar_delta": [dx, dz], "planar_distance": distance, "scheduler_epsilon": EPSILON, "station_predicate": distance <= EPSILON, "response": r, "no_action_in_progress_inferred_from_zero_retained_commitment": no_action_proven, "fixture_stable_predicate_inferred": r.stable and r.motion.grounded and no_action_proven, "action_in_progress_direct_retention": false, "bait_last_dash_is_dictionary": dash_dictionary, "bait_last_dash_sequence": last_sequence, "bait_sequence_three_predicate": dash_dictionary and int(last_sequence) == 3, "bait_boundary": row.bait.get("boundary"), "bait_boundary_predicate": row.bait.get("boundary") == "sentry-entry", "bait_landing": row.bait.get("landing"), "last_completed_action": last, "hero_actions_count": row.hero.actions.size(), "errors": row.get("errors"), "parent_present": row.has("parent"), "eligibility": row.get("eligibility")}
+		if FileAccess.get_sha256(path) != INPUTS[name].sha256:
+			_refuse("Actual diagnostic changed during native read: " + name); return
+	print("L5_NATIVE_FIXED_SETUP_INSPECTION " + JSON.stringify({"scope": "Native Exact.parse of two immutable actual1277/1 diagnostics only; observational, no simulation or acceptance", "observations": observations}))
+	quit(0)
+func _point(value: Variant) -> bool:
+	return value is Array and value.size() == 3 and value[0] is float and value[1] is float and value[2] is float and is_finite(value[0]) and is_finite(value[1]) and is_finite(value[2])
+func _refuse(reason: String) -> void:
+	push_error(reason)
+	quit(1)

@@ -1,0 +1,67 @@
+{
+  "at": "2026-10-20T05:51:56.172048+00:00",
+  "status": "ROOT_SOURCE_REVIEW_CLEAR_FOR_ONE_CHANGED_TARGETED_RUN",
+  "owner_commit": "9c3f3480b7fe2ebb123a62f5874341d71bf6fceb",
+  "handoff": "ed670dd6-3406-45f9-ba41-b78990e1e0d5",
+  "native_sha256": "0e63d341b0bf67af25fe45bcfe28d9d053a6de2f7b82727cdeaa685ad9ad357c",
+  "host_sha256": "9966c6e424f1cd114287b8de1e8f8158da5e847dd2baa997b1d49c982f7244bf",
+  "all9_handoff_hash_size_mode_exact": {
+    "docs/acts/act2/shared-support/a2-l5-generation-assignment-inert-20261020/README.md": {
+      "sha256": "0fa0881899c0bdd480903c8f7f41caffda4eb7c929205b94c1fd8d4740830547",
+      "bytes": 3412,
+      "mode": "0644"
+    },
+    "docs/acts/act2/shared-support/a2-l5-generation-assignment-inert-20261020/a2_l5_fixed_response_generation_assignment.gd.txt": {
+      "sha256": "0e63d341b0bf67af25fe45bcfe28d9d053a6de2f7b82727cdeaa685ad9ad357c",
+      "bytes": 60638,
+      "mode": "0644"
+    },
+    "docs/acts/act2/shared-support/a2-l5-generation-assignment-inert-20261020/execution-envelope/APPLICATION_PLAN.md": {
+      "sha256": "722f75d59b26a4c2e7cf86dd39f454a97dfb17d5e2f12054053b8f0cdf706296",
+      "bytes": 2236,
+      "mode": "0644"
+    },
+    "docs/acts/act2/shared-support/a2-l5-generation-assignment-inert-20261020/execution-envelope/INPUT_SPEC.json": {
+      "sha256": "5b4f8cc961ef6717527038ee0bb23e0493203935d2e183ee2760f33857ef5f82",
+      "bytes": 49685,
+      "mode": "0644"
+    },
+    "docs/acts/act2/shared-support/a2-l5-generation-assignment-inert-20261020/execution-envelope/READINESS.json": {
+      "sha256": "583aebde09ddb6499dcbe58f898efaca6780924451bb7d0902f077e224b9a87d",
+      "bytes": 803,
+      "mode": "0644"
+    },
+    "docs/acts/act2/shared-support/a2-l5-generation-assignment-inert-20261020/execution-envelope/run.py.txt": {
+      "sha256": "9966c6e424f1cd114287b8de1e8f8158da5e847dd2baa997b1d49c982f7244bf",
+      "bytes": 40859,
+      "mode": "0644"
+    },
+    "docs/acts/act2/shared-support/a2-l5-generation-assignment-inert-20261020/generation-assignment-amendment.patch.txt": {
+      "sha256": "81f7eea0ab62aea07ce6701cc991f391fb729b75aacb8c92903be401b2d54889",
+      "bytes": 773,
+      "mode": "0644"
+    },
+    "docs/acts/act2/shared-support/a2-l5-generation-assignment-inert-20261020/merge-audit.json": {
+      "sha256": "81ec8887078cfb41b1ebeffe3d57d96a3be03f6de6ce26971454939393f2abe2",
+      "bytes": 1455,
+      "mode": "0644"
+    },
+    "docs/acts/act2/shared-support/a2-l5-generation-assignment-inert-20261020/source-pins.json": {
+      "sha256": "391efd00669236218e66448bdefcb38783d109b7b6408c290b7553b5957fc442",
+      "bytes": 3412,
+      "mode": "0644"
+    }
+  },
+  "only_changed_function": "_archive_store",
+  "whole_before_and_after_archive_function_identical": true,
+  "native_diff": "--- 0686\n+++ 0e63\n@@ -637,12 +637,16 @@\n \t\t\t\t\t\tvar wire: Dictionary = parser.data\n \t\t\t\t\t\tvar serial: Variant = wire.get(\"generation\")\n \t\t\t\t\t\tparsed = (serial is int or serial is float) and is_finite(float(serial)) and serial >= 1 and serial <= Store.MAX_GENERATION and serial == floor(serial) and wire.get(\"format_version\") == Store.FORMAT_VERSION\n-\t\t\t\t\t\tif parsed: row.merge({\"generation\": int(serial), \"format_version\": wire.format_version})\n+\t\t\t\t\t\tif parsed:\n+\t\t\t\t\t\t\tvar validated_generation: int = int(serial)\n+\t\t\t\t\t\t\trow[\"generation\"] = validated_generation\n+\t\t\t\t\t\t\trow[\"format_version\"] = wire.format_version\n+\t\t\t\t\t\t\tparsed = row[\"generation\"] is int and row[\"generation\"] == validated_generation and row[\"generation\"] == serial and row[\"format_version\"] == Store.FORMAT_VERSION\n \t\t\t\t\tif not stable or not parsed:\n \t\t\t\t\t\trow[\"custody_error\"] = \"raw archive stability/header check refused; actual bytes retained\"\n \t\t\t\t\t\tresult.accepted = false\n \t\t\t\t\t# Each unique fresh slot has one real write; never fabricate backup generations.\n-\t\t\t\t\telif stored and suffix.is_empty() and int(row.generation) == generation:\n+\t\t\t\t\telif stored and suffix.is_empty() and row.generation is int and row.generation == generation:\n \t\t\t\t\t\towned_store_files[path] = row.duplicate(true)\n \t\t\t\t\telse:\n \t\t\t\t\t\trow[\"custody_error\"] = \"unexpected/unattributed generation left in situ\"\n",
+  "expected143_normalizes_identically_except_new_private_path_and_two_fixture_bytes": true,
+  "two_runtime_original_candidate_records_unchanged": true,
+  "host_byte_identical": true,
+  "mechanism_independent_review": ".cinder/a2-l5-seed-controls-actual-failure-review-20261020/REVIEW.json",
+  "mechanism_review_sha256": "3f1ffd4c7835436af351433b8c3cfad85e9ac798231d71eb3971cb69cc16a383",
+  "root_decision": "Explicit native validated int assignment fixes the overlapping null generation key. Strict serial/header/nativeint/actualStoregeneration/stability/custody remain; no gameplay/setup/context/comparison/parser/queue/rollback change. Preserve both prior failures; no policy credit or unchanged repeat.",
+  "external_failed_own_store_cleanup": ".cinder/a2-l5-seed-contract-controls-host-prepare-20261020/EXTERNAL_OWNED_STORE_CLEANUP.json",
+  "native_cleanup_reclassified": false,
+  "native_executions": 0
+}

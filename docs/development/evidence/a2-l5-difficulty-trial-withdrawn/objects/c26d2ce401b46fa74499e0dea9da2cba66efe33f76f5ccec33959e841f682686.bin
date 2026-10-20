@@ -1,0 +1,78 @@
+extends RefCounted
+## INERT TRIAL SOURCE: Root must review/promote/parse before any execution.
+## Pure finite construction selection. No native nodes, gameplay or save commit.
+const Difficulty = preload("res://scripts/combat/difficulty.gd")
+const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
+const Exact = preload("res://scripts/campaign/exact_json.gd")
+const API: String = "act2-dead-london-construction-1"
+const SCHEMA: int = 1
+const CANONICAL: String = "A2-L5/canonical-foot@v1"
+const ENTRY_SIDE: String = "A2-L5/entry-side-foot@v2"
+const LEGACY_KEYS: Array[String] = ["stage", "defeated_scouts", "contacts", "contact_seen", "rehearsal_complete", "sentry_started", "phase2_checkpoint", "passage_open", "profile_id", "world_revision", "last_action_sequence", "pending_checkpoints", "completion_pending", "exit_requested", "pending_defeats", "pending_phase2", "pending_clear", "phase2_admitted_after_checkpoint", "gate_states", "scheduler", "familiar", "rehearsal", "rehearsal_view", "sentry_foot_view", "bait", "sentry"]
+const KEYS: Array[String] = ["api_revision", "schema_version", "profile", "recipe_id"]
+const PROFILE_KEYS: Array[String] = ["id", "name", "raw_damage_multiplier", "windup_multiplier", "recovery_multiplier", "reserved_threat_budget", "commit_stagger_s", "arrangement"]
+const JOINT: Vector3 = Vector3(0, 0, -28.4)
+const ORIGINAL_FOOT: Vector3 = Vector3(0.65, 0, -29.35)
+const ENTRY_FOOT: Vector3 = Vector3(0.65, 0, -27.45)
+const RADIUS: float = 1.10
+
+static func descriptor_error(value: Variant) -> String:
+	if not value is Dictionary: return "Complete Dead London construction4 dictionary required"
+	var error: String = Codec.value_error(value)
+	if error.is_empty(): error = Codec.keys_error(value, KEYS)
+	if not error.is_empty(): return error
+	if not value.api_revision is String or value.api_revision != API or not value.schema_version is int or value.schema_version != SCHEMA: return "Exact construction String API/int schema1 required"
+	if not value.profile is Dictionary or not Codec.keys_error(value.profile, PROFILE_KEYS).is_empty() or not value.profile.get("id") is String: return "Exact complete canonical profile8 required"
+	var canonical: Dictionary = Difficulty.new().profile(value.profile.id)
+	if canonical.is_empty() or not Codec.keys_error(canonical, PROFILE_KEYS).is_empty() or not _same(value.profile, canonical): return "Construction retains full canonical typed profile8, not just its ID"
+	if not value.recipe_id is String or value.recipe_id not in [CANONICAL, ENTRY_SIDE]: return "Unknown finite Dead London construction recipe"
+	if value.recipe_id == ENTRY_SIDE and value.profile.id != "challenge": return "Entry-side Foot recipe is Challenge-only"
+	return ""
+
+static func definition(descriptor: Dictionary) -> Dictionary:
+	if not descriptor_error(descriptor).is_empty(): return {}
+	return {"joint_anchor": JOINT, "foot_anchor": ENTRY_FOOT if descriptor.recipe_id == ENTRY_SIDE else ORIGINAL_FOOT, "foot_radius": RADIUS}
+
+static func fresh(profile_id: String) -> Dictionary:
+	var descriptor: Dictionary = {"api_revision": API, "schema_version": SCHEMA, "profile": Difficulty.new().profile(profile_id), "recipe_id": ENTRY_SIDE if profile_id == "challenge" else CANONICAL}
+	return _selection(descriptor, false)
+
+static func restored(local: Dictionary) -> Dictionary:
+	# Literal absence chooses v1 even for a saved Challenge profile. It is never
+	# inferred from the future preference or from ended Scheduler.profile={}.
+	var keys: Array = LEGACY_KEYS.duplicate()
+	var legacy: bool = not local.has("construction")
+	if not legacy: keys.append("construction")
+	var error: String = Codec.value_error(local)
+	if error.is_empty(): error = Codec.keys_error(local, keys)
+	if not error.is_empty(): return {"error": error}
+	if not local.get("profile_id") is String: return {"error": "Saved Dead London profile ID required before construction"}
+	var descriptor: Dictionary
+	if legacy:
+		descriptor = {"api_revision": API, "schema_version": SCHEMA, "profile": Difficulty.new().profile(local.profile_id), "recipe_id": CANONICAL}
+	else:
+		if not local.construction is Dictionary: return {"error": "Present construction is never legacy absence"}
+		descriptor = local.construction.duplicate(true)
+	var selected: Dictionary = _selection(descriptor, legacy)
+	if not selected.error.is_empty(): return selected
+	if descriptor.profile.id != local.profile_id: return {"error": "Saved profile ID and construction profile disagree"}
+	if not local.get("scheduler") is Dictionary or not local.scheduler.get("profile") is Dictionary: return {"error": "Saved Scheduler profile dictionary required"}
+	if local.scheduler.profile.is_empty():
+		if local.get("stage") != 10 or local.get("completion_pending") != false: return {"error": "Only ordinary ended discovery may have empty Scheduler profile"}
+	elif not _same(local.scheduler.profile, descriptor.profile):
+		return {"error": "Nonempty active Scheduler profile must equal full construction profile"}
+	# The saved immutable construction header must agree before any native
+	# source is built. Full parent/component/native validators remain mandatory.
+	if not local.get("sentry") is Dictionary or not local.sentry.get("configuration") is Dictionary: return {"error": "Saved immutable B05 construction header required"}
+	var cfg: Dictionary = local.sentry.configuration
+	if cfg.get("profile_id") != descriptor.profile.id or not _same(cfg.get("joint_anchor"), Codec.vector3(selected.definition.joint_anchor)) or not _same(cfg.get("foot_anchor"), Codec.vector3(selected.definition.foot_anchor)) or not _same(cfg.get("foot_radius"), selected.definition.foot_radius): return {"error": "Saved B05 header disagrees with the finite whole definition"}
+	return selected
+
+static func _selection(descriptor: Dictionary, legacy: bool) -> Dictionary:
+	var error: String = descriptor_error(descriptor)
+	if not error.is_empty(): return {"error": error}
+	return {"error": "", "descriptor": descriptor.duplicate(true), "definition": definition(descriptor), "legacy": legacy}
+
+static func _same(left: Variant, right: Variant) -> bool:
+	var wire: String = Exact.stringify(left)
+	return not wire.is_empty() and wire == Exact.stringify(right)

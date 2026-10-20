@@ -1,0 +1,162 @@
+--- preserved606/public_construction_followup.gd.txt
++++ additive-v2/public_construction_followup.gd.txt
+@@ -16,8 +16,8 @@
+ const CANDIDATE: String = "5f47cfd1fb5f54b11cb425c057dffbff7500ff43b29da1da62b5a71daf9c1e11"
+ const HELPER: String = "res://scripts/acts/act2/dead_london_construction.gd"
+ const HELPER_SHA: String = "c26d2ce401b46fa74499e0dea9da2cba66efe33f76f5ccec33959e841f682686"
+-const INPUT: String = "res://.cinder/a2-l5-public-construction-followup-prepare-20261020/RUN_INPUT.json"
+-const PINS: String = "res://.cinder/a2-l5-public-construction-followup-prepare-20261020/source-pins.json"
++const INPUT: String = "res://.cinder/a2-l5-public-construction-followup-v2-prepare-20261020/RUN_INPUT.json"
++const PINS: String = "res://.cinder/a2-l5-public-construction-followup-v2-prepare-20261020/source-pins.json"
+ const PREFIX: Array[String] = ["A1-L1","A1-L2","A1-L3","A1-L4","A1-L5","A2-L1","A2-L2","A2-L3","A2-L4"]
+ const FILES: Array[String] = ["campaign.json","campaign.json.bak","settings.json","settings.json.bak","preferences.json","preferences.json.bak"]
+ class TickProbe:
+@@ -78,6 +78,7 @@
+ 		if not await _continue_exact(seed.story.snapshot,seed): _finish(); return
+ 		if not _layout(_shell.capture_campaign_snapshot(),"legacy26"): _finish(); return
+ 		var before_save: Dictionary = _disk(_directory)
++		if not _expect(_disk_usable(before_save),"Writer Pause refuses failed own-root custody before public Save"): _finish(); return
+ 		_shell.request_pause() # Real public Save at the untouched paused entrance.
+ 		if not await _quiet(): _finish(); return
+ 		if not _expect(_same(_shell.capture_campaign_snapshot(),seed.story.snapshot) and _same(_shell.attempts.state(),seed),"Original Standard public Pause retains exact actual untouched entrance and whole session"): _finish(); return
+@@ -152,14 +153,57 @@
+ 		_shell.call("_dispose",fresh); return {}
+ 	if not _layout(packet,_case.id,false): _shell.call("_dispose",fresh); return {}
+ 	_case["natural_fresh_packet_exact"] = Exact.stringify(packet)
+-	var before_prepare: Dictionary = _write_new("fresh-registration-"+String(_case.id)+".json",(JSON.stringify({"packet_exact":_case.natural_fresh_packet_exact,"case":_case.id,"cleanup_pending":true,"scope":"Actual unchanged fresh packet before async registration; no saved packet/Store/cleanup result"})+"\n").to_utf8_buffer())
+-	if not _expect(before_prepare.get("accepted",false),"Actual fresh packet retained before asynchronous registration"): _shell.call("_dispose",fresh); return {}
++	# Disclosed TEST administration only: no public direct-L5 begin exists.
++	# The unchanged native registration method keeps its exclusive drain gate.
++	var registration_shell: CinderCampaignShell = _shell
++	if not _expect(is_instance_valid(registration_shell) and registration_shell.is_inside_tree() and registration_shell.get_tree() == self and paused,"Live paused owned Shell exists before TEST administration property access"): return {}
++	var prior_draining: bool = bool(registration_shell.get("_draining"))
++	var idle_before: bool = is_instance_valid(registration_shell) and registration_shell.is_inside_tree() and registration_shell.get_tree() == self and paused and is_instance_valid(registration_shell.menu) and registration_shell.menu.page_name() == "title" and not is_instance_valid(registration_shell.active_level) and not is_instance_valid(registration_shell.player) and not prior_draining and not bool(registration_shell.get("_drain_queued")) and not bool(registration_shell.get("_registration_inflight")) and not bool(registration_shell.get("_registration_pending")) and not bool(registration_shell.get("_snapshot_validation_busy")) and (registration_shell.get("_operations") as Array).is_empty() and (registration_shell.get("_failed_operations") as Array).is_empty()
++	if not _expect(idle_before,"TEST registration administration requires the same paused live idle Title/no donor/no operation or busy scope"):
++		registration_shell.call("_dispose",fresh); return {}
++	var identity_before: Dictionary = {"shell":str(registration_shell.get_instance_id())}
++	for key: String in ["container","viewport","stage","camera","level","player","fx"]:
++		identity_before[key] = str(fresh[key].get_instance_id())
++	var fresh_guard_before: String = String(registration_shell.call("_registration_fresh_guard",fresh,packet))
++	var session_before: String = Exact.stringify(registration_shell.attempts.state())
++	var disk_before: Dictionary = _disk(_directory)
++	var administration_before: Dictionary = {"test_only":true,"public_begin":false,"prior_draining":prior_draining,"identity":identity_before,"full_native_fresh_guard_hex":fresh_guard_before,"whole_session_exact":session_before,"raw_slots":disk_before,"packet_exact":_case.natural_fresh_packet_exact,"process_frame":Engine.get_process_frames(),"physics_frame":Engine.get_physics_frames(),"scope":"TEST-exclusive administration around unchanged _prepare_registration only; no native level/packet/pose/route edits"}
++	_case["registration_administration_before"] = administration_before
++	if not _expect(not fresh_guard_before.is_empty() and not session_before.is_empty() and _disk_usable(disk_before),"Native full fresh identity/world/body/framing guard, whole session and usable own disk recorded before TEST administration"):
++		registration_shell.call("_dispose",fresh); return {}
++	var before_prepare: Dictionary = _write_new("fresh-registration-"+String(_case.id)+".json",(JSON.stringify({"packet_exact":_case.natural_fresh_packet_exact,"registration_administration_before":administration_before,"case":_case.id,"cleanup_pending":true,"scope":"Actual unchanged fresh packet and explicit TEST administration custody before async registration; no public begin/saved packet/Store/cleanup result"})+"\n").to_utf8_buffer())
++	if not _expect(before_prepare.get("accepted",false),"Actual fresh packet and TEST administration custody retained before asynchronous registration"): registration_shell.call("_dispose",fresh); return {}
+ 	_native_prepare_active = true
+-	var registered: bool = await _shell.call("_prepare_registration",[packet],{},fresh)
++	registration_shell.set("_draining",true)
++	var registered: bool = await registration_shell.call("_prepare_registration",[packet],{},fresh)
++	# Restore first on every returned result, including cancellation/watchdog.
++	# No unexpected native queue, busy or cancellation state is cleared.
++	var draining_restored: bool = false
++	if is_instance_valid(registration_shell):
++		registration_shell.set("_draining",prior_draining)
++		draining_restored = registration_shell.get("_draining") == prior_draining
+ 	_native_prepare_active = false
++	var same_shell: bool = is_instance_valid(registration_shell) and registration_shell == _shell and registration_shell.is_inside_tree() and registration_shell.get_tree() == self
++	var administration_after: Dictionary = {"test_only":true,"registered":registered,"same_shell":same_shell,"prior_draining_restored":draining_restored,"finished_latch":_finished,"process_frame":Engine.get_process_frames(),"physics_frame":Engine.get_physics_frames()}
++	var custody_ok: bool = false
++	if same_shell:
++		var identity_after: Dictionary = {"shell":str(registration_shell.get_instance_id())}
++		for key: String in ["container","viewport","stage","camera","level","player","fx"]:
++			identity_after[key] = str(fresh[key].get_instance_id()) if is_instance_valid(fresh.get(key)) else ""
++		var fresh_guard_after: String = String(registration_shell.call("_registration_fresh_guard",fresh,packet))
++		var session_after: String = Exact.stringify(registration_shell.attempts.state())
++		var disk_after: Dictionary = _disk(_directory)
++		var idle_after: bool = paused and is_instance_valid(registration_shell.menu) and registration_shell.menu.page_name() == "title" and not is_instance_valid(registration_shell.active_level) and not is_instance_valid(registration_shell.player) and not bool(registration_shell.get("_draining")) and not bool(registration_shell.get("_drain_queued")) and not bool(registration_shell.get("_registration_inflight")) and not bool(registration_shell.get("_registration_pending")) and not bool(registration_shell.get("_snapshot_validation_busy")) and (registration_shell.get("_operations") as Array).is_empty() and (registration_shell.get("_failed_operations") as Array).is_empty()
++		custody_ok = draining_restored and idle_after and _same(identity_after,identity_before) and not fresh_guard_after.is_empty() and fresh_guard_after == fresh_guard_before and session_after == session_before and Exact.stringify(packet) == _case.natural_fresh_packet_exact and _disk_usable(disk_after) and _same(disk_after,disk_before)
++		administration_after.merge({"identity":identity_after,"full_native_fresh_guard_hex":fresh_guard_after,"whole_session_exact":session_after,"raw_slots":disk_after,"idle_after":idle_after,"registration_cancelled":registration_shell.get("_registration_cancelled"),"campaign_error":registration_shell.campaign_error,"custody_unchanged":custody_ok},true)
++	_case["registration_administration_after"] = administration_after
++	var custody_retained: bool = _expect(custody_ok,"TEST administration restored exact prior draining and retained original Shell/fresh packet/native guard/session/disk without clearing unexpected operations")
+ 	if _finished: _finish_async.call_deferred(); return {}
+-	if not _expect(registered,"Original paused registration validates unchanged whole fresh candidate before TEST prefix wrapper"):
+-		_shell.call("_dispose",fresh); return {}
++	if not custody_retained:
++		if same_shell: registration_shell.call("_dispose",fresh)
++		return {}
++	if not _expect(registered,"Unchanged paused native registration validates actual whole fresh candidate within disclosed TEST administration"):
++		registration_shell.call("_dispose",fresh); return {}
+ 	var seed: Dictionary = _shell.attempts.state()
+ 	seed.completed_main = PREFIX.duplicate()
+ 	seed.story = _shell.attempts.call("_attempt","story",packet) # Existing ordinary initial-attempt constructor; no checkpoint ID is forced.
+@@ -184,11 +228,13 @@
+ 	if not _expect(initial.side_attempt == null and initial.completed_main == PREFIX and _same(initial.story.snapshot,cp),"Genuine literal whole Story entrance and CP, with disclosed prefix9 only"): return false
+ 	_case.initial_session_exact = Exact.stringify(initial); _case.checkpoint_exact = Exact.stringify(cp); _case.protected_story_exact = Exact.stringify(initial.story)
+ 	var original_raw: Dictionary = _disk(_directory)
++	if not _expect(_disk_usable(original_raw),"Future preference refuses failed own-root custody before any write"): return false
+ 	_shell.menu.difficulty_preference_requested.emit(future)
+ 	if not _expect(_shell.get_difficulty_preference() == future and _same(_shell.attempts.state(),initial) and _same(_disk(_directory)["campaign.json"],original_raw["campaign.json"]) and _same(_disk(_directory)["campaign.json.bak"],original_raw["campaign.json.bak"]),"Opposite future preference persists independently and cannot rewrite saved profile, full session or campaign generations"): return false
+ 	if not await _continue_exact(cp,initial) or not _layout(_shell.capture_campaign_snapshot(),key): return false
+ 	_record("initial_continue")
+ 	var before_pause: Dictionary = _disk(_directory)
++	if not _expect(_disk_usable(before_pause),"Resume/Pause refuses failed own-root custody before native ticks or Save"): return false
+ 	var old_player_clock: float = float(cp.player.world_actions.clock_s)
+ 	var old_scheduler_clock: float = float(cp.level.local.scheduler.clock_s)
+ 	_shell.menu.resume_requested.emit()
+@@ -210,6 +256,7 @@
+ 	if not await _continue_exact(current,advanced) or not _layout(_shell.capture_campaign_snapshot(),key): return false
+ 	_record("independent_current_continue")
+ 	var before_retry: Dictionary = _disk(_directory)
++	if not _expect(_disk_usable(before_retry),"Retry refuses failed own-root custody before any public operation"): return false
+ 	var donor_refs: Array[WeakRef] = _refs(_shell.active_level)
+ 	_events.clear(); _quiet_watch = true
+ 	_shell.menu.retry_requested.emit()
+@@ -246,6 +293,7 @@
+ 	if _finished: return false
+ 	_events.clear(); _quiet_watch = true
+ 	var raw_before: Dictionary = _disk(_directory)
++	if not _expect(_disk_usable(raw_before),"Title refuses failed own-root custody before constructing a Store reader"): return false
+ 	_shell = Shell.new() as CinderCampaignShell
+ 	if not _expect(_shell.configure_runtime({},_directory+"campaign.json",_directory+"settings.json",_directory+"preferences.json"),"Canonical registry, isolated own Store paths before Shell tree entry"): return false
+ 	root.add_child(_shell)
+@@ -256,8 +304,9 @@
+ func _continue_exact(packet: Dictionary,session: Dictionary) -> bool:
+ 	if _finished: return false
+ 	var raw_before: Dictionary = _disk(_directory)
++	if not _expect(_disk_usable(raw_before),"Continue refuses failed own-root custody before any public operation"): return false
+ 	_events.clear(); _quiet_watch = true
+-	_shell.menu.resume_requested.emit()
++	_shell.menu.continue_story_requested.emit()
+ 	if not await _quiet(): _quiet_watch = false; return false
+ 	_quiet_watch = false
+ 	return _expect(_live() and _shell.menu.page_name() == "resume" and _events.is_empty() and _same(_shell.capture_campaign_snapshot(),packet) and _same(_shell.attempts.state(),session) and _same(_disk(_directory),raw_before),"Actual public Continue installs exact current/whole session without Store rewrite or gameplay replay")
+@@ -274,6 +323,7 @@
+ 
+ func _generation(before: Dictionary,session: Dictionary,label: String) -> bool:
+ 	var after: Dictionary = _disk(_directory)
++	if not _expect(_disk_usable(before) and _disk_usable(after),"Generation reader refuses failed own-root custody before Store readback"): return false
+ 	var old: Variant = JSON.parse_string(Marshalls.base64_to_raw(before["campaign.json"].base64).get_string_from_utf8())
+ 	var now: Variant = JSON.parse_string(Marshalls.base64_to_raw(after["campaign.json"].base64).get_string_from_utf8())
+ 	var wire: String = Exact.stringify(session)
+@@ -331,6 +381,14 @@
+ func _disk(directory: String) -> Dictionary:
+ 	var slots: Dictionary = {}
+ 	var entries: Array[String] = _entries(directory)
++	if entries.has("UNKNOWN_ROOT") or entries.has("UNREADABLE_ROOT") or entries.has("LISTING_FAILED"):
++		_expect(false,"Own user root/listing refused before any Store slot open/read: " + str(entries))
++		for name: String in FILES:
++			var path: String = directory+name
++			slots[name] = {"path":path,"absolute_path":ProjectSettings.globalize_path(path),"exists":false,"sha256":"","bytes":0,"base64":"","custody_error":"root/listing refused before slot access"}
++		for entry: Dictionary in _roots:
++			if entry.path == directory: entry.latest_slots = slots.duplicate(true)
++		return slots
+ 	var dir: DirAccess = DirAccess.open(directory)
+ 	for entry: String in entries:
+ 		if not entry in FILES: _expect(false,"Unknown user entry retained without deletion: " + entry)
+@@ -347,6 +405,13 @@
+ 	for entry: Dictionary in _roots:
+ 		if entry.path == directory: entry.latest_slots = slots.duplicate(true)
+ 	return slots
++
++func _disk_usable(slots: Dictionary) -> bool:
++	# Propagate the same finite refusal before existing Store/public operations.
++	if not Codec.keys_error(slots,FILES).is_empty(): return false
++	for name: String in FILES:
++		if not slots[name] is Dictionary or slots[name].has("custody_error"): return false
++	return true
+ 
+ func _record(label: String) -> void:
+ 	if _case.is_empty(): return

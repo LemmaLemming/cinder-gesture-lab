@@ -1,0 +1,37 @@
+# L5 seed-contract comparison: actual TEST failure
+
+**Closed failure, no comparison outcome.** The actual phase `/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l5-seed-contract-controls-host-prepare-20261020/run-native-20261020T054240.279445Z-63e74a6e` records Host2 / canonical API1 / owned PID35682 closed with Popen-15. Root reported tool session85084 exit2. There is no final native report or total native check/failure count to infer. Both logs retain `Invalid call. Nonexistent 'int' constructor`, with `_archive_store:645` → `_persist:531`.
+
+## Exact source mechanism and minimal fix
+
+Exact fixture `0686dcf7db39d385629b604860b907a2aa0e19f64d4766f83af83031c2a329c1` initializes each row with `generation:null` at598. At640 its validated serial enters `row.merge({"generation": int(serial), "format_version": wire.format_version})` without overwrite enabled. The existing null therefore survives, and645 evaluates `int(row.generation)` behind the stored-primary branch. The actual archived Store header is ordinary JSON format2/generation1, **not an Exact integer envelope**.
+
+Godot documents `Dictionary.merge` with overwrite defaulting to false; existing keys are preserved. Direct assignment replaces the value. [Official Dictionary API](https://docs.godotengine.org/en/stable/classes/class_dictionary.html#class-dictionary-method-merge).
+
+The minimal additive TEST correction is explicit assignment after the existing validated finite/integral/range/header check:
+
+```gdscript
+if parsed:
+    row["generation"] = int(serial)
+    row["format_version"] = wire["format_version"]
+```
+
+A narrow `row.get("generation") is int` guard followed by direct equality can make unexpected metadata a controlled custody refusal. Do not merely avoid the comparison or retain null, relax Store/header/stability/readback/ownership checks, rewrite raw bytes or change mechanics/setup/framing. Of the fixture’s three merges,619 adds new byte/hash/mtime keys and633 adds new archive keys; only640 overlaps an initialized key. The plain control sidecar constructs a new finite dictionary and uses no merge or native decoder.
+
+## What actually progressed
+
+This run advanced beyond the preserved earlier1277/1 setup refusal. Its retained setup/seed-contract/fixed-seed artifacts plus exact straight-line source show that the six three-dash/APRON/actual-third-receipt setup clauses returned true before fixed-seed was written. It then reached real B05 configure/start, one synchronization step and the first required `before-first-response` diagnostic/payload/Store boundary. Encoded geometry was not decoded or re-proved in Python.
+
+A genuine first component Store primary was copied before the failure: **91,057B**, SHA256 `f3512edb136abf3c76217919418a6c7e9d7750f1bdaeacfc33bf778fabddf38c`, plain format2/generation1. Its payload string bytes exactly equal the retained **80,210B** native payload, SHA256 `25b90fe8f906dcf0ca6b5f593a1e5122bdd402fceb07ba6551556a25efb6326d`, and the envelope checksum joins. This is a TEST two-owner component capture, not whole local27/Attempts/Main/CP or a historical save. The formal `.store-custody` completion is absent. The capture-result file is present but **zero bytes**; the host preserves/copies it exactly and correctly refuses it as invalid JSON. Its emptiness is not filled with a reconstructed result.
+
+No completed v1 response, threshold/eligibility/paired result, v2 arm, comparison, final report or native normal-cleanup receipt is established. Plain `comparison` and `store_cleanup` remain empty. One tick-log line and four event-log lines are retained opaque; no per-frame/scalar claims follow. This failure does not establish equivalence, impossibility, fairness or a production SaveStore defect.
+
+The exact known user primary still exists at `/Users/howardchen/Library/Application Support/Godot/app_userdata/Cinder/test-a2-l5-fixed-store-90beb5a6d458d008f1903e353f855137/v1-before-first-response.component-store.json` and independently matches the retained raw archive byte-for-byte, regular0644. The corresponding backup is absent. After Root requested bounded cleanup custody, only this exact invocation directory was additionally listed: its sole entry is the known regular nonsymlink primary; the literal directory resolves exactly and has no link. Native initial entries were empty. No global user-data search or file mutation occurred. This current read does not replace the missing native custody/cleanup result.
+
+## Evidence and rollback
+
+All12 native originals and their retained copies match stable two-read hashes/sizes/0644 modes. The one empty-JSON issue remains explicit. All191 indexed entries match; all five145-entry maps verify:143 fixed inputs plus2 subjects, before queue=at lock=after restore, selected=after child, only exact5f47/c26d selected. All source retention rows and141 unique blobs join. Plain29 expected/actual source hashes equal the spec. Both rollback receipts record closed own child, canonical lock, exact bytes/modes restoration and no unknown overwrite; current originalA7/0644 and helper absence match. Named UID/cache snapshots and three C7 engine snapshots remain unchanged. Fixture `.gd` and `.txt` agree; frozen host9966/spec/readiness controls verify.
+
+Source rollback and owned process closure do not convert this failed native run into successful component cleanup. Earlier1277/1 remains unchanged, and all original24/current22-at-request acceptances are untouched. No engine/parser/import/host/queue rerun, native Variant/Exact decoder, runtime/tracked/canonical/worker/Git write or user-save mutation occurred. Only these private review files were written. Root owns the worker response and any future selection.
+
+Audit frozen before any Root external cleanup. The observed primary inode/device/mtime and exact known-directory listing are in REVIEW.json. A later Root own-file cleanup must remain a separate external receipt; it cannot change this native failure or supply missing passed native cleanup.

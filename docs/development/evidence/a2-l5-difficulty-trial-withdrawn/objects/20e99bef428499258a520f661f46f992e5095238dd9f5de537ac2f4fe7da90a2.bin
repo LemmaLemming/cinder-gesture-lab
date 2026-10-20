@@ -1,0 +1,362 @@
+{
+  "kind": "a2-l5-store-and-host-independent-source-review-1",
+  "prepared_at": "2026-10-20T05:11:00.638976+00:00",
+  "reviewer": "/root/act3_l5_retention_review",
+  "root_HEAD_observed": "ec884b3b87069d0467ada918766bab8cad1f7c15",
+  "handoff": "d4d2cbb9-9a98-4485-9ce4-ceaeb479eb4e",
+  "owner_commit": "74db40f9cf073e36957fc49bbcd456085c937397",
+  "verdict": "SOURCE_CLEAR_F1_RESOLVED_ROOT_READY_RESEAL_REQUIRED",
+  "blocking_findings": [],
+  "original_F1_review": {
+    "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l5-fixed-response-source-review-20261020/REVIEW.json",
+    "sha256": "e6a03b2e1f6db25591555ff1c257ed53ac305c438c2847754a3da8876b8af3d9",
+    "bytes": 22893,
+    "mode": 420
+  },
+  "new9_artifacts": [
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/acts/act2/shared-support/a2-l5-store-custody-inert-20261020/README.md",
+      "sha256": "cb985ffd6c0b4c72b81ee7f005eca85e5de564e744280adde4133491744e55e0",
+      "bytes": 5514,
+      "mode": 420
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/acts/act2/shared-support/a2-l5-store-custody-inert-20261020/a2_l5_fixed_response_comparison_store_custody.gd.txt",
+      "sha256": "940057c37fa75940feb5007cc1430618356f9b9288b6beb51717063e3d9897dd",
+      "bytes": 56906,
+      "mode": 420
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/acts/act2/shared-support/a2-l5-store-custody-inert-20261020/execution-envelope/APPLICATION_PLAN.md",
+      "sha256": "f7eac76fd0723686098cf2542b950874b249b34178928bcde0b5f2a1a6a55a98",
+      "bytes": 3810,
+      "mode": 420
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/acts/act2/shared-support/a2-l5-store-custody-inert-20261020/execution-envelope/INPUT_SPEC.json",
+      "sha256": "928d3c574f3802cfc21e214599d82112a94a919bbe8834f2a40ae4f00dc03ba3",
+      "bytes": 49348,
+      "mode": 420
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/acts/act2/shared-support/a2-l5-store-custody-inert-20261020/execution-envelope/READINESS.json",
+      "sha256": "7e37c61bfd703bdca9dd7e444c22328252fe466aece5d3abc0ccef8e6ef7fd28",
+      "bytes": 894,
+      "mode": 420
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/acts/act2/shared-support/a2-l5-store-custody-inert-20261020/execution-envelope/run.py.txt",
+      "sha256": "aa11c8bde9c538da52b358667f9a744ca9a6c68f73999a436b9f353a653d495c",
+      "bytes": 37328,
+      "mode": 420
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/acts/act2/shared-support/a2-l5-store-custody-inert-20261020/source-comparison.json",
+      "sha256": "671042fa5cef1cec81b38dbb3bd0719ae1f6d70230c3bdf6cdb3b847c03a55a3",
+      "bytes": 802,
+      "mode": 420
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/acts/act2/shared-support/a2-l5-store-custody-inert-20261020/source-pins.json",
+      "sha256": "2a134b8b95eb5551967e44d706ff577e5225207ee0621cb61906fa93c7140994",
+      "bytes": 2329,
+      "mode": 420
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/acts/act2/shared-support/a2-l5-store-custody-inert-20261020/store-custody-amendment.patch.txt",
+      "sha256": "0ed476dd6fc05ec74243b875dfe4231b321d801d2955fef36ac58ce4f16d5938",
+      "bytes": 11124,
+      "mode": 420
+    }
+  ],
+  "preserved_originals": [
+    {
+      "commit": "d50a690a71de5082ab30f966d4188d33ef34b755",
+      "files": 3,
+      "physical_equals_original_commit": true
+    },
+    {
+      "commit": "283953cbf56175330832b112f18407dedb7f0950",
+      "files": 4,
+      "physical_equals_original_commit": true
+    },
+    {
+      "commit": "5e22b896709ca034c10e9117e7cfbf0c4b8955f5",
+      "files": 7,
+      "physical_equals_original_commit": true
+    }
+  ],
+  "fixture_comparison": {
+    "original_sha256": "6127e49cc3ed12a761bb7a14fa85942836ebba529f57b211cda969fd76e8775b",
+    "new_sha256": "940057c37fa75940feb5007cc1430618356f9b9288b6beb51717063e3d9897dd",
+    "old_outer_functions": 37,
+    "changed_existing": [
+      "_run",
+      "_persist",
+      "_finish"
+    ],
+    "unchanged34_functions": [
+      {
+        "name": "_initialize",
+        "sha256": "9b63590bc7cbae4de817d1f8a309300849aa7a0452cd7373a4b210a7bce8f700"
+      },
+      {
+        "name": "_source_gate",
+        "sha256": "be4dc99ba8bef5d64de28ea235fb8d3fe7308e4822bd019993446b402d45d170"
+      },
+      {
+        "name": "_case",
+        "sha256": "a772f421282e312a8194ebbc4a81a31478824507e23a3a713c59c5d8217b9e7d"
+      },
+      {
+        "name": "_setup_dash",
+        "sha256": "cdbb049e074e78985edc67d2a7443b40ef938219959bde9423dc9c5d30ab73ce"
+      },
+      {
+        "name": "_drive",
+        "sha256": "65a8d35814609e6b3ec057d7c0139ceda6f98fff9a528c7d3c38d7896abc6860"
+      },
+      {
+        "name": "_offer",
+        "sha256": "3c10617c6eafc115dce7bc4c666917eea852566a172d1d92a77d8bae08c4903d"
+      },
+      {
+        "name": "_primary_ready",
+        "sha256": "0671552b4f4728ed63d77bc5442ccce0d11303c00eb56e2544223b9df17588aa"
+      },
+      {
+        "name": "_primary",
+        "sha256": "211f2fc272605c2a19e8128f05cc03c3fa001bd05d414513fe55d61d1c894a0a"
+      },
+      {
+        "name": "_step",
+        "sha256": "9a598f2741764b71b6f150228cfe29f28a31b96202be3522283f8c734b356b84"
+      },
+      {
+        "name": "_active_exchanges",
+        "sha256": "75a6d6f2e137056110f4cef3b2132de384bc4f8da6d243ea649f7b398285cd14"
+      },
+      {
+        "name": "_healthy",
+        "sha256": "e546362fc51e79fd92733535496dc44ffda2f75ace868f88b0946d4836ddcf7d"
+      },
+      {
+        "name": "_position_sample",
+        "sha256": "2804aad13fa29a81e75fbc24dc693d798249599deb1e9a414257fec277e4e1e9"
+      },
+      {
+        "name": "_capsule_values",
+        "sha256": "c30565e5bdf5170a3536ba05eba3ee8a1c48eefe6316facf767628de55beaafd"
+      },
+      {
+        "name": "_radius",
+        "sha256": "834711b104a23e87dd91532203dace68508acd064c4cfe74e09324df83868ad6"
+      },
+      {
+        "name": "_los",
+        "sha256": "7123c3ead8ec53b01ed1246e96846e899e0c9034d601554e2f46d7d098d78e97"
+      },
+      {
+        "name": "_stable",
+        "sha256": "1253a862d2495ca0a5e08db4716977ef6bf2042c040f9794dd32c59da485da46"
+      },
+      {
+        "name": "_sequence",
+        "sha256": "8ee633eaccf904bd0328d3af35fe7a35183b04a3d0d30a782cdfdc352b67d7cd"
+      },
+      {
+        "name": "_hero",
+        "sha256": "ecb6329ef19cba8907e3d442b859dc1d132648b1029ef217c44e45122f5653fc"
+      },
+      {
+        "name": "_parent",
+        "sha256": "48b4455710b43dae80fea2abebded41f36c93919c10820965edb6b8263d66a39"
+      },
+      {
+        "name": "_actor",
+        "sha256": "caa8f86c3897e7c68b9c1cbf6a7cd82dd159280bfeb03bae68d58c5bf53a9ab4"
+      },
+      {
+        "name": "_state",
+        "sha256": "d5fa1582fc08287e5b7ace138a939d85a7d38865d3ece5e229d89b8003780bee"
+      },
+      {
+        "name": "_clock",
+        "sha256": "db0e7cd8be4b08f91529e40f86b09f96ad8109b7f6c29dc4e0dd1257687fd07d"
+      },
+      {
+        "name": "_component_payload_error",
+        "sha256": "b73bd5a579980d84cd5ff1e4eb22c6181dd080dccc0f13b6b25b3eecbadfd1cf"
+      },
+      {
+        "name": "_diagnostic",
+        "sha256": "3408db351516b19fc48f216e8d178c7b8ecbddf31815f305dfefaf4bfc37c2de"
+      },
+      {
+        "name": "_compare",
+        "sha256": "b422267ffe49b9e6d3b6fa4ef28cc532c113002e7a775e608efa5cbcbce82feb"
+      },
+      {
+        "name": "_different_strategy",
+        "sha256": "306a54483de66121a505d8e92f82af7f946ff8f50b30389ec279076a6e77af13"
+      },
+      {
+        "name": "_cleanup_case",
+        "sha256": "faa58a92cc163f6a085aa51896f112c48feefaaa7a997eb7c64d90dcd0870afb"
+      },
+      {
+        "name": "_event",
+        "sha256": "25767eb5fb58756cd0f349df251a2a48a507a2fa9d76fdff9553612b9f8d24d6"
+      },
+      {
+        "name": "_collect_refs",
+        "sha256": "20f35387830921ddaf1d5eea7288f96565e4165cf235a878253948de45166f69"
+      },
+      {
+        "name": "_expect",
+        "sha256": "f0262d71ce49c53941ad5cfa8f355ed630b8d55b76c8a7259f6669749bbd401c"
+      },
+      {
+        "name": "_wall_guard",
+        "sha256": "56d5476f275a6a6603cd4e8019f7ca8c22299e02e8d6c253dff7bb4d00b4b0d6"
+      },
+      {
+        "name": "_write_exact",
+        "sha256": "b85146f2ad45a131e025282746a082e50573d69961aedc81e30af9f5a6c7efb7"
+      },
+      {
+        "name": "_same",
+        "sha256": "dbde64da57e4a7e423ff7501c9ad9923b738b24e02cfe896be179566abc85b09"
+      },
+      {
+        "name": "_safe",
+        "sha256": "2fc5577222e7e0e98e95b2b2cc26d9baaa1314749e6f3c69c264e652f997cdeb"
+      }
+    ],
+    "both_TEST_class_prefix_exact": true,
+    "added_IO_only_functions": [
+      "_prepare_store_output",
+      "_store_directory",
+      "_store_entries",
+      "_store_slot_available",
+      "_archive_store",
+      "_cleanup_store_output"
+    ]
+  },
+  "host_comparison": {
+    "original_sha256": "5b4dc903fd284efbbb5978aff0d118924d10b8be302317846489373bad5f0453",
+    "new_sha256": "aa11c8bde9c538da52b358667f9a744ca9a6c68f73999a436b9f353a653d495c",
+    "old_outer_functions": 21,
+    "changed_existing": [
+      "observe"
+    ],
+    "unchanged_existing_functions": 20,
+    "added": [
+      "observe_store_custody"
+    ],
+    "Root_L4_known_guard_reference_pins": [
+      {
+        "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l4-constructor-format-host-prepare-20261020/run.py",
+        "sha256": "2b0c2823a0355e657c662e5ce5a4dc9c6d2f865d74776990dcfd111698d34ab8",
+        "bytes": 23386,
+        "mode": 420
+      },
+      {
+        "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l4-constructor-format-host-prepare-20261020/native_inspect.py",
+        "sha256": "b951dbe0c5ef47fbfa7f60dd212c17ff9ade1a2f9556aad494a4c2eb969c7c33",
+        "bytes": 6110,
+        "mode": 420
+      }
+    ]
+  },
+  "finite_Root75_input_observation": {
+    "native_sources": 29,
+    "fixture_table_equals_spec": true,
+    "expected_total": 143,
+    "existing_nonfuture_matching": 138,
+    "mismatches": [],
+    "future_unmaterialized_capsule_slots": [
+      ".cinder/a2-l5-fixed-response-store-custody-host-prepare-20261020/fixed_response_companion.gd",
+      ".cinder/a2-l5-fixed-response-store-custody-host-prepare-20261020/fixed_response_companion.gd.txt",
+      ".cinder/a2-l5-fixed-response-store-custody-host-prepare-20261020/fixed_response_companion.gd.uid",
+      ".cinder/a2-l5-fixed-response-store-custody-host-prepare-20261020/inputs/dead_london.gd.txt",
+      ".cinder/a2-l5-fixed-response-store-custody-host-prepare-20261020/inputs/dead_london_construction.gd.txt"
+    ],
+    "subjects": [
+      {
+        "path": "scripts/acts/act2/dead_london.gd",
+        "original_matches": true,
+        "candidate_sha256": "5f47cfd1fb5f54b11cb425c057dffbff7500ff43b29da1da62b5a71daf9c1e11",
+        "original_state": "regular originala7d9"
+      },
+      {
+        "path": "scripts/acts/act2/dead_london_construction.gd",
+        "original_matches": true,
+        "candidate_sha256": "c26d2ce401b46fa74499e0dea9da2cba66efe33f76f5ccec33959e841f682686",
+        "original_state": "genuine absence"
+      }
+    ],
+    "C7_byte_observation": {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.tools/Godot.app/Contents/MacOS/Godot",
+      "sha256": "c7cccbf8fb143e34e02fd6521e09be2c2b974f0d5db080b19071c9c570718ccf",
+      "bytes": 351312912,
+      "mode": "0755",
+      "exact_expected_C7_bytes": true,
+      "engine_executed": false
+    },
+    "scope": "Exactly the supplied finite named map plus the declared C7 engine; no recursive global class/import/UID/evidence census."
+  },
+  "findings": [
+    {
+      "area": "F1 path correction and exclusive user directory",
+      "verdict": "clear source",
+      "finding": "_run creates fresh res evidence first, then one cryptographic32hex user://test-a2-l5-fixed-store namespace. Actual user root must exist; existing file/directory/link collision refuses, with no retry. Correct unchanged real Store now receives user://. This closes the deterministic originalres:// defect without weakening Store or changing TEST semantics."
+    },
+    {
+      "area": "fresh per-capture slot and unknown paths",
+      "verdict": "clear source",
+      "finding": "Directory listing must succeed with hidden entries visible. Any unattributed entry or current primary/backup/temp collision refuses. Each of six normal capture slots performs one actual Store.write; no manufactured second write or backup generation. A Store/header/archive failure preserves actual error/partial bytes and denies required capture. Unknown links/directories/temp/unattributed files remain in situ."
+    },
+    {
+      "area": "raw custody before cleanup",
+      "verdict": "clear source",
+      "finding": "Existing actual diagnostic and typed partial payload precede validation/Store. After write, actual primary/backup presence, user/absolute paths, hash/size/mtime, header generation and exact archive bytes are recorded. Archive output is newly named within owned res evidence, never overwrites known existing files, flushes and checks source/archive stability/hash/size. Native reads only Store envelope/header; no component Variant decoder. Header/checksum/generation is independently checked by host."
+    },
+    {
+      "area": "normal owned Store cleanup",
+      "verdict": "clear source with stated identity limit",
+      "finding": "Before cleanup receipt preserves known archived files/actual entries. Only successful fresh-slot primaries with matching final path/type/hash/size/mtime and archive hash are removed. Changed/unknown/unlistable paths remain; nonempty directory is retained and cleanup fails. Empty invocation directory is removed after known-file cleanup. Native API does not establish inode identity or power-loss safety; source explicitly disclaims these. Python performs no user deletion."
+    },
+    {
+      "area": "unchanged gameplay and source witness",
+      "verdict": "verified exact",
+      "finding": "Only outer_run/_persist/_finish change. Other34 outer functions and both TEST subclass texts, all constructor/seed/station/neutral loadout/ordinary-primary/phase/HP/no-blast/native guard/framing/proof/counterfactual/stop logic are byte-identical to original6127. Constructor5e22 and old witness remain exact. Six additions are IO/custody only."
+    },
+    {
+      "area": "host source restoration and queue",
+      "verdict": "clear source",
+      "finding": "All20 unaffected top-level host functions match held5b4dc903 apart from blank separator extent; onlyobserve changes and observe_store_custody is added. Queue, exactargv/onePopen capture, same-child durable closure, bounded stop, normaluserC7context, durable beforeimages and assembly state, final prior inode checks, exclusive helper creation, exact candidate own-inode rollback/absence unlink and unknown-left-in-situ behavior remain. Recover uses durable NOT_ATTEMPTED/CLOSED custody, not PID absence, and launches no engine."
+    },
+    {
+      "area": "host native custody/outcomes",
+      "verdict": "clear source",
+      "finding": "All actual res native artifacts are copied literally after child closure before interpretation, including partial/refusal output. New helper reads strict literal directory/capture/cleanup controls, exact six named capture paths and raw Store format/checksum/generation; archived payload_json remains opaque. Positive result additionally requires all native complete/success/discriminator/footer/source29/API0/Popen0 gates and verified user directory absence. Failure/equivalent/inconclusive outputs retain their native observations and cannot become functional_pass."
+    },
+    {
+      "area": "Root75 compatibility and pending application state",
+      "verdict": "clear for Root materialization after reseal",
+      "finding": "All138 existing entries in finite143expected map match currentRoot75 bytes/type/mode. Five private future capsule slots are intentionally absent/unmaterialized. Both source subjects match originala7d9/mode0644 and genuine helper absence; source29 exactly equals the fixture table. ReviewedC7binary351312912B/0755 matches exact expectedsha. The available75 change does not require worker broad adoption or new unrelated imports. Spec remains HOLD; Root must independently mark its new private copy ROOT_REVIEWED_READY and update readiness spec hash before one queue job."
+    }
+  ],
+  "qualifications": [
+    "This is text/source reasoning and filesystem byte observation only; no Python host execution/parse, Godot parser/import/native, semantic IO or cleanup result is established.",
+    "The normal fresh Store slot demonstrates one actual primary generation with absent backup; it is not backup/recovery or multiple-generation coverage. No extra write/producer is requested.",
+    "Native user-file cleanup authority uses fresh invocation path plus checked byte/type/size/mtime/archive custody, not native inode or power-loss proof. The Python source-assembly rollback separately retains exact own-inode guards.",
+    "Host retains the before-cleanup receipt and all raw artifacts, while its new observer chiefly validates directory/capture/archive/header/removal/actual-directory-absence joins. A later actual review must preserve any original custody or cleanup refusal; no current cleanup success is claimed.",
+    "No actual whole L5local27/Attempts/legacyChallenge26, full route, portrait, all-kit balance or difficulty-policy credit follows from this component fixture/envelope.",
+    "Owner current20/Shared74 labels are historical handoff metadata. Root75/current21 availability is independent of Agent02historicalShared60 checkout and of any later independent adoption.",
+    "No additional blocker or new native matrix is required by this review. Root alone seals/materializes the exact new capsule and executes one targeted comparison; original6127/283953/5e22 stay untouched."
+  ],
+  "Root_next_action": "Create only named new private capsule after this source review, preserve inert originals, set new spec application_state ROOT_REVIEWED_READY (optionally clarify current21/75 prose), recompute spec hash/bytes in READINESS and recheck the same finite named slots. No runtime constructor or combat source changes. Then one queued native job and exact actual result/Store/custody/cleanup review; no automatic rerun.",
+  "actions": "Only this new private REVIEW.json/REVIEW.md written. Read-only source/function/commit-byte/finite-slot/hash inspection. No tracked/canonical/runtime/materialization/Git mutation, worker message, host/Godot parser/native/import/queue execution."
+}

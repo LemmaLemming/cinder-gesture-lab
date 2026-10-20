@@ -1,0 +1,584 @@
+{
+  "schema_version": 1,
+  "reviewed_utc": "2026-10-20T05:47:58.378811+00:00",
+  "verdict": "ACTUAL_TEST_METADATA_FAILURE_RETAINED_NO_COMPARISON_OUTCOME",
+  "concrete_findings": [
+    {
+      "id": "F1",
+      "severity": "Fix TEST before another explicitly selected run",
+      "title": "Default Dictionary.merge preserves null generation before int conversion",
+      "source": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l5-seed-contract-controls-host-prepare-20261020/fixed_response_companion.gd",
+      "initialization_line": 598,
+      "merge_line": 640,
+      "failing_line": 645,
+      "mechanism": "row contains generation:null from initialization. The validated ordinary JSON numeric serial is put into a default merge without overwrite=true. Existing generation remains null; int(row.generation) is then reached only for the stored primary, producing the recorded int-constructor failure. This is not an Exact/native Variant integer decode.",
+      "evidence": "Actual retained primary is plain format_version2/generation1; source validates finite/integral/bounded serial before the merge. Actual stack is _archive_store645 -> _persist531.",
+      "minimal_additive_TEST_fix": "Within parsed=true assign row[\"generation\"] = int(serial) and row[\"format_version\"] = wire[\"format_version\"] explicitly (or narrowly merge these validated fields with overwrite=true). Prefer requiring row.get(\"generation\") is int before direct equality; no int(null) path. Keep every existing finite/header/range/stability/hash/readback/collision/ownership/backup guard.",
+      "not_a_fix": "Do not bypass the generation/custody comparison, accept null metadata, relax SaveStore, reinterpret Exact bytes, rewrite raw bytes or weaken setup/combat/framing/kit/safety gates.",
+      "official_semantics": "https://docs.godotengine.org/en/stable/classes/class_dictionary.html#class-dictionary-method-merge"
+    }
+  ],
+  "phase": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l5-seed-contract-controls-host-prepare-20261020/run-native-20261020T054240.279445Z-63e74a6e",
+  "root_reported_tool_session": {
+    "session_id": 85084,
+    "reported_exit": 2,
+    "independent_scope": "Root-reported tool session identity; durable Host2/API1/owned PID closure independently checked here."
+  },
+  "actual_failure": {
+    "closed": true,
+    "host_return": 2,
+    "canonical_api_return": 1,
+    "owned_children": [
+      {
+        "pid": 35682,
+        "closed": true,
+        "popen_return": -15
+      }
+    ],
+    "functional_pass": false,
+    "native_final_report_present": false,
+    "total_native_checks": null,
+    "total_native_failures": null,
+    "no_inferred_final_classification": true,
+    "literal_error": "SCRIPT ERROR: Invalid call. Nonexistent 'int' constructor.",
+    "stack": [
+      "_archive_store fixed_response_companion.gd:645",
+      "_persist fixed_response_companion.gd:531"
+    ],
+    "raw_and_engine_diagnostics": [
+      "SCRIPT ERROR: Invalid call. Nonexistent 'int' constructor.",
+      "SCRIPT ERROR: Invalid call. Nonexistent 'int' constructor."
+    ],
+    "host_stop_scope": "Actual script/project-resource error and closed owned Popen-15; do not relabel as a native assertion failure count or an equivalence result."
+  },
+  "progress": {
+    "actual_v1_setup_boundary": "setup-before-seed, seed-contract and fixed-seed Exact artifacts retained. Exact straight-line source reaches fixed-seed only after all six setup clauses returned true. This source/file reachability is not an independent Python re-proof of encoded coordinates/clauses.",
+    "actual_v1_B05_entry_boundary": "Exact source then requires begin_sentry_at_fixed_seed and one ordinary synchronization step before the retained before-first-response diagnostic/payload. No completed threshold/eligibility/paired response is credited.",
+    "first_component_Store_write": {
+      "reached": true,
+      "plain_format_version": 2,
+      "plain_generation": 1,
+      "archive": {
+        "sha256": "f3512edb136abf3c76217919418a6c7e9d7750f1bdaeacfc33bf778fabddf38c",
+        "bytes": 91057,
+        "mode": "0644",
+        "native_original": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l5-seed-contract-controls-host-prepare-20261020/run-native-20261020T054240.279445Z-63e74a6e/native/v1-before-first-response.store-primary.raw.json",
+        "retained_copy": "native-retained/v1-before-first-response.store-primary.raw.json",
+        "two_reads_copy_and_current_original_equal": true,
+        "strict_finite_JSON_valid": true
+      },
+      "payload": {
+        "sha256": "25b90fe8f906dcf0ca6b5f593a1e5122bdd402fceb07ba6551556a25efb6326d",
+        "bytes": 80210,
+        "mode": "0644",
+        "native_original": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l5-seed-contract-controls-host-prepare-20261020/run-native-20261020T054240.279445Z-63e74a6e/native/v1-before-first-response.payload.native.json",
+        "retained_copy": "native-retained/v1-before-first-response.payload.native.json",
+        "two_reads_copy_and_current_original_equal": true,
+        "strict_finite_JSON_valid": true
+      },
+      "payload_string_byte_equal_to_retained_native_payload": true,
+      "payload_checksum_exact": true,
+      "source_path_inference": "The failing645 int call is behind stored && primary short-circuit; retained archive and plain header independently show the first actual format2 primary. Formal _archive_store custody completion remains absent.",
+      "scope": "TEST two-owner component Player/Scheduler/Sentry/construction payload, not whole L5 local27/Attempts/Main/CP or historical save."
+    },
+    "missing_native_artifacts": [
+      "report.json",
+      "comparison.native.json",
+      "v1-executed-result.native.json",
+      "v2-executed-result.native.json",
+      "v1-before-first-response.store-custody.native.json",
+      "component-store-cleanup.native.json",
+      "component-store-before-cleanup.native.json"
+    ],
+    "candidate_v2_files_present": false,
+    "v1_or_v2_completed_executed_results_present": false,
+    "comparison_sidecar": {},
+    "capture_result_file": "Present, zero bytes, SHA empty-byte e3b0...; copied verbatim and correctly flagged invalid JSON. No content/outcome is synthesized.",
+    "native_tick_jsonl_lines": 1,
+    "native_event_jsonl_lines": 4,
+    "typed_evidence_scope": "Exact native payloads/logs retained opaque; no native Variant/Exact value decoding, scalar trajectory, frame-state or clause reconstruction."
+  },
+  "artifact_custody": {
+    "all12_native_originals_and_retained_copies_regular_stable_0644_exact": true,
+    "artifacts": {
+      "component-store-directory.native.json": {
+        "sha256": "957985855d1144c465fcd6b7695765877201864ff5768fe07e2d703eb10ae37f",
+        "bytes": 402,
+        "mode": "0644",
+        "native_original": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l5-seed-contract-controls-host-prepare-20261020/run-native-20261020T054240.279445Z-63e74a6e/native/component-store-directory.native.json",
+        "retained_copy": "native-retained/component-store-directory.native.json",
+        "two_reads_copy_and_current_original_equal": true,
+        "strict_finite_JSON_valid": true
+      },
+      "host-control.plain.json": {
+        "sha256": "83fb027d658aceb15573cf520584a1c027cb458ea94f3abb0ddbcf79db64fc70",
+        "bytes": 7222,
+        "mode": "0644",
+        "native_original": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l5-seed-contract-controls-host-prepare-20261020/run-native-20261020T054240.279445Z-63e74a6e/native/host-control.plain.json",
+        "retained_copy": "native-retained/host-control.plain.json",
+        "two_reads_copy_and_current_original_equal": true,
+        "strict_finite_JSON_valid": true
+      },
+      "source-gates.native.json": {
+        "sha256": "2536e40cc03d5bbf8eee8c9a3cffd1c1f2241a493d50fc7fedf8f99624f6f744",
+        "bytes": 7331,
+        "mode": "0644",
+        "native_original": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l5-seed-contract-controls-host-prepare-20261020/run-native-20261020T054240.279445Z-63e74a6e/native/source-gates.native.json",
+        "retained_copy": "native-retained/source-gates.native.json",
+        "two_reads_copy_and_current_original_equal": true,
+        "strict_finite_JSON_valid": true
+      },
+      "v1-before-first-response.capture-result.native.json": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "mode": "0644",
+        "native_original": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l5-seed-contract-controls-host-prepare-20261020/run-native-20261020T054240.279445Z-63e74a6e/native/v1-before-first-response.capture-result.native.json",
+        "retained_copy": "native-retained/v1-before-first-response.capture-result.native.json",
+        "two_reads_copy_and_current_original_equal": true,
+        "strict_finite_JSON_valid": false
+      },
+      "v1-before-first-response.diagnostic.native.json": {
+        "sha256": "4e661425ee5946554bed70be309bbf6175518f1d5eed3baff7e0c27836d32e2d",
+        "bytes": 43118,
+        "mode": "0644",
+        "native_original": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l5-seed-contract-controls-host-prepare-20261020/run-native-20261020T054240.279445Z-63e74a6e/native/v1-before-first-response.diagnostic.native.json",
+        "retained_copy": "native-retained/v1-before-first-response.diagnostic.native.json",
+        "two_reads_copy_and_current_original_equal": true,
+        "strict_finite_JSON_valid": true
+      },
+      "v1-before-first-response.payload.native.json": {
+        "sha256": "25b90fe8f906dcf0ca6b5f593a1e5122bdd402fceb07ba6551556a25efb6326d",
+        "bytes": 80210,
+        "mode": "0644",
+        "native_original": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l5-seed-contract-controls-host-prepare-20261020/run-native-20261020T054240.279445Z-63e74a6e/native/v1-before-first-response.payload.native.json",
+        "retained_copy": "native-retained/v1-before-first-response.payload.native.json",
+        "two_reads_copy_and_current_original_equal": true,
+        "strict_finite_JSON_valid": true
+      },
+      "v1-before-first-response.store-primary.raw.json": {
+        "sha256": "f3512edb136abf3c76217919418a6c7e9d7750f1bdaeacfc33bf778fabddf38c",
+        "bytes": 91057,
+        "mode": "0644",
+        "native_original": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l5-seed-contract-controls-host-prepare-20261020/run-native-20261020T054240.279445Z-63e74a6e/native/v1-before-first-response.store-primary.raw.json",
+        "retained_copy": "native-retained/v1-before-first-response.store-primary.raw.json",
+        "two_reads_copy_and_current_original_equal": true,
+        "strict_finite_JSON_valid": true
+      },
+      "v1-events.jsonl": {
+        "sha256": "39b87116dcf7838a62c59d29f49ef38437521298782272bc0733ef2dba72abd6",
+        "bytes": 8910,
+        "mode": "0644",
+        "native_original": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l5-seed-contract-controls-host-prepare-20261020/run-native-20261020T054240.279445Z-63e74a6e/native/v1-events.jsonl",
+        "retained_copy": "native-retained/v1-events.jsonl",
+        "two_reads_copy_and_current_original_equal": true,
+        "strict_finite_JSON_valid": true
+      },
+      "v1-fixed-seed.native.json": {
+        "sha256": "75b125d01f2d10d8a5e1d6f2b70b70f28dd2df8d43aa8dc088e4af390235ef14",
+        "bytes": 31684,
+        "mode": "0644",
+        "native_original": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l5-seed-contract-controls-host-prepare-20261020/run-native-20261020T054240.279445Z-63e74a6e/native/v1-fixed-seed.native.json",
+        "retained_copy": "native-retained/v1-fixed-seed.native.json",
+        "two_reads_copy_and_current_original_equal": true,
+        "strict_finite_JSON_valid": true
+      },
+      "v1-seed-contract.native.json": {
+        "sha256": "f2c540fbc5b3c20a1b8c04051ea34c4ce6648f4c94999b1c76b886a15d6d3750",
+        "bytes": 12642,
+        "mode": "0644",
+        "native_original": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l5-seed-contract-controls-host-prepare-20261020/run-native-20261020T054240.279445Z-63e74a6e/native/v1-seed-contract.native.json",
+        "retained_copy": "native-retained/v1-seed-contract.native.json",
+        "two_reads_copy_and_current_original_equal": true,
+        "strict_finite_JSON_valid": true
+      },
+      "v1-setup-before-seed.native.json": {
+        "sha256": "c637b58559a3469514c9bb95c3a8293e031ffcefeaae05ba1ae05cdbc539afdf",
+        "bytes": 10041,
+        "mode": "0644",
+        "native_original": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l5-seed-contract-controls-host-prepare-20261020/run-native-20261020T054240.279445Z-63e74a6e/native/v1-setup-before-seed.native.json",
+        "retained_copy": "native-retained/v1-setup-before-seed.native.json",
+        "two_reads_copy_and_current_original_equal": true,
+        "strict_finite_JSON_valid": true
+      },
+      "v1-ticks.jsonl": {
+        "sha256": "936559fa31e826c5b68579342b3103b1b39d0aaed036fc969a8253d600f6f112",
+        "bytes": 7352,
+        "mode": "0644",
+        "native_original": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l5-seed-contract-controls-host-prepare-20261020/run-native-20261020T054240.279445Z-63e74a6e/native/v1-ticks.jsonl",
+        "retained_copy": "native-retained/v1-ticks.jsonl",
+        "two_reads_copy_and_current_original_equal": true,
+        "strict_finite_JSON_valid": true
+      }
+    },
+    "issues_preserved": [
+      {
+        "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l5-seed-contract-controls-host-prepare-20261020/run-native-20261020T054240.279445Z-63e74a6e/native/v1-before-first-response.capture-result.native.json",
+        "error": "Expecting value: line 1 column 1 (char 0)",
+        "left_in_situ": true
+      }
+    ],
+    "host_partial_finite_JSON_refusal": "Exactly the empty capture-result is refused; partial bytes remain indexed/copied, not discarded.",
+    "native_store_custody_completed": false,
+    "normal_component_or_user_Store_cleanup_proved": false,
+    "plain_store_cleanup": {},
+    "known_user_primary_postfailure": {
+      "path": "/Users/howardchen/Library/Application Support/Godot/app_userdata/Cinder/test-a2-l5-fixed-store-90beb5a6d458d008f1903e353f855137/v1-before-first-response.component-store.json",
+      "exists": true,
+      "regular": true,
+      "symlink": false,
+      "sha256": "f3512edb136abf3c76217919418a6c7e9d7750f1bdaeacfc33bf778fabddf38c",
+      "bytes": 91057,
+      "mode": "0644"
+    },
+    "current_known_user_primary_matches_raw_archive": true,
+    "known_user_backup_present": false,
+    "postfailure_observation_limit": "Read-only exact primary/backup and one bounded invocation-directory listing. Only the known primary is present and regular/nonsymlink. This does not replace missing native custody/cleanup; any later Root cleanup is a separate external receipt.",
+    "postfailure_known_directory_observation": {
+      "observed_utc": "2026-10-20T05:48:24.156963+00:00",
+      "directory": "/Users/howardchen/Library/Application Support/Godot/app_userdata/Cinder/test-a2-l5-fixed-store-90beb5a6d458d008f1903e353f855137",
+      "directory_regular_nonsymlink": true,
+      "directory_resolve_exact": true,
+      "initial_entries_from_actual_native_control": [],
+      "current_entries": [
+        "v1-before-first-response.component-store.json"
+      ],
+      "only_primary_regular_nonsymlink": true,
+      "primary": "/Users/howardchen/Library/Application Support/Godot/app_userdata/Cinder/test-a2-l5-fixed-store-90beb5a6d458d008f1903e353f855137/v1-before-first-response.component-store.json",
+      "sha256": "f3512edb136abf3c76217919418a6c7e9d7750f1bdaeacfc33bf778fabddf38c",
+      "bytes": 91057,
+      "mode": "0644",
+      "device": 16777233,
+      "inode": 52867271,
+      "modified_time_ns": 1792474964118161165,
+      "link_count": 1,
+      "plain_format_version": 2,
+      "plain_generation": 1,
+      "payload_sha256": "25b90fe8f906dcf0ca6b5f593a1e5122bdd402fceb07ba6551556a25efb6326d",
+      "backup_present": false,
+      "stable_two_reads": true,
+      "scope": "Read/list only this exact invocation directory after Root requested own-file cleanup custody. Live path is no longer needed by the frozen audit; subsequent Root cleanup must be a separate external receipt and never change failed native cleanup absence."
+    }
+  },
+  "source_custody": {
+    "fixture": {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l5-seed-contract-controls-host-prepare-20261020/fixed_response_companion.gd",
+      "sha256": "0686dcf7db39d385629b604860b907a2aa0e19f64d4766f83af83031c2a329c1",
+      "bytes": 60376,
+      "mode": "0644"
+    },
+    "fixture_text_exact": true,
+    "host": {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l5-seed-contract-controls-host-prepare-20261020/run.py",
+      "sha256": "9966c6e424f1cd114287b8de1e8f8158da5e847dd2baa997b1d49c982f7244bf",
+      "bytes": 40859,
+      "mode": "0644"
+    },
+    "spec": {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l5-seed-contract-controls-host-prepare-20261020/INPUT_SPEC.json",
+      "sha256": "ec805b22aa892133bd9cf332af3700c3c0464e402a007e72b8060febdea0aa90",
+      "bytes": 50127,
+      "mode": "0644"
+    },
+    "readiness": {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l5-seed-contract-controls-host-prepare-20261020/READINESS.json",
+      "sha256": "516ef3734193c5f08461dd005f104c8d5888b89ab9a067f4a4947a21908f4668",
+      "bytes": 1197,
+      "mode": "0644"
+    },
+    "three_frozen_controls_exact": true,
+    "native_source29_plain_expected_actual_match_spec": true,
+    "five_maps_count_each": 145,
+    "fixed_input_count": 143,
+    "subjects": {
+      "scripts/acts/act2/dead_london.gd": {
+        "original": {
+          "exists": true,
+          "regular": true,
+          "symlink": false,
+          "sha256": "a7d9d948961183d1035f7c4af57072925c255afb94e6a0f0fad443130c40bd8e",
+          "bytes": 96817,
+          "mode": "0644"
+        },
+        "candidate": {
+          "exists": true,
+          "regular": true,
+          "symlink": false,
+          "sha256": "5f47cfd1fb5f54b11cb425c057dffbff7500ff43b29da1da62b5a71daf9c1e11",
+          "bytes": 100563,
+          "mode": "0644"
+        },
+        "candidate_source": ".cinder/a2-l5-seed-contract-controls-host-prepare-20261020/inputs/dead_london.gd.txt"
+      },
+      "scripts/acts/act2/dead_london_construction.gd": {
+        "original": {
+          "exists": false,
+          "regular": false,
+          "symlink": false,
+          "sha256": null,
+          "bytes": null,
+          "mode": null
+        },
+        "candidate": {
+          "exists": true,
+          "regular": true,
+          "symlink": false,
+          "sha256": "c26d2ce401b46fa74499e0dea9da2cba66efe33f76f5ccec33959e841f682686",
+          "bytes": 6199,
+          "mode": "0644"
+        },
+        "candidate_source": ".cinder/a2-l5-seed-contract-controls-host-prepare-20261020/inputs/dead_london_construction.gd.txt"
+      }
+    },
+    "before_queue_at_lock_after_restore_equal": true,
+    "selected_after_child_equal": true,
+    "only_two_planned_subjects_changed": true,
+    "retention_counts": {
+      "before-queue": 142,
+      "at-lock": 142,
+      "candidate-selected": 143,
+      "after-child": 143,
+      "after-restore": 142
+    },
+    "unique_retained_source_blobs": 141,
+    "all_blob_hashes_sizes_and_metadata_joins_exact": true,
+    "all191_indexed_files_hash_size_mode_exact": true,
+    "index_after_raw_close": true,
+    "restoration_receipts": [
+      {
+        "path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/acts/act2/dead_london_construction.gd",
+        "owned_children_closed": true,
+        "created_by_this_run": true,
+        "restored_exact_initial": true,
+        "write_attempted": true,
+        "under_canonical_lock": true,
+        "unknown_overwrite_authorized": false,
+        "status": "REMOVED_ONLY_EXACT_OWN_CREATED_CANDIDATE"
+      },
+      {
+        "path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/acts/act2/dead_london.gd",
+        "owned_children_closed": true,
+        "created_by_this_run": true,
+        "restored_exact_initial": true,
+        "write_attempted": true,
+        "under_canonical_lock": true,
+        "unknown_overwrite_authorized": false,
+        "status": "RESTORED_EXACT_INITIAL_BYTES_MODE"
+      }
+    ],
+    "beforeimages": {
+      "scripts/acts/act2/dead_london.gd": {
+        "record": {
+          "exists": true,
+          "regular": true,
+          "symlink": false,
+          "sha256": "a7d9d948961183d1035f7c4af57072925c255afb94e6a0f0fad443130c40bd8e",
+          "bytes": 96817,
+          "mode": "0644"
+        },
+        "blob": "beforeimage-0.bin",
+        "initial_identity": {
+          "device": 16777233,
+          "inode": 52824082
+        }
+      },
+      "scripts/acts/act2/dead_london_construction.gd": {
+        "record": {
+          "exists": false,
+          "regular": false,
+          "symlink": false,
+          "sha256": null,
+          "bytes": null,
+          "mode": null
+        },
+        "blob": null,
+        "initial_identity": null
+      }
+    },
+    "assembly_state": {
+      "scripts/acts/act2/dead_london.gd": {
+        "selection_intent": true,
+        "selection_complete": true,
+        "created_by_this_run": true,
+        "creation_identity": {
+          "device": 16777233,
+          "inode": 52866928
+        }
+      },
+      "scripts/acts/act2/dead_london_construction.gd": {
+        "selection_intent": true,
+        "selection_complete": true,
+        "created_by_this_run": true,
+        "creation_identity": {
+          "device": 16777233,
+          "inode": 52866932
+        }
+      }
+    },
+    "current_originalA7_0644_and_helper_absence_match": true,
+    "named_UID_cache_records_unchanged_in_all_maps": true,
+    "three_engine_snapshots_equal": true,
+    "queue": {
+      "queued": true,
+      "acquired": true,
+      "lock_context_released": true,
+      "lock_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/locks/godot.lock",
+      "inside_lock_finally_reached": true
+    }
+  },
+  "merge_scope_audit": {
+    "scope": "Only this exact fixture and its native plain sidecar producer/Root host; no global merge census.",
+    "calls": [
+      {
+        "line": 619,
+        "source": "row.merge({\"bytes\": size, \"sha256\": sha, \"modified_unix\": modified})"
+      },
+      {
+        "line": 633,
+        "source": "row.merge({\"archive_path\": archive, \"archive_sha256\": FileAccess.get_sha256(archive), \"copied_verbatim\": stable})"
+      },
+      {
+        "line": 640,
+        "source": "if parsed: row.merge({\"generation\": int(serial), \"format_version\": wire.format_version})"
+      }
+    ],
+    "overlaps": [
+      {
+        "line": 619,
+        "keys": [
+          "bytes",
+          "sha256",
+          "modified_unix"
+        ],
+        "overlap_with_initialized_row": []
+      },
+      {
+        "line": 633,
+        "keys": [
+          "archive_path",
+          "archive_sha256",
+          "copied_verbatim"
+        ],
+        "overlap_with_initialized_or_preceding_row": []
+      },
+      {
+        "line": 640,
+        "keys": [
+          "generation",
+          "format_version"
+        ],
+        "overlap_with_initialized_row": [
+          "generation"
+        ]
+      }
+    ],
+    "sidecar": "_write_host_control819 uses a new explicit finite primitive dictionary from whole assigned control records; no Dictionary.merge or Exact decoder. Python host has no GDScript Dictionary.merge.",
+    "official_documentation": {
+      "url": "https://docs.godotengine.org/en/stable/classes/class_dictionary.html#class-dictionary-method-merge",
+      "read_only_verified": true,
+      "semantics": "overwrite defaults false; an existing key is preserved. Explicit index assignment or overwrite=true replaces it."
+    }
+  },
+  "evidence_pins": {
+    "result.json": {
+      "sha256": "16bf75a18ff68463292180e351d81d797a175cb7e31dc950686392848915df38",
+      "bytes": 9543,
+      "mode": "0644"
+    },
+    "command.json": {
+      "sha256": "5a994fbaea5a7808511b77882137445d9a762d20e4e08234b970963bb7888840",
+      "bytes": 1521,
+      "mode": "0644"
+    },
+    "queue.json": {
+      "sha256": "63a80bf7a813afab5a5fdf9f6fe94c72f364e5bc00018f653dd4e03dd5a31ad6",
+      "bytes": 208,
+      "mode": "0644"
+    },
+    "evidence-index.json": {
+      "sha256": "ad1725e6ca443945ce8d3aa2049be8ebaa332c8743ad003ea7d420c71fa26e9e",
+      "bytes": 40366,
+      "mode": "0644"
+    },
+    "native-artifact-custody.json": {
+      "sha256": "e9f17494f74998a15c729b8ec856f458606ac6c7e841f98fea886499c9f4f58a",
+      "bytes": 7254,
+      "mode": "0644"
+    },
+    "native-observation.json": {
+      "sha256": "0da9b8cce9a1a1b3098a622ddedea7ea59bb9adb800addbdad99c995b007b6c5",
+      "bytes": 8310,
+      "mode": "0644"
+    },
+    "raw.log": {
+      "sha256": "17c88fcb5fd9a44dd011e9c4c2e4f5199fcdde6ce91ff568849e5ed88e39389e",
+      "bytes": 812,
+      "mode": "0644"
+    },
+    "engine.log": {
+      "sha256": "45301db9bae36141c5d07b5c027e41ed9784f40aca0dfe9464a7546d78cba5aa",
+      "bytes": 545,
+      "mode": "0644"
+    },
+    "beforeimages.json": {
+      "sha256": "3d8b072e8401e793adecd203fef40a4cfbdbc7cd6690887e06b3e0061ebe30ad",
+      "bytes": 643,
+      "mode": "0644"
+    },
+    "assembly-state.json": {
+      "sha256": "1e537cb90b4182d3da10cbc05975647969fa5c68101503b4e1a7235231646bb7",
+      "bytes": 462,
+      "mode": "0644"
+    },
+    "restore-receipts.json": {
+      "sha256": "fc41d503a14fe9a48c906a76f7b2175508200c584ad3e731730d9a392fa8559b",
+      "bytes": 761,
+      "mode": "0644"
+    }
+  },
+  "source_map_pins": {
+    "before-queue": {
+      "sha256": "831fd11a9d7984a5f619c31bb906212a6e05924d5af77ff5bd6f9e1e4d5f187d",
+      "bytes": 33387,
+      "mode": "0644"
+    },
+    "at-lock": {
+      "sha256": "831fd11a9d7984a5f619c31bb906212a6e05924d5af77ff5bd6f9e1e4d5f187d",
+      "bytes": 33387,
+      "mode": "0644"
+    },
+    "candidate-selected": {
+      "sha256": "984c1f90227c3b247d37d6ed358b8c42f22265cc156d17028bcb548315b1429a",
+      "bytes": 33450,
+      "mode": "0644"
+    },
+    "after-child": {
+      "sha256": "984c1f90227c3b247d37d6ed358b8c42f22265cc156d17028bcb548315b1429a",
+      "bytes": 33450,
+      "mode": "0644"
+    },
+    "after-restore": {
+      "sha256": "831fd11a9d7984a5f619c31bb906212a6e05924d5af77ff5bd6f9e1e4d5f187d",
+      "bytes": 33387,
+      "mode": "0644"
+    }
+  },
+  "preserved_history": {
+    "prior1277_review": {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l5-fixed-setup-failure-review-20261020/REVIEW.json",
+      "sha256": "97be7c8e1c78089f275a0d14c0d482f003b5914938cfd7684c56d5a7be1eb5c8",
+      "bytes": 21744,
+      "mode": "0644"
+    },
+    "prior1277_1_incomplete_before_seed_Store_combat_v2_unchanged": true,
+    "original_24_acceptances_and_22_amendments_at_request_not_modified": true,
+    "no_equivalence_fairness_or_production_defect_inferred": true
+  },
+  "operations": {
+    "new_native_engine_parser_import_renderer_queue_or_host_execution": false,
+    "native_Variant_Exact_decoder_or_reconstruction": false,
+    "runtime_tracked_canonical_worker_or_Git_writes": false,
+    "user_store_cleanup_or_mutation": false,
+    "web_use": "Read official Godot Dictionary API documentation only to verify merge/assignment semantics.",
+    "writes": "Only this private REVIEW.json and REVIEW.md. Root owns worker response and any future selection."
+  }
+}

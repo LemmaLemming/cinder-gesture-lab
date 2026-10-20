@@ -1,0 +1,568 @@
+extends SceneTree
+## INERT source-only L5 entrance compatibility proposal; NOT parsed or run.
+## Root alone materializes this one leaf and seals an operation-specific input.
+## writer: originalA7 Standard entrance only, one public Pause save, raw export.
+## reader: candidate5f47/c26d literal old26 + natural freshChallenge27 only.
+## Prefix9 wraps an untouched actual fresh packet; no local/HP/clock/proof edits.
+const Shell = preload("res://scripts/campaign/shell.gd")
+const Registry = preload("res://scripts/campaign/registry.gd")
+const Store = preload("res://scripts/campaign/save_store.gd")
+const Exact = preload("res://scripts/campaign/exact_json.gd")
+const Difficulty = preload("res://scripts/combat/difficulty.gd")
+const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
+const Equipment = preload("res://scripts/equipment.gd")
+const HOST: String = "res://scripts/acts/act2/dead_london.gd"
+const ORIGINAL: String = "a7d9d948961183d1035f7c4af57072925c255afb94e6a0f0fad443130c40bd8e"
+const CANDIDATE: String = "5f47cfd1fb5f54b11cb425c057dffbff7500ff43b29da1da62b5a71daf9c1e11"
+const HELPER: String = "res://scripts/acts/act2/dead_london_construction.gd"
+const HELPER_SHA: String = "c26d2ce401b46fa74499e0dea9da2cba66efe33f76f5ccec33959e841f682686"
+const INPUT: String = "res://.cinder/a2-l5-public-construction-followup-v2-prepare-20261020/RUN_INPUT.json"
+const PINS: String = "res://.cinder/a2-l5-public-construction-followup-v2-prepare-20261020/source-pins.json"
+const PREFIX: Array[String] = ["A1-L1","A1-L2","A1-L3","A1-L4","A1-L5","A2-L1","A2-L2","A2-L3","A2-L4"]
+const FILES: Array[String] = ["campaign.json","campaign.json.bak","settings.json","settings.json.bak","preferences.json","preferences.json.bak"]
+class TickProbe:
+	extends Node
+	signal tick_finished
+	func _init() -> void:
+		process_mode = Node.PROCESS_MODE_ALWAYS
+		process_physics_priority = 1000000
+	func _physics_process(_delta: float) -> void: tick_finished.emit()
+var _shell: CinderCampaignShell
+var _probe: TickProbe
+var _input: Dictionary = {}
+var _pins: Dictionary = {}
+var _before: Dictionary = {}
+var _output: String = ""
+var _operation: String = ""
+var _directory: String = ""
+var _roots: Array[Dictionary] = []
+var _cases: Array[Dictionary] = []
+var _case: Dictionary = {}
+var _rows: Array[Dictionary] = []
+var _events: Array[Dictionary] = []
+var _checks: int = 0
+var _failures: int = 0
+var _quiet_watch: bool = false
+var _native_prepare_active: bool = false
+var _cleanup_observations: Array[Dictionary] = []
+var _finished: bool = false
+var _finalizer: bool = false
+var _complete: bool = false
+var _cleanup_ok: bool = true
+var _output_owned: bool = false
+var _old_fps: int = 0
+var _old_audio: AudioBusLayout
+var _unit_receipt: Dictionary = {"accepted":false}
+var _legacy_origin: Dictionary = {}
+
+func _initialize() -> void:
+	_old_fps = Engine.max_fps
+	_old_audio = AudioServer.generate_bus_layout()
+	_run.call_deferred()
+
+func _run() -> void:
+	create_timer(120.0,true,false,true).timeout.connect(func() -> void:
+		if not _finished: _expect(false,"Finite120s follow-up watchdog; no automatic repeat"); _finish())
+	root.size = Vector2i(540,1170)
+	root.content_scale_size = root.size
+	root.content_scale_mode = Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
+	if not _options(): _finish(); return
+	if not _source_gate(): _finish(); return
+	_probe = TickProbe.new(); root.add_child(_probe)
+	node_added.connect(_observe_added)
+	paused = true
+	if _operation == "writer":
+		if not _new_case("legacy26","standard"): _finish(); return
+		var seed: Dictionary = await _fresh_entrance("standard")
+		if seed.is_empty() or _finished: _finish(); return
+		if not await _continue_exact(seed.story.snapshot,seed): _finish(); return
+		if not _layout(_shell.capture_campaign_snapshot(),"legacy26"): _finish(); return
+		var before_save: Dictionary = _disk(_directory)
+		if not _expect(_disk_usable(before_save),"Writer Pause refuses failed own-root custody before public Save"): _finish(); return
+		_shell.request_pause() # Real public Save at the untouched paused entrance.
+		if not await _quiet(): _finish(); return
+		if not _expect(_same(_shell.capture_campaign_snapshot(),seed.story.snapshot) and _same(_shell.attempts.state(),seed),"Original Standard public Pause retains exact actual untouched entrance and whole session"): _finish(); return
+		if not _generation(before_save,seed,"original_public_entrance_pause"): _finish(); return
+		_record("legacy_public_save")
+		_case.complete = true
+	else:
+		var legacy: Dictionary = _literal_legacy()
+		if legacy.is_empty(): _finish(); return
+		if not _new_case("legacy26","standard") or not _install_raw(legacy.raw_slots): _finish(); return
+		if not await _open_title(legacy.session): _finish(); return
+		if not await _read_case(legacy.session,"legacy26","challenge"): _finish(); return
+		_case.complete = true
+		if not _new_case("new27","challenge"): _finish(); return
+		var fresh: Dictionary = await _fresh_entrance("challenge")
+		if fresh.is_empty() or _finished: _finish(); return
+		if not await _read_case(fresh,"new27","standard"): _finish(); return
+		_case.complete = true
+	_complete = true
+	_finish()
+
+func _options() -> bool:
+	if not _expect(OS.get_cmdline_user_args().is_empty(),"No route/geometry/kit/selector arguments"): return false
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(INPUT))
+	if not _expect(parsed is Dictionary,"Root must first seal one exact operation-specific RUN_INPUT; absent means no run"): return false
+	_input = parsed
+	if not _expect(Codec.keys_error(_input,["operation","output_dir","source_pins_sha256","legacy_report"]).is_empty() and _input.operation in ["writer","reader"] and _input.output_dir is String and _input.source_pins_sha256 is String and _input.legacy_report is Dictionary,"Closed Root operation-specific input4"): return false
+	_operation = _input.operation; _output = _input.output_dir
+	if not _expect(_output.is_absolute_path() and not _output.contains("..") and DirAccess.dir_exists_absolute(_output),"Root-created new absolute output directory required"): return false
+	var out: DirAccess = DirAccess.open(_output)
+	if not _expect(out != null and out.get_files().is_empty() and out.get_directories().is_empty(),"Output is empty at admission; Root host separately pins its nonsymlink inode/custody"): return false
+	_output_owned = true
+	if not _expect(FileAccess.get_sha256(PINS) == _input.source_pins_sha256,"Root-sealed exact source-pins bytes before constructor selection"): return false
+	parsed = JSON.parse_string(FileAccess.get_file_as_string(PINS))
+	if not _expect(parsed is Dictionary and parsed.get("runtime_common") is Dictionary,"Named bounded native source map required"): return false
+	_pins = parsed
+	return _expect((_operation == "writer" and _input.legacy_report.is_empty()) or (_operation == "reader" and Codec.keys_error(_input.legacy_report,["path","sha256"]).is_empty()),"Writer has no imported packet; reader has one exact actual writer report, never fabricated raw slots")
+
+func _source_gate() -> bool:
+	if _pins.is_empty(): return false
+	var selected: Dictionary = _sources()
+	if _before.is_empty(): _before = selected.duplicate(true)
+	return _expect(selected == _pins.runtime_common and FileAccess.get_sha256(get_script().resource_path) == _pins.inert_fixture.sha256 and FileAccess.get_sha256(HOST) == (ORIGINAL if _operation == "writer" else CANDIDATE) and ((not FileAccess.file_exists(HELPER)) if _operation == "writer" else FileAccess.get_sha256(HELPER) == HELPER_SHA),"Exact originalA7 or candidate5f47/c26d and unchanged named shared sources before any native Shell construction")
+
+func _sources() -> Dictionary:
+	var result: Dictionary = {}
+	for path: String in _pins.get("runtime_common",{}): result[path] = FileAccess.get_sha256(path)
+	return result
+
+func _new_case(id: String,profile: String) -> bool:
+	if _finished: return false
+	_directory = "user://test-a2-l5-public-construction-" + Crypto.new().generate_random_bytes(16).hex_encode() + "/"
+	var parent: DirAccess = DirAccess.open("user://")
+	var name: String = _directory.trim_prefix("user://").trim_suffix("/")
+	if not _expect(parent != null and not parent.file_exists(name) and not parent.dir_exists(name) and not parent.is_link(name),"Refuse every existing TEST user directory/file/link; no production save path"): return false
+	if not _expect(parent.make_dir(name) == OK,"Create one fresh invocation-owned user directory"): return false
+	_roots.append({"path":_directory,"created_by_invocation":true,"latest_slots":{},"cleanup":{}})
+	_case = {"id":id,"saved_profile":profile,"complete":false,"user_path":_directory,"stages":[],"scope":"Disclosed TEST prefix9 around an unchanged native production entrance; no earned progress/HP/ammo/clock/pose/proof/checkpoint rewrite"}
+	_cases.append(_case)
+	var receipt: Dictionary = _write_new("admission-"+id+".json",(JSON.stringify({"user_path":_directory,"absolute_path":ProjectSettings.globalize_path(_directory),"source":FileAccess.get_sha256(HOST),"created_by_invocation":true,"case":id,"scope":"Custody only, before Shell/Store; no result"})+"\n").to_utf8_buffer())
+	return _expect(_entries(_directory).is_empty() and receipt.get("accepted",false),"Exclusive new user directory and admission custody persisted before any known Store slot")
+
+func _fresh_entrance(profile: String) -> Dictionary:
+	# Trusted existing Shell fresh seam, not a replacement scene/factory.
+	if _finished or not await _open_title({}): return {}
+	_shell.menu.difficulty_preference_requested.emit(profile)
+	if not _expect(_shell.get_difficulty_preference() == profile,"Public future preference is selected before once-only fresh native configuration"): return {}
+	var fresh: Dictionary = _shell.call("_prepare","A2-L5",Equipment.STARTER)
+	if not _expect(not fresh.is_empty(),"Original ordinary Shell constructor creates full authored L5 source topology"): return {}
+	var packet: Dictionary = _shell.call("_capture_fresh_candidate",fresh,_shell.call("_fresh_shell_state"))
+	if not _expect(not packet.is_empty() and packet.level.local.stage == 0 and packet.level.local.contacts.is_empty() and packet.level.local.defeated_scouts.is_empty() and packet.level.local.sentry.parent.stage == "dormant" and packet.player.world_actions.sequence == 0 and packet.player.world_actions.clock_s == 0.0,"Full actual fresh entrance capture; no later producer or history edits"):
+		_shell.call("_dispose",fresh); return {}
+	if not _layout(packet,_case.id,false): _shell.call("_dispose",fresh); return {}
+	_case["natural_fresh_packet_exact"] = Exact.stringify(packet)
+	# Disclosed TEST administration only: no public direct-L5 begin exists.
+	# The unchanged native registration method keeps its exclusive drain gate.
+	var registration_shell: CinderCampaignShell = _shell
+	if not _expect(is_instance_valid(registration_shell) and registration_shell.is_inside_tree() and registration_shell.get_tree() == self and paused,"Live paused owned Shell exists before TEST administration property access"): return {}
+	var prior_draining: bool = bool(registration_shell.get("_draining"))
+	var idle_before: bool = is_instance_valid(registration_shell) and registration_shell.is_inside_tree() and registration_shell.get_tree() == self and paused and is_instance_valid(registration_shell.menu) and registration_shell.menu.page_name() == "title" and not is_instance_valid(registration_shell.active_level) and not is_instance_valid(registration_shell.player) and not prior_draining and not bool(registration_shell.get("_drain_queued")) and not bool(registration_shell.get("_registration_inflight")) and not bool(registration_shell.get("_registration_pending")) and not bool(registration_shell.get("_snapshot_validation_busy")) and (registration_shell.get("_operations") as Array).is_empty() and (registration_shell.get("_failed_operations") as Array).is_empty()
+	if not _expect(idle_before,"TEST registration administration requires the same paused live idle Title/no donor/no operation or busy scope"):
+		registration_shell.call("_dispose",fresh); return {}
+	var identity_before: Dictionary = {"shell":str(registration_shell.get_instance_id())}
+	for key: String in ["container","viewport","stage","camera","level","player","fx"]:
+		identity_before[key] = str(fresh[key].get_instance_id())
+	var fresh_guard_before: String = String(registration_shell.call("_registration_fresh_guard",fresh,packet))
+	var session_before: String = Exact.stringify(registration_shell.attempts.state())
+	var disk_before: Dictionary = _disk(_directory)
+	var administration_before: Dictionary = {"test_only":true,"public_begin":false,"prior_draining":prior_draining,"identity":identity_before,"full_native_fresh_guard_hex":fresh_guard_before,"whole_session_exact":session_before,"raw_slots":disk_before,"packet_exact":_case.natural_fresh_packet_exact,"process_frame":Engine.get_process_frames(),"physics_frame":Engine.get_physics_frames(),"scope":"TEST-exclusive administration around unchanged _prepare_registration only; no native level/packet/pose/route edits"}
+	_case["registration_administration_before"] = administration_before
+	if not _expect(not fresh_guard_before.is_empty() and not session_before.is_empty() and _disk_usable(disk_before),"Native full fresh identity/world/body/framing guard, whole session and usable own disk recorded before TEST administration"):
+		registration_shell.call("_dispose",fresh); return {}
+	var before_prepare: Dictionary = _write_new("fresh-registration-"+String(_case.id)+".json",(JSON.stringify({"packet_exact":_case.natural_fresh_packet_exact,"registration_administration_before":administration_before,"case":_case.id,"cleanup_pending":true,"scope":"Actual unchanged fresh packet and explicit TEST administration custody before async registration; no public begin/saved packet/Store/cleanup result"})+"\n").to_utf8_buffer())
+	if not _expect(before_prepare.get("accepted",false),"Actual fresh packet and TEST administration custody retained before asynchronous registration"): registration_shell.call("_dispose",fresh); return {}
+	_native_prepare_active = true
+	registration_shell.set("_draining",true)
+	var registered: bool = await registration_shell.call("_prepare_registration",[packet],{},fresh)
+	# Restore first on every returned result, including cancellation/watchdog.
+	# No unexpected native queue, busy or cancellation state is cleared.
+	var draining_restored: bool = false
+	if is_instance_valid(registration_shell):
+		registration_shell.set("_draining",prior_draining)
+		draining_restored = registration_shell.get("_draining") == prior_draining
+	_native_prepare_active = false
+	var same_shell: bool = is_instance_valid(registration_shell) and registration_shell == _shell and registration_shell.is_inside_tree() and registration_shell.get_tree() == self
+	var administration_after: Dictionary = {"test_only":true,"registered":registered,"same_shell":same_shell,"prior_draining_restored":draining_restored,"finished_latch":_finished,"process_frame":Engine.get_process_frames(),"physics_frame":Engine.get_physics_frames()}
+	var custody_ok: bool = false
+	if same_shell:
+		var identity_after: Dictionary = {"shell":str(registration_shell.get_instance_id())}
+		for key: String in ["container","viewport","stage","camera","level","player","fx"]:
+			identity_after[key] = str(fresh[key].get_instance_id()) if is_instance_valid(fresh.get(key)) else ""
+		var fresh_guard_after: String = String(registration_shell.call("_registration_fresh_guard",fresh,packet))
+		var session_after: String = Exact.stringify(registration_shell.attempts.state())
+		var disk_after: Dictionary = _disk(_directory)
+		var idle_after: bool = paused and is_instance_valid(registration_shell.menu) and registration_shell.menu.page_name() == "title" and not is_instance_valid(registration_shell.active_level) and not is_instance_valid(registration_shell.player) and not bool(registration_shell.get("_draining")) and not bool(registration_shell.get("_drain_queued")) and not bool(registration_shell.get("_registration_inflight")) and not bool(registration_shell.get("_registration_pending")) and not bool(registration_shell.get("_snapshot_validation_busy")) and (registration_shell.get("_operations") as Array).is_empty() and (registration_shell.get("_failed_operations") as Array).is_empty()
+		custody_ok = draining_restored and idle_after and _same(identity_after,identity_before) and not fresh_guard_after.is_empty() and fresh_guard_after == fresh_guard_before and session_after == session_before and Exact.stringify(packet) == _case.natural_fresh_packet_exact and _disk_usable(disk_after) and _same(disk_after,disk_before)
+		administration_after.merge({"identity":identity_after,"full_native_fresh_guard_hex":fresh_guard_after,"whole_session_exact":session_after,"raw_slots":disk_after,"idle_after":idle_after,"registration_cancelled":registration_shell.get("_registration_cancelled"),"campaign_error":registration_shell.campaign_error,"custody_unchanged":custody_ok},true)
+	_case["registration_administration_after"] = administration_after
+	var custody_retained: bool = _expect(custody_ok,"TEST administration restored exact prior draining and retained original Shell/fresh packet/native guard/session/disk without clearing unexpected operations")
+	if _finished: _finish_async.call_deferred(); return {}
+	if not custody_retained:
+		if same_shell: registration_shell.call("_dispose",fresh)
+		return {}
+	if not _expect(registered,"Unchanged paused native registration validates actual whole fresh candidate within disclosed TEST administration"):
+		registration_shell.call("_dispose",fresh); return {}
+	var seed: Dictionary = _shell.attempts.state()
+	seed.completed_main = PREFIX.duplicate()
+	seed.story = _shell.attempts.call("_attempt","story",packet) # Existing ordinary initial-attempt constructor; no checkpoint ID is forced.
+	# Only route metadata/initial attempt wrapper is TEST. Packet bytes stay exact.
+	if not _expect(_shell.attempts.restore_session(seed),"Disclosed prefix9 + actual fresh current=checkpoint wrapper validates without packet changes"):
+		_shell.call("_dispose",fresh); return {}
+	var store: CinderSaveStore = Store.new(_directory+"campaign.json")
+	if not _expect(store.write_payload(_shell.attempts.state()) and store.generation == 1,"One disclosed TEST seed commit into absent own Store; not a public Save assertion"):
+		_shell.call("_dispose",fresh); return {}
+	_case.initial_session_exact = Exact.stringify(seed)
+	_case.checkpoint_exact = Exact.stringify(packet)
+	_case.protected_story_exact = Exact.stringify(seed.story)
+	_record("native_fresh_seed")
+	_shell.call("_dispose",fresh)
+	if not await _dispose_shell(): return {}
+	if not await _open_title(seed): return {}
+	return seed
+
+func _read_case(initial: Dictionary,key: String,future: String) -> bool:
+	if _finished: return false
+	var cp: Dictionary = initial.story.checkpoint
+	if not _expect(initial.side_attempt == null and initial.completed_main == PREFIX and _same(initial.story.snapshot,cp),"Genuine literal whole Story entrance and CP, with disclosed prefix9 only"): return false
+	_case.initial_session_exact = Exact.stringify(initial); _case.checkpoint_exact = Exact.stringify(cp); _case.protected_story_exact = Exact.stringify(initial.story)
+	var original_raw: Dictionary = _disk(_directory)
+	if not _expect(_disk_usable(original_raw),"Future preference refuses failed own-root custody before any write"): return false
+	_shell.menu.difficulty_preference_requested.emit(future)
+	if not _expect(_shell.get_difficulty_preference() == future and _same(_shell.attempts.state(),initial) and _same(_disk(_directory)["campaign.json"],original_raw["campaign.json"]) and _same(_disk(_directory)["campaign.json.bak"],original_raw["campaign.json.bak"]),"Opposite future preference persists independently and cannot rewrite saved profile, full session or campaign generations"): return false
+	if not await _continue_exact(cp,initial) or not _layout(_shell.capture_campaign_snapshot(),key): return false
+	_record("initial_continue")
+	var before_pause: Dictionary = _disk(_directory)
+	if not _expect(_disk_usable(before_pause),"Resume/Pause refuses failed own-root custody before native ticks or Save"): return false
+	var old_player_clock: float = float(cp.player.world_actions.clock_s)
+	var old_scheduler_clock: float = float(cp.level.local.scheduler.clock_s)
+	_shell.menu.resume_requested.emit()
+	for tick: int in range(4):
+		await _probe.tick_finished
+		if _finished: return false
+		if not _live() or paused or _shell.player.dead: return _expect(false,"Natural four-tick entrance stopped before public Pause; partial evidence retained")
+	if not _expect(not paused and _live(),"Four genuine native entrance physics ticks; no routed input or later component"): return false
+	_shell.request_pause()
+	if not await _quiet(): return false
+	var current: Dictionary = _shell.capture_campaign_snapshot()
+	var advanced: Dictionary = initial.duplicate(true); advanced.story.snapshot = current.duplicate(true)
+	if not _expect(not current.is_empty() and not _same(current,cp) and current.player.world_actions.clock_s > old_player_clock and current.level.local.scheduler.clock_s > old_scheduler_clock and _same(_shell.attempts.state(),advanced) and _same(advanced.story.checkpoint,cp) and _same(current.player.resources,cp.player.resources) and current.player.world_actions.sequence == cp.player.world_actions.sequence,"Public Pause saves distinct genuine current; whole earlier CP/Story history/resources unchanged except actual current snapshot"): return false
+	if not _layout(current,key) or not _generation(before_pause,advanced,"public_pause"): return false
+	_record("distinct_current_public_pause")
+	var identity: int = _shell.get_instance_id()
+	if not await _dispose_shell() or not await _open_title(advanced): return false
+	if not _expect(_shell.get_instance_id() != identity and _shell.get_difficulty_preference() == future,"Independent new Shell retains opposite future preference"): return false
+	if not await _continue_exact(current,advanced) or not _layout(_shell.capture_campaign_snapshot(),key): return false
+	_record("independent_current_continue")
+	var before_retry: Dictionary = _disk(_directory)
+	if not _expect(_disk_usable(before_retry),"Retry refuses failed own-root custody before any public operation"): return false
+	var donor_refs: Array[WeakRef] = _refs(_shell.active_level)
+	_events.clear(); _quiet_watch = true
+	_shell.menu.retry_requested.emit()
+	if not await _quiet(): _quiet_watch = false; return false
+	_quiet_watch = false
+	if not _expect(_events.is_empty() and _freed(donor_refs) and _same(_shell.capture_campaign_snapshot(),cp) and _same(_shell.attempts.state(),initial) and _shell.get_difficulty_preference() == future,"Public Retry retires donor, quietly restores exact earlier whole CP/session/Story and saved construction; no gameplay event replay"): return false
+	if not _layout(_shell.capture_campaign_snapshot(),key) or not _generation(before_retry,initial,"public_retry"): return false
+	_record("exact_earlier_checkpoint_retry")
+	return await _dispose_shell()
+
+func _layout(packet: Dictionary,key: String,installed: bool = true) -> bool:
+	var local: Dictionary = packet.get("level",{}).get("local",{})
+	var profile: String = "standard" if key == "legacy26" else "challenge"
+	var canonical: Dictionary = Difficulty.new().profile(profile)
+	var foot: Vector3 = Vector3(0.65,0,-29.35) if key == "legacy26" else Vector3(0.65,0,-27.45)
+	var expected: Dictionary = {"api_revision":"act2-dead-london-construction-1","schema_version":1,"profile":canonical,"recipe_id":"A2-L5/entry-side-foot@v2"}
+	var clauses: Dictionary = {"whole_identity":packet.get("level_id") == "A2-L5" and packet.get("paused") == true and packet.get("scene_path") == "res://scenes/acts/act2/dead_london.tscn" and packet.get("level",{}).get("local_snapshot_version") == 1,"full_local26_or27":local.size() == (26 if key == "legacy26" else 27),"saved_profile":local.get("profile_id") == profile,"full_scheduler_profile":_same(local.get("scheduler",{}).get("profile"),canonical),"no_descriptor_or_exact_typed4":not local.has("construction") if key == "legacy26" else _same(local.get("construction"),expected),"native_saved_foot_radius":_same(local.get("sentry",{}).get("configuration",{}).get("foot_radius"),1.10),"native_saved_B05_profile":local.get("sentry",{}).get("configuration",{}).get("profile_id") == profile,"native_saved_joint":_same(local.get("sentry",{}).get("configuration",{}).get("joint_anchor"),Codec.vector3(Vector3(0,0,-28.4))),"native_saved_foot":_same(local.get("sentry",{}).get("configuration",{}).get("foot_anchor"),Codec.vector3(foot))}
+	if installed and _live():
+		clauses.live_whole_validator = _shell.active_level.snapshot_error_with_player(packet.level,packet.player).is_empty()
+		var parent: Node = _shell.active_level.get("_sentry") as Node
+		clauses.live_sources = is_instance_valid(parent) and is_instance_valid(parent.call("get_actor")) and is_instance_valid(parent.call("get_foot"))
+		if clauses.live_sources:
+			clauses.live_native_anchors = parent.call("get_actor").global_position == Vector3(0,0,-28.4) and parent.call("get_foot").global_position == foot
+		if _operation == "reader":
+			clauses.native_construction_guard = String(_shell.active_level.call("_construction_native_error")).is_empty()
+			clauses.legacy_writer_latch = _shell.active_level.get("_legacy_construction_capture") == (key == "legacy26")
+	if not _case.has("construction_observations"): _case.construction_observations = []
+	_case.construction_observations.append({"key":key,"installed":installed,"clauses":clauses.duplicate(true),"local_exact":Exact.stringify(local),"scope":"Natural preconstruction profile/recipe and native anchor/latch observation; no configure-call instrumentation or rewritten configuration"})
+	for name: String in clauses:
+		if not _expect(clauses[name],"Construction clause " + name + " / " + key): return false
+	return true
+
+func _open_title(expected: Dictionary) -> bool:
+	if _finished: return false
+	_events.clear(); _quiet_watch = true
+	var raw_before: Dictionary = _disk(_directory)
+	if not _expect(_disk_usable(raw_before),"Title refuses failed own-root custody before constructing a Store reader"): return false
+	_shell = Shell.new() as CinderCampaignShell
+	if not _expect(_shell.configure_runtime({},_directory+"campaign.json",_directory+"settings.json",_directory+"preferences.json"),"Canonical registry, isolated own Store paths before Shell tree entry"): return false
+	root.add_child(_shell)
+	if not await _quiet(): _quiet_watch = false; return false
+	_quiet_watch = false
+	return _expect(_shell.player == null and _shell.menu.page_name() == "title" and _events.is_empty() and (expected.is_empty() or _same(_shell.attempts.state(),expected)) and _same(_disk(_directory),raw_before),"Fresh Title validates full saved session without raw Store rewrite or gameplay replay")
+
+func _continue_exact(packet: Dictionary,session: Dictionary) -> bool:
+	if _finished: return false
+	var raw_before: Dictionary = _disk(_directory)
+	if not _expect(_disk_usable(raw_before),"Continue refuses failed own-root custody before any public operation"): return false
+	_events.clear(); _quiet_watch = true
+	_shell.menu.continue_story_requested.emit()
+	if not await _quiet(): _quiet_watch = false; return false
+	_quiet_watch = false
+	return _expect(_live() and _shell.menu.page_name() == "resume" and _events.is_empty() and _same(_shell.capture_campaign_snapshot(),packet) and _same(_shell.attempts.state(),session) and _same(_disk(_directory),raw_before),"Actual public Continue installs exact current/whole session without Store rewrite or gameplay replay")
+
+func _quiet() -> bool:
+	for frame: int in range(1600):
+		await process_frame
+		if _finished or not is_instance_valid(_shell): return false
+		if not _shell.campaign_error.is_empty(): return _expect(false,"Shell failure retained: " + _shell.campaign_error)
+		if paused and not bool(_shell.get("_draining")) and not bool(_shell.get("_drain_queued")) and (_shell.get("_operations") as Array).is_empty():
+			await process_frame; await process_frame
+			return not _finished and _expect(_shell.campaign_error.is_empty() and paused,"Actual deferred operation reaches quiet paused barrier")
+	return _expect(false,"Bounded quiet barrier exhausted; no second attempt")
+
+func _generation(before: Dictionary,session: Dictionary,label: String) -> bool:
+	var after: Dictionary = _disk(_directory)
+	if not _expect(_disk_usable(before) and _disk_usable(after),"Generation reader refuses failed own-root custody before Store readback"): return false
+	var old: Variant = JSON.parse_string(Marshalls.base64_to_raw(before["campaign.json"].base64).get_string_from_utf8())
+	var now: Variant = JSON.parse_string(Marshalls.base64_to_raw(after["campaign.json"].base64).get_string_from_utf8())
+	var wire: String = Exact.stringify(session)
+	var from_store: Dictionary = Store.new(_directory+"campaign.json").read_payload()
+	var ok: bool = old is Dictionary and now is Dictionary and old.get("format_version") == 2 and old.get("payload_json") is String and old.get("sha256") == String(old.payload_json).sha256_text() and now.get("format_version") == 2 and now.get("generation") == old.get("generation",0)+1 and now.get("payload_json") == wire and now.get("sha256") == wire.sha256_text() and after["campaign.json.bak"].base64 == before["campaign.json"].base64 and _same(from_store,session)
+	_case["generation_"+label] = {"before":before,"after":after,"accepted":ok,"scope":"One actual record_snapshot write for this specific public Pause/Retry; initial TEST seed and preference writes are separate operations"}
+	return _expect(ok,"Actual operation-specific campaign generation+1 / exact previous-byte backup / full typed payload: " + label)
+
+func _literal_legacy() -> Dictionary:
+	var info: Dictionary = _input.legacy_report
+	if not _expect(info.path is String and info.path.is_absolute_path() and FileAccess.get_sha256(info.path) == info.sha256,"Exact closed original-writer report bytes selected before native parsing"): return {}
+	var report: Variant = JSON.parse_string(FileAccess.get_file_as_string(info.path))
+	if not _expect(report is Dictionary and report.get("operation") == "writer" and report.get("success") == true and report.get("normal_cleanup_completed") == true and report.get("failures") == 0 and report.get("host_source_sha256") == ORIGINAL and report.get("fixture_sha256") == FileAccess.get_sha256(get_script().resource_path) and report.get("unit") is Dictionary and report.unit.get("accepted") == true,"One genuinely successful original writer with complete final raw/cleanup receipt, not an oldChallenge fabrication"): return {}
+	if not _expect(report.unit.path == String(info.path).get_base_dir().path_join("construction-unit.json") and FileAccess.get_sha256(report.unit.path) == report.unit.sha256,"Exact writer unit path/hash; no reconstructed historical session"): return {}
+	var unit: Variant = JSON.parse_string(FileAccess.get_file_as_string(report.unit.path))
+	if not _expect(unit is Dictionary and unit.get("operation") == "writer" and unit.get("fixture_sha256") == report.fixture_sha256 and unit.get("host_source_sha256") == ORIGINAL and unit.get("complete_before_cleanup") == true and unit.get("cases") is Array and unit.cases.size() == 1 and unit.cases[0].get("complete") == true,"Actual writer precleanup unit retains exactly one completed Standard entrance"): return {}
+	var c: Dictionary = unit.cases[0]
+	var decoded: Dictionary = Exact.parse(c.initial_session_exact)
+	if not _expect(decoded.get("accepted",false) and decoded.get("value") is Dictionary,"Whole original26 session decoded only by native Exact, never Python Variant reconstruction"): return {}
+	var session: Dictionary = decoded.value
+	var last: Dictionary = c.stages.back()
+	if not _expect(last.get("label") == "legacy_public_save" and session.story.checkpoint.level.local.size() == 26 and not session.story.checkpoint.level.local.has("construction") and session.story.checkpoint.level.local.profile_id == "standard" and _same(session.story.snapshot,session.story.checkpoint),"Literal Std26 entrance is labelled correctly; no oldChallenge/late packet credit"): return {}
+	_legacy_origin = {"report":info.duplicate(true),"unit":report.unit.duplicate(true),"scope":"New narrow originalA7 compatibility capture, not recovered historical235 raw bytes"}
+	_case["legacy_origin"] = _legacy_origin.duplicate(true)
+	return {"session":session,"raw_slots":last.raw_slots}
+
+func _install_raw(slots: Dictionary) -> bool:
+	if not _expect(Codec.keys_error(slots,FILES).is_empty() and _entries(_directory).is_empty(),"Only exact six presence slots into empty own user directory"): return false
+	for name: String in FILES:
+		var slot: Dictionary = slots[name]
+		if not slot.exists: continue
+		var bytes: PackedByteArray = Marshalls.base64_to_raw(slot.base64)
+		if not _expect(slot.get("archive") is Dictionary and slot.archive.get("accepted") == true and slot.archive.path == String(_input.legacy_report.path).get_base_dir().path_join("legacy-"+name+".raw") and FileAccess.get_sha256(slot.archive.path) == slot.sha256 and FileAccess.get_file_as_bytes(slot.archive.path) == bytes and bytes.size() == slot.bytes,"Exact original raw exported bytes/size/hash, no payload conversion: " + name): return false
+		var own: DirAccess = DirAccess.open(_directory)
+		if not _expect(own != null and not own.file_exists(name) and not own.dir_exists(name) and not own.is_link(name),"Refuse any existing raw import target: " + name): return false
+		var file: FileAccess = FileAccess.open(_directory+name,FileAccess.WRITE)
+		if not _expect(file != null,"Absent own raw import slot opens: " + name): return false
+		file.store_buffer(bytes); file.flush(); var error: Error = file.get_error(); file.close()
+		if not _expect(error == OK and FileAccess.get_file_as_bytes(_directory+name) == bytes,"Raw bytes import readback exactly: " + name): return false
+	return true
+
+func _entries(directory: String) -> Array[String]:
+	var parent: DirAccess = DirAccess.open("user://")
+	var name: String = directory.trim_prefix("user://").trim_suffix("/")
+	if parent == null or parent.is_link(name) or not parent.dir_exists(name): return ["UNKNOWN_ROOT"]
+	var dir: DirAccess = DirAccess.open(directory)
+	if dir == null: return ["UNREADABLE_ROOT"]
+	dir.include_hidden = true; dir.include_navigational = false
+	var values: Array[String] = []
+	if dir.list_dir_begin() != OK: return ["LISTING_FAILED"]
+	var entry: String = dir.get_next()
+	while not entry.is_empty(): values.append(entry); entry = dir.get_next()
+	dir.list_dir_end(); values.sort(); return values
+
+func _disk(directory: String) -> Dictionary:
+	var slots: Dictionary = {}
+	var entries: Array[String] = _entries(directory)
+	if entries.has("UNKNOWN_ROOT") or entries.has("UNREADABLE_ROOT") or entries.has("LISTING_FAILED"):
+		_expect(false,"Own user root/listing refused before any Store slot open/read: " + str(entries))
+		for name: String in FILES:
+			var path: String = directory+name
+			slots[name] = {"path":path,"absolute_path":ProjectSettings.globalize_path(path),"exists":false,"sha256":"","bytes":0,"base64":"","custody_error":"root/listing refused before slot access"}
+		for entry: Dictionary in _roots:
+			if entry.path == directory: entry.latest_slots = slots.duplicate(true)
+		return slots
+	var dir: DirAccess = DirAccess.open(directory)
+	for entry: String in entries:
+		if not entry in FILES: _expect(false,"Unknown user entry retained without deletion: " + entry)
+	for name: String in FILES:
+		var path: String = directory+name
+		var slot: Dictionary = {"path":path,"absolute_path":ProjectSettings.globalize_path(path),"exists":false,"sha256":"","bytes":0,"base64":""}
+		if dir == null or dir.is_link(name) or dir.dir_exists(name):
+			slot["custody_error"] = "unknown/root/link/directory retained"; _expect(false,"Unknown Store slot type retained: " + name)
+		elif dir.file_exists(name):
+			var bytes: PackedByteArray = FileAccess.get_file_as_bytes(path)
+			slot.merge({"exists":true,"sha256":FileAccess.get_sha256(path),"bytes":bytes.size(),"base64":Marshalls.raw_to_base64(bytes),"modified_unix":FileAccess.get_modified_time(path)},true)
+			if not _expect(String(slot.sha256).length() == 64 and bytes.size() <= Store.MAX_FILE_BYTES and FileAccess.get_file_as_bytes(path) == bytes,"Bounded literal two-read Store bytes: " + name): slot["custody_error"] = "readback/budget refusal"
+		slots[name] = slot
+	for entry: Dictionary in _roots:
+		if entry.path == directory: entry.latest_slots = slots.duplicate(true)
+	return slots
+
+func _disk_usable(slots: Dictionary) -> bool:
+	# Propagate the same finite refusal before existing Store/public operations.
+	if not Codec.keys_error(slots,FILES).is_empty(): return false
+	for name: String in FILES:
+		if not slots[name] is Dictionary or slots[name].has("custody_error"): return false
+	return true
+
+func _record(label: String) -> void:
+	if _case.is_empty(): return
+	var row: Dictionary = {"label":label,"raw_slots":_disk(_directory)}
+	if _live() and paused:
+		row.live_snapshot_exact = Exact.stringify(_shell.capture_campaign_snapshot())
+		row.whole_session_exact = Exact.stringify(_shell.attempts.state())
+		row.future_preference = _shell.get_difficulty_preference()
+	_case.stages.append(row)
+
+func _observe_added(node: Node) -> void:
+	var origin: Dictionary = {"id":str(node.get_instance_id()),"path":str(node.get_path()),"script":node.get_script().resource_path if node.get_script() is Script else ""}
+	if node is CinderPlayer:
+		node.fired.connect(func(kind: String) -> void: _event("fired",origin,{"kind":kind}))
+		node.died.connect(func() -> void: _event("death",origin,{}))
+		node.world_action_executed.connect(func(record: Dictionary) -> void: _event("world_action",origin,record))
+		node.action_resolved.connect(func(kind: String,hits: int,damage: float) -> void: _event("action_result",origin,{"kind":kind,"hits":hits,"damage":damage}))
+		node.equipment_changed.connect(func(id: String) -> void: _event("equipment",origin,{"id":id}))
+	if node is CinderLevel:
+		node.checkpoint_requested.connect(func(id: String,cp: String,kind: String) -> void: _event("checkpoint",origin,{"id":id,"cp":cp,"kind":kind}))
+		node.completion_requested.connect(func(id: String,cp: String) -> void: _event("completion",origin,{"id":id,"cp":cp}))
+		node.contact_exit_requested.connect(func(id: String,exit_id: String) -> void: _event("contact_exit",origin,{"id":id,"exit_id":exit_id}))
+	if node is CinderCampaignShell: node.input_observed.connect(func(record: Dictionary) -> void: _event("input",origin,record))
+	if origin.script in ["res://scripts/acts/act2/ray_scout_exchange.gd","res://scripts/acts/act2/dead_london_ray_exchange.gd","res://scripts/acts/act2/dead_london_sentry_presented_encounter.gd"]:
+		node.connect("hit_resolved",func(id: String,result: Dictionary) -> void: _event("native_hit",origin,{"id":id,"result":result}))
+	if origin.script == "res://scripts/combat/lane_mechanism.gd": node.connect("hit_resolved",func(id: String,cycle: int,result: Dictionary) -> void: _event("native_lane_hit",origin,{"id":id,"cycle":cycle,"result":result}))
+
+func _event(kind: String,origin: Dictionary,payload: Dictionary) -> void:
+	# Payload dictionaries are JSON/Codec values for the observed gameplay signals.
+	# Cue/consumer clear state notifications are not classified as gameplay hits.
+	var row: Dictionary = {"kind":kind,"origin":origin,"payload_exact":Exact.stringify(payload),"payload_native_base64":Marshalls.raw_to_base64(var_to_bytes(_pure_observation(payload))),"quiet_watch":_quiet_watch,"process_frame":Engine.get_process_frames(),"physics_frame":Engine.get_physics_frames()}
+	if not _case.is_empty():
+		if not _case.has("events"): _case.events = []
+		_case.events.append(row)
+	if _quiet_watch: _events.append(row)
+
+func _pure_observation(value: Variant) -> Variant:
+	# Native geometry stays native; only ephemeral references become metadata.
+	if value is Object:
+		if not is_instance_valid(value): return {"observed_binding":"freed"}
+		return {"observed_binding":"live","id":str(value.get_instance_id()),"class":value.get_class(),"path":str(value.get_path()) if value is Node else ""}
+	if value is Array:
+		var rows: Array = []
+		for item: Variant in value: rows.append(_pure_observation(item))
+		return rows
+	if value is Dictionary:
+		var rows: Dictionary = {}
+		for key: Variant in value: rows[key] = _pure_observation(value[key])
+		return rows
+	if value is Callable or value is Signal or value is RID: return {"observed_ephemeral_type":type_string(typeof(value))}
+	return value
+
+func _refs(node: Node) -> Array[WeakRef]:
+	var result: Array[WeakRef] = [weakref(node)]
+	for child: Node in node.get_children(): result.append_array(_refs(child))
+	return result
+func _freed(refs: Array[WeakRef]) -> bool:
+	for ref: WeakRef in refs:
+		if ref.get_ref() != null: return false
+	return true
+func _live() -> bool: return is_instance_valid(_shell) and is_instance_valid(_shell.active_level) and is_instance_valid(_shell.player)
+func _same(left: Variant,right: Variant) -> bool:
+	var wire: String = Exact.stringify(left)
+	return not wire.is_empty() and wire == Exact.stringify(right)
+
+func _dispose_shell(finishing: bool = false) -> bool:
+	if _finished and not finishing: return false
+	if not is_instance_valid(_shell): return true
+	_events.clear(); _quiet_watch = true
+	var identity: String = str(_shell.get_instance_id())
+	var refs: Array[WeakRef] = _refs(_shell)
+	if is_instance_valid(_shell.active_level): _shell.active_level.exit_level()
+	if is_instance_valid(_shell.fx): _shell.fx.clear_lab()
+	_shell.free(); _shell = null
+	await process_frame; await process_frame
+	_quiet_watch = false
+	if _finished and not finishing: return false
+	_cleanup_observations.append({"shell_id":identity,"all_descendants_freed":_freed(refs),"gameplay_events":_events.duplicate(true),"paused":paused})
+	return _expect(_freed(refs) and _events.is_empty(),"Normal Level exit/effects/Shell disposal quietly releases all descendants without gameplay events")
+
+func _write_new(name: String,bytes: PackedByteArray) -> Dictionary:
+	var receipt: Dictionary = {"accepted":false,"path":_output.path_join(name)}
+	if not _output_owned or name.contains("/") or name.contains("..") or bytes.size() > 64*1024*1024: return receipt
+	var dir: DirAccess = DirAccess.open(_output)
+	if dir == null or dir.file_exists(name) or dir.dir_exists(name) or dir.is_link(name): return receipt
+	var file: FileAccess = FileAccess.open(receipt.path,FileAccess.WRITE)
+	if file == null: return receipt
+	file.store_buffer(bytes); file.flush(); var error: Error = file.get_error(); file.close()
+	receipt.merge({"accepted":error == OK and FileAccess.get_file_as_bytes(receipt.path) == bytes,"sha256":FileAccess.get_sha256(receipt.path),"bytes":bytes.size()},true)
+	return receipt
+
+func _cleanup_user_data() -> bool:
+	var ok: bool = _unit_receipt.get("accepted",false) and FileAccess.get_sha256(_unit_receipt.path) == _unit_receipt.sha256
+	if not ok: return false # No durable raw archive means no temporary-save removal.
+	for entry: Dictionary in _roots:
+		var parent: DirAccess = DirAccess.open("user://")
+		var basename: String = String(entry.path).trim_prefix("user://").trim_suffix("/")
+		var dir: DirAccess = DirAccess.open(entry.path)
+		if parent == null or parent.is_link(basename) or dir == null: ok = false; continue
+		for name: String in FILES:
+			var saved: Dictionary = entry.latest_slots.get(name,{})
+			if not saved.get("exists",false): continue
+			if saved.has("custody_error"): ok = false; continue
+			var path: String = entry.path+name
+			var same: bool = not dir.is_link(name) and dir.file_exists(name) and not dir.dir_exists(name) and FileAccess.get_sha256(path) == saved.sha256 and FileAccess.get_file_as_bytes(path).size() == saved.bytes and FileAccess.get_modified_time(path) == saved.modified_unix and FileAccess.get_file_as_bytes(path) == Marshalls.base64_to_raw(saved.base64)
+			if not same: ok = false; continue
+			if dir.remove(name) != OK: ok = false
+		var remaining: Array[String] = _entries(entry.path)
+		entry.cleanup = {"remaining":remaining,"unknown_retained":not remaining.is_empty(),"scope":"Only exact known own files with archived bytes/hash/size/mtime; native API supplies no inode receipt"}
+		if not remaining.is_empty(): ok = false; continue
+		if parent.remove(basename) != OK or parent.dir_exists(basename) or parent.file_exists(basename) or parent.is_link(basename): ok = false
+	return ok
+
+func _expect(ok: bool,note: String) -> bool:
+	_checks += 1; _rows.append({"index":_checks,"ok":ok,"note":note})
+	if not ok: _failures += 1; push_error("A2-L5 public construction: " + note)
+	return ok
+func _finish() -> void:
+	if _finished: return
+	_finished = true; paused = true; _quiet_watch = false
+	if is_instance_valid(_probe): _probe.set_physics_process(false)
+	_finish_async.call_deferred()
+func _finish_async() -> void:
+	if _finalizer: return
+	# Never free the Shell beneath its awaited native registration operation.
+	# That operation queues us once on return; Root owns a hung-child timeout.
+	if _native_prepare_active: return
+	_finalizer = true
+	if not _case.is_empty():
+		# Do not append a new stage after legacy_public_save; retain exact selected raw.
+		_case["before_cleanup_raw_slots"] = _disk(_directory)
+		if _operation == "writer" and not _case.stages.is_empty():
+			var slots: Dictionary = _case.stages.back().raw_slots
+			for name: String in FILES:
+				if slots[name].exists:
+					slots[name]["archive"] = _write_new("legacy-"+name+".raw",Marshalls.base64_to_raw(slots[name].base64))
+					_expect(slots[name].archive.accepted,"Exact raw original export before cleanup: " + name)
+	var unit: Dictionary = {"api_revision":"TEST-a2-l5-public-construction-1","operation":_operation,"host_source_sha256":FileAccess.get_sha256(HOST),"fixture_sha256":FileAccess.get_sha256(get_script().resource_path),"complete_before_cleanup":_complete and _failures == 0,"cleanup_pending":true,"normal_cleanup_completed":false,"cases":_cases,"legacy_origin":_legacy_origin,"user_roots":_roots,"rows_before_cleanup":_rows.duplicate(true),"source_before":_before,"scope":"Natural whole production entrance + disclosed TEST prefix9. writer is new originalA7 compatibility capture, not recovered historical235 bytes. reader is exact old26 Standard and fresh27 Challenge only. No full route/laterCP/oldChallenge/phase2/portrait/policy credit."}
+	_unit_receipt = _write_new("construction-unit.json",(JSON.stringify(unit,"\t",true,true)+"\n").to_utf8_buffer())
+	_expect(_unit_receipt.get("accepted",false),"Complete or partial raw/session/checkpoint/source diagnostics persisted before normal cleanup")
+	_cleanup_ok = await _dispose_shell(true)
+	if is_instance_valid(_probe): _probe.free()
+	_probe = null
+	_cleanup_ok = _cleanup_user_data() and _cleanup_ok
+	_expect(_cleanup_ok,"Exact own temporary files removed only after durable raw custody; unknown files never deleted")
+	var source_ok: bool = _sources() == _before and FileAccess.get_sha256(PINS) == _input.get("source_pins_sha256","") and FileAccess.get_sha256(HOST) == (ORIGINAL if _operation == "writer" else CANDIDATE) and (_operation != "reader" or FileAccess.get_sha256(HELPER) == HELPER_SHA)
+	_expect(source_ok,"Named source/registry bytes unchanged across native follow-up")
+	AudioServer.set_bus_layout(_old_audio); Engine.max_fps = _old_fps
+	paused = false
+	var success: bool = _complete and _failures == 0 and _cleanup_ok and source_ok and _unit_receipt.get("accepted",false)
+	var report: Dictionary = {"api_revision":"TEST-a2-l5-public-construction-1","operation":_operation,"host_source_sha256":FileAccess.get_sha256(HOST),"fixture_sha256":FileAccess.get_sha256(get_script().resource_path),"checks":_checks,"failures":_failures,"complete":_complete,"success":success,"normal_cleanup_completed":_cleanup_ok,"unit":_unit_receipt,"rows":_rows,"source_before":_before,"source_after":_sources(),"user_cleanup":_roots,"normal_descendant_cleanup":_cleanup_observations,"campaign_or_policy_acceptance_claimed":false,"portrait_executed":false}
+	var final: Dictionary = _write_new("report.json",(JSON.stringify(report,"\t",true,true)+"\n").to_utf8_buffer())
+	print("A2-L5 public construction: operation=%s checks=%d failures=%d complete=%s success=%s raw_before_cleanup=%s normal_cleanup=%s final_report=%s; no policy acceptance" % [_operation,_checks,_failures,str(_complete),str(success),str(_unit_receipt.get("accepted",false)),str(_cleanup_ok),str(final.get("accepted",false))])
+	quit(0 if success and final.get("accepted",false) else 2)

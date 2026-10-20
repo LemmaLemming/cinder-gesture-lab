@@ -1,0 +1,533 @@
+{
+  "kind": "a2-l5-fixed-response-independent-source-review-1",
+  "prepared_at": "2026-10-20T04:43:51.273008+00:00",
+  "reviewer": "/root/act3_l5_retention_review",
+  "root_HEAD_observed": "ead9e7180596789c9b157f352ecb63087294c7fe",
+  "handoff": "9610af64-6594-45b5-91e4-33dbcc9dc894",
+  "owner_commit": "d50a690a71de5082ab30f966d4188d33ef34b755",
+  "verdict": "FIX_REQUIRED_BEFORE_ENGINE",
+  "blocking_findings": [
+    {
+      "id": "F1",
+      "priority": "P1",
+      "status": "fix_before_engine",
+      "title": "Component SaveStore uses a forbidden res:// path",
+      "fixture_lines": [
+        494,
+        500
+      ],
+      "production_source": "scripts/campaign/save_store.gd:59-61",
+      "call_site": "_case:249 calls await _persist(\"before-first-response\", true)",
+      "proof": "_run:190 requires output.begins_with(\"res://.cinder/\"). _persist:494 constructs Store.new(output + stem + \".component-store.json\"). Canonical write_payload explicitly returns false for every path not beginning user:// (59-61), with Desktop saves require a user:// path. Thus even a valid native payload is guaranteed to fail its first required Store write before any _drive combat comparison.",
+      "impact": "The submitted6127 fixture cannot reach its stated real-response result on the exact pinned SaveStore. This is a TEST persistence-path bug, not a B05 or level failure.",
+      "minimal_remedy": "Keep diagnostics in the fresh res:// invocation directory. Allocate a separate fresh invocation-owned user:// Store directory/path before writes, refuse collisions, write the actual format2 payload there, then archive and verify the exact primary/backup raw bytes plus actual user path/hash/size/generation/absence in the res:// evidence before any owned cleanup. Remove only known invocation-owned temporary save files/directory after raw bytes are durably retained. Do not relax SaveStore or skip the required validated payload capture. Preserve constructor/geometry/seed/control policy; no producer or comparison matrix is needed.",
+      "not_executed": true
+    }
+  ],
+  "reviewed_artifacts": [
+    {
+      "path": "docs/acts/act2/shared-support/a2-l5-fixed-response-inert-20261020/EXECUTION_PLAN.md",
+      "sha256": "6bf1760739d8f91b67ee0436ebe720b168d077a3bebf1416bdda0dbb96d06526",
+      "bytes": 10108,
+      "mode": 420,
+      "working_equals_commit": true
+    },
+    {
+      "path": "docs/acts/act2/shared-support/a2-l5-fixed-response-inert-20261020/a2_l5_fixed_response_comparison.gd.txt",
+      "sha256": "6127e49cc3ed12a761bb7a14fa85942836ebba529f57b211cda969fd76e8775b",
+      "bytes": 47348,
+      "mode": 420,
+      "working_equals_commit": true
+    },
+    {
+      "path": "docs/acts/act2/shared-support/a2-l5-fixed-response-inert-20261020/source-pins.json",
+      "sha256": "4636e99a995790119900358fa45e1842d31cae48f3db7212cd6af6923a4e5199",
+      "bytes": 5807,
+      "mode": 420,
+      "working_equals_commit": true
+    }
+  ],
+  "constructor_unchanged": [
+    {
+      "path": "docs/acts/act2/shared-support/a2-l5-construction-inert-20261020/dead_london.gd.txt",
+      "sha256": "5f47cfd1fb5f54b11cb425c057dffbff7500ff43b29da1da62b5a71daf9c1e11",
+      "bytes": 100563,
+      "mode": 420,
+      "working_equals_5e22": true
+    },
+    {
+      "path": "docs/acts/act2/shared-support/a2-l5-construction-inert-20261020/dead_london_construction.gd.txt",
+      "sha256": "c26d2ce401b46fa74499e0dea9da2cba66efe33f76f5ccec33959e841f682686",
+      "bytes": 6199,
+      "mode": 420,
+      "working_equals_5e22": true
+    }
+  ],
+  "runtime_gates": [
+    {
+      "path": "res://scenes/main.tscn",
+      "expected_sha256": "c0c169890eed0afb26b1a09a017d45c90a64aa8ba874a683deb141c4190ee06b",
+      "canonical_actual": {
+        "sha256": "c0c169890eed0afb26b1a09a017d45c90a64aa8ba874a683deb141c4190ee06b",
+        "bytes": 171,
+        "mode": 420
+      },
+      "current_match": true,
+      "qualified_difference": null
+    },
+    {
+      "path": "res://scripts/game.gd",
+      "expected_sha256": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26",
+      "canonical_actual": {
+        "sha256": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26",
+        "bytes": 38685,
+        "mode": 420
+      },
+      "current_match": true,
+      "qualified_difference": null
+    },
+    {
+      "path": "res://scripts/player.gd",
+      "expected_sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+      "canonical_actual": {
+        "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+        "bytes": 48906,
+        "mode": 420
+      },
+      "current_match": true,
+      "qualified_difference": null
+    },
+    {
+      "path": "res://scripts/hud.gd",
+      "expected_sha256": "3a76c06a97da117b2fbd43824d88f3ef5150e6ad0045b5e27766b8d70542897b",
+      "canonical_actual": {
+        "sha256": "3a76c06a97da117b2fbd43824d88f3ef5150e6ad0045b5e27766b8d70542897b",
+        "bytes": 16609,
+        "mode": 420
+      },
+      "current_match": true,
+      "qualified_difference": null
+    },
+    {
+      "path": "res://scripts/equipment.gd",
+      "expected_sha256": "2f721f0e7af0d1034ae9f92c37b4af3c3223171d0e5d2c120e42c00ae9155ab0",
+      "canonical_actual": {
+        "sha256": "2f721f0e7af0d1034ae9f92c37b4af3c3223171d0e5d2c120e42c00ae9155ab0",
+        "bytes": 9130,
+        "mode": 420
+      },
+      "current_match": true,
+      "qualified_difference": null
+    },
+    {
+      "path": "res://scripts/acts/act2/dead_london_sentry_encounter.gd",
+      "expected_sha256": "f36e42c36e32edc2e20f7fed8d2dd21b0758f356fcc7cd53332ebd93109edfc1",
+      "canonical_actual": {
+        "sha256": "f36e42c36e32edc2e20f7fed8d2dd21b0758f356fcc7cd53332ebd93109edfc1",
+        "bytes": 115686,
+        "mode": 420
+      },
+      "current_match": true,
+      "qualified_difference": null
+    },
+    {
+      "path": "res://scripts/acts/act2/dead_london_sentry_presented_encounter.gd",
+      "expected_sha256": "c72d44cb8315a70adf285ce79c25d084d439ea6c55561de42078395fe27f7517",
+      "canonical_actual": {
+        "sha256": "c72d44cb8315a70adf285ce79c25d084d439ea6c55561de42078395fe27f7517",
+        "bytes": 1758,
+        "mode": 420
+      },
+      "current_match": true,
+      "qualified_difference": null
+    },
+    {
+      "path": "res://scripts/acts/act2/dead_london_sentry_actor.gd",
+      "expected_sha256": "ffaf6c671894715995f03fa5d2c1f54ea6b2bf720a118fb0a8b97a2269b67b5d",
+      "canonical_actual": {
+        "sha256": "ffaf6c671894715995f03fa5d2c1f54ea6b2bf720a118fb0a8b97a2269b67b5d",
+        "bytes": 7933,
+        "mode": 420
+      },
+      "current_match": true,
+      "qualified_difference": null
+    },
+    {
+      "path": "res://scripts/acts/act2/dead_london_sentry_presented_actor.gd",
+      "expected_sha256": "0f84ae138e572459e32575fe77e1050368c90ad4adccd1732e85496b144e5fe0",
+      "canonical_actual": {
+        "sha256": "0f84ae138e572459e32575fe77e1050368c90ad4adccd1732e85496b144e5fe0",
+        "bytes": 2303,
+        "mode": 420
+      },
+      "current_match": true,
+      "qualified_difference": null
+    },
+    {
+      "path": "res://scripts/acts/act2/dead_london_sentry_visual.gd",
+      "expected_sha256": "58b0f58c2a8641c7a55727ca616dd8cdf829f57f3f9166e58db4e15ad83ca2d4",
+      "canonical_actual": {
+        "sha256": "58b0f58c2a8641c7a55727ca616dd8cdf829f57f3f9166e58db4e15ad83ca2d4",
+        "bytes": 18564,
+        "mode": 420
+      },
+      "current_match": true,
+      "qualified_difference": null
+    },
+    {
+      "path": "res://scripts/acts/act2/dead_london_kit.gd",
+      "expected_sha256": "0f7d1b139c4ec9d0446f34761595dd762851e0ffe3d35e1f75cbcde63f03c983",
+      "canonical_actual": {
+        "sha256": "0f7d1b139c4ec9d0446f34761595dd762851e0ffe3d35e1f75cbcde63f03c983",
+        "bytes": 13327,
+        "mode": 420
+      },
+      "current_match": true,
+      "qualified_difference": null
+    },
+    {
+      "path": "res://scripts/acts/act2/dead_london_bait.gd",
+      "expected_sha256": "9ae1b065521e1d521025d0f90fc941aa0f19867851ddc3eaa632432147d94808",
+      "canonical_actual": {
+        "sha256": "9ae1b065521e1d521025d0f90fc941aa0f19867851ddc3eaa632432147d94808",
+        "bytes": 10932,
+        "mode": 420
+      },
+      "current_match": true,
+      "qualified_difference": null
+    },
+    {
+      "path": "res://scripts/acts/act2/dead_london_ray_exchange.gd",
+      "expected_sha256": "d6bbcc1f35f45b4ac32226f898d924350e3b01543f28f44cf15cade7b75a3ff1",
+      "canonical_actual": {
+        "sha256": "d6bbcc1f35f45b4ac32226f898d924350e3b01543f28f44cf15cade7b75a3ff1",
+        "bytes": 63748,
+        "mode": 420
+      },
+      "current_match": true,
+      "qualified_difference": null
+    },
+    {
+      "path": "res://scripts/campaign/level.gd",
+      "expected_sha256": "27fdab6686d8ba4b8282c48af84c0c3f63d8c8fa7620ae462a4642ec225100c1",
+      "canonical_actual": {
+        "sha256": "27fdab6686d8ba4b8282c48af84c0c3f63d8c8fa7620ae462a4642ec225100c1",
+        "bytes": 23949,
+        "mode": 420
+      },
+      "current_match": true,
+      "qualified_difference": null
+    },
+    {
+      "path": "res://scripts/campaign/save_store.gd",
+      "expected_sha256": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0",
+      "canonical_actual": {
+        "sha256": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0",
+        "bytes": 7310,
+        "mode": 420
+      },
+      "current_match": true,
+      "qualified_difference": null
+    },
+    {
+      "path": "res://scripts/campaign/exact_json.gd",
+      "expected_sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+      "canonical_actual": {
+        "sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+        "bytes": 9330,
+        "mode": 420
+      },
+      "current_match": true,
+      "qualified_difference": null
+    },
+    {
+      "path": "res://scripts/campaign/snapshot_codec.gd",
+      "expected_sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+      "canonical_actual": {
+        "sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+        "bytes": 3350,
+        "mode": 420
+      },
+      "current_match": true,
+      "qualified_difference": null
+    },
+    {
+      "path": "res://scripts/combat/threat_scheduler.gd",
+      "expected_sha256": "c28ea9f4cd6c1ff9aedbc9cfc45a28826c589c095b9193b565f45d23c3df903d",
+      "canonical_actual": {
+        "sha256": "c28ea9f4cd6c1ff9aedbc9cfc45a28826c589c095b9193b565f45d23c3df903d",
+        "bytes": 266033,
+        "mode": 420
+      },
+      "current_match": true,
+      "qualified_difference": null
+    },
+    {
+      "path": "res://scripts/combat/threat_geometry.gd",
+      "expected_sha256": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+      "canonical_actual": {
+        "sha256": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+        "bytes": 14303,
+        "mode": 420
+      },
+      "current_match": true,
+      "qualified_difference": null
+    },
+    {
+      "path": "res://scripts/combat/body_sweep.gd",
+      "expected_sha256": "bddf3956d85c656fedea6bbce952ceb494c76867cdba895ff089abeb4c31eab9",
+      "canonical_actual": {
+        "sha256": "bddf3956d85c656fedea6bbce952ceb494c76867cdba895ff089abeb4c31eab9",
+        "bytes": 17456,
+        "mode": 420
+      },
+      "current_match": true,
+      "qualified_difference": null
+    },
+    {
+      "path": "res://scripts/combat/difficulty.gd",
+      "expected_sha256": "e6a0aba9b39697cf59837165ebec858b0dd15c7573f66d79eadc58595ed2e7ae",
+      "canonical_actual": {
+        "sha256": "e6a0aba9b39697cf59837165ebec858b0dd15c7573f66d79eadc58595ed2e7ae",
+        "bytes": 4882,
+        "mode": 420
+      },
+      "current_match": true,
+      "qualified_difference": null
+    },
+    {
+      "path": "res://scripts/combat/lane_mechanism.gd",
+      "expected_sha256": "bcf6558d4ae57c4bf8714ae6fe6b1896b3c7c0be3b6a8a9f3178451653bd031d",
+      "canonical_actual": {
+        "sha256": "bcf6558d4ae57c4bf8714ae6fe6b1896b3c7c0be3b6a8a9f3178451653bd031d",
+        "bytes": 43768,
+        "mode": 420
+      },
+      "current_match": true,
+      "qualified_difference": null
+    },
+    {
+      "path": "res://data/design/difficulty_profiles.json",
+      "expected_sha256": "891baa4d087a1f35da0581c5dc6b888274296686144b3c8f5609249245def41c",
+      "canonical_actual": {
+        "sha256": "891baa4d087a1f35da0581c5dc6b888274296686144b3c8f5609249245def41c",
+        "bytes": 1313,
+        "mode": 420
+      },
+      "current_match": true,
+      "qualified_difference": null
+    },
+    {
+      "path": "res://data/design/player_equipment.json",
+      "expected_sha256": "737cf534df88fa965ab568f750515eb17098688d268e5b6b699de5cd519b98d1",
+      "canonical_actual": {
+        "sha256": "737cf534df88fa965ab568f750515eb17098688d268e5b6b699de5cd519b98d1",
+        "bytes": 32678,
+        "mode": 420
+      },
+      "current_match": true,
+      "qualified_difference": null
+    },
+    {
+      "path": "res://scenes/acts/act2/dead_london.tscn",
+      "expected_sha256": "1dcbdcadc4f3ccac37515a65b9f2be1b62352e6a3e735648fe441de610e76917",
+      "canonical_actual": {
+        "sha256": "1dcbdcadc4f3ccac37515a65b9f2be1b62352e6a3e735648fe441de610e76917",
+        "bytes": 734,
+        "mode": 420
+      },
+      "current_match": true,
+      "qualified_difference": null
+    },
+    {
+      "path": "res://tests/acts/act2/fixtures/a2_l1_profile_seed_game.gd",
+      "expected_sha256": "17d23892d1b80c8bd7a95e8ccd3adf2b6e5a75561d26416fe8816debf732bf3e",
+      "canonical_actual": {
+        "sha256": "17d23892d1b80c8bd7a95e8ccd3adf2b6e5a75561d26416fe8816debf732bf3e",
+        "bytes": 306,
+        "mode": 420
+      },
+      "current_match": true,
+      "qualified_difference": null
+    },
+    {
+      "path": "res://tests/acts/act2/fixtures/a2_l5_production_art_component.tscn",
+      "expected_sha256": "37727fd291c06753234be899276fb65f7c3bf17c5ef0c8fd7649ae1c0b81ccd1",
+      "canonical_actual": {
+        "sha256": "37727fd291c06753234be899276fb65f7c3bf17c5ef0c8fd7649ae1c0b81ccd1",
+        "bytes": 914,
+        "mode": 420
+      },
+      "current_match": true,
+      "qualified_difference": null
+    },
+    {
+      "path": "res://scripts/acts/act2/dead_london.gd",
+      "expected_sha256": "5f47cfd1fb5f54b11cb425c057dffbff7500ff43b29da1da62b5a71daf9c1e11",
+      "canonical_actual": {
+        "sha256": "a7d9d948961183d1035f7c4af57072925c255afb94e6a0f0fad443130c40bd8e",
+        "bytes": 96817,
+        "mode": 420
+      },
+      "current_match": false,
+      "qualified_difference": "intentional reviewed constructor assembly needed"
+    },
+    {
+      "path": "res://scripts/acts/act2/dead_london_construction.gd",
+      "expected_sha256": "c26d2ce401b46fa74499e0dea9da2cba66efe33f76f5ccec33959e841f682686",
+      "canonical_actual": null,
+      "current_match": false,
+      "qualified_difference": "intentional reviewed constructor assembly needed"
+    }
+  ],
+  "fixed_original_witness": {
+    "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/acts/act2/evidence/A2-L5/production-portrait-native-foot-context/portraits/metadata.exact.json",
+    "sha256": "0b5e1e8a7647300138bb9e9d24a6190d6039f82435195e0b58a591573e0ef68f",
+    "bytes": 161880,
+    "mode": 420,
+    "read_only_typed_json_inspection": "Offline tag decode only; no Godot parse/runtime or fresh reproducibility claim",
+    "frame": "direct-sentry-ray-lock",
+    "hero": {
+      "equipment_ids": {
+        "jacket": "CLOTH-J0",
+        "pants": "CLOTH-P0",
+        "shoes": "CLOTH-S0",
+        "weapon": "WEAPON-01"
+      },
+      "hp": 100.0,
+      "position": [
+        1.350000023841858,
+        -0.004157917574048042,
+        -27.939250946044922
+      ],
+      "presentation_id": "act2_survivor"
+    },
+    "three_declared_dash_receipts": [
+      {
+        "kind": "dash",
+        "sequence": 1,
+        "direction": [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "world_origin": [
+          0.0,
+          -0.004882815759629011,
+          -26.100000381469727
+        ],
+        "landing": [
+          0.0,
+          -0.004882815759629011,
+          -27.743555068969727
+        ],
+        "collision_shortened": true,
+        "distance": 1.6435546875
+      },
+      {
+        "kind": "dash",
+        "sequence": 2,
+        "direction": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "world_origin": [
+          0.0,
+          -0.004882815759629011,
+          -27.743555068969727
+        ],
+        "landing": [
+          0.0,
+          -0.004157917574048042,
+          -25.600976943969727
+        ],
+        "collision_shortened": true,
+        "distance": 2.142578125
+      },
+      {
+        "kind": "dash",
+        "sequence": 3,
+        "direction": [
+          0.5,
+          0.0,
+          -0.8660253882408142
+        ],
+        "world_origin": [
+          0.0,
+          -0.004157917574048042,
+          -25.600976943969727
+        ],
+        "landing": [
+          1.350000023841858,
+          -0.004157917574048042,
+          -27.939250946044922
+        ],
+        "collision_shortened": false,
+        "distance": 2.700004816055298
+      }
+    ],
+    "original_scope": "Standard production-offset component portrait; not Challenge/paired/whole-parent"
+  },
+  "source_review_areas": [
+    {
+      "area": "finite construction and sparse component",
+      "verdict": "source coherent, unexecuted",
+      "details": "Reviewed5f47/c26d ctor unchanged; one pre-tree ComponentHost binding retains actual inherited _ready six-floor/gate/art scaffold. Canonical current27/29 gates match; host remains originala7d9 and helper absent intentionally until Root assembles both exact reviewed inputs. Real B05 parent/presented actor, native Scheduler and Bait are used. TEST callback acknowledgement is explicitly not protected campaign checkpoint provenance."
+    },
+    {
+      "area": "fixed setup and neutral resource use",
+      "verdict": "source coherent, unexecuted",
+      "details": "Witness0b5e independently decodes to the stated neutral HP100 frame and three actual dash receipts FORWARD/BACK/(.5,0,-sqrt(.75)); first two collision-shortened and final X/Z exactly1.350000023841858,-27.939250946044922. Fixture repeats those directions through public request_dash, waits for actual receipt/stability/cooldown, and asserts fixed landing instead of assigning transforms. Initial shells0 only is disclosed; natural reload continues. No blast can pass, so no ammo-consuming attack is used. No direct HP/stage/clock/proof/geometry assignment found."
+    },
+    {
+      "area": "native offers and ordinary first-pool/phase progression",
+      "verdict": "source coherent, unexecuted",
+      "details": "_drive checks an actually legal ordinary primary before selecting/advancing proof waits, including Foot/Ray full-cadence overlap in paired phase. No forced proof index/direction/lock-only delay, no repeated-cycle search. First real slash spends30->15 native cap, real intro/drained receipts earn eligibility, one public TEST acknowledgement permits first paired cycle, and real second slash must produce0/cleared."
+    },
+    {
+      "area": "actual safety and full cadence",
+      "verdict": "source coherent with bounded measurement scope, unexecuted",
+      "details": "_step retains actual positions, measured capsule dimensions, contacts, on-floor report, planar floor footprint, live armed exchanges and inherited current/settled-follow framing observations; actual path intervals are checked against current/previous active unions independently of HP/immunity. Final complete paired trace includes holds through full primary cooldown and must clear both actual geometries. Planar floor-footprint checks are not alone a theorem of vertical floor contact or universal fairness; actual on_floor is separately recorded."
+    },
+    {
+      "area": "matched native counterfactual and discriminator",
+      "verdict": "source coherent, unexecuted",
+      "details": "Both arms need actual success before comparison. Matched first-Foot pose/control/capsule/stats/HP, bait initial floor, ray sample/geometry and member timing relative to first-Foot are required. Only copied old trace timestamps are translated; no gameplay geometry/input/state is changed. Distinct result requires old measured trace conflict with moved Foot, no ray conflict, and different executed dash/ordinary-primary spatial response. Unmatched/equivalent remains exit2 and cannot earn policy credit."
+    },
+    {
+      "area": "evidence before refusal and cleanup",
+      "verdict": "one blocking TEST Store-path defect F1; remaining source coherent",
+      "details": "Fresh-output guard prevents rewriting existing reports; setup, fixed seed and tick/event streams precede combat. _persist writes actual diagnostic and partial typed native payload before semantic/Store validation, so F1 refusal is diagnosable. Normal public component/outer exit and whole Game disposal, WeakRef checks, stream closure and runtime audio/FPS restoration are retained. Existing source does not delete res evidence. After correcting Store path, actual user:// archive/custody/owned cleanup must also be reviewed."
+    },
+    {
+      "area": "scope and honest stopping",
+      "verdict": "clear",
+      "details": "Plan/fixture label two-owner TEST component payloads explicitly; no strict whole L5 local27/Attempts/legacyChallenge26, Retry/restore, whole-parent checkpoint, route, portrait, all-kit balance, novelty or acceptance is claimed. One v1 then one v2 only;2400frames/35Scheduler seconds per arm and600000ms wall watchdog stop honestly. Owner19/24 is historical to handoff; Root20/24 remains separate."
+    }
+  ],
+  "extra_sources_read": [
+    "scripts/campaign/save_store.gd",
+    "scripts/campaign/level.gd",
+    "scripts/combat/body_sweep.gd",
+    "scripts/combat/threat_geometry.gd",
+    "scripts/combat/threat_scheduler.gd",
+    "scripts/player.gd",
+    "scripts/acts/act2/dead_london_sentry_encounter.gd",
+    "scripts/acts/act2/dead_london_bait.gd",
+    "scripts/acts/act2/dead_london_sentry_presented_encounter.gd",
+    "scripts/acts/act2/dead_london_sentry_actor.gd",
+    "tests/acts/act2/a2_l5_production_portrait_smoke.gd",
+    "tests/acts/act2/fixtures/a2_l5_production_art_component.tscn",
+    "tests/acts/act2/fixtures/a2_l1_profile_seed_game.gd"
+  ],
+  "execution_claims": {
+    "Godot_parser": 0,
+    "import": 0,
+    "engine": 0,
+    "native_outcome": null,
+    "difficulty_credit": false
+  },
+  "mutations": "Only new private REVIEW.json/REVIEW.md. No tracked/runtime/constructor/worker/Git/queue edits.",
+  "recommended_next_action": "Return exact F1 to owner for a narrowly scoped inert path/custody/cleanup amendment, then review only the amendment and exact pins before Root compatible materialization/one focused queued job."
+}

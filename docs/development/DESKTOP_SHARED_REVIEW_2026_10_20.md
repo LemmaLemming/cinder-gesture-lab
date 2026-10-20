@@ -1,6 +1,6 @@
 # Desktop shared-system review — 20 October 2026
 
-Current policy pointer: [L4's Shared76 amendment](ACT2_L4_DIFFICULTY.md), [O2's Shared75 amendment](ACT2_O2_DIFFICULTY.md) and [O3's retained purposes](ACT3_O3_DIFFICULTY_RETENTION.md) bring coverage to23/24; only A2-L5 remains. L4 adds its separately scoped447/59/258 and brief visual evidence; this later pointer does not change the historical shared-feature checkpoint below.
+Current policy pointer: [L4's Shared76 amendment](ACT2_L4_DIFFICULTY.md) and [L5's seven existing purposes](ACT2_L5_DIFFICULTY_RETENTION.md) complete coverage at24/24:15 authored amendments and nine bounded retentions. L4 has its scoped447/59/258 and actual portrait; L5 preserves original runtime/evidence and all failed trial limits. [Final desktop handoff](DESKTOP_COMPLETION.md) qualifies completion under focused acceptance. These later pointers do not change the historical shared-feature checkpoint below.
 
 This is the historical `caaaa143` shared-feature checkpoint. Later policy decisions are tracked in [current coverage](DIFFICULTY_COVERAGE.md).
 
