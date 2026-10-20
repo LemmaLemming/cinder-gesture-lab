@@ -1,0 +1,28 @@
+"""Bounded Python source/literal-reader controls, no dev import, parser or engine."""
+from pathlib import Path
+import ast,json,tempfile,types,hashlib
+HERE=Path(__file__).resolve().parent
+reader=types.ModuleType('reader');exec(compile((HERE/'native_inspect.py').read_bytes(),str(HERE/'native_inspect.py'),'exec'),reader.__dict__)
+rows=[]
+def expect(ok,note):
+    if not ok:raise AssertionError(note)
+    rows.append({'ok':True,'note':note})
+for name in ['run.py','native_inspect.py']:
+    ast.parse((HERE/name).read_text());expect(True,'Python source AST only: '+name)
+s=(HERE/'run.py').read_text()
+expect(all(token not in s for token in ['replace_subject','restore_subject','--headless','os.kill','unlink(','XDG_DATA_HOME','GODOT_USER_HOME']),'No swap/subject replacement/foreign-kill/lock-delete/headless/userdir-override operations')
+expect(s.count('dev.run_validation(')==1 and s.count('with dev.godot_lock(')==1 and 'kw.get("pass_fds") == (lock_fd,)' in s,'Single canonical queue/API and exact owned-Popen lock-fd custody retained')
+for literal in [b'{"a":1,"a":2}',b'{"n":NaN}',b'{"n":1e999}']:
+    rejected=False
+    try:reader.strict(literal)
+    except ValueError:rejected=True
+    expect(rejected,'Strict JSON rejects duplicate or nonfinite input: '+literal.decode())
+with tempfile.TemporaryDirectory(prefix='o2-reader-retention-') as temp:
+    base=Path(temp).resolve();(base/'evidence').mkdir()
+    for name,text in [('native-report.json','{"schema_version":1,"rows":[]}'),('persistence-unit.json','{"actual":"partial-native-diagnostic"}')]:
+        (base/'evidence'/name).write_text(text)
+    observed=reader.observe(base,HERE,{},'',2,2)
+    expect(observed['functional_pass'] is False and len(observed['retained'])==2,'Actual report and partial artifact retained before failed native row/API validation')
+receipt={'status':'SOURCE_CONTROLS_ONLY_NO_NATIVE_EXECUTION','checks':len(rows),'failures':0,'rows':rows,'limits':'Not prior37/8 matrix rerun, Godot parse/import, seal, native or visual result.'}
+(HERE/'SOURCE_CONTROLS.json').write_text(json.dumps(receipt,indent=2)+'\n')
+print(json.dumps({'checks':len(rows),'failures':0,'receipt_sha256':hashlib.sha256((HERE/'SOURCE_CONTROLS.json').read_bytes()).hexdigest()}))

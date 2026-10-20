@@ -1,0 +1,85 @@
+{
+  "schema": 1,
+  "status": "FINAL_FROZEN_SOURCE_ONLY_DIAGNOSTIC_RETENTION_READY_FOR_ROOT_REVIEW",
+  "frozen_files": {
+    ".cinder/a2-o2-right-retry-diagnostic-prepare-20261020/run.py": "360be019aff020b9bb23a4c08740e04207b2b2e3642c6b37080352ce532f246f",
+    ".cinder/a2-o2-right-retry-diagnostic-prepare-20261020/native_inspect.py": "3f13bac7f1fd7801433f76e25994f563f440cef7b98278167152febc62cbaaa7",
+    ".cinder/a2-o2-right-retry-diagnostic-prepare-20261020/prepare_inputs.py": "50c4039d4b097b3b03840a335fd3933c17f74c405bf73d66e8e15783e01fb80e",
+    ".cinder/a2-o2-right-retry-diagnostic-prepare-20261020/host_tests.py": "229cfa52e125c093d31cc3d4b3f1b9485dcafc989de05f930c06a95619e516fe",
+    ".cinder/a2-o2-right-retry-diagnostic-prepare-20261020/HOST_TESTS.json": "0a612352b5e6677ebda1a05f633b29957c1e75d14383a19e00ba4e61c4079ec1",
+    ".cinder/a2-o2-right-retry-diagnostic-prepare-20261020/README.md": "64f8d0e1676576f0463f7c5f06ccc8bae9f315fc2c3b60e156f21e6848e9e9bd",
+    ".cinder/a2-o2-right-retry-diagnostic-prepare-20261020/DEPENDENCY_GRAPH.json": "8d2484a39998a0082906edba70c2439fb25ea1ac11896c067a06c03e787820bd",
+    ".cinder/a2-o2-right-retry-diagnostic-prepare-20261020/PROVENANCE.json": "bd22eb4bdc4fda6a2510ccf941c8623a1890acf108cdb31496d549b351a2bfb8",
+    ".cinder/a2-o2-right-retry-diagnostic-prepare-20261020/GUARD_REUSE.json": "5d89ead6c00b6eba777bc5969f91a86cca25a4d27366884fa60057428646be21",
+    ".cinder/a2-o2-right-retry-diagnostic-prepare-20261020/INPUT_SPEC.json": "bbc0181a2bed3661f84ff1121d06a0a465a2f0866cd7fd915f8140860298a481",
+    ".cinder/a2-o2-right-retry-diagnostic-prepare-20261020/PAUSED_CHECKPOINT.json": "f04e05e76fc30af90fee0cf744b2383082058c5e6ae6455923b36d8da94bf1b9",
+    ".cinder/a2-o2-right-retry-diagnostic-prepare-20261020/native_inspect.py.draft.txt": "3f13bac7f1fd7801433f76e25994f563f440cef7b98278167152febc62cbaaa7",
+    ".cinder/a2-o2-right-retry-diagnostic-prepare-20261020/READER_DRAFT_REVIEW.json": "04a003d6fe2d434c0cdf6c0e9cc1da5dd1f3e943d283c578f8478f1adc416b6c",
+    ".cinder/a2-o2-right-retry-diagnostic-prepare-20261020/RUN_SOURCE_REVIEW.json": "5dd33adde68a95ad7c9bb48893c3040cf36e0f0998a89b5c3bbf8ccd77369a2c",
+    ".cinder/a2-o2-right-retry-diagnostic-prepare-20261020/comparison.gd.txt": "1a11f5d1f3a33d14c5879ccd50d9ed9d58851cc3d3847b32e953ea002ad2698b",
+    ".cinder/a2-o2-right-retry-diagnostic-prepare-20261020/RETENTION_ONLY.patch": "bd6ab04e3e0efc6fa26cf7c305e2ee5473b2315800e40a977f9da486817fd27c",
+    ".cinder/a2-o2-right-retry-diagnostic-prepare-20261020/RETENTION_AMENDMENT.json": "86091ea2d058540ed8a2f9b263385a27d9ec298fa2efad7e8e750bcfbc8cda77",
+    ".cinder/a2-o2-right-retry-diagnostic-prepare-20261020/GUARD_SUBSET_TESTS.json": "aa38925b921a1af827baaddac5195a4ab43ce991900db95e18c5b6d7c04422c7"
+  },
+  "fixed_slots": 179,
+  "self_slots": 19,
+  "total_named_slots": 198,
+  "fixture_sha256": "1a11f5d1f3a33d14c5879ccd50d9ed9d58851cc3d3847b32e953ea002ad2698b",
+  "fixture_live_selected": false,
+  "existing_fixture_UID_expected_present": {
+    "exists": true,
+    "regular": true,
+    "symlink": false,
+    "sha256": "88bdbc45f7da7bc1f0e804fb550a1cd94c9a5dcd166a38cf35b706cf1506c7e2",
+    "bytes": 19,
+    "mode": "0644"
+  },
+  "prior_unchanged_host_controls": {
+    "run_sha256": "360be019aff020b9bb23a4c08740e04207b2b2e3642c6b37080352ce532f246f",
+    "reader_sha256": "3f13bac7f1fd7801433f76e25994f563f440cef7b98278167152febc62cbaaa7",
+    "broader_prior37_controls_reused": true
+  },
+  "targeted_existing_guard_subset": {
+    "status": "TARGETED_EXISTING_PYTHON_GUARD_SUBSET_PASSED",
+    "checks": 8,
+    "failures": 0,
+    "rows": [
+      {
+        "label": "Known exact candidate restores only after mocked owned closure",
+        "passed": true
+      },
+      {
+        "label": "Exact original no-op preserves inode without writing",
+        "passed": true
+      },
+      {
+        "label": "Unknown source bytes remain in situ and retained",
+        "passed": true
+      },
+      {
+        "label": "Unknown source mode remains in situ",
+        "passed": true
+      },
+      {
+        "label": "Unknown symlink and target remain untouched",
+        "passed": true
+      },
+      {
+        "label": "Unknown directory remains untouched",
+        "passed": true
+      },
+      {
+        "label": "Any open owned child prohibits source restore write",
+        "passed": true
+      },
+      {
+        "label": "Final prior guard after replacement temp readiness preserves late foreign bytes",
+        "passed": true
+      }
+    ],
+    "source_host_tests_sha256": "229cfa52e125c093d31cc3d4b3f1b9485dcafc989de05f930c06a95619e516fe",
+    "limits": "Only eight existing original37 restore/final-prior guards rerun on MOCK source files and mock closure flags in unique temp directory. Unchanged other29 reader/closure controls reused; no expanded matrix. No canonical dev import/resolver/queue, Godot/GDScript parser/import/seal/native Store/materialization/live source/Git/worker operation."
+  },
+  "native_GDScript_parser_import_dev_queue_seal_materialization_live_Git_worker_operations": false,
+  "preconditions": "Root reviews exact retention-only fixture and fixed spec/readiness, selects this text over the existing executable fixture while preserving its genuine88b UID. Root alone may authorize one focused original-diagnostic attempt via unchanged canonical queued host guards. Actual original32/1 remains failed; any new original failure/refusal/nonclean result prohibits candidate. Cause and behavioral correction remain unproven."
+}

@@ -1,0 +1,112 @@
+--- 010929/persistence.gd.txt
++++ pure-successor/persistence.gd.txt
+@@ -6,7 +6,7 @@
+ const DifficultySource = preload("res://scripts/combat/difficulty.gd")
+ const HOST_PATH: String = "res://scripts/acts/act2/clear_air_circuit.gd"
+ const HOST_SHA: String = "02024cb156c1f055f8301848722753471afd2ca21644f2afe3e07c522dbfd7a5"
+-const SPEC_PATH: String = "res://.cinder/a2-o2-candidate-persistence-prepare-20261020/INPUT_SPEC.json"
++const SPEC_PATH: String = "res://.cinder/a2-o2-retry-observer-pure-prepare-20261020/INPUT_SPEC.json"
+ const FILES: Array[String] = ["campaign.json","campaign.json.bak","settings.json","settings.json.bak","preferences.json","preferences.json.bak"]
+ const SOURCE_UNITS: Dictionary = {
+ 	"old16":{"path":"res://.cinder/a2-o2-test-entry-framing-prepare-20261020/run-pair-20261020T040458.245936Z-8da9ffa8/original/evidence/comparison-unit.json","sha256":"c5bcdb46254bdd9ca52441488ae1a03420c4fc41fcd4d1889178ab5ee90e0284"},
+@@ -23,6 +23,14 @@
+ var _case: Dictionary = {}
+ var _roots: Array[String] = []
+ var _png_path: String = ""
++var _o_retry_active: bool = false
++var _o_donor_level: WeakRef
++var _o_donor_hero: WeakRef
++var _o_donor_hp: float = 0.0
++var _o_donor_dead: bool = false
++var _o_donor_nodes: Dictionary = {}
++var _o_donor_leases: Dictionary = {}
++var _o_retry_events: Array[Dictionary] = []
+ 
+ func _initialize() -> void:
+ 	_report_path = OS.get_environment("CINDER_A2_O2_CANDIDATE_PERSISTENCE_REPORT")
+@@ -120,10 +128,13 @@
+ 	_record("independent_current_continue")
+ 	var before_retry_raw: Dictionary = _disk()
+ 	_events.clear(); _watch = true
++	if not _o_begin_retry(current): _watch = false; return false
+ 	_shell.menu.retry_requested.emit()
+-	if not await _wait_quiet(): _watch = false; return false
+-	_watch = false
+-	if not _expect(_events.is_empty() and _same(_shell.capture_campaign_snapshot(),cp) and _same(_shell.attempts.state(),initial) and _shell.get_difficulty_preference() == "standard","Public Retry quietly restores exact genuine earlier CP and whole session, leaving future Standard distinct: " + key): return false
++	var retry_quiet: bool = await _wait_quiet()
++	var retry_clauses: Dictionary = {"quiet_barrier":retry_quiet,"no_forbidden_events":_events.is_empty(),"exact_original_checkpoint":_live() and paused and _same(_shell.capture_campaign_snapshot(),cp),"exact_original_session":is_instance_valid(_shell) and _same(_shell.attempts.state(),initial),"future_standard":is_instance_valid(_shell) and _shell.get_difficulty_preference() == "standard"}
++	_case["retry_diagnostics"] = {"clauses":retry_clauses,"events":_o_retry_events.duplicate(true),"forbidden_labels":_events.duplicate(),"donor_nodes":_o_donor_nodes.duplicate(true),"donor_leases":_o_donor_leases.duplicate(true),"scope":"Every Retry event retained; only exact original donor clear/circuit_level_exit notifications during its disarmed synchronous exit are permitted. All new-candidate/action/progression/contact/damage/input events remain forbidden."}
++	_o_retry_active = false; _watch = false
++	if not _expect(retry_clauses.quiet_barrier and retry_clauses.no_forbidden_events and retry_clauses.exact_original_checkpoint and retry_clauses.exact_original_session and retry_clauses.future_standard,"Public Retry permits only exact donor retirement notifications, quietly restores original CP/session and retains future Standard: " + key): return false
+ 	if not _layout(_shell.capture_campaign_snapshot(),key) or not _disk_generation(before_retry_raw,initial,"public_retry"): return false
+ 	_record("exact_earlier_checkpoint_retry")
+ 	return await _dispose_shell()
+@@ -284,3 +295,68 @@
+ 	print("CINDER_A2_O2_CANDIDATE_PERSISTENCE_REPORT path=%s sha256=%s" % [_report_path,FileAccess.get_sha256(_report_path)])
+ 	print("A2-O2 candidate persistence: %d checks, %d failures; complete=%s; success=%s" % [_checks,_failures,str(_complete),str(success)])
+ 	quit(0 if success and FileAccess.file_exists(_report_path) else 2)
++
++
++# Replace the inherited global unqualified observer only in this TEST fixture.
++# Hooks never mutate or disconnect native signals. Every callback is retained.
++func _observe_added(node: Node) -> void:
++	if not _watch: return
++	var origin: WeakRef = weakref(node)
++	var identity: Dictionary = {"id":str(node.get_instance_id()),"path":str(node.get_path()),"script":node.get_script().resource_path if node.get_script() is Script else ""}
++	if node is CinderPlayer:
++		node.fired.connect(func(kind: String) -> void: _o_event("fired",origin,identity,{"kind":kind}))
++		node.died.connect(func() -> void: _o_event("death",origin,identity,{}))
++		node.world_action_executed.connect(func(record: Dictionary) -> void: _o_event("world-action",origin,identity,record))
++		node.action_resolved.connect(func(kind: String,hits: int,damage: float) -> void: _o_event("action-result",origin,identity,{"kind":kind,"hits":hits,"damage":damage}))
++		node.equipment_changed.connect(func(id: String) -> void: _o_event("equipment",origin,identity,{"id":id}))
++	if node is CinderLevel:
++		node.checkpoint_requested.connect(func(level: String,id: String,kind: String) -> void: _o_event("checkpoint",origin,identity,{"level":level,"id":id,"kind":kind}))
++		node.completion_requested.connect(func(level: String,id: String) -> void: _o_event("completion",origin,identity,{"level":level,"id":id}))
++		node.contact_exit_requested.connect(func(level: String,id: String) -> void: _o_event("exit",origin,identity,{"level":level,"id":id}))
++	if node.get_script() in [Smoke,Lane]:
++		node.connect("state_changed",func(state: Dictionary) -> void: _o_event("consumer-state",origin,identity,state))
++		if node.get_script() == Smoke: node.connect("tick_resolved",func(id: String,cycle: int,result: Dictionary) -> void: _o_event("smoke-tick",origin,identity,{"id":id,"cycle":cycle,"result":result}))
++		else: node.connect("hit_resolved",func(id: String,cycle: int,result: Dictionary) -> void: _o_event("lane-hit",origin,identity,{"id":id,"cycle":cycle,"result":result}))
++	if node.get_script() in [Tender,Handler]: node.connect("defeated",func(id: String) -> void: _o_event("actor-defeat",origin,identity,{"id":id}))
++	if node.get_script() == Scheduler: node.connect("reservation_invalidated",func(id: String,reason: String) -> void: _o_event("reservation-invalidated",origin,identity,{"id":id,"reason":reason}))
++	if node.get_script() in [InteractionCue,ThreatCue]: node.connect("state_changed",func(state: Dictionary) -> void: _o_event("required-cue",origin,identity,state))
++	if node is CinderCampaignShell: node.connect("input_observed",func(record: Dictionary) -> void: _o_event("input",origin,identity,record))
++
++func _o_begin_retry(saved_current: Dictionary) -> bool:
++	_o_retry_events.clear(); _o_donor_nodes.clear(); _o_donor_leases.clear()
++	if not _expect(_live() and paused and not _shell.player.dead,"Retry observer freezes actual living paused donor identities before public request"): return false
++	_o_donor_level = weakref(_shell.active_level); _o_donor_hero = weakref(_shell.player)
++	_o_donor_hp = _shell.player.hp; _o_donor_dead = _shell.player.dead
++	for ref: WeakRef in _refs(_shell.active_level):
++		var node: Node = ref.get_ref() as Node
++		if not is_instance_valid(node): continue
++		var identity: Dictionary = {"id":str(node.get_instance_id()),"path":str(node.get_path()),"script":node.get_script().resource_path if node.get_script() is Script else ""}
++		if node.get_script() == InteractionCue: identity["trigger"] = node.call("state").trigger
++		_o_donor_nodes[identity.id] = identity
++	for lease: Dictionary in saved_current.level.local.scheduler.reservations:
++		_o_donor_leases[String(lease.id)] = true
++	_o_retry_active = true
++	return true
++
++func _o_event(kind: String,origin: WeakRef,identity: Dictionary,payload: Dictionary) -> void:
++	var node: Node = origin.get_ref() as Node
++	var donor: CinderLevel = _o_donor_level.get_ref() as CinderLevel if _o_donor_level != null else null
++	var hero: CinderPlayer = _o_donor_hero.get_ref() as CinderPlayer if _o_donor_hero != null else null
++	var donor_origin: bool = _o_retry_active and _o_donor_nodes.has(identity.id)
++	var disarmed_exit: bool = donor_origin and is_instance_valid(donor) and is_instance_valid(hero) and is_instance_valid(_shell) and paused and _shell.active_level == donor and donor.get("_entered") == false and donor.get("_lifecycle_busy") == true and hero.hp == _o_donor_hp and hero.dead == _o_donor_dead
++	var permitted: bool = false
++	if disarmed_exit and is_instance_valid(node):
++		if kind == "reservation-invalidated" and node.get_script() == Scheduler:
++			permitted = payload.get("reason") == "circuit_level_exit" and _o_donor_leases.has(String(payload.get("id","")))
++		elif kind == "consumer-state" and node.get_script() in [Smoke,Lane]:
++			permitted = payload.get("phase") == "clear" and payload.get("status") in ["idle","cancelled"] and payload.get("last_cancel_reason") == "circuit_level_exit" and payload.get("reservation_id") == ""
++		elif kind == "required-cue" and node.get_script() == ThreatCue:
++			permitted = _same(payload,{"api_revision":ThreatCue.API_REVISION,"phase":"clear","geometry":{},"source_position":null,"required":true,"source_visible":false,"footprint_visible":false,"active_fill_visible":false})
++		elif kind == "required-cue" and node.get_script() == InteractionCue:
++			permitted = _same(payload,{"api_revision":InteractionCue.API_REVISION,"state":"clear","trigger":_o_donor_nodes[identity.id].get("trigger"),"required":true,"visible":false})
++	var row: Dictionary = {"kind":kind,"origin":identity.duplicate(true),"payload_exact":Exact.stringify(_encode(payload)),"retry_active":_o_retry_active,"known_original_donor":donor_origin,"disarmed_original_donor_exit":disarmed_exit,"permitted_retirement":permitted,"disposition":"permitted_original_donor_retirement" if permitted else ("forbidden_retry_event" if _o_retry_active else "observed_other_phase"),"process_frame":Engine.get_process_frames(),"physics_frame":Engine.get_physics_frames()}
++	if not _case.is_empty():
++		if not _case.has("observed_events"): _case["observed_events"] = []
++		_case.observed_events.append(row)
++	if _o_retry_active: _o_retry_events.append(row)
++	if not permitted: _events.append(kind)

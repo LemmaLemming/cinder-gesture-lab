@@ -1,0 +1,5 @@
+The actual O2 job is **78 checks / 1 failure**, with the combined new17 layout assertion at row75. The old16 case completes all five stages, including exact original checkpoint/session Retry and three qualified donor retirement notifications. New17 completes initial Continue; its failurestage checkpoint and session remain literal exact. No portrait ran.
+
+Source inspection proves a TEST expectation mismatch: the fixture compares actor direction to the recipe normalized once, while the native Handler adapter flattens and normalizes that direction again. The production snapshot validator already accounts for this. The original combined assertion did not retain its subclauses, so this review does not retrospectively claim the exclusive actual failing predicate.
+
+The minimal correction is a single new17-only continuation with independently derived exact native adapter direction, plus all individual layout clauses and native exact direction/error diagnostics retained before assertions. Old16 evidence is reused from the closed actual job. No tolerance, production change or old16 repeat is required.

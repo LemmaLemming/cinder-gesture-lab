@@ -1,0 +1,165 @@
+"""Finite duplicate-free literal persistence report reader; no Variant/geometry decoder."""
+from pathlib import Path
+import hashlib,json,math,os,re,stat
+
+def require(ok,reason):
+    if not ok: raise ValueError(reason)
+def digest(data):return hashlib.sha256(data).hexdigest()
+def strict(data):
+    def pairs(items):
+        result={}
+        for key,value in items:
+            require(key not in result,'Duplicate JSON key: '+key);result[key]=value
+        return result
+    def finite(token):
+        value=float(token);require(math.isfinite(value),'Nonfinite JSON exponent');return value
+    return json.loads(data.decode('utf-8',errors='strict'),object_pairs_hook=pairs,parse_float=finite,parse_constant=lambda token:(_ for _ in ()).throw(ValueError(token)))
+def stable(path):
+    path=Path(path);require(path.is_absolute() and path.resolve()==path,'Literal nonsymlink absolute path required')
+    before=path.lstat();require(stat.S_ISREG(before.st_mode),'Regular file required')
+    fd=os.open(path,os.O_RDONLY|getattr(os,'O_NOFOLLOW',0))
+    with os.fdopen(fd,'rb') as stream:
+        opened=os.fstat(stream.fileno());require((before.st_dev,before.st_ino)==(opened.st_dev,opened.st_ino),'Changed before open')
+        data=stream.read();closed_fd=os.fstat(stream.fileno())
+    second=path.read_bytes();after=path.lstat();key=lambda r:(r.st_dev,r.st_ino,r.st_size,r.st_mode,r.st_mtime_ns)
+    require(key(before)==key(opened)==key(closed_fd)==key(after) and data==second,'Unstable literal two-read observation')
+    return {'path':str(path),'sha256':digest(data),'bytes':len(data),'mode':format(stat.S_IMODE(after.st_mode),'04o'),'stable_two_reads':True},data
+
+def exact_wire(text):
+    require(type(text) is str and bool(text),'Nonempty opaque Exact wire required')
+    outer=strict(text.encode());require(type(outer) is dict and set(outer)=={'api_revision','schema_version','value'} and outer['api_revision']=='exact-json-1' and type(outer['schema_version']) is int and outer['schema_version']==1 and type(outer['value']) is list,'Opaque Exact header differs')
+    return {'sha256':digest(text.encode()),'bytes':len(text.encode()),'scope':'Literal header/text custody only, no Variant decode'}
+
+def raw_slots(slots,session=None):
+    names={'campaign.json','campaign.json.bak','settings.json','settings.json.bak','preferences.json','preferences.json.bak'}
+    require(type(slots) is dict and set(slots)==names,'Exactly six raw Store slots required')
+    result={}
+    for name,row in slots.items():
+        require(type(row) is dict and set(row)=={'exists','raw','sha256'} and type(row['exists']) is bool and type(row['raw']) is str and type(row['sha256']) is str,'Raw slot types differ')
+        if not row['exists']:
+            require(row['raw']=='' and row['sha256']=='','Absent slot invented');result[name]={'present':False};continue
+        require(digest(row['raw'].encode())==row['sha256'],'Literal raw hash differs')
+        value=strict(row['raw'].encode());require(type(value) is dict,'Raw object required')
+        if not name.startswith('settings.'):
+            require(type(value.get('format_version')) is int and value['format_version']==2 and type(value.get('generation')) is int and value['generation']>=1 and type(value.get('payload_json')) is str and digest(value['payload_json'].encode())==value.get('sha256'),'Raw format2/checksum/generation differs')
+            exact_wire(value['payload_json'])
+            if name=='campaign.json' and session is not None:require(value['payload_json']==session,'Native full-session/raw-primary join differs')
+        result[name]={'present':True,'sha256':row['sha256'],'bytes':len(row['raw'].encode())}
+    return result
+
+def prior_old16(root,spec):
+    """Join the completed historical case; never execute or decode a native payload."""
+    evidence=spec['prior_old16_evidence'];loaded={};metadata={}
+    for name in ['report','artifact','phase_result','queue']:
+        control=evidence[name];meta,data=stable(root/control['path'].removeprefix('res://'))
+        require(meta['sha256']==control['sha256'],'Prior actual old16 evidence changed: '+name)
+        loaded[name]=strict(data);metadata[name]=meta
+    report=loaded['report'];artifact=loaded['artifact'];phase=loaded['phase_result'];queue=loaded['queue']
+    rows=report.get('rows')
+    require(report.get('checks')==78 and report.get('failures')==1 and report.get('complete') is False
+            and report.get('success') is False and type(rows) is list and len(rows)==78,
+            'Preserve actual78/1, never relabel it as a passing prior run')
+    require(all(type(row) is dict and row.get('index')==i and type(row.get('ok')) is bool for i,row in enumerate(rows,1))
+            and all(row['ok'] is True for row in rows[:48])
+            and [row['index'] for row in rows if not row['ok']]==[75]
+            and report.get('first_failure')==rows[74], 'Prior old16 completed rows or retained new17 failure differ')
+    require(report.get('source_before')==report.get('source_after')==spec['prior_old16_native_sources'],
+            'Prior actual27 native sources differ')
+    require(report.get('artifact')=={'path':metadata['artifact']['path'],'sha256':metadata['artifact']['sha256']}
+            and artifact.get('complete') is False and artifact.get('source_sha256')==spec['expected'][spec['subject']]['sha256']
+            and artifact.get('fixture_sha256')=='227cc76750ec607d2a930f68d61fcb55d0103e2271b9bfed61b518de7b2d49df',
+            'Prior actual partial artifact/source identity differs')
+    cases=artifact.get('cases')
+    require(type(cases) is list and [case.get('id') for case in cases]==['old16','new17']
+            and cases[0].get('complete') is True and cases[1].get('complete') is False,
+            'Only actual completed old16 may be reused; new17 failure is preserved')
+    require(phase.get('closed') is True and phase.get('passed') is False and phase.get('canonical_api_return')==2
+            and phase.get('host_return')==2 and phase.get('owned_children')==[{'pid':9441,'closed':True,'popen_return':2}]
+            and queue.get('acquired') is True and queue.get('lock_context_released') is True,
+            'Prior actual child/queue closure differs')
+    require(len(cases[0].get('retry_diagnostics',{}).get('events',[]))==3,'Retained prior old16 retirement evidence differs')
+    return cases[0],{'evidence':metadata,'prior_actual_checks':78,'prior_actual_failures':1,
+                     'preserved_first_failure':rows[74],'reused_case':'old16','native_replayed':False}
+
+
+def observe(out,root,spec,raw,api_return,child_return):
+    result={'functional_pass':False,'retained':[],'report_present':False}
+    observed={}
+    # Retain every produced diagnostic member before validating success/rows.
+    for rel in ['evidence/native-report.json','evidence/persistence-unit.json','evidence/candidate-first-handler-warning.png']:
+        path=out/rel
+        if path.exists():
+            try:
+                meta,data=stable(path);result['retained'].append(meta);observed[rel]=(meta,data)
+            except Exception as error:result.setdefault('retention_errors',[]).append(str(error))
+    try:
+        require('evidence/native-report.json' in observed,'Actual report absent')
+        meta,literal=observed['evidence/native-report.json'];result['report_present']=True;packet=strict(literal)
+        require(type(packet) is dict and type(packet.get('schema_version')) is int and packet['schema_version']==1,'Report schema differs')
+        rows=packet.get('rows');require(type(rows) is list and bool(rows),'Actual rows required')
+        require(all(type(r) is dict and set(r)=={'index','ok','note'} and type(r['index']) is int and r['index']==i and type(r['ok']) is bool and type(r['note']) is str for i,r in enumerate(rows,1)),'Sequential typed rows differ')
+        failed=[r for r in rows if not r['ok']]
+        require(type(packet.get('checks')) is int and packet['checks']==len(rows) and type(packet.get('failures')) is int and packet['failures']==len(failed) and packet.get('first_failure')==(failed[0] if failed else {}) and type(packet.get('complete')) is bool and type(packet.get('success')) is bool and packet['success']==(packet['complete'] and not failed),'Actual native count/completion controls differ')
+        line='CINDER_A2_O2_CANDIDATE_PERSISTENCE_REPORT path=%s sha256=%s'%(out/'evidence/native-report.json',meta['sha256'])
+        footer='A2-O2 candidate persistence: %d checks, %d failures; complete=%s; success=%s'%(len(rows),len(failed),str(packet['complete']).lower(),str(packet['success']).lower())
+        require([x for x in raw.splitlines() if x.startswith('CINDER_A2_O2_CANDIDATE_PERSISTENCE_REPORT ')]==[line] and [x for x in raw.splitlines() if x.startswith('A2-O2 candidate persistence:')]==[footer],'Literal raw/report/footer join differs')
+        require(packet.get('source_before')==spec['native_sources']==packet.get('source_after'),'Native source maps differ')
+        require('evidence/persistence-unit.json' in observed,'Actual native artifact absent')
+        unit_meta,unit_literal=observed['evidence/persistence-unit.json'];unit=strict(unit_literal)
+        require(packet.get('artifact')=={'path':str(out/'evidence/persistence-unit.json'),'sha256':unit_meta['sha256']},'Actual artifact path/hash differs')
+        require(type(unit) is dict and type(unit.get('schema_version')) is int and unit['schema_version']==1 and unit.get('complete') is True and unit.get('source_sha256')==spec['expected'][spec['subject']]['sha256'] and unit.get('fixture_sha256')==spec['fixture_sha256'],'Native artifact/source/fixture differs')
+        current_cases=unit.get('cases');require(type(current_cases) is list and [c.get('id') for c in current_cases]==['new17'] and all(c.get('complete') is True for c in current_cases),'Exactly one completed current native new17 case required; no old16 replay')
+        require(unit.get('prior_old16_evidence')==spec['prior_old16_evidence'],'Explicit actual old16 prior evidence references differ')
+        reused_old16,prior_summary=prior_old16(root,spec)
+        cases=[reused_old16]+current_cases
+        case_summary=[]
+        for case in cases:
+            source=spec['source_units'][case['id']];require(case.get('source_unit')==source,'Actual literal source-unit selection differs')
+            source_meta,_=stable(root/source['path'].removeprefix('res://'));require(source_meta['sha256']==source['sha256'],'Original source unit drift')
+            wires={name:exact_wire(case.get(name)) for name in ['original_checkpoint_exact','original_session_exact','protected_story_exact']}
+            stages=case.get('stages');require(type(stages) is list,'Native stages required')
+            required=['literal_raw_import','initial_continue','distinct_current_public_pause','independent_current_continue','exact_earlier_checkpoint_retry']
+            require([s.get('label') for s in stages if s.get('label')!='final_or_failure_before_cleanup']==required,'Actual native stage order differs')
+            for stage in stages:
+                raw_slots(stage.get('raw_stores'),stage.get('whole_session_exact'))
+                for key,value in stage.items():
+                    if key.endswith('_exact'):exact_wire(value)
+            lookup={s['label']:s for s in stages}
+            cp=wires['original_checkpoint_exact'];require(lookup['initial_continue']['live_snapshot_exact']==case['original_checkpoint_exact']==lookup['exact_earlier_checkpoint_retry']['live_snapshot_exact'],'Literal source/initial/Retry CP differs')
+            require(lookup['distinct_current_public_pause']['live_snapshot_exact']!=case['original_checkpoint_exact'] and lookup['distinct_current_public_pause']['live_snapshot_exact']==lookup['independent_current_continue']['live_snapshot_exact'],'Actual distinct current/independent Continue differs')
+            require(lookup['initial_continue']['whole_session_exact']==case['original_session_exact']==lookup['exact_earlier_checkpoint_retry']['whole_session_exact'],'Actual original/Retry whole-session join differs')
+            require(lookup['distinct_current_public_pause']['whole_session_exact']==lookup['independent_current_continue']['whole_session_exact'],'Actual current whole-session Continue differs')
+            retry=case.get('retry_diagnostics');require(type(retry) is dict and type(retry.get('clauses')) is dict,'Actual separated Retry diagnostics required')
+            clauses=retry['clauses'];require(set(clauses)=={'quiet_barrier','no_forbidden_events','exact_original_checkpoint','exact_original_session','future_standard'} and all(type(v) is bool and v is True for v in clauses.values()),'Native individual Retry clauses must all pass')
+            events=retry.get('events');donors=retry.get('donor_nodes');leases=retry.get('donor_leases')
+            require(type(events) is list and type(donors) is dict and bool(donors) and type(leases) is dict and retry.get('forbidden_labels')==[],'Actual Retry event/origin custody required')
+            for event in events:
+                require(type(event) is dict and event.get('retry_active') is True and event.get('known_original_donor') is True and event.get('disarmed_original_donor_exit') is True and event.get('permitted_retirement') is True and event.get('disposition')=='permitted_original_donor_retirement' and type(event.get('origin')) is dict and event['origin'].get('id') in donors,'Every actual Retry event must be exact disarmed original-donor retirement; all new-candidate events forbidden')
+                require(event.get('kind') in ['required-cue','consumer-state','reservation-invalidated'],'Actions/progression/damage/contact/input are never permitted retirement events')
+                exact_wire(event.get('payload_exact'))
+            case_summary.append({'id':case['id'],'evidence_origin':'REUSED_CLOSED78_1_OLD16_NO_NATIVE_REPLAY' if case['id']=='old16' else 'CURRENT_ONE_NATIVE_NEW17_CASE','source_unit':source,'original_wires':wires,'stages':[s['label'] for s in stages],'retry_clauses':clauses,'actual_retirement_events':len(events),'origin_scope':'Native callback payload/ID/lifecycle guards enforced by selected fixture; host retains opaque payloads without Variant decode.'})
+        layouts=current_cases[0].get('layout_diagnostics')
+        require(type(layouts) is list and len(layouts)==5 and [d.get('call') for d in layouts]==list(range(1,6))
+                and [d.get('live_evaluated') for d in layouts]==[False,True,True,True,True],
+                'Retained pre-assertion format/four-live layout observations required')
+        base_clauses={'one_new17_case','whole_packet_envelope','challenge_profile_id','whole_scheduler_profile','local_field_count','right_angle_descriptor','whole_descriptor_profile'}
+        for diagnostic in layouts:
+            clauses=diagnostic.get('clauses');expected=base_clauses|({'live_aggregate_validator','live_final_handler_direction'} if diagnostic['live_evaluated'] else set())
+            require(type(clauses) is dict and set(clauses)==expected and all(type(value) is bool and value is True for value in clauses.values()),'Every individual pre-assertion exact layout clause must pass')
+            for name in ['requested_recipe_direction_exact','expected_native_adapter_direction_exact','actual_live_direction_exact','saved_final_handler_direction_exact']:exact_wire(diagnostic.get(name))
+            require(type(diagnostic.get('requested_equals_expected_native')) is bool and type(diagnostic.get('actual_equals_once_recipe')) is bool,'Exact normalization diagnostics must be explicit booleans')
+            if diagnostic['live_evaluated']:
+                require(diagnostic.get('live_aggregate_validation_error')==''
+                        and diagnostic['actual_live_direction_exact']==diagnostic['expected_native_adapter_direction_exact']==diagnostic['saved_final_handler_direction_exact'],
+                        'Actual native actor, saved direction and independent exact adapter expectation must join')
+        portrait=cases[1].get('portrait');require(type(portrait) is dict and portrait.get('phase')=='warning' and portrait.get('actual_containment_error')=='' and portrait.get('root_size')==[540,1170],'Actual warning portrait diagnostic differs')
+        image_meta,image=observed['evidence/candidate-first-handler-warning.png'];require(image.startswith(b'\x89PNG\r\n\x1a\n') and portrait.get('path')==image_meta['path'] and portrait.get('sha256')==image_meta['sha256'],'Actual literal root image/hash differs')
+        labels={r['note']:r['ok'] for r in rows}
+        for label in ['Normal public exits and complete Shell disposal release all selected descendants','Actual canonical registry unchanged','All named selected source bytes unchanged']:
+            require(labels.get(label) is True,'Native cleanup/source row missing: '+label)
+        require(packet['complete'] is True and packet['success'] is True and not failed and api_return==0 and child_return==0,'Native/Host API/actual owned-Popen failed or incomplete')
+        for rel,(m,b) in observed.items():
+            after,again=stable(out/rel);require(m==after and b==again,'Artifact drift during literal joins')
+        result.update(functional_pass=True,summary={'checks':len(rows),'failures':len(failed),'complete':True,'current_native_case_ids':['new17'],'reused_prior_old16':prior_summary,'cases':case_summary,'layout_diagnostic_calls':5,'portrait':image_meta,'scope':'One new17 native case plus exact completed prior old16 evidence joins, without old16 replay. Native assertion custody and opaque Exact string joins; Root actual visual inspection separate. No host Variant/geometry decode, route or held-positive claim.'})
+    except Exception as error:result['error']=str(error)
+    return result

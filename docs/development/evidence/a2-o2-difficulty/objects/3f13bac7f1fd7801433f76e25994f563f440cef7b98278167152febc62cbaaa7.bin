@@ -1,0 +1,191 @@
+"""Bounded O2 literal report reader. No Variant decoder or geometry reproof."""
+from pathlib import Path
+import hashlib
+import json
+import math
+import os
+import re
+import stat
+
+
+def require(ok, reason):
+    if not ok:
+        raise ValueError(reason)
+
+
+def digest(data):
+    return hashlib.sha256(data).hexdigest()
+
+
+def strict(data):
+    def pairs(items):
+        result = {}
+        for key, value in items:
+            require(key not in result, "Duplicate JSON key: " + key)
+            result[key] = value
+        return result
+    def finite(token):
+        value = float(token)
+        require(math.isfinite(value), "Nonfinite JSON exponent")
+        return value
+    return json.loads(data.decode("utf-8", errors="strict"), object_pairs_hook=pairs,
+                      parse_float=finite,
+                      parse_constant=lambda token: (_ for _ in ()).throw(ValueError(token)))
+
+
+def stable(path):
+    path = Path(path)
+    require(path.is_absolute() and path.resolve() == path, "Literal nonsymlink absolute path required")
+    before = path.lstat()
+    require(stat.S_ISREG(before.st_mode), "Regular file required")
+    fd = os.open(path, os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0))
+    with os.fdopen(fd, "rb") as stream:
+        opened = os.fstat(stream.fileno())
+        require((before.st_dev, before.st_ino) == (opened.st_dev, opened.st_ino), "Changed before open")
+        data = stream.read()
+        closed_fd = os.fstat(stream.fileno())
+    second = path.read_bytes()
+    after = path.lstat()
+    key = lambda row: (row.st_dev, row.st_ino, row.st_size, row.st_mode, row.st_mtime_ns)
+    require(key(before) == key(opened) == key(closed_fd) == key(after) and data == second,
+            "Unstable literal two-read observation")
+    return {"path": str(path), "sha256": digest(data), "bytes": len(data),
+            "mode": format(stat.S_IMODE(after.st_mode), "04o"),
+            "stable_two_reads": True}, data
+
+
+def exact_wire(text):
+    require(type(text) is str and bool(text), "Nonempty opaque Exact wire required")
+    outer = strict(text.encode())
+    require(type(outer) is dict and set(outer) == {"api_revision", "schema_version", "value"}
+            and outer["api_revision"] == "exact-json-1" and type(outer["schema_version"]) is int
+            and outer["schema_version"] == 1 and type(outer["value"]) is list,
+            "Opaque native Exact envelope header differs")
+    return {"sha256": digest(text.encode()), "bytes": len(text.encode()),
+            "scope": "Header and literal text custody only; no host Variant decode/reproof"}
+
+
+def observe(out, root, spec, variant, raw, api_return, child_return, baseline=None):
+    result = {"functional_pass": False, "retained": [], "report_present": False}
+    path = out / "evidence/native-report.json"
+    if not path.exists():
+        result["error"] = "Actual report absent; no reconstruction"
+        return result
+    try:
+        meta, literal = stable(path)
+        result["retained"].append(meta); result["report_present"] = True
+        packet = strict(literal)
+        require(type(packet) is dict and type(packet.get("schema_version")) is int
+                and packet["schema_version"] == 1 and packet.get("cell") == variant, "Report schema/cell differs")
+        rows = packet.get("rows")
+        require(type(rows) is list and bool(rows), "Actual native rows required")
+        require(all(type(row) is dict and set(row) == {"index", "ok", "note"}
+                    and type(row["index"]) is int and row["index"] == index
+                    and type(row["ok"]) is bool and type(row["note"]) is str
+                    for index, row in enumerate(rows, 1)), "Native consecutive row/control types differ")
+        failed = [row for row in rows if not row["ok"]]
+        require(type(packet.get("checks")) is int and packet["checks"] == len(rows)
+                and type(packet.get("failures")) is int and packet["failures"] == len(failed)
+                and type(packet.get("first_failure")) is dict
+                and packet["first_failure"] == (failed[0] if failed else {})
+                and type(packet.get("complete")) is bool and type(packet.get("success")) is bool
+                and packet["success"] == (packet["complete"] and not failed)
+                and type(packet.get("outcome")) is str, "Actual count/firstfailure/completion controls differ")
+        report_line = "CINDER_A2_O2_HANDLER_COMPARE_REPORT path=%s sha256=%s" % (path, meta["sha256"])
+        footer = "A2-O2 Handler comparison: %d checks, %d failures; complete=%s; success=%s; outcome=%s" % (
+            len(rows), len(failed), str(packet["complete"]).lower(), str(packet["success"]).lower(), packet["outcome"])
+        require([line for line in raw.splitlines() if line.startswith("CINDER_A2_O2_HANDLER_COMPARE_REPORT ")] == [report_line]
+                and [line for line in raw.splitlines() if line.startswith("A2-O2 Handler comparison:")] == [footer],
+                "Literal report/SHA/path/count/footer join differs")
+        expected_sources = dict(spec["native_sources"])
+        expected_sources["res://" + spec["subject"]] = spec["subject_variants"][variant]["sha256"]
+        require(packet.get("source_before") == expected_sources == packet.get("source_after"), "Actual native source maps differ")
+        unit_path = out / "evidence/comparison-unit.json"
+        unit_meta, unit_bytes = stable(unit_path)
+        require(packet.get("comparison_unit") == {"path": str(unit_path), "sha256": unit_meta["sha256"]},
+                "Literal native comparison-unit path/SHA differs")
+        result["retained"].append(unit_meta)
+        unit = strict(unit_bytes)
+        require(type(unit) is dict and type(unit.get("schema_version")) is int and unit["schema_version"] == 1
+                and unit.get("cell") == variant and type(unit.get("complete")) is bool
+                and unit["complete"] == packet["success"] and unit.get("outcome") == packet["outcome"]
+                and unit.get("source_sha256") == spec["subject_variants"][variant]["sha256"]
+                and unit.get("fixture_sha256") == spec["fixture_sha256"], "Actual unit/fixture/source/control join differs")
+        wires = {}
+        for name in ["context_exact", "plan_exact", "trace_exact", "union_exact", "union_samples_exact", "actions_exact"]:
+            wires[name] = exact_wire(unit.get(name))
+        setup = unit.get("setup")
+        require(type(setup) is dict, "Actual disclosed setup required")
+        for name in ["whole_snapshot_exact", "whole_session_exact", "protected_story_exact"]:
+            wires["setup." + name] = exact_wire(setup.get(name))
+        disk = setup.get("raw_stores")
+        companions = ["campaign.json", "campaign.json.bak", "settings.json", "settings.json.bak", "preferences.json", "preferences.json.bak"]
+        require(type(disk) is dict and set(disk) == set(companions), "Six raw Store presence slots required")
+        raw_joins = {}
+        for name in companions:
+            row = disk[name]
+            require(type(row) is dict and set(row) == {"exists", "raw", "sha256"}
+                    and type(row["exists"]) is bool and type(row["raw"]) is str and type(row["sha256"]) is str,
+                    "Actual raw Store slot types differ")
+            if row["exists"]:
+                data = row["raw"].encode()
+                require(bool(data) and digest(data) == row["sha256"], "Literal native raw Store string/hash differs")
+                parsed = strict(data)
+                require(type(parsed) is dict, "Native raw JSON object required")
+                if not name.startswith("settings."):
+                    require(type(parsed.get("format_version")) is int and parsed["format_version"] == 2
+                            and type(parsed.get("generation")) is int and parsed["generation"] >= 1
+                            and type(parsed.get("payload_json")) is str
+                            and digest(parsed["payload_json"].encode()) == parsed.get("sha256"),
+                            "Native raw Store format2/checksum/generation differs")
+                    exact_wire(parsed["payload_json"])
+                if name == "campaign.json":
+                    require(parsed["payload_json"] == setup["whole_session_exact"], "Actual primary full-session wire differs")
+                raw_joins[name] = {"present": True, "sha256": digest(data), "bytes": len(data),
+                                  "scope": "Literal string captured in native unit; not a post-cleanup live userdata file"}
+            else:
+                require(row["raw"] == "" and row["sha256"] == "", "Absent original slot cannot be fabricated")
+                raw_joins[name] = {"present": False}
+        require(disk["campaign.json"]["exists"] and disk["preferences.json"]["exists"], "Actual campaign/preference Stores required")
+        identities = unit.get("native_ids_decimal")
+        id_keys = {"shell","hero","effects","level","scheduler","tool","west_bank","east_bank","west_tender","east_tender","final_handler"}
+        require(type(identities) is dict and set(identities) == id_keys
+                and all(type(value) is str and re.fullmatch(r"-?[1-9][0-9]*", value) for value in identities.values())
+                and len(set(identities.values())) == len(identities), "Actual signed/nonzero/unique decimal native IDs required")
+        phases = unit.get("phases")
+        require(type(phases) is dict and all(phases.get(name) is True for name in ["warning","lock","active","recovery"]),
+                "Actual complete four-phase native observation required")
+        require(type(unit.get("contacts")) is list and not unit["contacts"]
+                and type(unit.get("driver")) is list and bool(unit["driver"]), "Zero actual contact and retained request observations required")
+        expected_baseline = {"path": "", "sha256": "", "epoch_delta_s": 0}
+        if baseline is not None:
+            original_meta, _ = stable(Path(baseline["path"]))
+            require(original_meta["sha256"] == baseline["sha256"], "Original unit drift during candidate")
+            require(type(unit.get("baseline")) is dict and unit["baseline"].get("path") == baseline["path"]
+                    and unit["baseline"].get("sha256") == baseline["sha256"]
+                    and type(unit["baseline"].get("epoch_delta_s")) in [int, float],
+                    "Candidate receives literal closed original unit/hash and actual epoch delta")
+        else:
+            require(unit.get("baseline") == expected_baseline, "Original cannot consume a fabricated baseline")
+        labels = {row["note"]: row["ok"] for row in rows}
+        for label in ["Normal public level exit and complete native Shell disposal release all selected descendants",
+                      "Actual canonical registry unchanged", "All named selected source bytes unchanged"]:
+            require(labels.get(label) is True, "Actual normal cleanup/source assertion missing: " + label)
+        expected_outcome = "ORIGINAL_SAFE_USEFUL" if variant == "original" else "MEANINGFUL_CHANGED_RESPONSE"
+        require(packet["complete"] is True and packet["success"] is True and not failed
+                and unit["outcome"] == expected_outcome and api_return == 0 and child_return == 0,
+                "Actual native incomplete/failed or API/owned child nonzero")
+        after, after_bytes = stable(path)
+        unit_after, unit_after_bytes = stable(unit_path)
+        require(meta == after and literal == after_bytes and unit_meta == unit_after and unit_bytes == unit_after_bytes,
+                "Actual report/unit changed during full literal joins")
+        result.update(functional_pass=True, native_report=meta, comparison_unit=unit_meta,
+                      summary={"checks":len(rows),"failures":len(failed),"complete":packet["complete"],
+                               "success":packet["success"],"outcome":packet["outcome"],
+                               "first_failure":packet["first_failure"],"opaque_wires":wires,"raw_store_joins":raw_joins,
+                               "native_ids_decimal":identities,"phases":phases,"canonical_api_return":api_return,
+                               "same_owned_Popen_return":child_return,
+                               "counterfactual_scope":"Native diagnostics only, no host Variant decoder or geometry reproof"})
+    except Exception as error:
+        result["error"] = str(error)
+    return result

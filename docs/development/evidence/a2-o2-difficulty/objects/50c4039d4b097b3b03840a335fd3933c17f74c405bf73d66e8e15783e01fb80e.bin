@@ -1,0 +1,134 @@
+"""Freeze only the named O2 source experiment; no dev/queue/Godot import."""
+from pathlib import Path
+import ast
+import json
+import os
+import re
+import stat
+import types
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[1]
+BASE = '.cinder/a2-o2-handler-right-pair-host-prepare-20261016/'
+SOURCE = '.cinder/a2-o2-handler-right-diagonal-prepare-20261016/'
+LEAF = SOURCE + 'comparison-prepare/act2_o2_handler_angle_compare.gd.txt'
+FIXTURE = 'tests/act2_o2_handler_angle_compare.gd'
+SUBJECT = 'scripts/acts/act2/clear_air_circuit.gd'
+ORIGINAL = SOURCE + 'original_clear_air_circuit.gd.txt'
+CANDIDATE = SOURCE + 'candidate_clear_air_circuit.gd.txt'
+MAPPING = {FIXTURE: LEAF}
+check = types.ModuleType('cinder_o2_host_prepare_inspect')
+exec(compile((HERE / 'native_inspect.py').read_bytes(), str(HERE / 'native_inspect.py'), 'exec'), check.__dict__)
+
+
+def record(name):
+    path = ROOT / name
+    exists = os.path.lexists(path)
+    meta = path.lstat() if exists else None
+    check.require(not exists or (stat.S_ISREG(meta.st_mode) and not stat.S_ISLNK(meta.st_mode)), 'Named regular or absent source required: ' + name)
+    data = check.stable(path)[1] if exists else None
+    return {'exists': exists, 'regular': exists, 'symlink': False,
+            'sha256': check.digest(data) if data is not None else None,
+            'bytes': len(data) if data is not None else None,
+            'mode': format(stat.S_IMODE(meta.st_mode), '04o') if meta else None}
+
+
+def put(name, value):
+    (HERE / name).write_text(json.dumps(value, indent=2, allow_nan=False) + '\n')
+
+
+def main():
+    check.require(not (HERE / 'READINESS.json').exists(), 'Do not overwrite a frozen readiness')
+    check.require(not os.path.lexists(ROOT / FIXTURE) and not os.path.lexists(ROOT / (FIXTURE + '.uid')), 'Future single GD and UID must remain genuinely absent during preparation')
+    source_spec_path = ROOT / SOURCE / 'comparison-prepare/INPUT_SPEC.json'
+    source_spec_bytes = source_spec_path.read_bytes()
+    check.require(check.digest(source_spec_bytes) == 'd1f40fcc37e5efc7e44a3baf3085c5cd7f34f89bee0e2ea33e1049805a0292f3', 'Original immutable leaf control required')
+    source_spec = check.strict(source_spec_bytes)
+    check.require(record(LEAF)['sha256'] == '64c70c36ca16a43e6fa3e4aa9567b7659950a3d679c3ca508ca3e8c66a53894c', 'One fixed comparison leaf required')
+    # Preserve exact historical named modes too. No changed source is repinned.
+    for expected in source_spec['fixed_named_current_sources']:
+        actual = record(str(Path(expected['path']).relative_to(ROOT)))
+        check.require(all(actual[key] == expected[key] for key in ['sha256', 'bytes', 'mode']), 'Previously selected named input changed: ' + expected['path'])
+    original = record(SUBJECT)
+    candidate = record(CANDIDATE)
+    check.require(original['sha256'] == '084235779abe01c543471440fa06b86f239c3291668854196b4feb37f4b04e23' and original['mode'] == '0644', 'Unchanged accepted original084 required')
+    check.require(record(ORIGINAL)['sha256'] == original['sha256'] and candidate['sha256'] == '02024cb156c1f055f8301848722753471afd2ca21644f2afe3e07c522dbfd7a5', 'Exact private original and right-diagonal candidate required')
+    check.require(record('scripts/combat/authored_enemy_sequence.gd')['sha256'] == '9aed90b797bdef3388a82b63f40390e2b779f2fec671ed3914a33b1ff42950a3', 'Independent original9aed baseline required; no cost candidate composition')
+    cache = '.godot/global_script_class_cache.cfg'
+    classes = {m.group(1): m.group(2) for m in re.finditer(r'"class": &"([^"]+)".*?"path": "res://([^"]+)"', (ROOT / cache).read_text(), re.S)}
+    pending = [FIXTURE, 'scenes/main.tscn', 'scenes/acts/act2/a2_o2.tscn', 'scenes/acts/act2/a2_l4.tscn']
+    seen = set(); edges = []; unresolved = []
+    while pending:
+        name = pending.pop(0)
+        if name in seen: continue
+        seen.add(name)
+        if not name.endswith(('.gd', '.tscn', '.tres')): continue
+        text = (ROOT / MAPPING.get(name, name)).read_text()
+        if name.endswith('.gd'):
+            targets = set(re.findall(r'''(?:preload|load)\(\s*["']res://([^"']+)["']\s*\)''', text))
+            targets.update(re.findall(r'''^\s*extends\s+["']res://([^"']+)["']''', text, re.M))
+        else:
+            targets = set(re.findall(r'''path\s*=\s*["']res://([^"']+)["']''', text))
+        for target in sorted(targets):
+            if target in MAPPING or (ROOT / target).is_file():
+                edges.append({'from': name, 'to': target, 'reason': 'literal preload/extends/scene resource'}); pending.append(target)
+            else: unresolved.append({'from': name, 'target': target})
+        for klass, target in sorted(classes.items()):
+            if target != name and re.search(r'\b' + re.escape(klass) + r'\b', text):
+                edges.append({'from': name, 'to': target, 'reason': 'global class ' + klass}); pending.append(target)
+    check.require(not unresolved and '[autoload]' not in (ROOT / 'project.godot').read_text(), 'Unexpected unresolved/static autoload input requires bounded review')
+    put('DEPENDENCY_GRAPH.json', {'roots': [FIXTURE, 'scenes/main.tscn', 'scenes/acts/act2/a2_o2.tscn', 'scenes/acts/act2/a2_l4.tscn'], 'source_aliases': MAPPING,
+        'resources': sorted(seen), 'edges': edges, 'unresolved': unresolved,
+        'method': 'Fixed single future fixture plus real Main/Story/O2 scenes, recursive literal preload/extends/global-class references. Named runtime hash observations pinned separately. No unrelated level suite, import or global UID census.',
+        'limits': 'Scene/helper/cache/UID cohort for one two-child fixed response experiment, not proof that every statically reachable body executes.'})
+    native_names = [FIXTURE, 'tests/act2_o2_registration_smoke.gd', 'tests/acts/act2/a2_o2_loading_side_smoke.gd', 'scenes/main.tscn', 'scenes/acts/act2/a2_l4.tscn', 'scenes/acts/act2/a2_o2.tscn',
+        'scripts/game.gd', 'scripts/player.gd', 'scripts/campaign/shell.gd', 'scripts/campaign/level.gd', 'scripts/campaign/registry.gd', 'scripts/campaign/attempts.gd', 'scripts/campaign/save_store.gd', 'scripts/campaign/exact_json.gd', 'scripts/campaign/snapshot_codec.gd', SUBJECT,
+        'scripts/acts/act2/canister_tender_actor.gd', 'scripts/acts/act2/salvage_handler_actor.gd', 'scripts/combat/smoke_bank.gd', 'scripts/combat/lane_mechanism.gd', 'scripts/combat/threat_scheduler.gd', 'scripts/combat/threat_geometry.gd', 'scripts/combat/difficulty.gd', 'data/design/difficulty_profiles.json', 'data/campaign/registry.json']
+    native_sources = {'res://' + name: record(MAPPING.get(name, name))['sha256'] for name in native_names}
+    source_controls = {str(Path(row['path']).relative_to(ROOT)) for row in source_spec['fixed_named_current_sources']}
+    names = set(seen) | source_controls | set(MAPPING) | set(MAPPING.values())
+    names |= {name + '.uid' for name in names.copy() if name.endswith('.gd')}
+    names |= {SUBJECT, SUBJECT + '.uid', ORIGINAL, CANDIDATE, SOURCE + 'HANDLER_RIGHT_DIAGONAL.patch',
+        SOURCE + 'WITHDRAWN264_TO_RIGHT.patch', SOURCE + 'READINESS.json', SOURCE + 'PLAN.md', SOURCE + 'comparison-prepare/INPUT_SPEC.json', SOURCE + 'comparison-prepare/READINESS.json',
+        '.cinder/a2-o2-right-comparison-source-review-20261016/REVIEW.json', '.cinder/a2-o2-right-comparison-source-review-20261016/REVIEW.md',
+        '.cinder/local.json', 'project.godot', cache, '.godot/uid_cache.bin', 'scripts/dev/dev.py',
+        'data/design/player_equipment.json', 'data/design/difficulty_profiles.json', 'data/campaign/act2/a2_l1_difficulty_arrangements.json', 'data/campaign/act2/a2_l2_difficulty_arrangements.json',
+        'scripts/combat/authored_enemy_sequence.gd', 'scripts/combat/authored_enemy_sequence.gd.uid'}
+    expected = {name: (dict(record(MAPPING[name]), mode='0644') if name in MAPPING else record(name)) for name in sorted(names)}
+    candidate_runtime = dict(original, sha256=candidate['sha256'], bytes=candidate['bytes'])
+    binary = '.tools/Godot.app/Contents/MacOS/Godot'
+    engine = {'path': str(ROOT / binary), 'record': record(binary)}
+    check.require(engine['record']['sha256'] == 'c7cccbf8fb143e34e02fd6521e09be2c2b974f0d5db080b19071c9c570718ccf', 'Unchanged c7 existing engine required')
+    own = ['run.py', 'native_inspect.py', 'prepare_inputs.py', 'host_tests.py', 'HOST_TESTS.json', 'README.md', 'DEPENDENCY_GRAPH.json', 'PROVENANCE.json', 'GUARD_REUSE.json', 'INPUT_SPEC.json', 'READINESS.json', 'PAUSED_CHECKPOINT.json', 'native_inspect.py.draft.txt', 'READER_DRAFT_REVIEW.json', 'RUN_SOURCE_REVIEW.json']
+    spec = {'schema': 1, 'status': 'FROZEN_SOURCE_ONLY_UNSELECTED_UNEXECUTED', 'integration_root': str(ROOT), 'subject': SUBJECT,
+        'subject_variants': {'original': original, 'candidate': candidate_runtime}, 'candidate_source': CANDIDATE, 'original_source': ORIGINAL,
+        'fixture': FIXTURE, 'fixture_sha256': native_sources['res://' + FIXTURE], 'promotion_text_mapping': MAPPING,
+        'native_sources': native_sources, 'expected': expected, 'self_files': [BASE + name for name in own], 'engine_expected': engine,
+        'timeout_after_lock_seconds': 180, 'native_fixture_watchdog_seconds': 150, 'maximum_phases': 2, 'order': ['original', 'candidate'],
+        'report_environment': 'CINDER_A2_O2_HANDLER_COMPARE_REPORT absolute new native-report.json in existing unique owned evidence directory',
+        'report_contract': 'Duplicate-free finite literal JSON; typed consecutive native rows/count/failures/firstfailure/complete/success/outcome, literal native report/unit path and hash/footer, exact25 native source maps, API0+same actual owned Popen0 and actual cleanup/source rows. Six raw Store slots and opaque native Exact envelope/header/text custody only. No host Variant/geometry decoder or synthesized assertion.',
+        'baseline_contract': 'Original must close successful/clean Host0/API0/Popen0 with index/result/raw/engine/report/unit/source/retention joins before candidate replacement. Candidate consumes exact separately closed original comparison-unit literal absolute path and SHA. CA-only Host2 or any diagnostic stops original; no candidate.',
+        'mutation_contract': 'Only subject084 to02024 inside one canonical dev.godot_lock after original owned child closure. Exact reviewed cost-v2 guards: temp ready then final prior bytes/mode/type compare; finally exact candidate guarded restore, exact original no-op, unknown bytes/mode/type retained and left in situ; no foreign kill/lock deletion. Durable original beforeimage retained; SIGKILL/power loss cannot execute Python finally.',
+        'scope': 'ONE fixed original then candidate Challenge Handler response with actual original-selected proof and native old-path counterfactual versus matched candidate recorded full held union. No forced direction, repeated cell, angle/pose search, four-packet writer, extra kit or full-route producer. Normal isolated user:// TEST Stores remain native; Root chooses permission context before execution. No earned-route/legacy-transport/portrait/performance/difficulty acceptance claim.'}
+    put('INPUT_SPEC.json', spec)
+    put('PROVENANCE.json', {'status': 'SOURCE_ONLY_UNSELECTED_UNEXECUTED', 'accepted_runtime': 'Shared74 / canonical1bfbf64a; original24 content and17 difficulty acceptances unchanged',
+        'resumed_from': 'PAUSED_CHECKPOINT.json; saved draft retained verbatim as unreviewed history', 'leaf': spec['fixture_sha256'], 'original': original['sha256'], 'candidate': candidate['sha256'],
+        'native_reader': 'READER_DRAFT_REVIEW.json source-format review; final host mocked controls separate, not gameplay credit',
+        'guard_reuse': 'GUARD_REUSE.json exact cost-v2 three-way restore and final prior guard method bodies',
+        'independent_baseline': 'Authored9aed and Schedulerc28; no withdrawn binding-tail or encodability proxy candidate composition',
+        'fixed_slots': len(expected), 'resources': len(seen), 'edges': len(edges), 'native_source_map_entries': len(native_sources),
+        'host_only_tests': check.strict((HERE / 'HOST_TESTS.json').read_bytes()), 'new_future_GD_UID_absent': True, 'dev_queue_engine_GDScript_parser_import_seal_native': False})
+    for name in ['run.py', 'native_inspect.py', 'prepare_inputs.py', 'host_tests.py']: ast.parse((HERE / name).read_text(), filename=name)
+    for name in own:
+        if name != 'READINESS.json': check.require((HERE / name).is_file(), 'Complete named control file missing: ' + name)
+    put('READINESS.json', {'schema': 1, 'status': 'FINAL_FROZEN_SOURCE_READY_FOR_ROOT_REVIEW_BEFORE_SELECTION',
+        'frozen_files': {BASE + name: check.digest((HERE / name).read_bytes()) for name in own if name != 'READINESS.json'},
+        'fixed_slots': len(expected), 'resource_count': len(seen), 'edge_count': len(edges), 'native_sources': len(native_sources),
+        'future_GD_UID_absent': True, 'Python_ASTs': 4, 'host_only_tests': check.strict((HERE / 'HOST_TESTS.json').read_bytes()),
+        'dev_queue_engine_GDScript_parser_import_seal_native': False,
+        'preconditions': 'Root full source review, select exact single future fixture0644 with UID absent, inspect closed host-only seal, then at most one original-successful-clean-first/candidate-second queued pair. Candidate selected only after external original closure joins. No gameplay credit from this source capsule.'})
+    print(json.dumps({'status': 'FINAL_FROZEN_SOURCE_UNSELECTED_UNEXECUTED', 'fixed_slots': len(expected), 'resources': len(seen), 'edges': len(edges), 'native_sources': len(native_sources),
+        'run_sha256': check.digest((HERE / 'run.py').read_bytes()), 'spec_sha256': check.digest((HERE / 'INPUT_SPEC.json').read_bytes()), 'readiness_sha256': check.digest((HERE / 'READINESS.json').read_bytes())}))
+
+
+if __name__ == '__main__': main()

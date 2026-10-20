@@ -1,0 +1,99 @@
+--- original-227cc/persistence.gd.txt
++++ new17-only-layout/persistence.gd.txt
+@@ -1,16 +1,17 @@
+ extends "res://tests/acts/act2/a2_o2_loading_side_smoke.gd"
+ ## INERT source-only future single graphical native persistence job.
+-## Reuses real old16/new17 Challenge CP/raw Stores from CLOSED actual pair.
++## Runs only genuine new17 Challenge CP/raw Stores; reuses CLOSED78/1 old16 evidence without replay.
+ ## TEST prefix8/gated Tender injuries remain setup, not earned route credit.
+ ## No producer, pose search, kit matrix, proof rewrite or unsafe replay.
+ const DifficultySource = preload("res://scripts/combat/difficulty.gd")
+ const HOST_PATH: String = "res://scripts/acts/act2/clear_air_circuit.gd"
+ const HOST_SHA: String = "02024cb156c1f055f8301848722753471afd2ca21644f2afe3e07c522dbfd7a5"
+-const SPEC_PATH: String = "res://.cinder/a2-o2-retry-observer-pure-prepare-20261020/INPUT_SPEC.json"
++const SPEC_PATH: String = "res://.cinder/a2-o2-new17-layout-prepare-20261020/INPUT_SPEC.json"
+ const FILES: Array[String] = ["campaign.json","campaign.json.bak","settings.json","settings.json.bak","preferences.json","preferences.json.bak"]
+ const SOURCE_UNITS: Dictionary = {
+ 	"old16":{"path":"res://.cinder/a2-o2-test-entry-framing-prepare-20261020/run-pair-20261020T040458.245936Z-8da9ffa8/original/evidence/comparison-unit.json","sha256":"c5bcdb46254bdd9ca52441488ae1a03420c4fc41fcd4d1889178ab5ee90e0284"},
+ 	"new17":{"path":"res://.cinder/a2-o2-test-entry-framing-prepare-20261020/run-pair-20261020T040458.245936Z-8da9ffa8/candidate/evidence/comparison-unit.json","sha256":"5dccb1e7b0d7260599325250979f9016930aed6dcaaa489211f2dba9a12ea27e"}}
++const PRIOR_OLD16_EVIDENCE: Dictionary = {"report":{"path":"res://.cinder/a2-o2-retry-observer-pure-prepare-20261020/run-run-20261020T043227.494939Z-ad71ba18/persistence/evidence/native-report.json","sha256":"be6ff997614bb4afb2c6bbb7ba4f274e23e46932e1c2e2cccfbd731aa317df05"},"artifact":{"path":"res://.cinder/a2-o2-retry-observer-pure-prepare-20261020/run-run-20261020T043227.494939Z-ad71ba18/persistence/evidence/persistence-unit.json","sha256":"fdff2fbe6a01496fb9d89704bf9eae9e4fddfcf8326128c3dbb9cf9c8b5bec5c"},"phase_result":{"path":"res://.cinder/a2-o2-retry-observer-pure-prepare-20261020/run-run-20261020T043227.494939Z-ad71ba18/persistence/result.json","sha256":"90128791d348be234697b2072202e34882f5fb500352568c029260a6a17e9f30"},"queue":{"path":"res://.cinder/a2-o2-retry-observer-pure-prepare-20261020/run-run-20261020T043227.494939Z-ad71ba18/queue.json","sha256":"7b246baef850037476bd71854bcf72a26ecbddfdf64914de346f98f11da71563"},"scope":"Reuse only the completed actual old16 case from CLOSED78/1. The new17 failure remains; old16 is not replayed by this one-case fixture."}
+ var _report_path: String
+ var _output: String
+ var _unit_path: String
+@@ -56,7 +57,7 @@
+ 	node_added.connect(_observe_added)
+ 	paused = true
+ 	var base: String = _test_root
+-	for key: String in ["old16","new17"]:
++	for key: String in ["new17"]:
+ 		_test_root = base + key + "/"; _roots.append(_test_root)
+ 		_case = {"id":key,"source_unit":SOURCE_UNITS[key].duplicate(true),"stages":[],"complete":false}
+ 		_cases.append(_case)
+@@ -152,14 +153,52 @@
+ 	return result
+ 
+ func _layout(packet: Dictionary,key: String) -> bool:
+-	if packet.is_empty(): return _expect(false,"Complete actual layout packet required: " + key)
++	# Retain every clause and exact native observation BEFORE any assertion.
++	# This independent TEST derivation follows the actual public adapter:
++	# recipe normalization first, then planar flatten + normalization.
++	var envelope: bool = not packet.is_empty() and packet.get("level") is Dictionary and packet.level.get("local") is Dictionary and packet.get("player") is Dictionary
++	if not envelope:
++		if not _case.has("layout_diagnostics"): _case["layout_diagnostics"] = []
++		_case.layout_diagnostics.append({"call":_case.layout_diagnostics.size()+1,"live_evaluated":false,"clauses":{"whole_packet_envelope":false},"scope":"All available diagnostics retained before failed envelope assertion"})
++		return _expect(false,"Complete actual new17 layout packet required: " + key)
+ 	var local: Dictionary = packet.level.local
+ 	var canonical: Dictionary = DifficultySource.new().profile("challenge")
+-	var valid: bool = local.profile_id == "challenge" and _same(local.scheduler.profile,canonical)
+-	if key == "old16": valid = valid and local.size() == 16 and not local.has("handler_arrangement")
+-	else: valid = valid and local.size() == 17 and local.handler_arrangement == {"api_revision":"act2-clear-air-handler-arrangement-1","schema_version":1,"profile":canonical,"recipe_id":"challenge-handler-diagonal-right-1"} and _same(local.handler_arrangement.profile,canonical)
+-	if _live(): valid = valid and _shell.active_level.snapshot_error_with_player(packet.level,packet.player).is_empty() and _shell.active_level.call("get_actor","final_handler").get("direction") == (Vector3.BACK if key == "old16" else (Vector3.BACK+Vector3.RIGHT).normalized())
+-	return _expect(valid,"Actual full typed Challenge profile and saved old16 frontal/new17 right-angle construction retained: " + key)
++	var requested: Vector3 = (Vector3.BACK+Vector3.RIGHT).normalized()
++	var expected_direction: Vector3 = Vector3(requested.x,0.0,requested.z).normalized()
++	var clauses: Dictionary = {
++		"one_new17_case":key == "new17",
++		"whole_packet_envelope":envelope,
++		"challenge_profile_id":local.get("profile_id") == "challenge",
++		"whole_scheduler_profile":local.get("scheduler") is Dictionary and _same(local.scheduler.get("profile"),canonical),
++		"local_field_count":local.size() == 17,
++		"right_angle_descriptor":local.get("handler_arrangement") == {"api_revision":"act2-clear-air-handler-arrangement-1","schema_version":1,"profile":canonical,"recipe_id":"challenge-handler-diagonal-right-1"},
++		"whole_descriptor_profile":local.get("handler_arrangement") is Dictionary and _same(local.handler_arrangement.get("profile"),canonical),
++	}
++	var live_evaluated: bool = _live()
++	var validation_error: String = "NOT_EVALUATED_NO_LIVE_RECIPIENT"
++	var actual_direction: Variant = null
++	if live_evaluated:
++		validation_error = _shell.active_level.snapshot_error_with_player(packet.level,packet.player)
++		var actor: Node3D = _shell.active_level.call("get_actor","final_handler") as Node3D
++		if is_instance_valid(actor): actual_direction = actor.get("direction")
++		clauses["live_aggregate_validator"] = validation_error.is_empty()
++		clauses["live_final_handler_direction"] = actual_direction is Vector3 and actual_direction == expected_direction
++	var diagnostic: Dictionary = {
++		"call":_case.get("layout_diagnostics",[]).size()+1,"live_evaluated":live_evaluated,"clauses":clauses.duplicate(true),
++		"live_aggregate_validation_error":validation_error,
++		"requested_recipe_direction_exact":Exact.stringify(_encode(requested)),
++		"expected_native_adapter_direction_exact":Exact.stringify(_encode(expected_direction)),
++		"actual_live_direction_exact":Exact.stringify(_encode(actual_direction)),
++		"saved_final_handler_direction_exact":Exact.stringify(local.get("actors",{}).get("final_handler",{}).get("direction")),
++		"requested_equals_expected_native":requested == expected_direction,
++		"actual_equals_once_recipe":actual_direction is Vector3 and actual_direction == requested,
++		"scope":"Exact native TEST observation before assertions; no tolerance, production helper call, live edit or normalization repair",
++	}
++	if not _case.has("layout_diagnostics"): _case["layout_diagnostics"] = []
++	_case.layout_diagnostics.append(diagnostic)
++	for name: String in clauses:
++		if not _expect(clauses[name],"Exact new17 layout clause " + name + " / call " + str(diagnostic.call)): return false
++	return true
+ 
+ func _install_raw(slots: Dictionary) -> bool:
+ 	if not _expect(not DirAccess.dir_exists_absolute(ProjectSettings.globalize_path(_test_root)) and slots.size() == FILES.size(),"New distinct user directory receives exact six presence slots; no existing save overwritten"): return false
+@@ -272,7 +311,7 @@
+ 	_finishing = true
+ 	# Retain partial native diagnostics/raw strings BEFORE cleanup or assertions.
+ 	if not _case.is_empty(): _record("final_or_failure_before_cleanup")
+-	var artifact: Dictionary = {"schema_version":1,"complete":_complete and _failures == 0,"source_sha256":FileAccess.get_sha256(HOST_PATH),"fixture_sha256":FileAccess.get_sha256(get_script().resource_path),"cases":_cases,"scope":"Genuine old16/new17 Challenge native persistence under working candidate020; TEST8/gated Tender setup; no producer/comparison rerun, earned route or held/positive cooldown claim. Actual Tool status/cooldowns are retained literally."}
++	var artifact: Dictionary = {"schema_version":1,"complete":_complete and _failures == 0,"source_sha256":FileAccess.get_sha256(HOST_PATH),"fixture_sha256":FileAccess.get_sha256(get_script().resource_path),"cases":_cases,"prior_old16_evidence":PRIOR_OLD16_EVIDENCE.duplicate(true),"scope":"Genuine new17-only Challenge native persistence under working candidate020; completed old16 reused from exact CLOSED78/1 evidence, not replayed; TEST8/gated Tender setup; no producer/comparison rerun, earned route or held/positive cooldown claim. Actual Tool status/cooldowns are retained literally."}
+ 	if _unit_path.is_absolute_path() and not FileAccess.file_exists(_unit_path):
+ 		var file: FileAccess = FileAccess.open(_unit_path,FileAccess.WRITE)
+ 		if file != null: file.store_string(JSON.stringify(artifact)); file.flush(); file.close()

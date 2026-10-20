@@ -1,0 +1,561 @@
+extends "res://tests/act2_o2_registration_smoke.gd"
+## INERT PRIVATE DRAFT. One actual old/new response comparison only.
+## Future Root leaf: tests/act2_o2_handler_angle_compare.gd.
+## No parser/import/native/production selection; Root reviews source first.
+## Actual Shell, TEST prefix8 plus genuine Story. Public recovery-gated Tender
+## injuries and original quiet tails earn contact CP; no HP/stage/history writes.
+## No full route, ordinary Tender victory, exit, stamp or difficulty credit.
+
+const WriterDifficulty = preload("res://scripts/combat/difficulty.gd")
+const OLD_HOST_SHA: String = "084235779abe01c543471440fa06b86f239c3291668854196b4feb37f4b04e23"
+const HOST_PATH: String = "res://scripts/acts/act2/clear_air_circuit.gd"
+const ANCHOR: Vector3 = Vector3(0, 0, -6.8)
+const NEUTRAL: Dictionary = {"jacket":"CLOTH-J0","pants":"CLOTH-P0","shoes":"CLOTH-S0","weapon":"WEAPON-01"}
+
+var _p_report_path: String
+var _p_output: String
+var _p_root: String
+var _p_rows: Array[Dictionary] = []
+var _p_first_failure: Dictionary = {}
+var _p_before: Dictionary = {}
+var _p_complete: bool = false
+var _p_profile: String = ""
+var _p_story: Dictionary = {}
+var _p_initial: Dictionary = {}
+var _p_finishing: bool = false
+
+
+
+
+const CandidateGeometry = preload("res://scripts/combat/threat_geometry.gd")
+const RIGHT_HOST_SHA: String = "02024cb156c1f055f8301848722753471afd2ca21644f2afe3e07c522dbfd7a5"
+const CELL_SCOPE: String = "One actual original Challenge response then one complete right-diagonal response at the same declared real CP anchor; actual old sampled path versus matched new recorded timed union. No forced tie-break, unsafe replay, route or persistence award."
+const DRIVER_EPS: float = 0.00001
+var _c_cell: String = ""
+var _c_baseline_path: String = ""
+var _c_baseline_sha: String = ""
+var _c_baseline: Dictionary = {}
+var _c_plan: Dictionary = {}
+var _c_context: Dictionary = {}
+var _c_trace: Array[Dictionary] = []
+var _c_union: Dictionary = {}
+var _c_union_samples: Array[Dictionary] = []
+var _c_phases: Dictionary = {}
+var _c_actions: Array[Dictionary] = []
+var _c_contacts: Array[Dictionary] = []
+var _c_driver: Array[Dictionary] = []
+var _c_counterfactual: Array[Dictionary] = []
+var _c_setup_packet: Dictionary = {}
+var _c_outcome: String = "UNEXECUTED"
+var _c_initial_hp: float = 0.0
+var _c_epoch: float = 0.0
+var _c_delta: float = 0.0
+var _c_unit_path: String = ""
+
+
+func _initialize() -> void:
+	_p_report_path = OS.get_environment("CINDER_A2_O2_HANDLER_COMPARE_REPORT")
+	_p_output = _p_report_path.get_base_dir()
+	_p_root = "user://test-clear-air-handler-compare-%d-%d/" % [OS.get_process_id(), Time.get_ticks_usec()]
+	_test_root = _p_root
+	_old_audio = AudioServer.generate_bus_layout()
+	_old_fps = Engine.max_fps
+	_registry_bytes = FileAccess.get_file_as_string(Registry.DATA_PATH)
+	_p_before = _p_sources()
+	_run.call_deferred()
+
+
+func _run() -> void:
+	if not _c_arguments(): _finish(); return
+	_c_outcome = "SETUP_PENDING"
+	var selected_sha: String = OLD_HOST_SHA if _c_cell == "original" else RIGHT_HOST_SHA
+	if not _p_setup("comparison", selected_sha) or not await _p_open("challenge") or not await _p_earn_checkpoint(): _finish(); return
+	# This declared setup is not ordinary Tender victory or earned campaign
+	# progress. It invokes real recovery gates/tails/contact/Retry, not setters.
+	_c_setup_packet = {"whole_snapshot_exact":Exact.stringify(_shell.capture_campaign_snapshot()),"whole_session_exact":Exact.stringify(_shell.attempts.state()),"protected_story_exact":Exact.stringify(_p_story),"raw_stores":_p_disk(),"TEST_injuries":_encode(_injuries),"scope":"TEST prefix8, actual gated Tender injuries, original tails, one fixed CP contact and public Retry; no HP/stage/history assignment"}
+	if not _c_bindings(): _finish(); return
+	_c_initial_hp = _shell.player.hp
+	_shell.player.world_action_executed.connect(func(record: Dictionary) -> void: _c_actions.append(record.duplicate(true)))
+	_shell.active_level.call("get_tool").connect("hit_resolved",func(id: String, cycle: int, result: Dictionary) -> void: _c_contacts.append({"hero_id":id,"cycle":cycle,"clock_s":_c_clock(),"result":_encode(result)}))
+	_shell.menu.resume_requested.emit()
+	_c_outcome = "WAITING_FIRST_ACTUAL_RESPONSE"
+	if not await _c_first_plan(): _finish(); return
+	_c_epoch = float(_c_plan.reservation.start_s)
+	_c_context = _c_conditions()
+	if not _expect(_c_clock() == _c_epoch and _shell.player.get_threat_response_state().action_clock_s == _c_clock(), "First actual admission observed at exact native epoch with complete Player/Scheduler clocks; no omitted recognition prefix"): _finish(); return
+	if _c_cell == "candidate":
+		if not _c_read_baseline() or not _c_match_context(): _finish(); return
+	if not _c_observe() or not await _c_follow(): _finish(); return
+	if not _expect(_c_phases.has_all(["warning","lock","active","recovery"]) and _c_contacts.is_empty() and _shell.player.hp == _c_initial_hp and not _shell.player.dead, "Actual single-cycle full cadence includes all four phases, zero Lane opportunities/contacts and no HP loss"): _finish(); return
+	if not _expect(_c_actions.size() >= 2 and _c_actions.back().kind == "primary" and float(_shell.active_level.call("get_actor","final_handler").get("hp")) == 10.0, "Actual existing neutral primary damages the living Handler once by20, without blast, defeat or exit"): _finish(); return
+	if _c_cell == "candidate":
+		if not _c_evaluate_old_path(): _finish(); return
+		_c_outcome = "MEANINGFUL_CHANGED_RESPONSE"
+	else:
+		_c_outcome = "ORIGINAL_SAFE_USEFUL"
+	_p_complete = true
+	_finish()
+
+
+func _c_arguments() -> bool:
+	var seen: Dictionary = {}
+	for argument: String in OS.get_cmdline_user_args():
+		var key: String = argument.get_slice("=",0)
+		if key not in ["--cell","--baseline","--baseline-sha256"] or seen.has(key): return _expect(false,"Only one declared original/candidate cell and exact optional baseline selector")
+		seen[key] = true
+		if key == "--cell": _c_cell = argument.trim_prefix("--cell=")
+		elif key == "--baseline": _c_baseline_path = argument.trim_prefix("--baseline=")
+		else: _c_baseline_sha = argument.trim_prefix("--baseline-sha256=")
+	if not _expect(_c_cell in ["original","candidate"] and (seen.size() == 1 if _c_cell == "original" else seen.size() == 3), "Exactly one cell; candidate explicitly names immutable original baseline/hash"): return false
+	return _expect((_c_baseline_path.is_empty() and _c_baseline_sha.is_empty()) if _c_cell == "original" else (_c_baseline_path.is_absolute_path() and _c_baseline_sha.length() == 64 and _c_baseline_path.get_base_dir() != _p_output), "Candidate reads a separately closed original artifact; no same-output overwrite")
+
+
+func _c_bindings() -> bool:
+	var packet: Dictionary = _shell.capture_campaign_snapshot()
+	var local: Dictionary = packet.get("level",{}).get("local",{})
+	var layout: bool = local.size() == 16 and not local.has("handler_arrangement") if _c_cell == "original" else local.size() == 17 and local.get("handler_arrangement") is Dictionary and local.handler_arrangement.keys().size() == 4 and local.handler_arrangement.api_revision == "act2-clear-air-handler-arrangement-1" and local.handler_arrangement.schema_version is int and local.handler_arrangement.schema_version == 1 and local.handler_arrangement.recipe_id == "challenge-handler-diagonal-right-1" and _same(local.handler_arrangement.profile, WriterDifficulty.new().profile("challenge"))
+	if not _expect(layout and local.profile_id == "challenge" and _same(local.scheduler.profile, WriterDifficulty.new().profile("challenge")) and local.world_revision == 1 and packet.level.local_snapshot_version == 1 and _shell.active_level.snapshot_error_with_player(packet.level,packet.player).is_empty(), "Selected actual old16 or closed new17 construction and canonical full profile validate without recipe fabrication"): return false
+	return _expect(_shell.player.is_on_floor() and _shell.player.get_threat_response_state().stable and _shell.player.global_position.x == ANCHOR.x and absf(_shell.player.global_position.z-ANCHOR.z) <= DRIVER_EPS and _shell.player.equipment.snapshot() == NEUTRAL and _shell.player.hp == 100.0 and _state().checkpoint_committed and int(_shell.active_level.call("get_tool").call("state").cycle) == 0, "One genuine supported central CP anchor and unchanged neutral100HP precede actual Handler admission")
+
+
+func _c_first_plan() -> bool:
+	for _tick: int in range(MAX_TICKS):
+		if not await _c_step(false): return false
+		var state: Dictionary = _shell.active_level.call("get_tool").call("state")
+		if not _state().admission_errors.get("final_tool",{}).is_empty():
+			_c_outcome = "INCONCLUSIVE_ACTUAL_ADMISSION_REFUSAL"
+			return _expect(false,"First natural native admission refusal stops this hypothesis: "+str(_state().admission_errors))
+		if int(state.cycle) > 0:
+			var proof: Dictionary = _state().proofs.get("final_tool",{})
+			var lease: Dictionary = _shell.active_level.call("get_scheduler").call("reservation_state",state.reservation_id)
+			if not _expect(state.status == "running" and state.phase == "warning" and int(state.cycle) == 1 and proof.get("accepted",false) and not proof.get("uses_blast",true) and not proof.get("uses_invulnerability",true) and lease.get("armed",false), "First actual source cycle retains its own complete ordinary proof; no chosen left/right or replacement gate"): return false
+			_c_plan = {"cycle":state.cycle,"reservation":lease.duplicate(true),"proof":proof.duplicate(true),"role":state.resolved_role.duplicate(true)}
+			return _expect(lease.source_instance_id == (_shell.active_level.call("get_tool") as Node).get_instance_id() and _shell.active_level.call("get_tool").get("_heroes").get("hero") == _shell.player and _shell.active_level.call("get_tool").get("_scheduler") == _shell.active_level.call("get_scheduler"), "Actual lease/source and native live Hero/Scheduler bindings remain genuine")
+	return _expect(false,"Bounded one first native admission; no retry/search")
+
+
+func _c_clock() -> float:
+	return float(_shell.active_level.call("get_scheduler").call("get_clock")) if _live() else -1.0
+
+
+func _c_current() -> bool:
+	if not _live() or _shell.player.dead or not _shell.campaign_error.is_empty(): return false
+	var state: Dictionary = _shell.active_level.call("get_tool").call("state")
+	var lease: Dictionary = _shell.active_level.call("get_scheduler").call("reservation_state",String(_c_plan.reservation.id))
+	if state.status != "running" or state.cycle != _c_plan.cycle or state.reservation_id != _c_plan.reservation.id or not lease.get("armed",false): return false
+	for key: String in ["source_instance_id","source_position","geometry","opening_position","start_s","lock_from_s","active_from_s","active_until_s","recovery_until_s","cooldown_until_s","profile_id","world_revision"]:
+		if lease.get(key) != _c_plan.reservation.get(key): return false
+	return true
+
+
+func _c_step(require_plan: bool = true) -> bool:
+	if not _expect(_live() and not _shell.player.dead and _shell.campaign_error.is_empty() and not paused, "Actual native simulation remains alive and publicly resumed; unexpected pause/refusal is retained"): return false
+	await _probe.tick_finished # Existing native end-of-tick priority120, no clock assignment.
+	if not _expect(_live() and not _shell.player.dead and _state().runtime_error.is_empty(), "Native full host/callback loop remains valid"): return false
+	if require_plan:
+		if not _expect(_c_current(), "Same original source/cycle/deadlines remain armed; natural guard cancellation stops, without re-admission"): _c_outcome = "INCONCLUSIVE_NATIVE_GUARD_OR_PLAN_LOSS"; return false
+		return _c_observe()
+	return true
+
+
+func _c_observe() -> bool:
+	var clock: float = _c_clock()
+	if not _expect(_shell.player.get_threat_response_state().action_clock_s == clock and _shell.player.hp == _c_initial_hp and _c_contacts.is_empty(), "Every actual sampled step retains coherent clocks, original HP and zero contact opportunities"): return false
+	var phase: String = _shell.active_level.call("get_tool").call("state").phase
+	_c_phases[phase] = true
+	if _c_trace.is_empty() or float(_c_trace.back().clock_s) < clock:
+		_c_trace.append({"clock_s":clock,"position":_shell.player.global_position,"physics_frame":Engine.get_physics_frames(),"process_frame":Engine.get_process_frames(),"hp":_shell.player.hp})
+	var held: Array = _shell.active_level.call("get_scheduler").call("reservations")
+	_c_union_samples.append({"clock_s":clock,"held":_encode(held)})
+	for lease: Dictionary in held:
+		if not lease.get("armed",false): return _expect(false,"Unarmed/mixed unknown union is not this declared ordinary Handler context")
+		var immutable: Dictionary = lease.duplicate(true)
+		immutable.erase("state") # Only public phase label changes; all authority retained.
+		if _c_union.has(lease.id):
+			if not _expect(_c_union[lease.id] == immutable, "Every recorded held member retains immutable complete native lease"): return false
+		else: _c_union[lease.id] = immutable
+	return _expect(_c_current() and held.size() == 1 and held[0].id == _c_plan.reservation.id, "Whole actual final union is the single genuine Handler; no other member silently omitted or suppressed")
+
+
+func _c_before_dispatch(segment: Dictionary) -> bool:
+	if segment.kind == "ordinary_primary": return _c_clock()+DRIVER_EPS < float(segment.start_s)
+	return _c_clock()+1.0/float(Engine.physics_ticks_per_second) <= float(segment.start_s)+DRIVER_EPS
+
+
+func _c_follow() -> bool:
+	for segment: Dictionary in _c_plan.proof.path:
+		if segment.kind not in ["escape_dash","positioning_dash","ordinary_primary"]: continue
+		var tick_s: float = 1.0 / float(Engine.physics_ticks_per_second)
+		while _c_before_dispatch(segment):
+			if not await _c_step(): return false
+		if not _expect(_c_current(), "Current complete native authority owns the next original action"): return false
+		var response: Dictionary = _shell.player.get_threat_response_state()
+		if segment.kind == "ordinary_primary":
+			if not _expect(_c_clock() <= float(segment.start_s)+tick_s+DRIVER_EPS and response.stable and response.primary_cooldown_left_s == 0.0 and response.commitment_remaining_s == 0.0 and _shell.active_level.call("get_tool").call("state").phase == "recovery" and _c_clock()+float(_shell.player.stats.primary_cooldown) <= float(_c_plan.reservation.recovery_until_s)-CinderThreatScheduler.TIME_MARGIN, "Actual immediate primary plus full cooldown fits retained recovery at legal sampled boundary"): return false
+			var target: Node3D = _shell.active_level.call("get_actor","final_handler") as Node3D
+			var direction: Vector3 = target.global_position - _shell.player.global_position
+			direction.y = 0.0
+			var before: float = float(target.get("hp"))
+			if not _expect(direction.length() <= float(_shell.player.stats.primary_range) and _shell.player.slash(direction.normalized()) == 1 and float(target.get("hp")) == before-20.0, "One ordinary existing primary hits the recovering low mount; no blast/pickup/direct actor injury in this component"): return false
+			for _tick: int in range(MAX_TICKS):
+				response = _shell.player.get_threat_response_state()
+				if response.stable and response.primary_cooldown_left_s == 0.0 and response.commitment_remaining_s == 0.0: break
+				if not await _c_step(): return false
+			if not _expect(response.stable and response.primary_cooldown_left_s == 0.0 and response.commitment_remaining_s == 0.0 and _c_clock() <= float(_c_plan.reservation.recovery_until_s), "Real primary full cadence finishes within original recovery"): return false
+		else:
+			if not _expect(_c_clock() <= float(segment.start_s)+DRIVER_EPS and response.stable and response.dash_cooldown_left_s == 0.0 and response.commitment_remaining_s == 0.0 and _shell.player.global_position.distance_to(segment.from) <= 0.005, "Public dash requested on preceding native boundary with original origin/readiness/deadline; missed window stops"): return false
+			var direction: Vector3 = segment.to - segment.from
+			direction.y = 0.0
+			_c_driver.append({"kind":segment.kind,"planned_s":segment.start_s,"requested_s":_c_clock(),"actual_origin":_encode(_shell.player.global_position),"actual_direction":_encode(direction.normalized()),"qualification":"Legal sampled request before fractional start, next native physics integrates; not exact continuous proof execution"})
+			var count: int = _c_actions.size()
+			if not _expect(_shell.player.request_dash(direction.normalized()), "Actual public fixed-distance dash accepts own proof direction without input substitution"): return false
+			for _tick: int in range(MAX_TICKS):
+				if not await _c_step(): return false
+				if _c_actions.size() > count: break
+			if not _expect(_c_actions.size() == count+1 and _c_actions.back().kind == "dash" and not _c_actions.back().blocked and _c_actions.back().landing == _shell.player.global_position and _shell.player.global_position.distance_to(segment.to) <= 0.005 and not _shell.player.action_in_progress() and absf(Vector2((_c_actions.back().landing as Vector3).x-(_c_actions.back().world_origin as Vector3).x,(_c_actions.back().landing as Vector3).z-(_c_actions.back().world_origin as Vector3).z).length()-2.7) <= 0.005, "One actual completed2.7 dash retains literal full sampled movement and deliberate stopped landing"): return false
+	var end_s: float = float(_c_plan.proof.response_complete_s)
+	if _c_cell == "candidate":
+		var old_trace: Dictionary = Exact.parse(_c_baseline.trace_exact)
+		if not _expect(old_trace.get("accepted",false) and old_trace.value is Array and not old_trace.value.is_empty(), "Untouched old full observed trace decodes through native Exact codec"): return false
+		end_s = maxf(end_s,float(old_trace.value.back().clock_s)+_c_delta)
+	for _tick: int in range(MAX_TICKS):
+		if _c_clock() + DRIVER_EPS >= end_s: break
+		if not await _c_step(): return false
+	return _expect(_c_clock() + DRIVER_EPS >= end_s and _c_clock() <= float(_c_plan.reservation.recovery_until_s), "Observed union and actual full response cover entire rebased old cadence, without a second cycle or expired lease")
+
+
+func _c_conditions() -> Dictionary:
+	var floor: Dictionary = _shell.active_level.get("_floor")
+	var collision: CollisionShape3D = floor.collision as CollisionShape3D
+	return {"profile":_shell.active_level.call("get_scheduler").call("encounter_profile"),"equipment":_shell.player.equipment.snapshot(),"stats":_shell.player.stats.duplicate(true),"origin":Codec.vector3(_shell.player.global_position),"source_position":Codec.vector3(_shell.active_level.call("get_tool").global_position),"role":_c_plan.role.duplicate(true),"floor":{"body_position":Codec.vector3((floor.body as Node3D).global_position),"body_rotation":Codec.vector3((floor.body as Node3D).global_rotation),"collision_position":Codec.vector3(collision.global_position),"collision_rotation":Codec.vector3(collision.global_rotation),"box_size":Codec.vector3((collision.shape as BoxShape3D).size),"safe_rect":_encode(floor.safe_rect)},"cleared_ids":_state().cleared_ids.duplicate(),"checkpoint":_shell.active_level.current_checkpoint().duplicate(true)}
+
+
+func _c_read_baseline() -> bool:
+	if not _expect(FileAccess.file_exists(_c_baseline_path) and FileAccess.get_sha256(_c_baseline_path) == _c_baseline_sha, "Exact separately retained original artifact hash, never current output synthesis"): return false
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(_c_baseline_path))
+	if not _expect(parsed is Dictionary and parsed.get("schema_version") == 1 and parsed.get("cell") == "original" and parsed.get("complete") == true and parsed.get("outcome") == "ORIGINAL_SAFE_USEFUL" and parsed.get("source_sha256") == OLD_HOST_SHA and parsed.get("fixture_sha256") == FileAccess.get_sha256(get_script().resource_path), "Closed original same-fixture source receipt required; Root must separately join original report/raw/exit before this selection"): return false
+	_c_baseline = parsed.duplicate(true)
+	return true
+
+
+func _c_match_context() -> bool:
+	var old_context: Dictionary = Exact.parse(_c_baseline.context_exact)
+	if not _expect(old_context.get("accepted",false) and _same(old_context.value,_c_context), "Actual source/profile/equipment/stats/origin/floor/checkpoint/role contexts match completely; unmatched context stops"): _c_outcome = "INCONCLUSIVE_CONTEXT_MISMATCH"; return false
+	var old_plan: Dictionary = Exact.parse(_c_baseline.plan_exact)
+	if not _expect(old_plan.get("accepted",false) and old_plan.value is Dictionary, "Literal old native plan is retained, never synthesized"): return false
+	var lease: Dictionary = old_plan.value.reservation
+	_c_delta = _c_epoch - float(lease.start_s)
+	for key: String in ["lock_from_s","active_from_s","active_until_s","recovery_until_s","cooldown_until_s"]:
+		if not _expect(Codec.same_values(float(lease[key])-float(lease.start_s),float(_c_plan.reservation[key])-_c_epoch), "Actual native relative deadline equivalence under one epoch offset: "+key): _c_outcome = "INCONCLUSIVE_CONTEXT_MISMATCH"; return false
+	return true
+
+
+func _c_literal_segments(trace: Array, delta: float) -> Array[Dictionary]:
+	var segments: Array[Dictionary] = []
+	for index: int in range(1,trace.size()):
+		var a: Dictionary = trace[index-1]
+		var b: Dictionary = trace[index]
+		segments.append({"from":Codec.read_vector3(a.position),"to":Codec.read_vector3(b.position),"start_s":float(a.clock_s)+delta,"end_s":float(b.clock_s)+delta})
+	return segments
+
+
+func _c_evaluate_old_path() -> bool:
+	var decoded: Dictionary = Exact.parse(_c_baseline.trace_exact)
+	if not _expect(decoded.get("accepted",false) and decoded.value is Array and decoded.value.size() >= 2, "Whole original per-native-tick path including waits/holds/return is immutable"): return false
+	var segments: Array[Dictionary] = _c_literal_segments(decoded.value,_c_delta)
+	var native_hit: bool = false
+	for id: String in _c_union:
+		var lease: Dictionary = _c_union[id]
+		for index: int in range(segments.size()):
+			var segment: Dictionary = segments[index]
+			# Exact Lane345–353 guard; Geometry alone has an EPS overlap and
+			# must not manufacture a last-lock contact before native active.
+			if maxf(float(segment.start_s),float(lease.active_from_s)) > minf(float(segment.end_s),float(lease.active_until_s)): continue
+			var actual_lane: bool = CandidateGeometry.timed_path_hits(lease.geometry,[segment],float(lease.active_from_s),float(lease.active_until_s),CinderThreatScheduler.CAPSULE_RADIUS)
+			var conservative: bool = CandidateGeometry.timed_path_hits(lease.geometry,[segment],float(lease.active_from_s),float(lease.active_until_s),CinderThreatScheduler.CAPSULE_RADIUS+CinderThreatScheduler.SKIN)
+			if actual_lane or conservative:
+				_c_counterfactual.append({"lease_id":id,"segment_index":index,"segment":_encode(segment),"actual_lane_radius_032":actual_lane,"proof_radius_033":conservative,"actual_candidate_lease":_encode(lease),"qualification":"Literal old observed path rebased by one delta against recorded actual candidate timed union; not executed in candidate world and not a replacement proof"})
+			native_hit = native_hit or actual_lane
+	if not native_hit:
+		_c_outcome = "EQUIVALENT_OLD_PATH_STILL_SAFE_OR_INCONCLUSIVE"
+		return false # Declared stopping result, no alternate angle/pose/cell.
+	return true
+
+
+func _c_write_unit() -> void:
+	if _p_output.is_empty() or not DirAccess.dir_exists_absolute(_p_output): return
+	_c_unit_path = _p_output.path_join("comparison-unit.json")
+	var unit: Dictionary = {"schema_version":1,"cell":_c_cell,"complete":_p_complete and _failures == 0,"outcome":_c_outcome,"source_sha256":FileAccess.get_sha256(HOST_PATH),"fixture_sha256":FileAccess.get_sha256(get_script().resource_path),"context_exact":Exact.stringify(_c_context),"plan_exact":Exact.stringify(_encode(_c_plan)),"trace_exact":Exact.stringify(_encode(_c_trace)),"union_exact":Exact.stringify(_encode(_c_union)),"union_samples_exact":Exact.stringify(_c_union_samples),"actions_exact":Exact.stringify(_encode(_c_actions)),"phases":_c_phases,"contacts":_c_contacts,"driver":_c_driver,"counterfactual":_c_counterfactual,"setup":_c_setup_packet,"baseline":{"path":_c_baseline_path,"sha256":_c_baseline_sha,"epoch_delta_s":_c_delta},"native_ids_decimal":_p_ids(),"scope":CELL_SCOPE,"external_join_required":"This unit alone is not closed native credit; Root must join report rows/raw/footer/ownedexit/source custody before using it as candidate baseline."}
+	_p_write_new(_c_unit_path,JSON.stringify(unit))
+
+
+func _p_finish_async() -> void:
+	if _p_finishing: return
+	_p_finishing = true
+	_c_write_unit() # Includes partial/inconclusive original observations.
+	if is_instance_valid(_preview):
+		var level: CinderLevel = _preview.get("active_level") as CinderLevel
+		if is_instance_valid(level): level.exit_level()
+		if is_instance_valid(_preview.get("fx")): _preview.get("fx").clear_lab()
+		_preview.free(); _preview = null
+	await _p_dispose()
+	if is_instance_valid(_probe): _probe.free()
+	paused = false
+	_expect(FileAccess.get_file_as_string(Registry.DATA_PATH) == _registry_bytes, "Actual canonical registry unchanged")
+	_expect(_p_sources() == _p_before, "All named selected source bytes unchanged")
+	_p_remove_stores()
+	AudioServer.set_bus_layout(_old_audio)
+	Engine.max_fps = _old_fps
+	await create_timer(0.1,true,false,true).timeout
+	var success: bool = _p_complete and _failures == 0
+	var report: Dictionary = {"schema_version":1,"cell":_c_cell,"checks":_checks,"failures":_failures,"rows":_p_rows,"first_failure":_p_first_failure,"complete":_p_complete,"success":success,"outcome":_c_outcome,"comparison_unit":{"path":_c_unit_path,"sha256":FileAccess.get_sha256(_c_unit_path)},"source_before":_p_before,"source_after":_p_sources(),"scope":CELL_SCOPE,"limits":"Discrete public requests are not exact continuous proof execution; geometric old-path counterfactual is not unsafe input execution or enemy-decision causality. No full route/legacy transport/performance/optical or difficulty acceptance credit from this leaf."}
+	if _p_report_path.is_absolute_path() and not FileAccess.file_exists(_p_report_path):
+		var file: FileAccess = FileAccess.open(_p_report_path,FileAccess.WRITE)
+		if file != null: file.store_string(JSON.stringify(report)); file.flush(); file.close()
+	print("CINDER_A2_O2_HANDLER_COMPARE_REPORT path=%s sha256=%s" % [_p_report_path,FileAccess.get_sha256(_p_report_path)])
+	print("A2-O2 Handler comparison: %d checks, %d failures; complete=%s; success=%s; outcome=%s" % [_checks,_failures,str(_p_complete),str(success),_c_outcome])
+	quit(0 if success and FileAccess.file_exists(_p_report_path) else 2)
+
+
+func _p_setup(kind: String, source_sha: String) -> bool:
+	create_timer(150.0, true, false, true).timeout.connect(func() -> void:
+		if not _finished:
+			_expect(false, "Finite150s fixture watchdog; no mechanical deadline changed")
+			_finish()
+	)
+	root.size = Vector2i(540, 1170)
+	root.content_scale_size = root.size
+	root.content_scale_mode = Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
+	if not _expect(_p_report_path.is_absolute_path() and DirAccess.dir_exists_absolute(_p_output) and not FileAccess.file_exists(_p_report_path), "New explicit absolute report path in existing owned output directory"): return false
+	if not _expect((OS.get_cmdline_user_args().is_empty() if kind == "old-writer" else true) and FileAccess.get_sha256(HOST_PATH) == source_sha, "Exact selected untouched old084 or Root-selected264 native writer is present before construction"): return false
+	_probe = NativeTickProbe.new()
+	root.add_child(_probe)
+	node_added.connect(_observe_added)
+	var registry: CinderCampaignRegistry = Registry.new()
+	return _expect(registry.last_error.is_empty() and registry.ids().size() == 24 and registry.is_playable("A2-L4") and registry.entry("A2-L4").scene_path == STORY_PATH and registry.is_playable("A2-O2") and registry.entry("A2-O2").scene_path == O2_PATH and registry.entry("A2-O2").parent_level_id == "A2-L3" and registry.is_unlocked("A2-O2", PREFIX) and not registry.is_unlocked("A2-O2", PREFIX.slice(0,7)) and registry.next_main("A2-L3") == "A2-L4", "Current actual canonical Story/optional/parent/main metadata; no stale O3-unimplemented assertion")
+
+
+func _p_open(profile: String) -> bool:
+	_p_profile = profile
+	_test_root = _p_root + profile + "/"
+	_injuries.clear()
+	var registry: CinderCampaignRegistry = Registry.new()
+	if not await _seed_story(registry) or not await _new_shell(): return false
+	_shell.menu.continue_story_requested.emit()
+	if not await _p_wait_packet(_p_initial.story.snapshot, "story"): return false
+	_p_story = _shell.attempts.state().story.duplicate(true)
+	_shell.menu.difficulty_preference_requested.emit(profile)
+	await _settle()
+	if not _expect(_shell.get_difficulty_preference() == profile and _same(_shell.attempts.state().story, _p_story), "Public selected future profile preserves complete protected Story"): return false
+	_shell.menu.optional_requested.emit("A2-O2")
+	for _frame: int in range(1200):
+		await process_frame
+		if not is_instance_valid(_shell) or not _shell.campaign_error.is_empty(): break
+		if _live() and paused and not bool(_shell.get("_draining")) and (_shell.get("_operations") as Array).is_empty() and _shell.menu.page_name() == "resume": break
+	if not _expect(_live() and paused and _shell.attempts.active_kind() == "optional" and _shell.active_level.get("_profile_id") == profile and _shell.player.equipment.snapshot() == NEUTRAL and _shell.player.hp == _shell.player.max_hp and _shell.player.get_world_action_records().is_empty(), "Actual public optional entry constructs selected native profile with neutral unchanged resources and no actions"): return false
+	var packet: Dictionary = _shell.capture_campaign_snapshot()
+	return _expect(not packet.is_empty() and _same(packet, _shell.attempts.state().side_attempt.snapshot) and _same(packet, _shell.attempts.state().side_attempt.checkpoint) and _same(_shell.attempts.state().story, _p_story), "Whole real entrance equals durable native snapshot/checkpoint and protected Story")
+
+
+func _seed_story(registry: CinderCampaignRegistry) -> bool:
+	paused = true
+	_preview = MainScene.instantiate()
+	_preview.set("level_scene_path", STORY_PATH)
+	root.add_child(_preview)
+	_preview.call("open_bench")
+	await process_frame; await process_frame
+	var hero: CinderPlayer = _preview.get("player") as CinderPlayer
+	var level: CinderLevel = _preview.get("active_level") as CinderLevel
+	if not _expect(paused and is_instance_valid(hero) and is_instance_valid(level) and level.level_id == "A2-L4" and level.scene_file_path == STORY_PATH and String(_preview.get("level_load_error")).is_empty(), "Actual canonical paused Main supplies complete unchanged Story writers"): return false
+	var player_packet: Dictionary = hero.snapshot_state()
+	var level_packet: Dictionary = level.snapshot_state()
+	var input: Dictionary = _preview.call("get_input_observation_state")
+	if not _expect(not player_packet.is_empty() and not level_packet.is_empty() and hero.get_world_action_records().is_empty() and input.sequence == 0 and input.last_observation.is_empty() and hero.snapshot_error(player_packet).is_empty() and level.snapshot_error_with_player(level_packet, player_packet).is_empty(), "Independent complete native Player/Story validators and real untouched input precede TEST outer context"): return false
+	var anchor: Vector2 = input.anchor_normalized
+	var snapshot: Dictionary = {"schema_version":1,"level_id":"A2-L4","scene_path":STORY_PATH,"paused":true,"equipment_ids":hero.equipment.snapshot(),"player":player_packet,"level":level_packet,"shell":{"api_revision":Shell.SHELL_API,"anchor_normalized":[anchor.x,anchor.y],"input_sequence":input.sequence,"last_input_observation":input.last_observation.duplicate(true),"camera_focus":Codec.vector3(_preview.get("_camera_focus")),"shake_left_s":float(_preview.get("_shake")),"difficulty_at_entry":level_packet.local.profile_id}}
+	var model: CinderCampaignAttempts = Attempts.new(registry)
+	_p_initial = model.state()
+	_p_initial.completed_main = PREFIX.duplicate() # TEST prerequisite declaration, never earned progress.
+	_p_initial.story = {"kind":"story","level_id":"A2-L4","snapshot":snapshot.duplicate(true),"checkpoint":snapshot.duplicate(true)}
+	var writer: CinderSaveStore = Store.new(_test_root + "campaign.json")
+	writer.payload_validator = model.saved_payload_error
+	if not _expect(model.state_error(_p_initial).is_empty() and writer.write_payload(_p_initial), "Validated Attempts/format2 Store accepts declared TEST prefix8 plus exact native Story; no synthetic optional packet"): return false
+	level.exit_level()
+	_preview.get("fx").clear_lab()
+	var retired: Array = _refs(_preview)
+	_preview.free(); _preview = null
+	return _expect(_refs_freed(retired), "Original Story seed donor normally exits and frees all native descendants")
+
+
+func _new_shell() -> bool:
+	_events.clear(); _watch = true
+	_shell = Shell.new() as CinderCampaignShell
+	if not _expect(_shell.configure_runtime({}, _test_root+"campaign.json", _test_root+"settings.json", _test_root+"preferences.json"), "Independent actual canonical Shell uses only isolated Stores"): return false
+	root.add_child(_shell)
+	for _frame: int in range(1200):
+		await process_frame
+		if not is_instance_valid(_shell) or not _shell.campaign_error.is_empty(): break
+		if paused and not bool(_shell.get("_draining")) and (_shell.get("_operations") as Array).is_empty() and _shell.menu.page_name() == "title": break
+	_watch = false
+	return _expect(paused and _shell.campaign_error.is_empty() and _shell.player == null and _shell.active_level == null and _shell.menu.page_name() == "title" and _events.is_empty(), "Fresh Title independently reads/validates actual entire session without install callbacks")
+
+
+func _p_wait_packet(expected: Dictionary, kind: String) -> bool:
+	for _frame: int in range(1200):
+		await process_frame
+		if not is_instance_valid(_shell) or not _shell.campaign_error.is_empty(): break
+		if paused and not bool(_shell.get("_draining")) and (_shell.get("_operations") as Array).is_empty() and _shell.attempts.active_kind() == kind and is_instance_valid(_shell.player) and _same(_shell.capture_campaign_snapshot(), expected): return true
+	return _expect(false, "Bounded actual quiet full-packet install: " + _shell.campaign_error)
+
+
+func _test_contact(position_value: Vector3) -> bool:
+	if not _live(): return false
+	paused = true
+	_shell.player.global_position = position_value + Vector3.UP * 0.04
+	_shell.player.velocity = Vector3.ZERO
+	# This one artificial TEST teleport has no preceding ordinary follow frame.
+	# Prepare that initial cosmetic frame once, before the SAME public resume.
+	var actor: CinderPlayer = _shell.player
+	var player_before: Dictionary = actor.snapshot_state()
+	var level_before: Dictionary = _shell.active_level.snapshot_state()
+	var response_before: Dictionary = actor.get_threat_response_state()
+	if not _expect(response_before.get("actor") == actor, "TEST entry preparation retains actual response actor identity"): return false
+	response_before.erase("actor") # Node identity is checked separately, never JSON-forged.
+	var before: String = Exact.stringify({"player":player_before,"level":level_before,"response":_encode(response_before),"input":_encode(_shell.get_input_observation_state()),"attempts":_shell.attempts.state(),"raw_stores":_p_disk(),"native_ids":_p_ids()})
+	if not _expect(not player_before.is_empty() and not level_before.is_empty() and not before.is_empty(), "Artificial TEST contact has complete paused native state before cosmetic entry preparation"): return false
+	_shell.call("_update_status")
+	_shell.call("_update_camera", 0.0, true)
+	var player_after: Dictionary = actor.snapshot_state()
+	var level_after: Dictionary = _shell.active_level.snapshot_state()
+	var response_after: Dictionary = actor.get_threat_response_state()
+	if not _expect(_shell.player == actor and response_after.get("actor") == actor, "One cosmetic TEST frame preserves actual Player/response identity"): return false
+	response_after.erase("actor")
+	var after: String = Exact.stringify({"player":player_after,"level":level_after,"response":_encode(response_after),"input":_encode(_shell.get_input_observation_state()),"attempts":_shell.attempts.state(),"raw_stores":_p_disk(),"native_ids":_p_ids()})
+	if not _expect(not player_after.is_empty() and not level_after.is_empty() and before == after, "One cosmetic TEST entry frame preserves exact native Player/response/consumer/clocks/resources/input/Attempts/raw Stores"): return false
+	var hero_points: Array = _shell.call("player_camera_framing_points")
+	if not _expect(not hero_points.is_empty() and String(_shell.call("camera_framing_error", hero_points)).is_empty(), "Actual full Hero bounds are currently contained after one ordinary cosmetic TEST entry frame"): return false
+	_shell.menu.resume_requested.emit()
+	for _tick: int in range(10):
+		await _probe.tick_finished
+		if paused: break
+	return _expect(_shell.campaign_error.is_empty() and is_instance_valid(_shell.player) and not _shell.player.dead,"explicit TEST contact resolves natively without callback/runtime fault: " + _shell.campaign_error)
+
+
+func _p_earn_checkpoint() -> bool:
+	for id: String in ["east_tender", "west_tender"]:
+		if not await _test_gated_defeat(id) or not await _same_original_tail_finishes(id): return false
+	if not _expect(_state().cleared_ids == ["east_tender","west_tender"] and _state().checkpoint_committed == false and int(_shell.active_level.call("get_tool").call("state").cycle) == 0, "Both disclosed recovery-gated public injuries/native callbacks and original quiet tails precede CP/Handler"): return false
+	if not await _test_contact(ANCHOR): return false # One disclosed fixed supported contact pose; never a search.
+	_shell.request_pause()
+	await _settle()
+	var checkpoint: Dictionary = _shell.attempts.state().side_attempt.checkpoint
+	if not _expect(not checkpoint.is_empty() and checkpoint.level.progress.checkpoint_id == CP_ID and checkpoint.level.local.defeated_ids == ["east_tender","west_tender"] and int(checkpoint.level.local.tool.cycle) == 0 and _same(_shell.attempts.state().story, _p_story), "Real contact durably records actual quiet before-final checkpoint, no manufactured history"): return false
+	# Retain the actual unit/raw Store and pure current view before a failed
+	# Retry can dispose the rejected candidate and cleanup removes user files.
+	# Diagnostic only: no refit, wait, pose, guard or saved-field mutation.
+	if not _p_retain_before_retry(checkpoint): return false
+	# Public Retry makes the genuine saved contact unit the exact live writer;
+	# no local field is manufactured, copied into production, or stripped.
+	_shell.menu.retry_requested.emit()
+	if not await _p_wait_packet(checkpoint, "optional"): return false
+	return _expect(_same(_shell.capture_campaign_snapshot(), checkpoint) and _state().checkpoint_committed and _shell.player.global_position.x == 0.0 and absf(_shell.player.global_position.z - ANCHOR.z) < 0.00001 and _shell.player.hp == _shell.player.max_hp, "Actual public Retry installs genuine CP at the single declared anchor with unchanged full HP; no Handler route performed")
+
+
+
+func _p_retain_before_retry(checkpoint: Dictionary) -> bool:
+	var current: Dictionary = _shell.capture_campaign_snapshot()
+	var camera: Camera3D = _shell.get("camera") as Camera3D
+	var points: Array = _shell.active_level.call("_current_required_points")
+	var hero_points: Array = _shell.call("player_camera_framing_points")
+	var required: Array = points.duplicate()
+	required.append_array(hero_points)
+	var plan: Dictionary = _shell.call("camera_framing_plan",required,_shell.get("_camera_focus"))
+	# Retain every pure native plan field. Encode its Basis as native axes so
+	# the existing closed JSON codec can carry it without a Variant decoder.
+	var framing_state: Dictionary = _shell.call("get_camera_framing_state")
+	for diagnostic: Dictionary in [plan,framing_state]:
+		if diagnostic.get("basis") is Basis:
+			var basis: Basis = diagnostic.basis
+			diagnostic.basis = {"diagnostic_native_type":"Basis","axes":[basis.x,basis.y,basis.z]}
+	var view: Dictionary = {"native_clock_s":_state().clock_s,"physics_frame":Engine.get_physics_frames(),"process_frame":Engine.get_process_frames(),"actual_camera_position":camera.global_position,"actual_camera_basis_axes":[camera.global_basis.x,camera.global_basis.y,camera.global_basis.z],"actual_camera_size":camera.size,"actual_viewport_size":camera.get_viewport().get_visible_rect().size,"actual_focus":_shell.get("_camera_focus"),"saved_checkpoint_focus":checkpoint.shell.camera_focus,"actual_hero_position":_shell.player.global_position,"current_required_points":points,"actual_hero_points":hero_points,"actual_current_containment_error":_shell.call("camera_framing_error",required),"pure_plan":plan,"actual_hud_safe_rect":_shell.hud.call("combat_safe_rect"),"level_objective":_shell.active_level.objective_text,"actual_framing_state":framing_state,"scope":"Pure actual pre-Retry view only; no reconstructed candidate camera, geometry or hypothetical fit. Accepted plan does not certify current containment."}
+	# Populate the existing setup field BEFORE Retry, rather than first after
+	# successful Retry in _run. A failed cohort can now retain its actual units.
+	_c_setup_packet = {"whole_snapshot_exact":Exact.stringify(current),"whole_session_exact":Exact.stringify(_shell.attempts.state()),"protected_story_exact":Exact.stringify(_p_story),"raw_stores":_p_disk(),"TEST_injuries":_encode(_injuries),"checkpoint_exact":Exact.stringify(checkpoint),"native_pre_retry_view_exact":Exact.stringify(_encode(view)),"scope":"Actual genuine before-final checkpoint/current/session/raw Stores before public Retry; native pure view only, no camera/clock/pose/stage/history change"}
+	var retained: bool = true
+	for key: String in ["whole_snapshot_exact","whole_session_exact","protected_story_exact","checkpoint_exact","native_pre_retry_view_exact"]:
+		retained = retained and not String(_c_setup_packet[key]).is_empty()
+	return _expect(retained,"Actual pre-Retry whole packet/raw Store/pure view retained before any presentation refusal")
+
+
+func _p_disk() -> Dictionary:
+	var result: Dictionary = {}
+	for name: String in ["campaign.json","campaign.json.bak","settings.json","settings.json.bak","preferences.json","preferences.json.bak"]:
+		var path: String = _test_root + name
+		var exists: bool = FileAccess.file_exists(path)
+		result[name] = {"exists":exists,"raw":FileAccess.get_file_as_string(path) if exists else "","sha256":FileAccess.get_sha256(path) if exists else ""}
+	return result
+
+
+func _p_ids() -> Dictionary:
+	var result: Dictionary = {}
+	if not _live(): return result
+	for pair: Array in [["shell",_shell],["hero",_shell.player],["effects",_shell.fx],["level",_shell.active_level],["scheduler",_shell.active_level.call("get_scheduler")],["tool",_shell.active_level.call("get_tool")],["west_bank",_bank("west_bank")],["east_bank",_bank("east_bank")]]:
+		var node: Node = pair[1] as Node
+		if is_instance_valid(node) and node.is_inside_tree(): result[pair[0]] = str(node.get_instance_id())
+	for id: String in TARGETS:
+		var actor: Node = _shell.active_level.call("get_actor",id) as Node
+		if is_instance_valid(actor) and actor.is_inside_tree(): result[id] = str(actor.get_instance_id())
+	return result
+
+
+func _p_sources() -> Dictionary:
+	var result: Dictionary = {}
+	for path: String in [get_script().resource_path,"res://tests/act2_o2_registration_smoke.gd","res://tests/acts/act2/a2_o2_loading_side_smoke.gd","res://scenes/main.tscn",STORY_PATH,O2_PATH,"res://scripts/game.gd","res://scripts/player.gd","res://scripts/campaign/shell.gd","res://scripts/campaign/level.gd","res://scripts/campaign/registry.gd","res://scripts/campaign/attempts.gd","res://scripts/campaign/save_store.gd","res://scripts/campaign/exact_json.gd","res://scripts/campaign/snapshot_codec.gd",HOST_PATH,"res://scripts/acts/act2/canister_tender_actor.gd","res://scripts/acts/act2/salvage_handler_actor.gd","res://scripts/combat/smoke_bank.gd","res://scripts/combat/lane_mechanism.gd","res://scripts/combat/threat_scheduler.gd","res://scripts/combat/threat_geometry.gd","res://scripts/combat/difficulty.gd","res://data/design/difficulty_profiles.json","res://data/campaign/registry.json"]:
+		result[path] = FileAccess.get_sha256(path)
+	return result
+
+
+func _p_write_new(path: String, text: String) -> bool:
+	if not _expect(path.is_absolute_path() and not FileAccess.file_exists(path), "New owned evidence path never replaces prior output"): return false
+	var file: FileAccess = FileAccess.open(path, FileAccess.WRITE)
+	if not _expect(file != null, "Owned new evidence output opens"): return false
+	file.store_string(text); file.flush()
+	var error: Error = file.get_error()
+	file.close()
+	return _expect(error == OK, "Complete owned evidence output flushes")
+
+
+func _p_dispose() -> bool:
+	if not is_instance_valid(_shell): return true
+	var retired: Array = _refs(_shell)
+	if is_instance_valid(_shell.active_level): _shell.active_level.exit_level()
+	if is_instance_valid(_shell.fx): _shell.fx.clear_lab()
+	_shell.free(); _shell = null
+	await process_frame; await process_frame
+	return _expect(_refs_freed(retired), "Normal public level exit and complete native Shell disposal release all selected descendants")
+
+
+func _p_remove_stores() -> void:
+	for name: String in ["campaign.json","campaign.json.bak","settings.json","settings.json.bak","preferences.json","preferences.json.bak"]:
+		var path: String = ProjectSettings.globalize_path(_test_root + name)
+		if FileAccess.file_exists(path): DirAccess.remove_absolute(path)
+
+
+func _expect(ok: bool, note: String) -> bool:
+	_checks += 1
+	var row: Dictionary = {"index":_checks,"ok":ok,"note":note}
+	_p_rows.append(row)
+	if not ok:
+		_failures += 1
+		if _p_first_failure.is_empty(): _p_first_failure = row.duplicate(true)
+		push_error("FAIL A2O2 Handler fixture: " + note)
+	return ok
+
+
+func _finish() -> void:
+	if _finished: return
+	_finished = true
+	_watch = false
+	_p_finish_async.call_deferred()
+
+

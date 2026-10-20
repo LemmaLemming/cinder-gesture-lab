@@ -1,0 +1,176 @@
+"""Python-only synthetic report/closure/guard controls; zero native credit."""
+from pathlib import Path
+import copy
+import json
+import tempfile
+import types
+
+HERE = Path(__file__).resolve().parent
+check = types.ModuleType('o2_mock_reader')
+exec(compile((HERE / 'native_inspect.py').read_bytes(), str(HERE / 'native_inspect.py'), 'exec'), check.__dict__)
+host = types.ModuleType('o2_mock_host')
+host.__file__ = str(HERE / 'run.py')
+exec(compile((HERE / 'run.py').read_bytes(), str(HERE / 'run.py'), 'exec'), host.__dict__)
+rows = []
+
+
+def expect(label, ok):
+    assert ok, label
+    rows.append({'label': label, 'passed': True})
+
+
+def refuses(call):
+    try:
+        call()
+        return False
+    except (ValueError, KeyError, FileNotFoundError):
+        return True
+
+
+def make_mock(root, cell='original', baseline=None):
+    out = root / ('.cinder/MOCK-' + cell)
+    evidence = out / 'evidence'; evidence.mkdir(parents=True)
+    subject = 'scripts/MOCK-SUBJECT.gd'; fixture = 'tests/MOCK-FIXTURE.gd'
+    original = {'exists': True, 'regular': True, 'symlink': False, 'sha256': 'c' * 64, 'bytes': 10, 'mode': '0644'}
+    spec = {'fixture': fixture, 'fixture_sha256': 'a' * 64, 'subject': subject,
+            'subject_variants': {'original': original, 'candidate': dict(original, sha256='d' * 64)},
+            'native_sources': {'res://' + fixture: 'a' * 64, 'res://MOCK-CONTROL': 'b' * 64},
+            'expected': {subject: original}}
+    exact = json.dumps({'api_revision': 'exact-json-1', 'schema_version': 1, 'value': ['dictionary', []]}, separators=(',', ':'))
+    def store(payload):
+        return json.dumps({'format_version': 2, 'generation': 1, 'payload_json': payload, 'sha256': check.digest(payload.encode())}, separators=(',', ':'))
+    disk = {name: {'exists': False, 'raw': '', 'sha256': ''} for name in ['campaign.json', 'campaign.json.bak', 'settings.json', 'settings.json.bak', 'preferences.json', 'preferences.json.bak']}
+    for name, literal in [('campaign.json', store(exact)), ('preferences.json', store(exact)), ('settings.json', '{"MOCK_ONLY":true}')]:
+        disk[name] = {'exists': True, 'raw': literal, 'sha256': check.digest(literal.encode())}
+    source_sha = spec['subject_variants'][cell]['sha256']
+    outcome = 'ORIGINAL_SAFE_USEFUL' if cell == 'original' else 'MEANINGFUL_CHANGED_RESPONSE'
+    unit = {'schema_version': 1, 'cell': cell, 'complete': True, 'outcome': outcome, 'source_sha256': source_sha,
+            'fixture_sha256': spec['fixture_sha256'], 'setup': {'whole_snapshot_exact': exact, 'whole_session_exact': exact, 'protected_story_exact': exact, 'raw_stores': disk},
+            'native_ids_decimal': {name: str(index) for index, name in enumerate(['shell', 'hero', 'effects', 'level', 'scheduler', 'tool', 'west_bank', 'east_bank', 'west_tender', 'east_tender', 'final_handler'], 1)},
+            'phases': {name: True for name in ['warning', 'lock', 'active', 'recovery']}, 'contacts': [], 'driver': [{'MOCK_ONLY': True}],
+            'baseline': {'path': '', 'sha256': '', 'epoch_delta_s': 0} if baseline is None else {'path': baseline['path'], 'sha256': baseline['sha256'], 'epoch_delta_s': 0.25}}
+    for name in ['context_exact', 'plan_exact', 'trace_exact', 'union_exact', 'union_samples_exact', 'actions_exact']: unit[name] = exact
+    labels = ['MOCK_ONLY synthetic complete', 'Normal public level exit and complete native Shell disposal release all selected descendants', 'Actual canonical registry unchanged', 'All named selected source bytes unchanged']
+    native_rows = [{'index': i, 'ok': True, 'note': label} for i, label in enumerate(labels, 1)]
+    sources = dict(spec['native_sources']); sources['res://' + subject] = source_sha
+    packet = {'schema_version': 1, 'cell': cell, 'checks': len(native_rows), 'failures': 0, 'rows': native_rows, 'first_failure': {}, 'complete': True, 'success': True, 'outcome': outcome, 'source_before': sources, 'source_after': sources}
+    return out, spec, packet, unit
+
+
+def write_mock(out, packet, unit):
+    path = out / 'evidence/native-report.json'; unit_path = out / 'evidence/comparison-unit.json'
+    unit_path.write_text(json.dumps(unit))
+    packet['comparison_unit'] = {'path': str(unit_path), 'sha256': check.digest(unit_path.read_bytes())}
+    path.write_text(json.dumps(packet))
+    return 'CINDER_A2_O2_HANDLER_COMPARE_REPORT path=%s sha256=%s\nA2-O2 Handler comparison: %d checks, %d failures; complete=%s; success=%s; outcome=%s\n' % (
+        path, check.digest(path.read_bytes()), packet['checks'], packet['failures'], str(packet['complete']).lower(), str(packet['success']).lower(), packet['outcome'])
+
+
+def main():
+    with tempfile.TemporaryDirectory(prefix='cinder-o2-host-mocks-') as directory:
+        root = Path(directory).resolve()
+        out, spec, packet, unit = make_mock(root)
+        raw = write_mock(out, packet, unit)
+        observe = lambda text=raw, api=0, child=0: check.observe(out, root, spec, 'original', text, api, child)
+        expect('MOCK_ONLY complete literal report/unit/source/Store/footer joins', observe()['functional_pass'])
+        for token in ['1e999', '-1e999', 'NaN', 'Infinity']:
+            expect('Strict JSON refuses nonfinite token ' + token, refuses(lambda token=token: check.strict(('{"x":' + token + '}').encode())))
+        expect('Strict JSON refuses nested duplicate keys', refuses(lambda: check.strict(b'{"x":{"y":1,"y":2}}')))
+        for label, mutation in [
+            ('Bool cannot masquerade as consecutive row index', lambda p: p['rows'][0].update(index=True)),
+            ('Incorrect failure count refuses', lambda p: p.update(failures=1)),
+            ('Missing native normal cleanup assertion refuses', lambda p: p['rows'][1].update(note='MISSING_MOCK_LABEL')),
+            ('Native source drift refuses', lambda p: p['source_after'].update({'res://MOCK-CONTROL': 'z' * 64})),
+            ('Incomplete native result refuses', lambda p: p.update(complete=False, success=False)),
+            ('Equivalent outcome never promotes candidate', lambda p: p.update(outcome='EQUIVALENT_OLD_PATH_STILL_SAFE_OR_INCONCLUSIVE'))]:
+            changed = copy.deepcopy(packet); mutation(changed)
+            changed_raw = write_mock(out, changed, unit)
+            expect(label, not observe(changed_raw)['functional_pass'])
+        raw = write_mock(out, packet, unit)
+        expect('Wrong footer refuses even with intact report', not observe(raw.replace('4 checks', '5 checks'))['functional_pass'])
+        expect('API0 is required independently of native success', not observe(raw, 2, 0)['functional_pass'])
+        expect('Same owned Popen0 is required independently of API0', not observe(raw, 0, 2)['functional_pass'])
+        for label, mutation in [
+            ('Wrong native unit source refuses', lambda u: u.update(source_sha256='x' * 64)),
+            ('Opaque Exact envelope schema bool refuses', lambda u: u.update(context_exact='{"api_revision":"exact-json-1","schema_version":true,"value":[]}')),
+            ('Literal raw Store checksum corruption refuses', lambda u: u['setup']['raw_stores']['campaign.json'].update(sha256='x' * 64)),
+            ('Absent raw slot cannot retain fabricated bytes', lambda u: u['setup']['raw_stores']['campaign.json.bak'].update(raw='x')),
+            ('Duplicate native identity refuses', lambda u: u['native_ids_decimal'].update(hero='1')),
+            ('Missing active phase refuses', lambda u: u['phases'].pop('active')),
+            ('Any actual contact opportunity refuses', lambda u: u['contacts'].append({'MOCK_ONLY': True})),
+            ('Original cannot consume a fabricated baseline', lambda u: u['baseline'].update(path='/MOCK-FOREIGN'))]:
+            changed = copy.deepcopy(unit); mutation(changed)
+            changed_raw = write_mock(out, packet, changed)
+            expect(label, not observe(changed_raw)['functional_pass'])
+        raw = write_mock(out, packet, unit)
+        # Build a MOCK-only closed first phase, never engine/native evidence.
+        (out / 'raw.log').write_text(raw)
+        (out / 'engine.log').write_text('')
+        for name in ['command.json', 'engine-before.json', 'engine-after.json', 'engine-at-close.json', 'native-literal-retention.json']:
+            host.save(out / name, {'MOCK_ONLY': True})
+        for name in ['sources-at-lock.json', 'sources-after-child.json', 'sources-at-phase-close.json']:
+            host.save(out / name, spec['expected'])
+            host.save(out / name.replace('.json', '-retention.json'), {})
+        observation = observe(raw)
+        phase = {'phase': 'original', 'closed': True, 'passed': True, 'host_return': 0, 'canonical_api_return': 0, 'native_functional_pass': True, 'raw_diagnostics': [],
+                 'owned_children': [{'pid': 123, 'closed': True, 'popen_return': 0}], 'native_observation': observation}
+        host.save(out / 'native-observation.json', observation); host.save(out / 'result.json', phase); host.indexed(out)
+        old_root = host.ROOT; host.ROOT = root
+        try:
+            baseline = host.closed_original_baseline(out, phase, spec)
+            expect('MOCK_ONLY original external closure yields literal native unit baseline', baseline == observation['comparison_unit'])
+            # Report-clean API/native0 cannot substitute for actual clean Host0.
+            failed = copy.deepcopy(phase); failed['host_return'] = 2; failed['passed'] = False
+            host.save(out / 'result.json', failed); host.indexed(out)
+            expect('CA-only or other Host2 forbids original baseline', refuses(lambda: host.closed_original_baseline(out, failed, spec)))
+            host.save(out / 'result.json', phase); host.indexed(out)
+            (out / 'raw.log').write_text(raw + 'WARNING: MOCK_DIAGNOSTIC\n'); host.indexed(out)
+            expect('Original diagnostic cannot enter candidate baseline', refuses(lambda: host.closed_original_baseline(out, phase, spec)))
+            (out / 'raw.log').write_text(raw); host.indexed(out)
+            (out / 'command.json').write_text('{"MOCK_DRIFT":true}')
+            expect('Indexed original artifact drift refuses before source selection', refuses(lambda: host.closed_original_baseline(out, phase, spec)))
+            host.indexed(out)
+            baseline = host.closed_original_baseline(out, phase, spec)
+        finally: host.ROOT = old_root
+        candidate_out, candidate_spec, candidate_packet, candidate_unit = make_mock(root, 'candidate', baseline)
+        candidate_raw = write_mock(candidate_out, candidate_packet, candidate_unit)
+        candidate_observe = lambda: check.observe(candidate_out, root, candidate_spec, 'candidate', candidate_raw, 0, 0, baseline)
+        expect('MOCK_ONLY candidate joins separately closed original literal unit/hash', candidate_observe()['functional_pass'])
+        candidate_unit['baseline']['epoch_delta_s'] = True
+        candidate_raw = write_mock(candidate_out, candidate_packet, candidate_unit)
+        expect('Bool epoch cannot masquerade as finite native baseline delta', not candidate_observe()['functional_pass'])
+        subject = root / 'MOCK-SUBJECT.gd'; original = b'MOCK-ORIGINAL'; candidate = b'MOCK-CANDIDATE'
+        subject.write_bytes(original); subject.chmod(0o644); old_record, _ = host.record(subject)
+        subject.write_bytes(candidate); candidate_record, _ = host.record(subject)
+        def receipt(name, closed=True, attempted=True):
+            destination = root / name; destination.mkdir()
+            return host.restore_subject_if_known(subject, original, old_record, candidate_record, destination, closed, attempted)
+        answer = receipt('known-candidate')
+        expect('Known exact candidate restores only after mocked owned closure', answer['restored_exact_bytes_and_mode'] and subject.read_bytes() == original)
+        inode = subject.stat().st_ino; answer = receipt('exact-original', attempted=False)
+        expect('Exact original no-op preserves inode without writing', answer['status'] == 'ALREADY_EXACT_ORIGINAL_NO_WRITE' and subject.stat().st_ino == inode and not answer['subject_write_attempted'])
+        subject.write_bytes(b'MOCK-FOREIGN'); answer = receipt('foreign-bytes')
+        expect('Unknown source bytes remain in situ and retained', not answer['restored_exact_bytes_and_mode'] and subject.read_bytes() == b'MOCK-FOREIGN' and (root / 'foreign-bytes/unexpected-subject-before-restore.bin').read_bytes() == b'MOCK-FOREIGN')
+        subject.write_bytes(candidate); subject.chmod(0o600); answer = receipt('foreign-mode')
+        expect('Unknown source mode remains in situ', not answer['restored_exact_bytes_and_mode'] and subject.stat().st_mode & 0o777 == 0o600)
+        subject.unlink(); target = root / 'MOCK-FOREIGN-TARGET'; target.write_bytes(b'NO_FOREIGN_TARGET_READ'); subject.symlink_to(target); answer = receipt('foreign-link')
+        expect('Unknown symlink and target remain untouched', not answer['restored_exact_bytes_and_mode'] and subject.is_symlink() and target.read_bytes() == b'NO_FOREIGN_TARGET_READ')
+        subject.unlink(); subject.mkdir(); answer = receipt('foreign-directory')
+        expect('Unknown directory remains untouched', not answer['restored_exact_bytes_and_mode'] and subject.is_dir())
+        subject.rmdir(); subject.write_bytes(candidate); subject.chmod(0o644); answer = receipt('open-child', closed=False)
+        expect('Any open owned child prohibits source restore write', not answer['subject_write_attempted'] and subject.read_bytes() == candidate)
+        subject.write_bytes(original); actual_record = host.file_record
+        def late_change(path):
+            subject.write_bytes(b'MOCK-LATE-FOREIGN')
+            return actual_record(path)
+        host.file_record = late_change
+        try: refused = refuses(lambda: host.replace_subject(subject, candidate, '0644', old_record))
+        finally: host.file_record = actual_record
+        expect('Final prior guard after replacement temp readiness preserves late foreign bytes', refused and subject.read_bytes() == b'MOCK-LATE-FOREIGN')
+    result = {'status': 'PYTHON_ONLY_SYNTHETIC_CONTROLS_PASSED', 'checks': len(rows), 'failures': 0, 'rows': rows,
+              'limits': 'Only MOCK literal JSON/source/closure/index files and mocked child-closure flags under a unique temporary directory. No canonical dev import/resolver/queue, engine/GDScript parser/import/seal/native Store, executable fixture/UID materialization, live source/Git/worker operation or gameplay credit.'}
+    (HERE / 'HOST_TESTS.json').write_text(json.dumps(result, indent=2) + '\n')
+    print(json.dumps({'Python_only_checks': len(rows), 'failures': 0, 'native_credit': False}))
+
+
+if __name__ == '__main__': main()

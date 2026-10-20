@@ -1,0 +1,47 @@
+--- WITHDRAWN_UNEXECUTED264.gd.txt
++++ UNEXECUTED_RIGHT_DIAGONAL.gd.txt
+@@ -1,5 +1,5 @@
+ extends CinderLevel
+-## PRIVATE INERT SOURCE-ONLY Handler-angle hypothesis; not promoted or executed.
++## PRIVATE INERT corrected right-diagonal hypothesis; not promoted or executed.
+ ## A2-O2: two original Tender/SmokeBank pairs, then one original Handler.
+ ## The shared Player, Scheduler, Lane and SmokeBank own inputs/damage/clocks.
+ ## New host progression, native bindings, presentation and closed local16 codec.
+@@ -46,7 +46,7 @@
+ const LOCAL_KEYS: Array[String] = ["scenic_clock", "profile_id", "world_revision", "defeated_ids", "defeat_times", "pending_defeats", "checkpoint_contact_seen", "checkpoint_requested", "pending_checkpoint", "completion_pending", "exit_requested", "scheduler", "actors", "banks", "tool", "views"]
+ const HANDLER_ARRANGEMENT_API: String = "act2-clear-air-handler-arrangement-1"
+ const HANDLER_FRONTAL_RECIPE: String = "canonical-handler-frontal-1"
+-const HANDLER_NORTHWEST_RECIPE: String = "challenge-handler-northwest-1"
++const HANDLER_DIAGONAL_RIGHT_RECIPE: String = "challenge-handler-diagonal-right-1"
+ const HANDLER_ARRANGEMENT_KEYS: Array[String] = ["api_revision", "schema_version", "profile", "recipe_id"]
+ const HANDLER_PROFILE_KEYS: Array[String] = ["id", "name", "raw_damage_multiplier", "windup_multiplier", "recovery_multiplier", "reserved_threat_budget", "commit_stagger_s", "arrangement"]
+ const VIEW_KEYS: Array[String] = ["reservation_id", "landing", "attack_position", "target_id", "primary_time_s", "response_complete_s", "equipment_ids"]
+@@ -137,7 +137,7 @@
+ 		runtime_error = "Fresh canonical Circuit profile required"
+ 		return
+ 	_handler_legacy_layout = false
+-	_handler_arrangement = {"api_revision": HANDLER_ARRANGEMENT_API, "schema_version": 1, "profile": canonical.duplicate(true), "recipe_id": HANDLER_NORTHWEST_RECIPE if selected == "challenge" else HANDLER_FRONTAL_RECIPE}
++	_handler_arrangement = {"api_revision": HANDLER_ARRANGEMENT_API, "schema_version": 1, "profile": canonical.duplicate(true), "recipe_id": HANDLER_DIAGONAL_RIGHT_RECIPE if selected == "challenge" else HANDLER_FRONTAL_RECIPE}
+ 	var error: String = _handler_policy_error(_handler_arrangement)
+ 	if not error.is_empty():
+ 		runtime_error = error
+@@ -252,7 +252,7 @@
+ 	# Validate retained recipe identity, not today's fresh preference mapping.
+ 	# Frontal remains available for every profile as immutable retained v1.
+ 	if policy.recipe_id == HANDLER_FRONTAL_RECIPE: return ""
+-	if policy.recipe_id == HANDLER_NORTHWEST_RECIPE and profile.id == "challenge": return ""
++	if policy.recipe_id == HANDLER_DIAGONAL_RIGHT_RECIPE and profile.id == "challenge": return ""
+ 	return "Unknown or incompatible retained Circuit Handler recipe"
+ 
+ 
+@@ -304,8 +304,8 @@
+ func _handler_direction() -> Vector3:
+ 	if _handler_legacy_layout or _handler_arrangement.get("recipe_id") == HANDLER_FRONTAL_RECIPE:
+ 		return Vector3.BACK
+-	if _handler_arrangement.get("recipe_id") == HANDLER_NORTHWEST_RECIPE:
+-		return (Vector3.BACK + Vector3.LEFT).normalized()
++	if _handler_arrangement.get("recipe_id") == HANDLER_DIAGONAL_RIGHT_RECIPE:
++		return (Vector3.BACK + Vector3.RIGHT).normalized()
+ 	return Vector3.ZERO # Unknown policy must already have refused configuration.
+ 
+ 

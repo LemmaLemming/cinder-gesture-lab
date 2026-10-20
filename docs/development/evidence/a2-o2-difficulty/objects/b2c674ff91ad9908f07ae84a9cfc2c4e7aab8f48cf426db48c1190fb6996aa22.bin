@@ -1,0 +1,35 @@
+"""Freeze the additive TEST observer capsule after exact old205 named checks; no native materialization."""
+from pathlib import Path
+import json,hashlib,stat,os
+ROOT=Path(__file__).resolve().parents[2];D=Path(__file__).resolve().parent;OLD=ROOT/'.cinder/a2-o2-candidate-persistence-prepare-20261020'
+prior=json.loads((OLD/'INPUT_SPEC.json').read_text());priorready=json.loads((OLD/'READINESS.json').read_text())
+def sha(b):return hashlib.sha256(b).hexdigest()
+def row(p):
+ present=os.path.lexists(p);st=p.lstat() if present else None;regular=bool(st and stat.S_ISREG(st.st_mode));data=p.read_bytes() if regular else None
+ return {'exists':present,'regular':regular,'symlink':bool(st and stat.S_ISLNK(st.st_mode)),'sha256':sha(data) if data is not None else None,'bytes':len(data) if data is not None else None,'mode':format(stat.S_IMODE(st.st_mode),'04o') if st else None}
+def rel(p):return str(p.relative_to(ROOT))
+def put(n,d):(D/n).write_text(json.dumps(d,indent=2,allow_nan=False)+'\n')
+for n,m in prior['expected'].items():assert row(ROOT/n)==m,n
+for n in prior['self_files']:assert row(ROOT/n)['sha256']==priorready['frozen_files'][n],n
+assert len(set(prior['expected'])|set(prior['self_files']))==205
+assert row(D/'run.py')['sha256']==row(OLD/'run.py')['sha256']=='a5d5106f28ec05387755b7802abef9339ec6b80602f235585f09384c4142db67'
+expected=dict(prior['expected'])
+for n in prior['self_files']:expected[n]=row(ROOT/n)
+RUN=OLD/'run-run-20261020T042152.990446Z-0feb4195'
+for n in ['evidence-index.json','result.json','queue.json','persistence/result.json','persistence/evidence-index.json','persistence/evidence/native-report.json','persistence/evidence/persistence-unit.json']:
+ expected[rel(RUN/n)]=row(RUN/n)
+review=ROOT/'.cinder/a2-o2-candidate-persistence-actual-review-20261020/REVIEW.json';expected[rel(review)]=row(review)
+PRESERVED=ROOT/'.cinder/a2-o2-retry-observer-prepare-20261020'
+for name in ['INDEX.json','persistence.gd.txt','RETRY_OBSERVER.patch']:expected[rel(PRESERVED/name)]=row(PRESERVED/name)
+fixture=prior['fixture'];fixturebytes=(D/'persistence.gd.txt').read_bytes();fixture_sha=sha(fixturebytes)
+expected[fixture]={'exists':True,'regular':True,'symlink':False,'sha256':fixture_sha,'bytes':len(fixturebytes),'mode':'0644'}
+assert not (ROOT/(fixture+'.uid')).exists()
+sources=dict(prior['native_sources']);sources['res://'+fixture]=fixture_sha
+selfnames=['run.py','native_inspect.py','persistence.gd.txt','RETRY_OBSERVER.patch','README.md','PURE_OBSERVER_AMENDMENT.json','prepare_source.py.draft.txt','SOURCE_CONTROLS.json','freeze_inputs.py','INPUT_SPEC.json','PROVENANCE.json']
+spec={'schema':1,'status':'FROZEN_SOURCE_ONLY_ADDITIVE_OBSERVER_UNMATERIALIZED_UNSEALED_UNEXECUTED','integration_root':str(ROOT),'subject':prior['subject'],'fixture':fixture,'fixture_sha256':fixture_sha,'promotion_text_mapping':{fixture:rel(D/'persistence.gd.txt')},'expected':dict(sorted(expected.items())),'self_files':[rel(D/n) for n in selfnames],'native_sources':sources,'engine_expected':prior['engine_expected'],'source_units':prior['source_units'],'scope':'ONE future graphical no-swap persistence/portrait job; origin/lifecycle/payload-qualified TEST donor retirement observer only, exact same genuine old16/new17 inputs and mechanical cases as010929. No production/route/producer/comparison repeat.'}
+put('INPUT_SPEC.json',spec)
+put('PROVENANCE.json',{'status':'ADDITIVE_INERT_SOURCE_ONLY','old_frozen_input_spec':{'path':rel(OLD/'INPUT_SPEC.json'),'sha256':row(OLD/'INPUT_SPEC.json')['sha256'],'named_original_slots':205,'post_L4_closed_named_check':'all unchanged before this freeze'},'old_runtime_fixture':prior['expected'][fixture],'future_fixture':expected[fixture],'old_failed_native':{'path':str(RUN),'native_checks':47,'native_failures':1,'first_failed_index':44,'host_API_Popen':2,'partial_unit_sha256':row(RUN/'persistence/evidence/persistence-unit.json')['sha256'],'preserved':True},'actual_review':{'path':rel(review),'sha256':row(review)['sha256']},'exact_failed_event_kinds':'UNRECORDED, no retrospective fabrication','source_guard_proof':['Shell._install exits old active level before pointer replacement','Level.exit_level disarms _entered and enters _lifecycle_busy before hook','Circuit._on_exit_level cancels/clears native consumers with exact circuit_level_exit and clears cues','Inherited generic observer permanently appended those cleanup notifications to the same _events list'],'delta_scope':'Bounded TEST observer records exact origin/payload/lifecycle; five individual Retry clauses; native geometry/actions/time/production unchanged. Host run unchanged; literal reader adds actual diagnostic joins, no Variant decoder.','unchanged_host_run_sha256':row(D/'run.py')['sha256'],'prior_full_mock_matrix_rerun':False,'source_controls':row(D/'SOURCE_CONTROLS.json'),'Godot_parser_engine_dev_queue_seal_materialization_executed':False,'next_authority':'Root full source review, known runtime TEST selection, engine-free seal, then at most one focused graphical native run and actual Root image inspection.'})
+frozen={rel(D/n):row(D/n)['sha256'] for n in selfnames}
+put('READINESS.json',{'schema':1,'status':'FINAL_FROZEN_ADDITIVE_TEST_OBSERVER_READY_FOR_ROOT_REVIEW','frozen_files':frozen,'fixed_slots':len(expected),'self_slots':len(selfnames),'total_named_slots':len(set(expected)|set(spec['self_files'])),'native_source_slots':len(sources),'original205_named_slots_preserved_and_checked':True,'only_planned_runtime_delta':{'path':fixture,'old_sha256':prior['fixture_sha256'],'new_sha256':fixture_sha,'mode':'0644'},'future_UID_absent':True,'working_candidate020_unchanged':True,'run_py_unchanged':True,'native_parser_engine_dev_queue_materialization_done':False,'native_47_1_preserved':True,'new17_and_portrait_unexecuted':True,'mandatory_original_acceptances_unchanged':True})
+put('INDEX.json',{'status':'FINAL_FROZEN_SOURCE_ONLY','files':{p.name:row(p) for p in sorted(D.iterdir()) if p.is_file() and p.name!='INDEX.json'},'no_native_execution':True})
+print(json.dumps({'status':'FINAL_FROZEN','fixed':len(expected),'self':len(selfnames),'total':len(set(expected)|set(spec['self_files'])),'fixture':fixture_sha,'reader':row(D/'native_inspect.py')['sha256'],'input_spec':row(D/'INPUT_SPEC.json')['sha256'],'readiness':row(D/'READINESS.json')['sha256'],'index':row(D/'INDEX.json')['sha256']},indent=2))

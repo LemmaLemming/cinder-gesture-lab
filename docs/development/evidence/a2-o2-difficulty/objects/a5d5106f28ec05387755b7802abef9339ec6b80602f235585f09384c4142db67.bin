@@ -1,0 +1,238 @@
+"""Root-only seal then ONE graphical candidate020 persistence job; no subject writes or swaps."""
+from pathlib import Path
+import argparse
+import contextlib
+import datetime
+import importlib.util
+import json
+import os
+import re
+import signal
+import stat
+import sys
+import types
+import uuid
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[1]
+# Execute the pinned helper source directly, avoiding an unpinned .pyc cache.
+check = types.ModuleType("cinder_o2_persistence_native_inspect")
+exec(compile((HERE / "native_inspect.py").read_bytes(), str(HERE / "native_inspect.py"), "exec"), check.__dict__)
+DIAGNOSTIC = re.compile(r"^\s*(?:ERROR|WARNING|SCRIPT ERROR):|ObjectDB.*leak|Orphan.*StringName", re.I)
+
+
+def save(path, value):
+    data = (json.dumps(value, indent=2, allow_nan=False) + "\n").encode()
+    temporary = path.with_name(path.name + ".tmp")
+    with temporary.open("xb") as stream:
+        stream.write(data); stream.flush(); os.fsync(stream.fileno())
+    os.replace(temporary, path)
+
+
+def record(path):
+    present = os.path.lexists(path)
+    st = path.lstat() if present else None
+    regular = bool(st and stat.S_ISREG(st.st_mode))
+    data = check.stable(path)[1] if regular else None
+    return {"exists": present, "regular": regular, "symlink": bool(st and stat.S_ISLNK(st.st_mode)),
+            "sha256": check.digest(data) if data is not None else None, "bytes": len(data) if data is not None else None,
+            "mode": format(stat.S_IMODE(st.st_mode), "04o") if st else None}, data
+
+
+def engine(spec):
+    path = Path(spec["engine_expected"]["path"])
+    row, _ = record(path)
+    check.require(row == spec["engine_expected"]["record"] and os.access(path, os.X_OK), "Exact existing engine bytes/size/mode/type differ")
+    return dict(row, path=str(path), retained_binary=False)
+
+
+def snapshot(spec, out, label):
+    names = sorted(set(spec["expected"]) | set(spec["self_files"]))
+    rows = {}; retained = {}; blobs = out / "source-blobs"; blobs.mkdir(exist_ok=True)
+    for name in names:
+        row, data = record(ROOT / name); rows[name] = row
+        if data is not None:
+            target = blobs / (row["sha256"] + ".bin")
+            if not target.exists():
+                with target.open("xb") as stream: stream.write(data)
+            check.require(check.digest(target.read_bytes()) == row["sha256"], "Retained source CAS differs")
+            retained[name] = dict(row, blob=str(target.relative_to(out)))
+    save(out / (label + ".json"), rows); save(out / (label + "-retention.json"), retained)
+    expected_inputs = dict(spec["expected"])
+    for name, expected in expected_inputs.items():
+        check.require(rows[name] == expected, "Fixed named source/size/mode/absence/type differs: " + name)
+    readiness = check.strict((HERE / "READINESS.json").read_bytes())
+    for name in spec["self_files"]:
+        check.require(rows[name]["regular"] and not rows[name]["symlink"] and rows[name]["mode"] == "0644", "Regular0644 host input required")
+    for name, expected in readiness["frozen_files"].items():
+        check.require(rows[name]["sha256"] == expected, "Frozen host control changed: " + name)
+    return rows
+
+
+def old_seal(path):
+    check.require(path.name == "seal.json" and path.parent.parent == HERE, "Closed seal from this exact capsule required")
+    result = check.strict((path.parent / "result.json").read_bytes()); index = check.strict((path.parent / "evidence-index.json").read_bytes())
+    check.require(result.get("closed") is True and result.get("passed") is True and type(result.get("host_return")) is int
+                  and result["host_return"] == 0 and index.get("created_after_raw_close") is True, "Seal must have genuinely closed0")
+    for name in ["seal.json", "result.json"]:
+        meta, _ = check.stable(path.parent / name)
+        check.require(index["files"][name] == {k:meta[k] for k in ["sha256", "bytes", "mode"]}, "Seal/index metadata differs")
+    seal = check.strict(path.read_bytes())
+    check.require(seal.get("sealed") is True and seal.get("source_phase") == str(path.parent), "Actual seal identity differs")
+    return seal["sources"]
+
+
+class Tee:
+    def __init__(self, terminal, log): self.terminal, self.log = terminal, log
+    def write(self, value): self.log.write(value); return self.terminal.write(value)
+    def flush(self): self.log.flush(); self.terminal.flush()
+
+
+def retain_observed(out, observation):
+    records = []; destination = out / "native-retained-blobs"; destination.mkdir(exist_ok=True)
+    for row in observation.get("retained", []):
+        meta, data = check.stable(Path(row["path"]))
+        check.require(meta == row, "Native original drift before retention")
+        target = destination / (meta["sha256"] + ".bin")
+        if not target.exists():
+            with target.open("xb") as stream: stream.write(data)
+        check.require(check.digest(target.read_bytes()) == meta["sha256"], "Native retained CAS differs")
+        records.append(dict(meta, retained_blob=str(target.relative_to(out))))
+    save(out / "native-literal-retention.json", records)
+
+
+
+def indexed(out):
+    files = {}
+    for path in sorted(out.rglob("*")):
+        if path.is_file() and path != out / "evidence-index.json":
+            row, _ = check.stable(path)
+            files[str(path.relative_to(out))] = {k:row[k] for k in ["sha256", "bytes", "mode"]}
+    save(out / "evidence-index.json", {"created_after_raw_close": True, "files": files})
+
+
+
+def execute_phase(dev, spec, parent, context, lock_fd, registry):
+    variant = "persistence"
+    out = parent / variant; out.mkdir(exist_ok=False)
+    result = {"phase": variant, "closed": False, "passed": False, "engine_launch_attempted": False,
+              "native_functional_pass": False, "canonical_api_return": None, "owned_children": []}
+    code = 2; interrupted = False
+    with (out / "raw.log").open("x") as raw, contextlib.redirect_stdout(Tee(sys.stdout, raw)), contextlib.redirect_stderr(Tee(sys.stderr, raw)):
+        try:
+            snapshot(spec, out, "sources-at-lock")
+            before = engine(spec); save(out / "engine-before.json", before)
+            evidence = out / "evidence"; evidence.mkdir(exist_ok=False)
+            report = evidence / "native-report.json"
+            args = []
+            child_env = dict(context.environ)
+            child_env["CINDER_A2_O2_CANDIDATE_PERSISTENCE_REPORT"] = str(report)
+            child_context = dev.ProjectContext(root=ROOT, environ=child_env)
+            command = [spec["engine_expected"]["path"], "--path", str(ROOT), "--log-file", str(out / "engine.log"),
+                       "--script", "res://" + spec["fixture"], "--"] + args
+            save(out / "command.json", {"argv": command, "user_arguments": args, "report_environment": {"CINDER_A2_O2_CANDIDATE_PERSISTENCE_REPORT": str(report)}, "timeout_after_lock_seconds": 180,
+                                       "canonical_api": "dev.godot_lock/run_validation", "one_owned_child": True, "variant": variant})
+            owned = []; actual_popen = dev.subprocess.Popen
+            def tracked(argv, *pos, **kw):
+                check.require(argv == command and not owned and kw.get("cwd") == ROOT and kw.get("env") == child_context.environ
+                              and kw.get("pass_fds") == (lock_fd,), "Exactly one planned canonical child/context/lock required")
+                child = actual_popen(argv, *pos, **kw); owned.append(child); registry.append(child); return child
+            result["engine_launch_attempted"] = True; save(out / "result.json", result)
+            try:
+                dev.subprocess.Popen = tracked
+                result["canonical_api_return"] = dev.run_validation(command, child_context, lock_fd, 180, detect_godot_errors=True)
+            finally:
+                dev.subprocess.Popen = actual_popen
+                for child in owned:
+                    if child.poll() is None: dev.stop_validation(child)
+                    child.wait(timeout=5)
+                result["owned_children"] = [{"pid":child.pid,"closed":child.poll() is not None,"popen_return":child.poll()} for child in owned]
+                save(out / "result.json", result)
+            check.require(len(owned) == 1 and owned[0].poll() is not None, "Actual own child must close before any source write")
+            raw.flush()
+            observation = check.observe(out, ROOT, spec, (out / "raw.log").read_text(),
+                                        result["canonical_api_return"], owned[0].poll())
+            result["native_observation"] = observation; save(out / "native-observation.json", observation)
+            retain_observed(out, observation)
+            snapshot(spec, out, "sources-after-child")
+            after = engine(spec); save(out / "engine-after.json", after); check.require(after == before, "Engine identity drift")
+            result["native_functional_pass"] = observation["functional_pass"]
+            check.require(observation["functional_pass"], "Actual native rows/report/artifact/footer/API/Popen failed or incomplete")
+            engine_raw = (out / "engine.log").read_text(errors="replace") if (out / "engine.log").is_file() else ""
+            check.require(not any(DIAGNOSTIC.search(line) for line in ((out / "raw.log").read_text()+"\n"+engine_raw).splitlines()),
+                          "Actual diagnostic remains NONCLEAN; no retry")
+            result["passed"] = True; code = 0
+        except KeyboardInterrupt:
+            result["error"] = "Interrupted; canonical API closes only its actual owned child"; interrupted = True; code = 130
+        except Exception as error:
+            result["error"] = str(error); print("A2-O2 candidate persistence phase failure:", error, flush=True)
+        finally:
+            try:
+                snapshot(spec, out, "sources-at-phase-close"); save(out / "engine-at-close.json", engine(spec))
+            except Exception as error:
+                result["close_custody_error"] = str(error); result["passed"] = False; code = 2
+            raw.flush(); result.update(closed=True, host_return=code,
+                raw_diagnostics=[line for line in (out / "raw.log").read_text().splitlines() if DIAGNOSTIC.search(line)])
+            save(out / "result.json", result)
+            print("A2-O2 candidate persistence phase CLOSED " + variant + " code=" + str(code), flush=True)
+    indexed(out)
+    if interrupted: raise KeyboardInterrupt()
+    return result
+
+
+def main():
+    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('phase',choices=['seal','run']);parser.add_argument('--seal',type=Path)
+    args=parser.parse_args();stamp=datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S.%fZ')
+    out=HERE/('run-'+args.phase+'-'+stamp+'-'+uuid.uuid4().hex[:8]);out.mkdir(exist_ok=False)
+    result={'phase':args.phase,'closed':False,'passed':False,'engine_launch_attempted':False,'subject_write_attempted':False,'candidate_accepted':False,'phases':[]}
+    queue={'queued':False,'acquired':False,'lock_context_released':False};spec=None;code=2
+    old_term=signal.getsignal(signal.SIGTERM);signal.signal(signal.SIGTERM,lambda _sig,_frame:(_ for _ in ()).throw(KeyboardInterrupt()))
+    with (out/'raw.log').open('x') as raw,contextlib.redirect_stdout(Tee(sys.stdout,raw)),contextlib.redirect_stderr(Tee(sys.stderr,raw)):
+        try:
+            check.require((args.phase=='seal')==(args.seal is None),'Run needs exact closed seal; seal takes none')
+            spec=check.strict((HERE/'INPUT_SPEC.json').read_bytes());check.require(spec['integration_root']==str(ROOT),'Exact Integration host required')
+            before=engine(spec);save(out/'engine-before.json',before)
+            current=snapshot(spec,out,'preflight-observed')
+            if args.phase=='seal':
+                sealed=snapshot(spec,out,'sources-at-seal');check.require(current==sealed,'Source drift during host-only seal')
+                save(out/'seal.json',{'sealed':True,'source_phase':str(out),'sources':sealed,'scope':spec['scope']})
+            else:
+                selected=args.seal.absolute();sealed=old_seal(selected);check.require(current==sealed,'Sources differ from selected closed seal')
+                save(out/'selected-seal.json',{'path':str(selected),'sha256':check.digest(selected.read_bytes())})
+                module=importlib.util.spec_from_file_location('cinder_a2_o2_persistence_dev',ROOT/'scripts/dev/dev.py')
+                check.require(module is not None and module.loader is not None,'Actual canonical dev module required')
+                dev=importlib.util.module_from_spec(module);sys.modules[module.name]=dev
+                prior_bytecode=sys.dont_write_bytecode
+                try:sys.dont_write_bytecode=True;module.loader.exec_module(dev)
+                finally:sys.dont_write_bytecode=prior_bytecode
+                env=dict(os.environ);env.update(CINDER_GODOT=spec['engine_expected']['path'],CINDER_CANONICAL_ROOT=str(ROOT),PYTHONDONTWRITEBYTECODE='1')
+                context=dev.ProjectContext(root=ROOT,environ=env)
+                check.require(context.root==ROOT and context.canonical_root==ROOT and str(dev.resolve_godot(context))==spec['engine_expected']['path'],'Canonical context/engine differs')
+                check.require(snapshot(spec,out,'sources-before-queue')==sealed,'Inputs changed before queue')
+                queue.update(queued=True,lock_path=str(dev.shared_lock_path(ROOT)));save(out/'queue.json',queue)
+                registry=[]
+                try:
+                    with dev.godot_lock(ROOT) as lock_fd:
+                        queue['acquired']=True;save(out/'queue.json',queue)
+                        check.require(snapshot(spec,out,'sources-at-lock')==sealed and engine(spec)==before,'Exact candidate inputs and engine at lock required')
+                        result['engine_launch_attempted']=True
+                        phase=execute_phase(dev,spec,out,context,lock_fd,registry);result['phases'].append(phase)
+                        check.require(phase['closed'] is True and phase['passed'] is True and all(c.poll() is not None for c in registry),'One actual owned graphical native job must close clean0')
+                        check.require(snapshot(spec,out,'sources-after-native')==sealed,'All frozen source/UID/cache/mode/type slots unchanged after native')
+                finally:
+                    if queue['acquired']:queue['lock_context_released']=True;save(out/'queue.json',queue)
+            result['passed']=True;code=0
+        except KeyboardInterrupt:
+            result['error']='Interrupted; canonical API closes only its actual owned child';code=130
+        except Exception as error:
+            result['error']=str(error);print('A2-O2 candidate persistence host failure:',error,flush=True)
+        finally:
+            if spec is not None:
+                try:snapshot(spec,out,'sources-at-runner-close');save(out/'engine-after.json',engine(spec))
+                except Exception as error:result['close_custody_error']=str(error);result['passed']=False;code=2
+            raw.flush();result.update(closed=True,host_return=code,scope='One no-swap graphical actual persistence job with native/Host/API/owned-Popen closure; no producer/comparison repeat or automatic level/difficulty/visual acceptance.')
+            save(out/'result.json',result);save(out/'queue.json',queue)
+            print('A2-O2 candidate persistence host CLOSED code='+str(code),flush=True)
+    signal.signal(signal.SIGTERM,old_term);indexed(out);return code
+
+if __name__=='__main__':raise SystemExit(main())

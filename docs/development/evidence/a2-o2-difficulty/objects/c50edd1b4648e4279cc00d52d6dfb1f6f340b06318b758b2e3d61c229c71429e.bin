@@ -1,0 +1,54 @@
+{
+  "phase": "run",
+  "closed": true,
+  "passed": false,
+  "engine_launch_attempted": true,
+  "subject_write_attempted": false,
+  "candidate_accepted": false,
+  "phases": [
+    {
+      "phase": "persistence",
+      "closed": true,
+      "passed": false,
+      "engine_launch_attempted": true,
+      "native_functional_pass": false,
+      "canonical_api_return": 2,
+      "owned_children": [
+        {
+          "pid": 3022,
+          "closed": true,
+          "popen_return": 2
+        }
+      ],
+      "native_observation": {
+        "functional_pass": false,
+        "retained": [
+          {
+            "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-o2-candidate-persistence-prepare-20261020/run-run-20261020T042152.990446Z-0feb4195/persistence/evidence/native-report.json",
+            "sha256": "7806cb32ebd65c124729735817ab94d017cecdd20a736e2d8e6570a0dda14d08",
+            "bytes": 11943,
+            "mode": "0644",
+            "stable_two_reads": true
+          },
+          {
+            "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-o2-candidate-persistence-prepare-20261020/run-run-20261020T042152.990446Z-0feb4195/persistence/evidence/persistence-unit.json",
+            "sha256": "a2dcf7a94054670bfeb1e630f0541e14b50aaba68f8c9bd8d89b2016e8a061f2",
+            "bytes": 12970644,
+            "mode": "0644",
+            "stable_two_reads": true
+          }
+        ],
+        "report_present": true,
+        "error": "Native artifact/source/fixture differs"
+      },
+      "error": "Actual native rows/report/artifact/footer/API/Popen failed or incomplete",
+      "host_return": 2,
+      "raw_diagnostics": [
+        "ERROR: FAIL O2 persistence: Public Retry quietly restores exact genuine earlier CP and whole session, leaving future Standard distinct: old16"
+      ]
+    }
+  ],
+  "error": "One actual owned graphical native job must close clean0",
+  "host_return": 2,
+  "scope": "One no-swap graphical actual persistence job with native/Host/API/owned-Popen closure; no producer/comparison repeat or automatic level/difficulty/visual acceptance."
+}

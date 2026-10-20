@@ -1,5 +1,8 @@
 # Clear Air Circuit focused desktop acceptance
 
+Current20October2026: the separate[Shared75 Handler amendment](ACT2_O2_DIFFICULTY.md) is accepted with exact020 runtime, changed ordinary response, literal old16/new17 focused saves/Retry and one actual first-warning portrait. All original acceptance evidence/failures below retain their sources and scope; this does not reopen content acceptance or claim full routes/all kits.
+
+
 A2-O2 is accepted under `focused-desktop-level-1` at the exact owned handoff `dadbf52ab13592a25fac1166d976e1e7f25c358c`, canonical HANDOFF `7cb65a50-d468-4050-b777-93d82737d35d`. Its scene is `res://scenes/acts/act2/a2_o2.tscn`, with accepted parent A2-L3 and a once-only cosmetic completion stamp. Act2 becomes **7/8**, campaign **14/24**. The fifteen-main/nine-optional desktop work continues; the sole Act2 owner may start A2-O3 Bleached Canal after the canonical ACCEPTED response.
 
 The [owner's handoff](../acts/act2/A2_O2_HANDOFF.md) and [original evidence index](../acts/act2/evidence/A2-O2/focused-handoff-20261012/index.json) map all seven focused categories. Original Shared50 native mechanics257/0, selected canonical gear extrema523/0, separated-marker loading/save/Retry/transitions/cleanup116/0 and graphical322/0 are reused. Their602 inputs per job retain their original bytes and attribution. The independent reviewer verified9,628 portable manifest rows and36 pinned index references; actual Shared52 adoption is a distinct preserving merge32a683be with original ACK2192b18a. No later adoption or runtime seal retroactively changes the native50 evidence.

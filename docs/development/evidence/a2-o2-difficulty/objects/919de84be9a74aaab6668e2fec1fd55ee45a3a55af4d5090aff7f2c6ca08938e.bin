@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "unit_ids": [
+    "arrival",
+    "road_east",
+    "road_west",
+    "common_left",
+    "common_right",
+    "departure_a",
+    "departure_b"
+  ],
+  "recipes": [
+    {
+      "recipe_id": "A2-L1/assisted-canonical@v1",
+      "profile": "assisted",
+      "order": [
+        "arrival",
+        "road_east",
+        "road_west",
+        "common_left",
+        "common_right",
+        "departure_a",
+        "departure_b"
+      ]
+    },
+    {
+      "recipe_id": "A2-L1/standard-canonical@v1",
+      "profile": "standard",
+      "order": [
+        "arrival",
+        "road_east",
+        "road_west",
+        "common_left",
+        "common_right",
+        "departure_a",
+        "departure_b"
+      ]
+    },
+    {
+      "recipe_id": "A2-L1/challenge-canonical-legacy@v1",
+      "profile": "challenge",
+      "order": [
+        "arrival",
+        "road_east",
+        "road_west",
+        "common_left",
+        "common_right",
+        "departure_a",
+        "departure_b"
+      ]
+    },
+    {
+      "recipe_id": "A2-L1/challenge-opposite-common@v2",
+      "profile": "challenge",
+      "order": [
+        "arrival",
+        "road_east",
+        "road_west",
+        "common_right",
+        "common_left",
+        "departure_a",
+        "departure_b"
+      ]
+    }
+  ],
+  "current": {
+    "assisted": "A2-L1/assisted-canonical@v1",
+    "standard": "A2-L1/standard-canonical@v1",
+    "challenge": "A2-L1/challenge-opposite-common@v2"
+  }
+}

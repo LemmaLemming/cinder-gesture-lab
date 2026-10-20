@@ -1,0 +1,42 @@
+--- a/tests/act2_o2_handler_angle_compare.gd
++++ b/tests/act2_o2_handler_angle_compare.gd
+@@ -408,6 +408,39 @@
+ 	return _expect(false, "Bounded actual quiet full-packet install: " + _shell.campaign_error)
+ 
+ 
++func _test_contact(position_value: Vector3) -> bool:
++	if not _live(): return false
++	paused = true
++	_shell.player.global_position = position_value + Vector3.UP * 0.04
++	_shell.player.velocity = Vector3.ZERO
++	# This one artificial TEST teleport has no preceding ordinary follow frame.
++	# Prepare that initial cosmetic frame once, before the SAME public resume.
++	var actor: CinderPlayer = _shell.player
++	var player_before: Dictionary = actor.snapshot_state()
++	var level_before: Dictionary = _shell.active_level.snapshot_state()
++	var response_before: Dictionary = actor.get_threat_response_state()
++	if not _expect(response_before.get("actor") == actor, "TEST entry preparation retains actual response actor identity"): return false
++	response_before.erase("actor") # Node identity is checked separately, never JSON-forged.
++	var before: String = Exact.stringify({"player":player_before,"level":level_before,"response":_encode(response_before),"input":_encode(_shell.get_input_observation_state()),"attempts":_shell.attempts.state(),"raw_stores":_p_disk(),"native_ids":_p_ids()})
++	if not _expect(not player_before.is_empty() and not level_before.is_empty() and not before.is_empty(), "Artificial TEST contact has complete paused native state before cosmetic entry preparation"): return false
++	_shell.call("_update_status")
++	_shell.call("_update_camera", 0.0, true)
++	var player_after: Dictionary = actor.snapshot_state()
++	var level_after: Dictionary = _shell.active_level.snapshot_state()
++	var response_after: Dictionary = actor.get_threat_response_state()
++	if not _expect(_shell.player == actor and response_after.get("actor") == actor, "One cosmetic TEST frame preserves actual Player/response identity"): return false
++	response_after.erase("actor")
++	var after: String = Exact.stringify({"player":player_after,"level":level_after,"response":_encode(response_after),"input":_encode(_shell.get_input_observation_state()),"attempts":_shell.attempts.state(),"raw_stores":_p_disk(),"native_ids":_p_ids()})
++	if not _expect(not player_after.is_empty() and not level_after.is_empty() and before == after, "One cosmetic TEST entry frame preserves exact native Player/response/consumer/clocks/resources/input/Attempts/raw Stores"): return false
++	var hero_points: Array = _shell.call("player_camera_framing_points")
++	if not _expect(not hero_points.is_empty() and String(_shell.call("camera_framing_error", hero_points)).is_empty(), "Actual full Hero bounds are currently contained after one ordinary cosmetic TEST entry frame"): return false
++	_shell.menu.resume_requested.emit()
++	for _tick: int in range(10):
++		await _probe.tick_finished
++		if paused: break
++	return _expect(_shell.campaign_error.is_empty() and is_instance_valid(_shell.player) and not _shell.player.dead,"explicit TEST contact resolves natively without callback/runtime fault: " + _shell.campaign_error)
++
++
+ func _p_earn_checkpoint() -> bool:
+ 	for id: String in ["east_tender", "west_tender"]:
+ 		if not await _test_gated_defeat(id) or not await _same_original_tail_finishes(id): return false

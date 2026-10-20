@@ -1,0 +1,37 @@
+"""Source-only fixed metadata writer. Does not materialize or execute a native fixture."""
+from pathlib import Path
+import hashlib,json,stat,os
+ROOT=Path(__file__).resolve().parents[2];D=Path(__file__).resolve().parent
+old=json.loads((ROOT/'.cinder/a2-o2-test-entry-framing-prepare-20261020/INPUT_SPEC.json').read_text())
+PAIR=ROOT/'.cinder/a2-o2-test-entry-framing-prepare-20261020/run-pair-20261020T040458.245936Z-8da9ffa8'
+def sha(b):return hashlib.sha256(b).hexdigest()
+def row(p):
+    exists=os.path.lexists(p);st=p.lstat() if exists else None;regular=bool(st and stat.S_ISREG(st.st_mode));b=p.read_bytes() if regular else None
+    return {'exists':exists,'regular':regular,'symlink':bool(st and stat.S_ISLNK(st.st_mode)),'sha256':sha(b) if b is not None else None,'bytes':len(b) if b is not None else None,'mode':format(stat.S_IMODE(st.st_mode),'04o') if st else None}
+def put(n,obj):(D/n).write_text(json.dumps(obj,indent=2,allow_nan=False)+'\n')
+def rel(p):return str(p.relative_to(ROOT))
+expected=dict(old['expected']);expected[old['subject']]=old['subject_variants']['candidate']
+fixture='tests/act2_o2_candidate_persistence.gd';fixture_sha=sha((D/'persistence.gd.txt').read_bytes())
+assert not (ROOT/fixture).exists() and not (ROOT/(fixture+'.uid')).exists()
+expected[fixture]={'exists':True,'regular':True,'symlink':False,'sha256':fixture_sha,'bytes':len((D/'persistence.gd.txt').read_bytes()),'mode':'0644'}
+expected[fixture+'.uid']=row(ROOT/(fixture+'.uid'))
+for n in ['evidence-index.json','result.json','queue.json','restore-receipt.json','original/result.json','original/evidence-index.json','original/evidence/native-report.json','original/evidence/comparison-unit.json','candidate/result.json','candidate/evidence-index.json','candidate/evidence/native-report.json','candidate/evidence/comparison-unit.json']:
+    expected[rel(PAIR/n)]=row(PAIR/n)
+for n in ['.cinder/a2-o2-fixed-pair-actual-review-20261020/REVIEW.json','.cinder/a2-o2-working-selection-20261020/SELECTED.json']:
+    expected[n]=row(ROOT/n)
+for n,m in expected.items():
+    if n==fixture:continue
+    assert row(ROOT/n)==m,n
+sources=dict(old['native_sources']);sources.pop('res://'+old['fixture']);sources['res://'+fixture]=fixture_sha;sources['res://'+old['subject']]=old['subject_variants']['candidate']['sha256']
+source_units={}
+for key,arm in [('old16','original'),('new17','candidate')]:
+    p=PAIR/arm/'evidence/comparison-unit.json';source_units[key]={'path':'res://'+rel(p),'sha256':row(p)['sha256']};sources['res://'+rel(p)]=row(p)['sha256']
+self_names=['run.py','native_inspect.py','persistence.gd.txt','README.md','source_controls.py','SOURCE_CONTROLS.json','SOURCE_CONTROLS_INITIAL_FAILURE.json','freeze_inputs.py','INPUT_SPEC.json','PROVENANCE.json']
+spec={'schema':1,'status':'FROZEN_SOURCE_ONLY_UNMATERIALIZED_UNSEALED_UNEXECUTED','integration_root':str(ROOT),'subject':old['subject'],'fixture':fixture,'fixture_sha256':fixture_sha,'promotion_text_mapping':{fixture:rel(D/'persistence.gd.txt')},'expected':dict(sorted(expected.items())),'self_files':[rel(D/n) for n in self_names],'native_sources':sources,'engine_expected':old['engine_expected'],'source_units':source_units,'scope':'ONE future graphical native persistence/portrait job under Root-selected candidate020; genuine actual old16/new17 raw units, native Exact only; no producer/comparison rerun/swap/route/held-positive claim.'}
+put('INPUT_SPEC.json',spec)
+put('PROVENANCE.json',{'status':'SOURCE_ONLY_PREPARATION','actual_pair_review':{'path':'.cinder/a2-o2-fixed-pair-actual-review-20261020/REVIEW.json','sha256':expected['.cinder/a2-o2-fixed-pair-actual-review-20261020/REVIEW.json']['sha256']},'actual_units':source_units,'original_pair_counts':{'original':1142,'candidate':1149,'failures_each':0},'prior_controls_reused':{'run_source':'360be019aff020b9bb23a4c08740e04207b2b2e3642c6b37080352ce532f246f','literal_reader_source':'3f13bac7f1fd7801433f76e25994f563f440cef7b98278167152febc62cbaaa7','previous37_and8_rerun':False,'credit_limit':'Shared immutable snapshot/CAS/queue/Popen primitives adapted; new no-swap host only bounded source controls, no native result.'},'source_checks':{'path':rel(D/'SOURCE_CONTROLS.json'),'sha256':row(D/'SOURCE_CONTROLS.json')['sha256'],'checks':8,'failures':0},'retained_source_harness_failure':rel(D/'SOURCE_CONTROLS_INITIAL_FAILURE.json'),'runtime_or_worker_edits':False,'engine_parser_import_dev_queue_seal_executed':False,'actual_visual_inspection':'PENDING future single graphical job and Root image inspection'})
+frozen={rel(D/n):row(D/n)['sha256'] for n in self_names}
+put('READINESS.json',{'schema':1,'status':'FINAL_FROZEN_INERT_READY_FOR_ROOT_FULL_SOURCE_REVIEW','frozen_files':frozen,'fixed_slots':len(expected),'self_slots':len(self_names),'total_named_slots':len(set(expected)|set(spec['self_files'])),'native_source_slots':len(sources),'fixture_sha256':fixture_sha,'future_fixture_uid_expected_absent':True,'working_candidate_required':expected[old['subject']],'no_swap':True,'engine_baseline':old['engine_expected'],'source_controls':{'checks':8,'failures':0,'native':False},'native_engine_parser_import_dev_queue_seal_materialization_done':False,'future_actual_visual':'Actual root warning PNG in same graphical job, Root must view','accepted_levels_or_difficulty_changed':False})
+index={n:row(p) for p in sorted(D.iterdir()) if p.is_file() and p.name!='INDEX.json' for n in [p.name]}
+put('INDEX.json',{'status':'FINAL_FROZEN_SOURCE_ONLY','files':index,'no_native_execution':True})
+print(json.dumps({'status':'FINAL_FROZEN','fixed':len(expected),'self':len(self_names),'total':len(set(expected)|set(spec['self_files'])),'native':len(sources),'fixture':fixture_sha,'readiness':row(D/'READINESS.json')['sha256'],'index':row(D/'INDEX.json')['sha256']},indent=2))

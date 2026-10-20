@@ -1,0 +1,52 @@
+{
+  "phase": "pair",
+  "closed": true,
+  "passed": false,
+  "candidate_accepted": false,
+  "phases": [
+    {
+      "phase": "original",
+      "closed": true,
+      "passed": false,
+      "engine_launch_attempted": true,
+      "native_functional_pass": false,
+      "canonical_api_return": 2,
+      "owned_children": [
+        {
+          "pid": 52018,
+          "closed": true,
+          "popen_return": 2
+        }
+      ],
+      "native_observation": {
+        "functional_pass": false,
+        "retained": [
+          {
+            "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-o2-handler-right-pair-host-prepare-20261016/run-pair-20261020T033510.241235Z-0eb09f34/original/evidence/native-report.json",
+            "sha256": "b4a662dfd736dbc62d1e58ce91ef671fc1c2f7f79d747e96050869ea94a6c79f",
+            "bytes": 10291,
+            "mode": "0644",
+            "stable_two_reads": true
+          },
+          {
+            "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-o2-handler-right-pair-host-prepare-20261016/run-pair-20261020T033510.241235Z-0eb09f34/original/evidence/comparison-unit.json",
+            "sha256": "f84ab4ffdcff5db932885e03f91d8a1b7fa8772c6f70bf09c9d831daf2a45f03",
+            "bytes": 1441,
+            "mode": "0644",
+            "stable_two_reads": true
+          }
+        ],
+        "report_present": true,
+        "error": "Nonempty opaque Exact wire required"
+      },
+      "error": "Actual native rows/report/artifact/footer/API/Popen failed or incomplete",
+      "host_return": 2,
+      "raw_diagnostics": [
+        "ERROR: FAIL A2O2 Handler fixture: Bounded actual quiet full-packet install: Restore candidate presentation failed: Required source, footprint, player or landing lies outside the protected screen rectangle"
+      ]
+    }
+  ],
+  "error": "Original must close successful/clean before candidate; stop without replacement",
+  "host_return": 2,
+  "scope": "One original-first/candidate-second pair only; native/API/ownedPopen/Host diagnostics distinct. No automatic candidate/policy acceptance or new level gate."
+}

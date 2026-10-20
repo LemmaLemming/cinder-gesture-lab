@@ -1,0 +1,44 @@
+--- tests/act2_o2_handler_angle_compare.gd@64c70
++++ INERT/comparison.gd.txt
+@@ -417,11 +417,41 @@
+ 	await _settle()
+ 	var checkpoint: Dictionary = _shell.attempts.state().side_attempt.checkpoint
+ 	if not _expect(not checkpoint.is_empty() and checkpoint.level.progress.checkpoint_id == CP_ID and checkpoint.level.local.defeated_ids == ["east_tender","west_tender"] and int(checkpoint.level.local.tool.cycle) == 0 and _same(_shell.attempts.state().story, _p_story), "Real contact durably records actual quiet before-final checkpoint, no manufactured history"): return false
++	# Retain the actual unit/raw Store and pure current view before a failed
++	# Retry can dispose the rejected candidate and cleanup removes user files.
++	# Diagnostic only: no refit, wait, pose, guard or saved-field mutation.
++	if not _p_retain_before_retry(checkpoint): return false
+ 	# Public Retry makes the genuine saved contact unit the exact live writer;
+ 	# no local field is manufactured, copied into production, or stripped.
+ 	_shell.menu.retry_requested.emit()
+ 	if not await _p_wait_packet(checkpoint, "optional"): return false
+ 	return _expect(_same(_shell.capture_campaign_snapshot(), checkpoint) and _state().checkpoint_committed and _shell.player.global_position.x == 0.0 and absf(_shell.player.global_position.z - ANCHOR.z) < 0.00001 and _shell.player.hp == _shell.player.max_hp, "Actual public Retry installs genuine CP at the single declared anchor with unchanged full HP; no Handler route performed")
++
++
++
++func _p_retain_before_retry(checkpoint: Dictionary) -> bool:
++	var current: Dictionary = _shell.capture_campaign_snapshot()
++	var camera: Camera3D = _shell.get("camera") as Camera3D
++	var points: Array = _shell.active_level.call("_current_required_points")
++	var hero_points: Array = _shell.call("player_camera_framing_points")
++	var required: Array = points.duplicate()
++	required.append_array(hero_points)
++	var plan: Dictionary = _shell.call("camera_framing_plan",required,_shell.get("_camera_focus"))
++	# Retain every pure native plan field. Encode its Basis as native axes so
++	# the existing closed JSON codec can carry it without a Variant decoder.
++	var framing_state: Dictionary = _shell.call("get_camera_framing_state")
++	for diagnostic: Dictionary in [plan,framing_state]:
++		if diagnostic.get("basis") is Basis:
++			var basis: Basis = diagnostic.basis
++			diagnostic.basis = {"diagnostic_native_type":"Basis","axes":[basis.x,basis.y,basis.z]}
++	var view: Dictionary = {"native_clock_s":_state().clock_s,"physics_frame":Engine.get_physics_frames(),"process_frame":Engine.get_process_frames(),"actual_camera_position":camera.global_position,"actual_camera_basis_axes":[camera.global_basis.x,camera.global_basis.y,camera.global_basis.z],"actual_camera_size":camera.size,"actual_viewport_size":camera.get_viewport().get_visible_rect().size,"actual_focus":_shell.get("_camera_focus"),"saved_checkpoint_focus":checkpoint.shell.camera_focus,"actual_hero_position":_shell.player.global_position,"current_required_points":points,"actual_hero_points":hero_points,"actual_current_containment_error":_shell.call("camera_framing_error",required),"pure_plan":plan,"actual_hud_safe_rect":_shell.hud.call("combat_safe_rect"),"level_objective":_shell.active_level.objective_text,"actual_framing_state":framing_state,"scope":"Pure actual pre-Retry view only; no reconstructed candidate camera, geometry or hypothetical fit. Accepted plan does not certify current containment."}
++	# Populate the existing setup field BEFORE Retry, rather than first after
++	# successful Retry in _run. A failed cohort can now retain its actual units.
++	_c_setup_packet = {"whole_snapshot_exact":Exact.stringify(current),"whole_session_exact":Exact.stringify(_shell.attempts.state()),"protected_story_exact":Exact.stringify(_p_story),"raw_stores":_p_disk(),"TEST_injuries":_encode(_injuries),"checkpoint_exact":Exact.stringify(checkpoint),"native_pre_retry_view_exact":Exact.stringify(_encode(view)),"scope":"Actual genuine before-final checkpoint/current/session/raw Stores before public Retry; native pure view only, no camera/clock/pose/stage/history change"}
++	var retained: bool = true
++	for key: String in ["whole_snapshot_exact","whole_session_exact","protected_story_exact","checkpoint_exact","native_pre_retry_view_exact"]:
++		retained = retained and not String(_c_setup_packet[key]).is_empty()
++	return _expect(retained,"Actual pre-Retry whole packet/raw Store/pure view retained before any presentation refusal")
+ 
+ 
+ func _p_disk() -> Dictionary:

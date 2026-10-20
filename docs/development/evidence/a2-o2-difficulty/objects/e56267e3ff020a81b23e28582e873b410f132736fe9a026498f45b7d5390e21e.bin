@@ -1,0 +1,8 @@
+{
+  "status": "FAILED_SOURCE_CONTROL_HARNESS",
+  "check": "Actual report and partial artifact retained before failed native row/API validation",
+  "reason": "TemporaryDirectory returned /var path through macOS symlink. Stable reader correctly requires literal canonical absolute paths. Harness now uses Path(temp).resolve().",
+  "native_execution": false,
+  "original_assertion": "functional_pass is False and len(retained)==2",
+  "preserved": true
+}

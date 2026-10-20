@@ -1,0 +1,54 @@
+# Clear Air Circuit retained Handler direction
+
+Accepted20 October2026 as the fourteenth authored difficulty consumer. Shared75 publishes the exact tested `clear_air_circuit.gd` SHA-256 `02024cb156c1f055f8301848722753471afd2ca21644f2afe3e07c522dbfd7a5`. Fresh Challenge alone points the final Handler diagonally BACK+RIGHT; Standard/Assisted retain frontal BACK. The Handler remains at(0,0,-10.5), with the original3.8-length/.31-radius lane, health, roles, timings, recovery openings, floor, native admission/view guards, checkpoint and rewards. Both Tenders and their smoke banks remain unchanged. All24 original content acceptances remain; this amendment makes21/24 difficulty policies:14 authored plus7 bounded retentions.
+
+## Actual different response
+
+The fixed comparison closes original1142/0 and candidate1149/0, both clean API/Popen/Host0. At the same neutral representative context, the original uses two public dashes and the diagonal candidate one; both make an ordinary primary attack through the genuine opening, reducing Handler30→10, and retain the complete primary cooldown and warning/lock/active/recovery observation. Neither receives incoming contact/HP loss or uses blast. The candidate's actual recorded lane intersects13 segments131–143 of the copied old response under both its real.32 and conservative.33 capsule bounds. This is a native-geometry counterfactual against the recorded old trace; the unsafe old trace is not executed in the candidate. The actual different ordinary spatial response, rather than an incidental hit or numerical profile label, qualifies the amendment.
+
+Both arms disclose an eight-checkpoint TEST prefix plus real recovery-gated Tender injuries/tails/contact checkpoint setup. The before-final Challenge current/checkpoint and whole Attempts/raw Store strings are actually captured after public Retry. This is a representative focused state, not a newly earned full route or a new provenance producer. The saved candidate and actor selection happen before once-only configuration; no live geometry/pose repair, forced proof or new player mechanic is introduced.
+
+## Specific unchanged exercises
+
+| Existing exercise | Positive source-backed purpose and retained player decision |
+| --- | --- |
+| Two Tenders and independent smoke banks | The player chooses which side to close first; each recovery-gated ordinary defeat closes its own bank. The existing opposite sources make order and source/space association meaningful without a second duplicated kit. |
+| Harmless ended tails and before-final contact | The original quiet predicate and real stable contact prevent mixing unfinished smoke/leases with a refreshed final state. This teaches confirmation of spent danger and checkpoint continuity; it is not another combat-novelty claim. |
+| Final regular Handler | The player recognizes the original reach warning, finds safe floor and returns to the low ordinary opening. Fresh Challenge changes that spatial answer through the retained diagonal; original frontal states remain literal. |
+| Distinct return and optional identity | A grounded contact return follows completion, keeps protected Story separate and grants only the existing optional stamp once. Combat taps retain their existing meaning. This is continuity/departure purpose, not permanent progression power. |
+
+These reasons come from the accepted Circuit concept/current sources and original[O2 acceptance](ACT2_O2_ACCEPTANCE.md). Supply-crate full/empty presentation belongs to enemy scenery and grants no ammo/heal. No new equipment, perk, powerup, reward or ability introduction is allocated. Original canonical ledger queries are retained in[the preparation receipt](../acts/act2/evidence/A2-O2/preparation-20261012/query-receipt.json); current ability/equipment/numerical validators all exit0 in[the exact current receipt](evidence/a2-o2-difficulty/current-validators.json). Numeric screening is not simulated human balance or new all-kit runtime proof.
+
+## Closed saved construction and compatibility
+
+Literal old local16 saves keep their original frontal construction, including old Challenge, and their original numeric validation/writer. New local17 adds exactly one `handler_arrangement` dictionary with four closed fields: `api_revision`, integer `schema_version`, full canonical typed eight-field `profile`, and `recipe_id`. Its API is `act2-clear-air-handler-arrangement-1`, schema1. `canonical-handler-frontal-1` remains valid for every saved canonical profile, including Challenge; `challenge-handler-diagonal-right-1` requires saved Challenge. Saved selection never consults the current menu preference. The full descriptor survives the genuine ended/empty-Scheduler branch; the old defeat/quiet/earned-state checks remain intact. Outer optional1/world1 and native actor/Scheduler formats remain unchanged.
+
+The actor's public adapter flattens and normalizes the recipe direction again. The snapshot expectation follows that exact convention; lane geometry uses the recipe direction. Native92 retains both exact scalar wires and43 separated true layout clauses. No tolerance, rounded comparison or production change was made to hide the earlier TEST assertion.
+
+**Shared75 is availability, not worker adoption.** Older readers reject the new local17 packet. Never strip the descriptor, downgrade a save, merge a stale codec or reopen a frozen job to make an older checkout read it. Workers retain their actual adopted baselines and current inert source scopes until an explicit preserving adoption. All native evidence here ran with Shared74 plus the same exact020 candidate bytes; the global publication label adds no engine change and needs no label-only rerun. Historical PRIVATE PROPOSED comments in the tested source retain candidate provenance; this record and the accepted publication establish its current status.
+
+## Focused saves, Retry and visual review
+
+The overall78/1 job remains failed. Its complete old16 case is reused: literal raw import, initial fresh Continue, distinct actual Pause save, another independent current Continue and exact earlier Retry all succeed. Generations6→7→8 and prior-primary backups5→6→7 retain exact full CP/session/protected Story and future Standard preference. New17's exact initial Continue succeeds in that same job before combined TEST layout row75 fails; remaining new17 stages and portrait were unexecuted there.
+
+The next job executes **only new17**, closing92/0 complete/clean, API0/ownedPID12657 Popen0/Host0. Its genuine retained Challenge checkpoint loads through a fresh Title with future Standard, continues/resumes to the first real Handler warning, makes a public Pause, restores the distinct current Save through another new Shell and retries the earlier checkpoint. Exact Store payload/checksum/generation/backup joins, retained recipe/full profile, whole session and protected Story remain coherent. All five separated Retry clauses pass. Exactly three synchronous old-donor retirement events are retained and qualified by actual origin/lifecycle/payload: reservation-invalidated, required-cue and consumer-state. New-recipient input/action/contact/damage/progression events remain forbidden. No event is suppressed or disconnected. Normal Shell/descendant disposal succeeds. Own isolated save removal is performed; absence after removal is not separately asserted.
+
+Root and the independent reviewer personally inspected the actual540×1170[first-warning image](evidence/a2-o2-difficulty/readable/candidate-first-handler-warning.png), SHA-256 `3008e360ba4b1e8ee2bf88960bc23a43090c430e1ea468ed8de137effb1eea93`. The upper Handler, diagonal lane outline, lower Hero, open safe stone floor and HUD are readable. Dark lower coat/feet/shadow overlap remains; spent Tenders are visible on the lower apron. The image shows HP100 and shells2 and supplies no zero-ammo portrait claim. It is one first-warning observation, not active/recovery/all-kit/full-art/motion/balance proof.
+
+## Original failures and portable custody
+
+| Actual closed result | Retained interpretation |
+| --- | --- |
+|32/1 | Original setup public Retry/view failure; candidate unexecuted. |
+|33/1 | Same refusal with actual pre-Retry diagnostics retained; candidate unexecuted. A paused TEST contact displacement precedes camera follow. The entry-only TEST framing correction leaves production camera bytes unchanged. |
+|47/1 | Unqualified quiet-event Retry assertion fails despite exact final CP/session. Original event types were not retained; no payload or production cause is invented retrospectively. New17/portrait unexecuted. |
+|78/1 | Complete positive old16 case remains reusable within an overall failed job. New17 stops at combined TEST direction row75. Source identifies once/twice normalization expectations; that old combined row does not identify its sole failed predicate. |
+|92/0 | Onlynew17 actual persistence/Retry/portrait job; individually retained native adapter diagnostics explain the new observation without rewriting78/1. |
+
+[The portable capsule](evidence/a2-o2-difficulty/README.md) contains377 deduplicated opaque exact objects,61,314,677B; six closed-phase manifests retain2,904 original indexed origins and1,264 retained aliases with original bytes/modes. Its[index](evidence/a2-o2-difficulty/index.json), named source/control/review aliases, actual host returns/raw logs and image retain the complete bounded chronology. Original evidence statuses and older then-current policy counts remain historical. Separate Root completion and validator receipts do not alter native artifacts. All sources were assembled/restored through the canonical queue with owned process/known-byte custody; no foreign process or held lock was removed.
+
+[Independent source and portable-custody reviews](evidence/a2-o2-publication-review/index.json) find no concrete acceptance/compatibility blocker and verify all402 capsule files.
+
+Original Shared50 mechanics257/0, selected extrema523/0, loading116/0 and graphics322/0 plus Root registration41/0 retain their original source attribution. They support unchanged mechanics, transitions, optional/replay identity, original selected-kit guards and presentation; they are not new diagonal all-kit checks. Eighty-six old functions are byte-identical and five are changed alongside the finite construction helpers. No controller/equipment/cue/scheduler API or ledger change is selected.
+
+**Untested full-playthrough behavior:** earned complete routes, both ordinary Tender clear orders into the final exit, defeat-all/full campaign, all mixed kits/difficulty balance, sustained performance and exhaustive artwork remain untested here. These are recorded limits under[focused acceptance](LEVEL_ACCEPTANCE.md), not new gates. No mobile/export/release/public-upload work is included.

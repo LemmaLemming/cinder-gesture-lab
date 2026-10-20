@@ -1,4 +1,5 @@
 extends CinderLevel
+## PRIVATE INERT corrected right-diagonal hypothesis; not promoted or executed.
 ## A2-O2: two original Tender/SmokeBank pairs, then one original Handler.
 ## The shared Player, Scheduler, Lane and SmokeBank own inputs/damage/clocks.
 ## New host progression, native bindings, presentation and closed local16 codec.
@@ -18,6 +19,7 @@ const CueMesh: Script = preload("res://scripts/cues/cue_mesh.gd")
 const Geometry: Script = preload("res://scripts/combat/threat_geometry.gd")
 const Difficulty: Script = preload("res://scripts/combat/difficulty.gd")
 const Codec: Script = preload("res://scripts/campaign/snapshot_codec.gd")
+const ArrangementExact: Script = preload("res://scripts/campaign/exact_json.gd")
 const AdmissionEquipment: Script = preload("res://scripts/equipment.gd")
 const SharedGame: Script = preload("res://scripts/game.gd")
 
@@ -42,6 +44,11 @@ const MARKER_AT: Vector3 = Vector3(0.9, 0, -13.9)
 const COMPLETION_ID: String = "clear-air-circuit-complete"
 const EXIT_ID: String = "clear-air-circuit-return"
 const LOCAL_KEYS: Array[String] = ["scenic_clock", "profile_id", "world_revision", "defeated_ids", "defeat_times", "pending_defeats", "checkpoint_contact_seen", "checkpoint_requested", "pending_checkpoint", "completion_pending", "exit_requested", "scheduler", "actors", "banks", "tool", "views"]
+const HANDLER_ARRANGEMENT_API: String = "act2-clear-air-handler-arrangement-1"
+const HANDLER_FRONTAL_RECIPE: String = "canonical-handler-frontal-1"
+const HANDLER_DIAGONAL_RIGHT_RECIPE: String = "challenge-handler-diagonal-right-1"
+const HANDLER_ARRANGEMENT_KEYS: Array[String] = ["api_revision", "schema_version", "profile", "recipe_id"]
+const HANDLER_PROFILE_KEYS: Array[String] = ["id", "name", "raw_damage_multiplier", "windup_multiplier", "recovery_multiplier", "reserved_threat_budget", "commit_stagger_s", "arrangement"]
 const VIEW_KEYS: Array[String] = ["reservation_id", "landing", "attack_position", "target_id", "primary_time_s", "response_complete_s", "equipment_ids"]
 const RESPONSE_DIRECTIONS: Array[Vector3] = [
 	Vector3(0.707106781187, 0, -0.707106781187), Vector3(-0.707106781187, 0, -0.707106781187),
@@ -67,6 +74,9 @@ var _bank_guard: Node
 var _exit_cue: Node3D
 var _scenic_clock: float = 0.0
 var _profile_id: String = "standard"
+# Selection is per attempt, before any actor/Lane configure. No frame cache.
+var _handler_legacy_layout: bool = false
+var _handler_arrangement: Dictionary = {}
 var _defeated_ids: Array[String] = []
 var _defeat_times: Dictionary = {}
 var _pending_defeats: Array[String] = []
@@ -119,13 +129,44 @@ func _build_ground() -> void:
 
 
 func _on_enter_level() -> void:
+	var selected: String = "standard"
 	if is_instance_valid(shared_shell) and shared_shell.has_method("get_difficulty_preference"):
-		_profile_id = String(shared_shell.call("get_difficulty_preference"))
+		selected = String(shared_shell.call("get_difficulty_preference"))
+	var canonical: Dictionary = Difficulty.new().profile(selected)
+	if canonical.is_empty():
+		runtime_error = "Fresh canonical Circuit profile required"
+		return
+	_handler_legacy_layout = false
+	_handler_arrangement = {"api_revision": HANDLER_ARRANGEMENT_API, "schema_version": 1, "profile": canonical.duplicate(true), "recipe_id": HANDLER_DIAGONAL_RIGHT_RECIPE if selected == "challenge" else HANDLER_FRONTAL_RECIPE}
+	var error: String = _handler_policy_error(_handler_arrangement)
+	if not error.is_empty():
+		runtime_error = error
+		return
+	_profile_id = selected
+	_build_native_encounter()
+
+
+func restore_candidate_construction_required() -> bool:
+	return true
+
+
+func _on_enter_restore_candidate(local: Dictionary, _player: Dictionary) -> String:
+	# Pure saved selection before original once-only configure; never query menu.
+	var error: String = _select_saved_handler_construction(local)
+	if not error.is_empty(): return error
+	_build_native_encounter()
+	return runtime_error
+
+
+func _build_native_encounter() -> void:
 	_scheduler = Scheduler.new() as CinderThreatScheduler
 	_scheduler.name = "CircuitThreatScheduler"
 	add_child(_scheduler)
 	if not _scheduler.begin_encounter(_profile_id, ENCOUNTER_ID, WORLD_REVISION):
 		runtime_error = _scheduler.last_error
+		return
+	if not _handler_legacy_layout and not _handler_exact(_scheduler.encounter_profile(), _handler_arrangement.profile):
+		runtime_error = "Circuit once-configured Scheduler differs from frozen full construction profile"
 		return
 	for id: String in ACTOR_IDS:
 		var actor: Node3D = (HandlerActor.new() if id == "final_handler" else TenderActor.new()) as Node3D
@@ -183,6 +224,107 @@ func _on_enter_level() -> void:
 	_pose_consumers()
 	_update_objective()
 	set_physics_process(true)
+
+# PRIVATE PROPOSED retained construction. No arbitrary vectors/row overrides.
+# _ready builds only the unchanged ground/kit; native attack geometry is first
+# configured by _build_native_encounter after this selector. No _ready angle
+# dependency exists, so no post-configure rotation or reconfiguration is needed.
+func _handler_local_keys(local: Dictionary) -> Array[String]:
+	var keys: Array[String] = LOCAL_KEYS.duplicate()
+	if local.has("handler_arrangement"): keys.append("handler_arrangement")
+	return keys
+
+
+func _handler_exact(left: Variant, right: Variant) -> bool:
+	var encoded: String = ArrangementExact.stringify(left)
+	return not encoded.is_empty() and encoded == ArrangementExact.stringify(right)
+
+
+func _handler_policy_error(policy: Dictionary) -> String:
+	if not Codec.keys_error(policy, HANDLER_ARRANGEMENT_KEYS).is_empty() or policy.get("api_revision") != HANDLER_ARRANGEMENT_API or not policy.get("schema_version") is int or policy.schema_version != 1 or not policy.get("profile") is Dictionary or not policy.get("recipe_id") is String:
+		return "Closed typed Circuit Handler arrangement1 required"
+	var profile: Dictionary = policy.profile
+	if not Codec.keys_error(profile, HANDLER_PROFILE_KEYS).is_empty() or not profile.get("id") is String:
+		return "Full canonical Circuit construction profile required"
+	var canonical: Dictionary = Difficulty.new().profile(profile.id)
+	if canonical.is_empty() or not _handler_exact(profile, canonical):
+		return "Exact full canonical Circuit construction profile differs"
+	# Validate retained recipe identity, not today's fresh preference mapping.
+	# Frontal remains available for every profile as immutable retained v1.
+	if policy.recipe_id == HANDLER_FRONTAL_RECIPE: return ""
+	if policy.recipe_id == HANDLER_DIAGONAL_RIGHT_RECIPE and profile.id == "challenge": return ""
+	return "Unknown or incompatible retained Circuit Handler recipe"
+
+
+func _select_saved_handler_construction(local: Dictionary) -> String:
+	var error: String = Codec.value_error(local)
+	if error.is_empty(): error = Codec.keys_error(local, _handler_local_keys(local))
+	if not error.is_empty(): return error
+	if not local.get("profile_id") is String or Difficulty.new().profile(local.profile_id).is_empty():
+		return "Saved canonical Circuit profile ID required before construction"
+	if not local.has("handler_arrangement"):
+		# Preserve the original native validators/numeric policy, not new Exact
+		# restrictions, for every literal old16 packet including old Challenge.
+		_handler_legacy_layout = true
+		_handler_arrangement.clear()
+		_profile_id = local.profile_id
+		return ""
+	if not local.handler_arrangement is Dictionary:
+		return "Typed Circuit Handler arrangement required"
+	error = _handler_policy_error(local.handler_arrangement)
+	if not error.is_empty(): return error
+	if local.handler_arrangement.profile.id != local.profile_id:
+		return "Saved Circuit profile ID differs from retained construction"
+	_handler_legacy_layout = false
+	_handler_arrangement = local.handler_arrangement.duplicate(true)
+	_profile_id = local.profile_id
+	return ""
+
+
+func _handler_saved_construction_error(local: Dictionary) -> String:
+	if not local.has("handler_arrangement"):
+		return "" if _handler_legacy_layout else "Literal old16 requires its original frontal recipient"
+	if _handler_legacy_layout or not local.handler_arrangement is Dictionary:
+		return "New Circuit packet requires its retained construction recipient"
+	var error: String = _handler_policy_error(local.handler_arrangement)
+	if not error.is_empty(): return error
+	if not _handler_exact(local.handler_arrangement, _handler_arrangement):
+		return "Circuit construction cannot change after once-configuration"
+	if local.get("profile_id") != _handler_arrangement.profile.id:
+		return "Circuit saved profile differs from retained construction"
+	if not local.get("scheduler") is Dictionary or not local.scheduler.get("profile") is Dictionary:
+		return "Whole Circuit saved Scheduler required"
+	# The original ended/clear branch still validates all earned defeats and no
+	# leases. Its empty Scheduler does not erase the retained full profile.
+	if not local.scheduler.profile.is_empty() and not _handler_exact(local.scheduler.profile, _handler_arrangement.profile):
+		return "Whole Circuit Scheduler profile differs from construction"
+	return ""
+
+
+func _handler_direction() -> Vector3:
+	if _handler_legacy_layout or _handler_arrangement.get("recipe_id") == HANDLER_FRONTAL_RECIPE:
+		return Vector3.BACK
+	if _handler_arrangement.get("recipe_id") == HANDLER_DIAGONAL_RIGHT_RECIPE:
+		return (Vector3.BACK + Vector3.RIGHT).normalized()
+	return Vector3.ZERO # Unknown policy must already have refused configuration.
+
+
+func _actor_direction(id: String) -> Vector3:
+	return _handler_direction() if id == "final_handler" else Vector3.BACK
+
+
+func _actor_snapshot_direction(id: String) -> Vector3:
+	# Match the exact public adapter's planar flatten + normalized assignment;
+	# don't assume repeated native Vector3 normalization preserves scalar bits.
+	var requested: Vector3 = _actor_direction(id)
+	return Vector3(requested.x, 0.0, requested.z).normalized()
+
+
+func _actor_yaw(id: String) -> float:
+	if id != "final_handler" or _handler_legacy_layout or _handler_arrangement.get("recipe_id") == HANDLER_FRONTAL_RECIPE:
+		return 0.0
+	var direction: Vector3 = _handler_direction()
+	return atan2(direction.x, direction.z)
 
 
 func _physics_process(delta: float) -> void:
@@ -246,7 +388,7 @@ func _consumer(id: String) -> Variant:
 
 func _tool_geometry() -> Dictionary:
 	var at: Vector3 = ACTOR_POSITIONS.final_handler
-	return Geometry.lane(at, at + Vector3.BACK * 3.8, 0.31)
+	return Geometry.lane(at, at + _handler_direction() * 3.8, 0.31)
 
 
 func _bank_id(target: String) -> String:
@@ -466,7 +608,7 @@ func _pose_consumer(id: String, state: Dictionary, pose_actor: bool = true) -> v
 	var actor: Variant = _actors.get(target)
 	var living: bool = _node_live(actor) and float(actor.get("hp")) > 0.0
 	var phase: String = String(state.phase) if state.status == "running" else "idle"
-	if pose_actor and living: actor.call("present_phase", phase, _phase_progress(state), Vector3.BACK)
+	if pose_actor and living: actor.call("present_phase", phase, _phase_progress(state), _actor_direction(target))
 	var cue: Variant = _opening_cues.get(target)
 	if _node_live(cue):
 		if state.status == "running" and state.phase == "recovery" and living and (id != TOOL_ID or (_checkpoint_requested and not _pending_checkpoint)):
@@ -985,7 +1127,9 @@ func _capture_local_state() -> Dictionary:
 	for id: String in ACTOR_IDS: actors[id] = _actors[id].call("snapshot_state")
 	var banks: Dictionary = {}
 	for id: String in BANK_IDS: banks[id] = _banks[id].call("snapshot_state", bindings)
-	return {"scenic_clock": _scenic_clock, "profile_id": _profile_id, "world_revision": WORLD_REVISION, "defeated_ids": _defeated_ids.duplicate(), "defeat_times": _defeat_times.duplicate(), "pending_defeats": _pending_defeats.duplicate(), "checkpoint_contact_seen": _checkpoint_contact_seen, "checkpoint_requested": _checkpoint_requested, "pending_checkpoint": _pending_checkpoint, "completion_pending": _completion_pending, "exit_requested": _exit_requested, "scheduler": _scheduler.snapshot_state(bindings), "actors": actors, "banks": banks, "tool": _tool.call("snapshot_state", bindings), "views": _views.duplicate(true)}
+	var local: Dictionary = {"scenic_clock": _scenic_clock, "profile_id": _profile_id, "world_revision": WORLD_REVISION, "defeated_ids": _defeated_ids.duplicate(), "defeat_times": _defeat_times.duplicate(), "pending_defeats": _pending_defeats.duplicate(), "checkpoint_contact_seen": _checkpoint_contact_seen, "checkpoint_requested": _checkpoint_requested, "pending_checkpoint": _pending_checkpoint, "completion_pending": _completion_pending, "exit_requested": _exit_requested, "scheduler": _scheduler.snapshot_state(bindings), "actors": actors, "banks": banks, "tool": _tool.call("snapshot_state", bindings), "views": _views.duplicate(true)}
+	if not _handler_legacy_layout: local["handler_arrangement"] = _handler_arrangement.duplicate(true)
+	return local
 
 
 func _local_snapshot_error(state: Dictionary) -> String:
@@ -1001,7 +1145,8 @@ func _whole_snapshot_error(state: Dictionary, player: Dictionary) -> String:
 	if not get_tree().paused or not runtime_error.is_empty() or not _forecasts.is_empty(): return "Circuit transport requires the paused native commit barrier"
 	var error: String = _runtime_content_error()
 	if error.is_empty(): error = Codec.value_error(state)
-	if error.is_empty(): error = Codec.keys_error(state, LOCAL_KEYS)
+	if error.is_empty(): error = Codec.keys_error(state, _handler_local_keys(state))
+	if error.is_empty(): error = _handler_saved_construction_error(state)
 	if not error.is_empty(): return error
 	if player.is_empty(): return "Circuit requires the complete saved Player"
 	error = hero.snapshot_error(player)
@@ -1042,7 +1187,7 @@ func _whole_snapshot_error(state: Dictionary, player: Dictionary) -> String:
 		error = _actors[id].call("snapshot_error", state.actors[id])
 		if not error.is_empty(): return id + ": " + error
 		var actor: Dictionary = state.actors[id]
-		if actor.root_position != Codec.vector3(ACTOR_POSITIONS[id]) or float(actor.max_hp) != 30.0 or (float(actor.hp) <= 0.0) != earned.has(id) or actor.direction != Codec.vector3(Vector3.BACK) or float(actor.body_yaw) != 0.0: return "Circuit actual actor root/HP/history/direction/yaw differs: " + id
+		if actor.root_position != Codec.vector3(ACTOR_POSITIONS[id]) or float(actor.max_hp) != 30.0 or (float(actor.hp) <= 0.0) != earned.has(id) or actor.direction != Codec.vector3(_actor_snapshot_direction(id)) or float(actor.body_yaw) != _actor_yaw(id): return "Circuit actual actor root/HP/history/direction/yaw differs: " + id
 	error = _tool.call("snapshot_error", state.tool, bindings, state.scheduler)
 	if not error.is_empty(): return error
 	if state.tool.configuration.raw_role != TOOL_ROLE or state.tool.configuration.timing_floors != TOOL_FLOORS: return "Circuit unchanged Handler role/floors differ"
