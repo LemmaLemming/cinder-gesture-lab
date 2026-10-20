@@ -1,0 +1,107 @@
+{
+  "scope": "Final bounded inert lifecycle/raw-first/coroutine/partial-failure/double-finalization review of exact0dd7 only. This is source reasoning, not Godot parser or execution evidence.",
+  "source_path": "/private/tmp/act1-support-a2-l4-deferred-finish/fixed_comparison_deferred_finish.gd.txt",
+  "source_bytes": 66958,
+  "source_sha256": "0dd7f97603edcb5f92f9e0f425e6f82ba2d57126b4b3645a6449e508b778c885",
+  "patch_path": "/private/tmp/act1-support-a2-l4-deferred-finish/deferred-finish.patch.txt",
+  "patch_bytes": 15579,
+  "patch_sha256": "f53d07ebfb726c0a60ba15ebdea1414dab70b6c720d03e385d1448973f5857ee",
+  "exact_patch_reconstructs_source": true,
+  "baseline_failed_source": {
+    "path": "/private/tmp/act1-support-a2-l4-published-framing/fixed_comparison_published_framing.gd.txt",
+    "bytes": 60698,
+    "sha256": "c0b7edf55cdd0353676e6d1b1a17498d15f4611055665ee1600538f65bf1362b",
+    "actual_original_failure_preserved": true
+  },
+  "source_controls": {
+    "entries": 37,
+    "raw_control_dictionary_byte_unchanged": true,
+    "embedded_sources": [
+      {
+        "label": "HOST",
+        "sha256": "1fc574eff95d8d0e295a6a61ee3fa15a416634313b552282d7c7fb8e3a816760",
+        "unchanged_from_failed_c0b7": true
+      },
+      {
+        "label": "GAME",
+        "sha256": "c3d67c5b2ceba7877dac5a0d17dafeaa4f49a26f1d36874af033ecaffb733ec8",
+        "unchanged_from_failed_c0b7": true
+      }
+    ],
+    "native_proof_and_combat_review_not_reopened": true
+  },
+  "findings": [],
+  "reviewed_boundaries": [
+    {
+      "lines": [
+        964,
+        970
+      ],
+      "result": "_finish immediately latches_finished, pauses tree and disables probe physics, then only queues deferred worker. It does not free Game/Level/probe while tick_finished emits."
+    },
+    {
+      "lines": [
+        764,
+        800
+      ],
+      "result": "Original-to-candidate retirement also pauses/disables observer, yields on a SceneTree-owned boundary signal and runs capture/write/cleanup only in deferred worker. Completion re-enables observer only on persisted evidence/cleanup success; a latched finish prevents candidate continuation."
+    },
+    {
+      "lines": [
+        907,
+        961,
+        977,
+        979
+      ],
+      "result": "Before either cleanup path, an observation-only snapshot seals current component plus prior closed components/checks/actual flags/verdict into unique immutable pre-cleanup binary and JSON. Provisional artifacts expressly say cleanup_pending and make no acceptance/cleanup claim. Binding projection happens while recipients are live, without consulting_live afterfinish latch."
+    },
+    {
+      "lines": [
+        973,
+        976,
+        790,
+        800
+      ],
+      "result": "Once-only finalizer flag is set only after pending inter-component retirement finishes. A queued finalizer that sees active boundary returns; boundary completion requeues it. _finished checks afterawait prevent paused/retired tuple reuse or a second candidate after watchdog finish."
+    },
+    {
+      "lines": [
+        803,
+        817
+      ],
+      "result": "Normal cleanup keeps null-safe optionalLevel WeakRef, frees owned Game, verifies both releases and only then appends closed component. Cleanup result/checks feed final positive gating. Neither helper nor native recipient is recreated to repair failure."
+    },
+    {
+      "lines": [
+        929,
+        961,
+        984,
+        1005
+      ],
+      "result": "Persistence failure latches_precleanup_all_ok false and stops inter-component progression; final result additionally needs cleanup, evidence, rawfinal readback/SHA/roundtrip and summary readback/SHA. No original failure, partial receipt, timeout or missing component can produce exit0."
+    },
+    {
+      "lines": [
+        271,
+        282,
+        907,
+        961
+      ],
+      "result": "Namespace refuses prior partial pre-cleanup files; each serial has unique binary/summary paths with no overwrite. Immutable earlier receipts are retained in later payloads/finalreport. Sourcegate/options refusal can still finish with a nonpassing record when ownednamespace exists; noExact/candidate call is required by persistence."
+    }
+  ],
+  "preserved_failure_custody": {
+    "path": "/private/tmp/act1-support-a2-l4-deferred-finish/original-failure-custody.json",
+    "sha256": "adf5663d631e8f8e3151606dcff961c80286be9f1d8418ea4f9e6b933788f54f",
+    "classification": "Host2/API1/ownedPopen-15; locked probe free867; no persisted original summary/native trace; mechanical result unproved"
+  },
+  "limits": [
+    "No source-only review establishes native parser/lifecycle/file IO success; Root alone executes the changed TEST path.",
+    "The original c0b7 emission stack does not establish original/candidate response success, counts, useful difference or policy acceptance.",
+    "Preserved raw Variant data follows explicit binding-reference projection; it is not a lossless runtime Object graph or native save.",
+    "No new station, kit, angle, source-order/timing/proof horizon, native producer or campaign gate is introduced by this lifecycle delta."
+  ],
+  "engine_parser_or_native_run": false,
+  "runtime_or_source_edit": false,
+  "acceptance_changed": false
+}

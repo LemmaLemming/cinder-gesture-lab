@@ -1,0 +1,262 @@
+{
+  "scope": "Bounded read-only exact c0b7 failed native phase/source/log custody. No engine/parser/materialization/new native attempt. No large source archive copied.",
+  "authority_response": {
+    "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/agent-chat/cinder-campaign/integration/messages/0746aedd-1bef-4323-a843-347ad493bce1-RESPONSE.json",
+    "bytes": 2174,
+    "sha256": "de64dfa48e5b3bac713de8d553b2ac455d5a1cbfe789cc6e2be34daa665d6be5"
+  },
+  "phase_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l4-fixed-comparison-prepare-20261020/run-native-20261020T044533.860872Z-8be4a8d2",
+  "phase_relative_path": ".cinder/a2-l4-fixed-comparison-prepare-20261020/run-native-20261020T044533.860872Z-8be4a8d2",
+  "classification": "FAILED_NATIVE_TEST_FINISH_LIFECYCLE; NO_PERSISTED_MECHANICAL_OUTCOME",
+  "host_return": 2,
+  "canonical_api_return": 1,
+  "owned_children": [
+    {
+      "pid": 13212,
+      "closed": true,
+      "popen_return": -15
+    }
+  ],
+  "closed": true,
+  "passed": false,
+  "native_functional_pass": false,
+  "native_terminal_recorded": false,
+  "mechanical_outcome_unproved": true,
+  "policy_acceptance_claimed": false,
+  "raw_and_engine_first_error_excerpt": [
+    {
+      "line": 3,
+      "text": "ERROR: Object is locked and can't be freed."
+    },
+    {
+      "line": 4,
+      "text": "   at: callp (core/object/object.cpp:787)"
+    },
+    {
+      "line": 5,
+      "text": "   GDScript backtrace (most recent call first):"
+    },
+    {
+      "line": 6,
+      "text": "       [0] _finish (res://.cinder/a2-l4-fixed-comparison-prepare-20261020/fixed_comparison.gd:867)"
+    },
+    {
+      "line": 7,
+      "text": "       [1] _run (res://.cinder/a2-l4-fixed-comparison-prepare-20261020/fixed_comparison.gd:257)"
+    },
+    {
+      "line": 8,
+      "text": "       [2] _candidate_response (res://.cinder/a2-l4-fixed-comparison-prepare-20261020/fixed_comparison.gd:376)"
+    },
+    {
+      "line": 9,
+      "text": "       [3] _tick (res://.cinder/a2-l4-fixed-comparison-prepare-20261020/fixed_comparison.gd:495)"
+    },
+    {
+      "line": 10,
+      "text": "       [4] _physics_process (res://.cinder/a2-l4-fixed-comparison-prepare-20261020/fixed_comparison.gd:167)"
+    },
+    {
+      "line": 11,
+      "text": "SCRIPT ERROR: Attempted to free a locked object (calling or emitting)."
+    },
+    {
+      "line": 12,
+      "text": "Cinder dev: Godot reported a script or project-resource error; validation failed."
+    },
+    {
+      "line": 13,
+      "text": "          at: _finish (res://.cinder/a2-l4-fixed-comparison-prepare-20261020/fixed_comparison.gd:867)"
+    },
+    {
+      "line": 14,
+      "text": "          GDScript backtrace (most recent call first):"
+    },
+    {
+      "line": 15,
+      "text": "              [0] _finish (res://.cinder/a2-l4-fixed-comparison-prepare-20261020/fixed_comparison.gd:867)"
+    },
+    {
+      "line": 16,
+      "text": "              [1] _run (res://.cinder/a2-l4-fixed-comparison-prepare-20261020/fixed_comparison.gd:257)"
+    },
+    {
+      "line": 17,
+      "text": "              [2] _candidate_response (res://.cinder/a2-l4-fixed-comparison-prepare-20261020/fixed_comparison.gd:376)"
+    },
+    {
+      "line": 18,
+      "text": "              [3] _tick (res://.cinder/a2-l4-fixed-comparison-prepare-20261020/fixed_comparison.gd:495)"
+    }
+  ],
+  "failure_mechanism": "Immediate NativeTickProbe.free in _finish line867 while tick_finished is emitting; source deferred-callback correction only. Stack path does not establish any response outcome.",
+  "native_artifact_custody": {
+    "artifacts": {},
+    "errors": [
+      {
+        "artifact": "native-report.json",
+        "error": "Actual native artifact absent: native-report.json"
+      },
+      {
+        "artifact": "native-trace.bin",
+        "error": "Actual native artifact absent: native-trace.bin"
+      }
+    ],
+    "opaque_binary_retention_only": true
+  },
+  "exact_failed_source_blob": {
+    "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l4-fixed-comparison-prepare-20261020/run-native-20261020T044533.860872Z-8be4a8d2/source-blobs/c0b7edf55cdd0353676e6d1b1a17498d15f4611055665ee1600538f65bf1362b.bin",
+    "bytes": 60698,
+    "sha256": "c0b7edf55cdd0353676e6d1b1a17498d15f4611055665ee1600538f65bf1362b"
+  },
+  "exact_owned_inert_c0b7_source": {
+    "path": "/private/tmp/act1-support-a2-l4-published-framing/fixed_comparison_published_framing.gd.txt",
+    "bytes": 60698,
+    "sha256": "c0b7edf55cdd0353676e6d1b1a17498d15f4611055665ee1600538f65bf1362b"
+  },
+  "at_lock_selected_source_rows": {
+    ".cinder/a2-l4-fixed-comparison-prepare-20261020/fixed_comparison.gd": {
+      "exists": true,
+      "regular": true,
+      "symlink": false,
+      "sha256": "c0b7edf55cdd0353676e6d1b1a17498d15f4611055665ee1600538f65bf1362b",
+      "bytes": 60698,
+      "mode": "0644",
+      "blob": "source-blobs/c0b7edf55cdd0353676e6d1b1a17498d15f4611055665ee1600538f65bf1362b.bin"
+    },
+    ".cinder/a2-l4-fixed-comparison-prepare-20261020/fixed_comparison.gd.txt": {
+      "exists": true,
+      "regular": true,
+      "symlink": false,
+      "sha256": "c0b7edf55cdd0353676e6d1b1a17498d15f4611055665ee1600538f65bf1362b",
+      "bytes": 60698,
+      "mode": "0644",
+      "blob": "source-blobs/c0b7edf55cdd0353676e6d1b1a17498d15f4611055665ee1600538f65bf1362b.bin"
+    }
+  },
+  "small_phase_file_pins": [
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l4-fixed-comparison-prepare-20261020/run-native-20261020T044533.860872Z-8be4a8d2/result.json",
+      "bytes": 1390,
+      "sha256": "73044e1692e15120df834739fb4a1c07c7dda38a27ce73110e5873da4b83dd42"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l4-fixed-comparison-prepare-20261020/run-native-20261020T044533.860872Z-8be4a8d2/native-observation.json",
+      "bytes": 329,
+      "sha256": "124cf32dbac1e6c61305b8da22ccd480b1d9186f3d625e74adc0648b8644562e"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l4-fixed-comparison-prepare-20261020/run-native-20261020T044533.860872Z-8be4a8d2/native-artifact-custody.json",
+      "bytes": 316,
+      "sha256": "61b18c49014c2500fbbfd565bffb72bf914a6dd6da75ea557219f6b608ec21f8"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l4-fixed-comparison-prepare-20261020/run-native-20261020T044533.860872Z-8be4a8d2/command.json",
+      "bytes": 989,
+      "sha256": "3dcb4f17db469b7a11119f41d3a191066d119f7323f6d5402032b31fc72df257"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l4-fixed-comparison-prepare-20261020/run-native-20261020T044533.860872Z-8be4a8d2/raw.log",
+      "bytes": 1709,
+      "sha256": "7ce2af8452482cc747c8cf2527db17c758995e58cb2f6adca4c939bb0df925f5"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l4-fixed-comparison-prepare-20261020/run-native-20261020T044533.860872Z-8be4a8d2/engine.log",
+      "bytes": 1443,
+      "sha256": "5618cd0e1c7831785f3536e0b44e57624888c9064a9dc424a3b154de6c18a1b4"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l4-fixed-comparison-prepare-20261020/run-native-20261020T044533.860872Z-8be4a8d2/sources-candidate-selected.json",
+      "bytes": 48183,
+      "sha256": "41cf985f572322168e277cefbe81e4eb277df2ef6db8edca45c5e3b6c365951d"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l4-fixed-comparison-prepare-20261020/run-native-20261020T044533.860872Z-8be4a8d2/sources-candidate-selected-retention.json",
+      "bytes": 67158,
+      "sha256": "296d81c024d36852427c65ca9b75ff87776e5cf584374e65585779b84e63510f"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l4-fixed-comparison-prepare-20261020/run-native-20261020T044533.860872Z-8be4a8d2/sources-at-lock.json",
+      "bytes": 48120,
+      "sha256": "ba8ed2eb55d57f91c39e821bd092f2a35ca66af55f13e38612cfdb8dc8ec0aba"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l4-fixed-comparison-prepare-20261020/run-native-20261020T044533.860872Z-8be4a8d2/sources-at-lock-retention.json",
+      "bytes": 66813,
+      "sha256": "5255b1e9001d18227c9e7126ff0611a95c524b7eb5a0d86543536ca43ba5d5cc"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l4-fixed-comparison-prepare-20261020/run-native-20261020T044533.860872Z-8be4a8d2/restore-receipts.json",
+      "bytes": 1553,
+      "sha256": "015663ec8d55da104bd51a7e468559e1c38706956ec7bbe25fae5553c54cc0cc"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l4-fixed-comparison-prepare-20261020/run-native-20261020T044533.860872Z-8be4a8d2/sources-after-restore.json",
+      "bytes": 48120,
+      "sha256": "ba8ed2eb55d57f91c39e821bd092f2a35ca66af55f13e38612cfdb8dc8ec0aba"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l4-fixed-comparison-prepare-20261020/run-native-20261020T044533.860872Z-8be4a8d2/evidence-index.json",
+      "bytes": 48839,
+      "sha256": "c95fdace5171fe1d98e5243d5348a8b18e97d9f57b5abcf146ef9316443d5608"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l4-fixed-comparison-prepare-20261020/run-native-20261020T044533.860872Z-8be4a8d2/queue.json",
+      "bytes": 208,
+      "sha256": "63a80bf7a813afab5a5fdf9f6fe94c72f364e5bc00018f653dd4e03dd5a31ad6"
+    }
+  ],
+  "restore_receipts": [
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/acts/act2/london_approaches_construction.gd",
+      "owned_children_closed": true,
+      "created_by_this_run": true,
+      "restored_exact_initial": true,
+      "write_attempted": true,
+      "under_canonical_lock": true,
+      "unknown_overwrite_authorized": false,
+      "status": "REMOVED_ONLY_EXACT_OWN_CREATED_CANDIDATE"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/acts/act2/london_approaches_smoke_rules.gd",
+      "owned_children_closed": true,
+      "created_by_this_run": false,
+      "restored_exact_initial": true,
+      "write_attempted": true,
+      "under_canonical_lock": true,
+      "unknown_overwrite_authorized": false,
+      "status": "RESTORED_EXACT_INITIAL_BYTES_MODE"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/acts/act2/london_approaches_snapshot_rules.gd",
+      "owned_children_closed": true,
+      "created_by_this_run": false,
+      "restored_exact_initial": true,
+      "write_attempted": true,
+      "under_canonical_lock": true,
+      "unknown_overwrite_authorized": false,
+      "status": "RESTORED_EXACT_INITIAL_BYTES_MODE"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/acts/act2/london_approaches.gd",
+      "owned_children_closed": true,
+      "created_by_this_run": false,
+      "restored_exact_initial": true,
+      "write_attempted": true,
+      "under_canonical_lock": true,
+      "unknown_overwrite_authorized": false,
+      "status": "RESTORED_EXACT_INITIAL_BYTES_MODE"
+    }
+  ],
+  "all_four_entry_receipts_restore_exact": true,
+  "preserved_prior_acceptance": {
+    "original_content": 24,
+    "difficulty_policies": 20
+  },
+  "limits": [
+    "Raw/engine logs retain actual lifecycle error and original Host2/API1/owned Popen-15; no result counts or response success reconstructed.",
+    "No summary or native-trace binary was retained by that run; source/log are the available outcome evidence.",
+    "Only selected source blob and small phase reports/logs were inspected; not a full source-dependency/environment audit.",
+    "Original c0b7 and phase are retained untouched; all output is private support JSON."
+  ]
+}
