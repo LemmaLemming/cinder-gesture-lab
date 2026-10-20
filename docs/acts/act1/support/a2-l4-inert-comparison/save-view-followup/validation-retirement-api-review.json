@@ -1,0 +1,183 @@
+{
+  "schema_version": 1,
+  "title": "A2-L4 exact pristine validation-recipient retirement: bounded source predicate audit",
+  "created_at_utc": "2026-10-20T05:44:26.448033+00:00",
+  "authorizations": [
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/agent-chat/cinder-campaign/integration/messages/b90c3efb-0097-4ac8-bf5e-ccfe2db9b9b2-RESPONSE.json",
+      "bytes": 2804,
+      "sha256": "4ae0d16c3c76a0e5339c4511bc26e532df154ffb4b2b5273134366a39999cd6c"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/agent-chat/cinder-campaign/integration/messages/d15f7ffe-0a32-4af6-adb2-bf002d1698c2-RESPONSE.json",
+      "bytes": 1573,
+      "sha256": "8cfcd747e43821bcb2174bf7752305ad23e9a6602ff4f2e30380e51c1f902cbf"
+    }
+  ],
+  "scope": "Source-only API and observation predicate review. No production or author source edits, parser, engine, import, queue, materialization, producer, adoption or native execution.",
+  "selected_sources": [
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/campaign/shell.gd",
+      "bytes": 70657,
+      "sha256": "f8df3b798544b79d66985f5e468f13ade5485bccc6050b54c9d9d242b3211a0f"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/campaign/level.gd",
+      "bytes": 23949,
+      "sha256": "27fdab6686d8ba4b8282c48af84c0c3f63d8c8fa7620ae462a4642ec225100c1"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/campaign/attempts.gd",
+      "bytes": 18347,
+      "sha256": "6701abec6181beb3934490e468b00868c14e69eb229f708d562b98efe32a43a0"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/acts/act2/ray_scout_exchange.gd",
+      "bytes": 63062,
+      "sha256": "6d8e11a29254cad18947655d8e7470d7892b18e856e534859ae6211a897ae7e2"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/acts/act2/weybridge.gd",
+      "bytes": 62407,
+      "sha256": "767430baacc6b6a32547e1ec87e81b9fe48ad24e53939c18876fa63317d85145"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/acts/act2/london_approaches_sequence.gd",
+      "bytes": 5602,
+      "sha256": "e43236ccdc37827253533bdf999f26db2f4e3d5adfc309f1f70f98247fe8184a"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/combat/threat_scheduler.gd",
+      "bytes": 266033,
+      "sha256": "c28ea9f4cd6c1ff9aedbc9cfc45a28826c589c095b9193b565f45d23c3df903d"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/combat/lane_mechanism.gd",
+      "bytes": 43768,
+      "sha256": "bcf6558d4ae57c4bf8714ae6fe6b1896b3c7c0be3b6a8a9f3178451653bd031d"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/combat/smoke_bank.gd",
+      "bytes": 71522,
+      "sha256": "698a70275c438be088fe8abeb7a35083444879364a3acda3ae91194fe4c67ae9"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/player.gd",
+      "bytes": 48906,
+      "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743"
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/docs/acts/act1/support/a2-l4-inert-constructor/london_approaches.gd.txt",
+      "bytes": 61944,
+      "sha256": "b81f9e8274bf72dca952fd1da8d41fd73e49059f24e0004ece6ca011d31fb3b4"
+    }
+  ],
+  "native_path": [
+    {
+      "source": "inert b81f london_approaches.gd.txt:44-54 + Level:116-117",
+      "fact": "L4 opts saved construction only; inherited physics registration remains false. Both old16/new17 use the legacy validation map, never registration-scope fallback."
+    },
+    {
+      "source": "Shell:745,766-769,823-826",
+      "fact": "Previous candidates dispose before next validation; each freshly constructed candidate enters actual _validation_candidates[A2-L4]. This map remains populated until synchronous disposal loop finishes."
+    },
+    {
+      "source": "Shell:591-641",
+      "fact": "Candidate owns a hidden Shell child container, own-world viewport, stage, actual native Level/Player/FX/Camera seven-binding tuple."
+    },
+    {
+      "source": "Level:145-153,203-209 + Shell:782-801",
+      "fact": "Uncommitted construction has restore_candidate true/notready. Canonical install calls finish_restore_candidate before installed aliases; true/notready plus all installed aliases/container/world disjoint establishes never-installed native construction."
+    },
+    {
+      "source": "Shell:815-821 + Level:222-234",
+      "fact": "Native disposal exits Level before FX clear and container free. Exit disarms entered before on-exit while busy and retained bindings remain; restore flags/bindings are cleared only afterward."
+    },
+    {
+      "source": "inert b81f London:989-1002 + inherited Weybridge:941-960",
+      "fact": "L4 banks cancel l4_exit first; inherited lanes clear l2_exit before Ray cleanup, then Scheduler end and disarm. Their internal cancel-reason changes do not authorize arbitrary callbacks."
+    },
+    {
+      "source": "Ray:343-355,360-379,491-492,666-690",
+      "fact": "Fresh configure starts three cycle0 idle-clear records, empty whole proof map, no leases/history. Cleanup cancel inserts known Ray proof entries containing empty dictionaries, preserves empty cycle0 cancel reason, and publishes the exact native state before retirement/binding release."
+    }
+  ],
+  "minimal_required_predicates": {
+    "before_super": [
+      "Exact seven-binding actual validation-map membership, typed native ready original hidden tree and own World3D; canonical gated b81f source/scene, Player/FX/Ray sources; no aliases to installed Level/Player/FX/stage/camera/container/viewport/world.",
+      "Fresh uncommitted construction, restore true/notready/entered true/notbusy, no runtime/snapshot error, immutable actual full profile/positions. Reject partial or failed mapped candidates even if they emit zero callbacks.",
+      "Clock0, no whole scheduler reservations/cooldowns; all nine exact actors at selected roots with full native HP; all three exact Ray identities and public/private idle-clear cycle0 empty exchange/proof/pending history; full Player HP/resources and pristine action clocks/history.",
+      "Freeze candidate/installed Player exact native paused state, all actor/driver/scheduler identity and script identity, full native Ray states/records, and actual container descendant weakrefs. Immutable report records carry scalar identities rather than live Object/WeakRef handles."
+    ],
+    "every_allowed_callback": [
+      "Synchronous same wrapper span and same actual seven-binding validation map membership. Only exact frozen native Ray state_changed(id,state) from known three source members; no registered/missing-map exceptions.",
+      "Paused same Shell/tree/container/world, entered false/busy true/restore true/notready, retained same candidate Player/FX/Shell, still never installed and disjoint from installed bindings.",
+      "Frozen all-nine actor identity/root/full HP, exact scheduler/exchange still level children, immutable selection and Scheduler.encounter_profile equality, clock0/no lease or cooldown; unchanged candidate and installed Player whole native state.",
+      "Every known Ray current state and record remains original empty cycle0 idle-clear. Whole proof map contains only known three keys with empty Dictionary values; native cancel may add these empty entries, so do not require an entirely empty map during callbacks.",
+      "Exact callback payload equals frozen native expected full state; keep every callback, including forbidden ones. Reject input/action/contact/damage/defeat/progress/newlease/unknown/changed events."
+    ],
+    "wrapper_return": [
+      "Freeze/read only; unchanged synchronous super._dispose(candidate) exactly once, with no await, deferred substitute, suppression, mutation, state repair, extra production override or changed exit order.",
+      "End qualifying span on return; require matching ticket and actual normal original-container/descendant weakref retirement. An ineligible actual map recipient must produce a failed check even when it emitted no callback."
+    ]
+  },
+  "preliminary_author_read": {
+    "status": "Unfrozen draft; not final companion approval.",
+    "latest_exact_observer_text_read": {
+      "path": "/private/tmp/act1-support-a2-l4-save-view/validation-observer.txt",
+      "sha256": "ed16a94f2a932c169faf665062fb8b9d1b8d21dd078ee15f748fea8b77ae0b0b",
+      "bytes": 22073
+    },
+    "assembled_wrapper_text_read": {
+      "path": "/private/tmp/act1-support-a2-l4-save-view/saved_construction_view.gd.txt",
+      "reported_source_sha256": "96c8783f44f88cd0c4913a2d79256b9cb43ef30fa92eb96878ebe6e7c05df96a",
+      "reported_bytes": 87166,
+      "read_scope": "embedded _dispose wrapper and direct integration/callback call sites only; full companion not reviewed in this audit"
+    },
+    "concrete_findings_sent_to_author_and_parent": [
+      {
+        "id": "VAL-01",
+        "issue": "A nonempty prefreeze error was only metadata; after-dispose asserts only eligible spans. An actual partial/changed mapped candidate emitting no callback could leave no failed check.",
+        "required_correction": "Record explicit failed check/quiet violation for ineligible actual validation recipients, while unchanged super disposal still executes.",
+        "status_at_read": "Outstanding in ed16 observer text."
+      },
+      {
+        "id": "VAL-02",
+        "issue": "Known-Ray state.proof checks did not reject extra whole _proofs keys; emitted-payload equality alone did not cover all recipient pending history.",
+        "required_correction": "Whole proof-map empty before, known-only empty entries during cleanup; compare all three records and full states at callbacks.",
+        "status_at_read": "ed16 adds complete records/state comparisons; whole proof-map key/value guard remains outstanding."
+      },
+      {
+        "id": "VAL-03",
+        "issue": "Initial callback checked selected construction and clock but omitted full current Scheduler profile and all-nine actor/scheduler/driver custody.",
+        "required_correction": "Compare frozen full Scheduler profile and all-nine identity/root/HP plus exact driver/scheduler level-child bindings.",
+        "status_at_read": "Resolved by source read of ed16; no runtime claim."
+      }
+    ],
+    "wrapper_source_observation": "Observed embedded wrapper calls before reader, unchanged synchronous super._dispose exactly once, then after reader; no await or production ordering modification.",
+    "no_claim_of_native_failure_or_success": true
+  },
+  "updated_lifecycle_notes": {
+    "path": "/private/tmp/act1-support-a2-l4-save-view/lifecycle-api-notes.md",
+    "bytes": 14788,
+    "sha256": "4984a38c107d8bb56b098d62703184a36b541f4c4e9b53340910726ec6f76582"
+  },
+  "updated_lifecycle_api_pins": {
+    "path": "/private/tmp/act1-support-a2-l4-save-view/lifecycle-api-pins.json",
+    "bytes": 13322,
+    "sha256": "a9b5c0ee61336fbcf695c0383465d07750f9bbf7ce0c3dfa9bb92945acf2a059"
+  },
+  "first_Title_note_correction": "Native Attempts.load_saved211-233 first validates original donor then migrates availability5-to13, writing one isolated TEST campaign generation with literal input primary as backup; later Title/Continue reads preserve generations. No input preaugmentation.",
+  "preserved_actual_evidence": [
+    "constructor447",
+    "corrected0dd7comparison59"
+  ],
+  "counts_preserved": {
+    "original_acceptances": 24,
+    "difficulty_policies": 22,
+    "worker_actual_shared_API": 74
+  },
+  "new_runtime_or_native_results": 0,
+  "new_gameplay_candidate_or_source_edits": 0,
+  "final_frozen_companion_review_pending": true
+}

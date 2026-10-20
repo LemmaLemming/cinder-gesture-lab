@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "review": "Preliminary unstable public lifecycle body source read",
+  "created_at_utc": "2026-10-20T05:30:36.254032+00:00",
+  "reviewed_path": "/private/tmp/act1-support-a2-l4-save-view/body.txt",
+  "reviewed_sha256": "57e8ad46ef770a9ede838e21d7aeef6648707254a79100efcb2cf780cd89f6c9",
+  "reviewed_bytes": 29979,
+  "reviewed_lines": 443,
+  "status": "Source-predicated observer blocker; no runtime/native failure inferred",
+  "findings": [
+    {
+      "id": "LIFE-OBS-01",
+      "body_lines": [
+        226,
+        242,
+        315,
+        361
+      ],
+      "detail": "Cold Title watches all Ray state_changed events and allows retirement only for captured installed original donor. L4 legacy per-submission validation creates fresh entered restore candidates, then Shell disposes earlier candidate on the next whole-snapshot validation and at Title cleanup. Ray.cleanup cancel_all invokes cancel->_present, which emits a Ray state_changed even for cycle0 idle. Those are not installed original-donor origins, so the current fixture necessarily classifies these normal validation-recipient retirement callbacks as forbidden and _open_title requires zero forbidden events.",
+      "source_predicate_chain": [
+        "CinderLevel.restore_candidate_physics_registration_required returnsfalse; c310L4 separately opts fresh savedconstruction",
+        "Shell._snapshot_problem_unlocked:745 disposes previous validationcandidate; :766-769 fresh saved-construction candidate retained",
+        "CinderLevel.enter_restore_candidate:145 sets_enteredtrue before native construction",
+        "Shell._dispose:815-821 calls candidate.level.exit_level; Weybridge._on_exit_level:947 callsRay.cleanup",
+        "Ray.cleanup:669 -> cancel_all(exchange_removed); cancel:343-351 leaves idle/clear forcycle0 and invokes_present",
+        "Ray._present:491-492 emits state_changed(id,state) whennotifydefaulttrue",
+        "Body_event361 requires allowed installed-donor retirement to avoid_forbidden while_watch true; coldTitle has no installed captured donor"
+      ],
+      "required_next": "Integration/parent decides whether to authorize an explicit independently qualified uncommitted validation-recipient retirement category or report this source blocker. Do not suppress/disconnect signals or silently treat allnewcandidate callbacks as old-donor retirement.",
+      "communicated_to_author_and_parent": true
+    }
+  ],
+  "other_source_observations": [
+    "PublicReplay uses genuinely completed5bc donor, native fresh Challenge replay construction and disclosed whole pre-record Story capture.",
+    "Replay generationdelta2/immediatepreviouspayload, Pause/Retry delta1 and exactwholeSession/CP distinctions follow actual APIs.",
+    "FirstTitle IMPLEMENTED_IDS availability migration is expected separately from literal original input and retains exact wholeStory; no preaugmentation is written to input.",
+    "Observer retains all callbacks globally; _watch controls failure classification rather than native signal blocking.",
+    "Legacy5bc Retry expectation correctly changes only story.snapshot to literalCP; new17Replay Retry returns its entranceSession."
+  ],
+  "limitations": [
+    "Unstable draft source only; final frozen text requires separate review and exact pin.",
+    "No source edit, parser, engine/import, producer, portrait, queue or runtime operation.",
+    "No native execution, save success/failure, profile/policy or actual pixel result claimed."
+  ]
+}
