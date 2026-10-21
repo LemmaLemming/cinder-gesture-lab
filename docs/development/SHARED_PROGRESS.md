@@ -1,5 +1,11 @@
 # Cinder shared progress
 
+## 21 October2026 — mobile publication and local cleanup
+
+The later direct user request authorized mobile publication and project-specific cleanup after the completed desktop endpoint. [Mobile products](MOBILE_PRODUCTS.md) are public at tag `mobile-test-2026-10-21`, source `fc9f5f02`: debug-signed Android APK, unsigned arm64 iPhone IPA and complete Xcode project. All nine asset SHA256 values and source tip were verified remotely. Physical-device gameplay and mobile performance remain unverified; iOS requires local signing. The GitHub repository remains public and unarchived.
+
+[Cleanup](LOCAL_CLEANUP.md) removed project-only tools, templates, generated storage, test saves, the newly installed simulator and all four remaining worker checkouts. Original branch refs and unique drafts remain in the main local source/recovery checkout pending the user's optional source-deletion choice and specific approval for broader public worker-history upload. The canonical `.cinder/` mailbox/setup was retired after its recovery snapshot; it is no longer an active coordination location. All original act scopes and desktop acceptance remain complete; the monitor stays paused. Reinstall tools/regenerate setup before any later local development. Shared developer tools and signing credentials were preserved.
+
 ## Dead London's seven purposes and desktop closeout —20 October2026
 
 [Integration accepts seven individual existing L5 purposes](ACT2_L5_DIFFICULTY_RETENTION.md) after source-backed review: quiet familiar squares, rehearsal/park Scout, completed physical dash bait independent of screen aim, separate first Ray/Foot/spent brace, earned drained checkpoint, familiar staggered composition at a low ordinary joint/two finite pools, and quiet microbial contact coda. Reasons stand independently of the failed alternative. Exact originalA7/visual58b0 and five related Root/Act2 source pairs match; helper/UID remain absent. No runtime/API/geometry/format/equipment/reward change or additional Challenge response follows. Shared76 remains current. All24 original content acceptances stay intact; difficulty coverage is24/24,15 authored plus nine bounded retentions.
